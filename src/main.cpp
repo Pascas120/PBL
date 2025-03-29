@@ -6,11 +6,14 @@
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
 #include <stdio.h>
+#include "Shader.h"
+#include "stb_image.h"
+#include "Model.h"
+#include "Camera.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
 #include <glad/glad.h>  // Initialize with gladLoadGL()
-
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 #include <spdlog/spdlog.h>
 
@@ -38,13 +41,19 @@ constexpr int32_t WINDOW_HEIGHT = 1080;
 GLFWwindow* window = nullptr;
 
 // Change these to lower GL version like 4.5 if GL 4.6 can't be initialized on your machine
-const     char*   glsl_version     = "#version 460";
+const     char*   glsl_version     = "#version 410";
 constexpr int32_t GL_VERSION_MAJOR = 4;
-constexpr int32_t GL_VERSION_MINOR = 6;
+constexpr int32_t GL_VERSION_MINOR = 1;
 
 bool   show_demo_window    = true;
 bool   show_another_window = false;
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Shader ourShader;
+Model ourModel;
 
 int main(int, char**)
 {
@@ -124,7 +133,12 @@ bool init()
         spdlog::error("Failed to initialize OpenGL loader!");
         return false;
     }
-
+//==============================================================================================
+    glEnable(GL_DEPTH_TEST);
+    stbi_set_flip_vertically_on_load(true);
+    ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
+    ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
+//==============================================================================================
     return true;
 }
 
@@ -145,19 +159,84 @@ void init_imgui()
 
 }
 
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset){
+    camera.ProcessMouseScroll(yoffset);
+}
+
 void input()
 {
-    // I/O ops go here
+    float currentFrame = glfwGetTime();
+    static float lastFrame = 0.0f;
+    float deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+
+    // Add mouse controls if needed
+    static double lastX = WINDOW_WIDTH/2.0f;
+    static double lastY = WINDOW_HEIGHT/2.0f;
+    static bool firstMouse = true;
+
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+
+    lastX = xpos;
+    lastY = ypos;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+        camera.ProcessMouseMovement(xoffset, yoffset);
+
+    float scrollOffset;
+
+    glfwSetScrollCallback(window, scrollCallback);
 }
 
 void update()
 {
-    // Update game objects' state here
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 }
 
 void render()
 {
-    // OpenGL Rendering code goes here
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(show_demo_window){
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }else{
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    ourShader.use();
+
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    ourShader.setMat4("projection", projection);
+    ourShader.setMat4("view", view);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    ourShader.setMat4("model", model);
+
+    ourModel.Draw(ourShader);
 }
 
 void imgui_begin()
@@ -218,18 +297,12 @@ void imgui_end()
 
     glViewport(0, 0, display_w, display_h);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void end_frame()
 {
-    // Poll and handle events (inputs, window resize, etc.)
-    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
     glfwPollEvents();
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);

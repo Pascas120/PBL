@@ -4,6 +4,10 @@
 #include <iostream>
 #include <sstream>
 
+
+//TODO asercje zamiast exceptions, printf zamiast cout, nie korzystać z stringstreama
+
+Shader::Shader(){}
 // Constructor: Reads and compiles shaders
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
@@ -153,3 +157,4 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
         }
     }
 }
+

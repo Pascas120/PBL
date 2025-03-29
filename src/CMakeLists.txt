@@ -21,7 +21,13 @@ source_group(TREE ${CMAKE_SOURCE_DIR}         FILES ${ASSETS_FILES})
 # Define the executable
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		Shader.h
-		Shader.cpp)
+		Shader.cpp
+		Mesh.cpp
+		Mesh.h
+		Model.cpp
+		Model.h
+		Camera.cpp
+		Camera.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
