@@ -27,7 +27,20 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		Model.cpp
 		Model.h
 		Camera.cpp
-		Camera.h)
+		Camera.h
+		Transform.cpp
+		Transform.h
+		GameObject.cpp
+		GameObject.h
+		Component.cpp
+		Component.h
+		ComponentList.cpp
+		ComponentList.h
+		ModelComponent.cpp
+		ModelComponent.h
+		Scene.cpp
+		Scene.h
+)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")
