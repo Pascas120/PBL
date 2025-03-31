@@ -21,6 +21,7 @@ public:
 
     GameObject* CreateGameObject();
     void Update();
+    void Draw(Shader &shader);
 };
 
 

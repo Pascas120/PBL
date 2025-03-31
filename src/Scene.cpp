@@ -17,3 +17,7 @@ GameObject* Scene::CreateGameObject() {
 void Scene::Update() {
     root->Update();
 }
+
+void Scene::Draw(Shader& shader) {
+    root->Draw(shader);
+}

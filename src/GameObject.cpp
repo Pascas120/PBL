@@ -4,20 +4,20 @@
 
 #include "GameObject.h"
 
+#include "ModelComponent.h"
+
 GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
     for (int i = 0; i < MAX_CHILDREN; i++) {
         children[i] = nullptr;
     }
 }
 
-// Dodaje dziecko do GameObject
 void GameObject::AddChild(GameObject* child) {
     if (childCount >= MAX_CHILDREN) return;
     children[childCount++] = child;
     child->parent = this;
 }
 
-// Oznacza obiekt jako brudny i propaguje w dół
 void GameObject::MarkDirty() {
     dirty = true;
     for (int i = 0; i < childCount; i++) {
@@ -27,7 +27,6 @@ void GameObject::MarkDirty() {
     }
 }
 
-// Aktualizuje tylko brudne węzły
 void GameObject::Update() {
     if (dirty) {
         components.Update();
@@ -36,6 +35,19 @@ void GameObject::Update() {
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
             children[i]->Update();
+        }
+    }
+}
+
+void GameObject::Draw(Shader& shader) {
+    //ModelComponent* modelComp = components.GetComponent<ModelComponent>();
+    //if (modelComp) {
+    //    modelComp->Draw(shader);
+    //}
+
+    for (int i = 0; i < childCount; i++) {
+        if (children[i]) {
+            children[i]->Draw(shader);
         }
     }
 }

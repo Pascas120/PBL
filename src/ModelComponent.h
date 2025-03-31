@@ -16,7 +16,7 @@ public:
     ModelComponent(const std::string& modelPath, bool gamma = false);
 
     void Draw(Shader& shader);
-    void Update() override;
+    void update() override;
 
     Model& GetModel();
 };

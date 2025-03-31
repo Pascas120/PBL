@@ -11,7 +11,7 @@ void ModelComponent::Draw(Shader& shader) {
     model.Draw(shader);
 }
 
-void ModelComponent::Update() {
+void ModelComponent::update() {
 }
 
 Model& ModelComponent::GetModel() {

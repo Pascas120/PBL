@@ -5,6 +5,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 #include "ComponentList.h"
+#include "Shader.h"
 
 
 constexpr int MAX_CHILDREN = 10;
@@ -23,6 +24,7 @@ public:
     void AddChild(GameObject* child);
     void MarkDirty();
     void Update();
+    void Draw(Shader& shader);
 
     GameObject* GetParent();
     GameObject** GetChildren();
