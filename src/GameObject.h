@@ -12,15 +12,15 @@ constexpr int MAX_CHILDREN = 10;
 
 class GameObject {
 private:
-    ComponentList components;
     GameObject* parent;
     GameObject* children[MAX_CHILDREN];
     int childCount;
     bool dirty;
 
 public:
-    GameObject();
+    ComponentList components;
 
+    GameObject();
     void AddChild(GameObject* child);
     void MarkDirty();
     void Update();

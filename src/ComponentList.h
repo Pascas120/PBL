@@ -23,14 +23,44 @@ private:
 public:
     ComponentList();
 
-    template<typename T>
-    T* AddComponent();
+    template<typename T, typename... Args>
+    T* AddComponent(Args&&... args) {
+        if (freeIndex == -1) {
+            printf("No space for more components!\n");
+            return nullptr;
+        }
+
+        int newIndex = freeIndex;
+        freeIndex = nodes[newIndex].next;
+
+        // Tworzenie komponentu z przekazanymi argumentami
+        nodes[newIndex].component = new T(args...);
+        nodes[newIndex].next = -1;
+
+        if (head == -1) {
+            head = tail = newIndex;
+        } else {
+            nodes[tail].next = newIndex;
+            tail = newIndex;
+        }
+
+        return static_cast<T*>(nodes[newIndex].component);
+    }
+
 
     void RemoveComponent(Component* component);
     void Update();
 
     template<typename T>
-    T* GetComponent();
+    T* GetComponent() {
+        int current = head;
+        while (current != -1) {
+            T* casted = dynamic_cast<T*>(nodes[current].component);
+            if (casted) return casted;
+            current = nodes[current].next;
+        }
+        return nullptr;
+    }
 
     ~ComponentList();
 };

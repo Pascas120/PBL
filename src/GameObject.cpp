@@ -5,6 +5,7 @@
 #include "GameObject.h"
 
 #include "ModelComponent.h"
+#include "Transform.h"
 
 GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
     for (int i = 0; i < MAX_CHILDREN; i++) {
@@ -29,9 +30,17 @@ void GameObject::MarkDirty() {
 
 void GameObject::Update() {
     if (dirty) {
+        if (parent) {
+            Transform* parentTransform = parent->components.GetComponent<Transform>();
+            Transform* transform = components.GetComponent<Transform>();
+            if (parentTransform && transform) {
+                transform->setParentMatrix(parentTransform->getModelMatrix());
+            }
+        }
         components.Update();
         dirty = false;
     }
+
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
             children[i]->Update();
@@ -40,10 +49,12 @@ void GameObject::Update() {
 }
 
 void GameObject::Draw(Shader& shader) {
-    //ModelComponent* modelComp = components.GetComponent<ModelComponent>();
-    //if (modelComp) {
-    //    modelComp->Draw(shader);
-    //}
+    ModelComponent* modelComp = components.GetComponent<ModelComponent>();
+    Transform* transform = components.GetComponent<Transform>();
+    if (modelComp) {
+        shader.setMat4("model", transform->getModelMatrix());
+        modelComp->Draw(shader);
+    }
 
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {

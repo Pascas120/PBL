@@ -5,11 +5,14 @@
 #include "imgui.h"
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
-#include <stdio.h>
+//#include <stdio.h>
 #include "Shader.h"
 #include "stb_image.h"
 #include "Model.h"
 #include "Camera.h"
+#include "Scene.h"
+#include "Transform.h"
+#include "ModelComponent.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
@@ -54,6 +57,11 @@ float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Shader ourShader;
 Model ourModel;
+
+Scene scene;
+GameObject* obj1 = scene.CreateGameObject();
+GameObject* obj2 = scene.CreateGameObject();
+float osc = 0;
 
 int main(int, char**)
 {
@@ -138,6 +146,12 @@ bool init()
     stbi_set_flip_vertically_on_load(true);
     ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
     ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
+
+    obj1->AddChild(obj2);
+    obj1->components.AddComponent<Transform>();
+    obj1->components.AddComponent<ModelComponent>(&ourModel);
+    obj2->components.AddComponent<Transform>();
+    obj2->components.AddComponent<ModelComponent>(&ourModel);
 //==============================================================================================
     return true;
 }
@@ -213,6 +227,12 @@ void update()
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
+    osc += 0.01f;
+    obj1->components.GetComponent<Transform>()->setScale(glm::vec3(sin(osc)));
+    obj1->MarkDirty();
+    obj2->components.GetComponent<Transform>()->setTranslation(glm::vec3(sin(osc+0.5)*10));
+    obj1->Update();
+    //scene.Update();
 }
 
 void render()
@@ -231,12 +251,7 @@ void render()
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-    ourShader.setMat4("model", model);
-
-    ourModel.Draw(ourShader);
+    obj1->Draw(ourShader);
 }
 
 void imgui_begin()

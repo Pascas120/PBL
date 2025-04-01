@@ -11,29 +11,6 @@ ComponentList::ComponentList() : head(-1), tail(-1), freeIndex(0) {
     nodes[MAX_COMPONENTS - 1].next = -1;
 }
 
-template<typename T>
-T* ComponentList::AddComponent() {
-    if (freeIndex == -1) {
-        printf("No space for more components!\n");
-        return nullptr;
-    }
-
-    int newIndex = freeIndex;
-    freeIndex = nodes[newIndex].next;
-
-    nodes[newIndex].component = new T();
-    nodes[newIndex].next = -1;
-
-    if (head == -1) {
-        head = tail = newIndex;
-    } else {
-        nodes[tail].next = newIndex;
-        tail = newIndex;
-    }
-
-    return static_cast<T*>(nodes[newIndex].component);
-}
-
 void ComponentList::RemoveComponent(Component* component) {
     int current = head;
     int prev = -1;
@@ -71,16 +48,6 @@ void ComponentList::Update() {
     }
 }
 
-template<typename T>
-T* ComponentList::GetComponent() {
-    int current = head;
-    while (current != -1) {
-        T* casted = dynamic_cast<T*>(nodes[current].component);
-        if (casted) return casted;
-        current = nodes[current].next;
-    }
-    return nullptr;
-}
 
 ComponentList::~ComponentList() {
     int current = head;

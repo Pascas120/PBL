@@ -16,18 +16,20 @@ private:
     glm::vec3 rotate;
     glm::vec3 scale;
     glm::mat4 modelMatrix;
+    glm::mat4 parentMatrix = glm::mat4(1.0f);
 
 public:
     Transform();
 
-    void SetTranslation(const glm::vec3& t);
-    void SetRotation(const glm::vec3& r);
-    void SetScale(const glm::vec3& s);
+    void setTranslation(const glm::vec3& t);
+    void setRotation(const glm::vec3& r);
+    void setScale(const glm::vec3& s);
+    void setParentMatrix(const glm::mat4& m);
 
-    const glm::vec3& GetTranslation() const;
-    const glm::vec3& GetRotation() const;
-    const glm::vec3& GetScale() const;
-    const glm::mat4& GetModelMatrix() const;
+    const glm::vec3& getTranslation() const;
+    const glm::vec3& getRotation() const;
+    const glm::vec3& getScale() const;
+    const glm::mat4& getModelMatrix() const;
 
     void update() override;
 };
