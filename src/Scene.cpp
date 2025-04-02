@@ -3,15 +3,15 @@
 //
 
 #include "Scene.h"
+#include "Transform.h"
 
-Scene::Scene() : objectCount(0) {
-    root = &objects[objectCount++];
+Scene::Scene(){
+    root = new GameObject();
 }
 
 // Tworzy nowy GameObject w scenie
-GameObject* Scene::CreateGameObject() {
-    if (objectCount >= MAX_OBJECTS) return nullptr;
-    return &objects[objectCount++];
+void Scene::addChild(GameObject *obj){
+    root->AddChild(obj);
 }
 
 void Scene::Update() {

@@ -15,6 +15,20 @@ GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
 
 void GameObject::AddChild(GameObject* child) {
     if (childCount >= MAX_CHILDREN) return;
+
+    if (child->parent) {
+        GameObject* oldParent = child->parent;
+        for (int i = 0; i < oldParent->childCount; i++) {
+            if (oldParent->children[i] == child) {
+                for (int j = i; j < oldParent->childCount - 1; j++) {
+                    oldParent->children[j] = oldParent->children[j + 1];
+                }
+                oldParent->childCount--;
+                break;
+            }
+        }
+    }
+
     children[childCount++] = child;
     child->parent = this;
 }

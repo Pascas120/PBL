@@ -59,8 +59,8 @@ Shader ourShader;
 Model ourModel;
 
 Scene scene;
-GameObject* obj1 = scene.CreateGameObject();
-GameObject* obj2 = scene.CreateGameObject();
+GameObject* obj1 = new GameObject();
+GameObject* obj2 = new GameObject();
 float osc = 0;
 
 int main(int, char**)
@@ -147,11 +147,13 @@ bool init()
     ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
     ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
 
+    scene.addChild(obj1);
     obj1->AddChild(obj2);
     obj1->components.AddComponent<Transform>();
     obj1->components.AddComponent<ModelComponent>(&ourModel);
     obj2->components.AddComponent<Transform>();
     obj2->components.AddComponent<ModelComponent>(&ourModel);
+
 //==============================================================================================
     return true;
 }
@@ -231,8 +233,8 @@ void update()
     obj1->components.GetComponent<Transform>()->setScale(glm::vec3(sin(osc)));
     obj1->MarkDirty();
     obj2->components.GetComponent<Transform>()->setTranslation(glm::vec3(sin(osc+0.5)*10));
-    obj1->Update();
-    //scene.Update();
+    //obj1->Update();
+    scene.Update();
 }
 
 void render()
@@ -251,7 +253,7 @@ void render()
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
 
-    obj1->Draw(ourShader);
+    scene.Draw(ourShader);
 }
 
 void imgui_begin()

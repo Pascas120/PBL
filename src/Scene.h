@@ -12,14 +12,12 @@ constexpr int MAX_OBJECTS = 100;
 
 class Scene {
 private:
-    GameObject objects[MAX_OBJECTS];
-    int objectCount;
     GameObject* root;
 
 public:
     Scene();
 
-    GameObject* CreateGameObject();
+    void addChild(GameObject* obj);
     void Update();
     void Draw(Shader &shader);
 };
