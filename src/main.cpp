@@ -36,6 +36,10 @@ void imgui_begin();
 void imgui_render();
 void imgui_end();
 
+void imgui_obj_info(GameObject* obj);
+void imgui_transform(GameObject* obj);
+void imgui_children(GameObject* obj);
+
 void end_frame();
 
 constexpr int32_t WINDOW_WIDTH  = 1920;
@@ -48,8 +52,8 @@ const     char*   glsl_version     = "#version 410";
 constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 1;
 
-bool   show_demo_window    = true;
-bool   show_another_window = false;
+bool show_wireframe = false;
+
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -194,6 +198,10 @@ void input()
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboard(DOWN, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.ProcessKeyboard(UP, deltaTime);
 
     // Add mouse controls if needed
     static double lastX = WINDOW_WIDTH/2.0f;
@@ -226,21 +234,22 @@ void input()
 
 void update()
 {
-    float currentFrame = static_cast<float>(glfwGetTime());
+    /*float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
     osc += 0.01f;
     obj1->components.GetComponent<Transform>()->setScale(glm::vec3(sin(osc)));
     obj1->MarkDirty();
     obj2->components.GetComponent<Transform>()->setTranslation(glm::vec3(sin(osc+0.5)*10));
-    //obj1->Update();
-    scene.Update();
+    scene.Update();*/
+
+	scene.Update();
 }
 
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(show_demo_window){
+	if (!show_wireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }else{
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -266,44 +275,100 @@ void imgui_begin()
 
 void imgui_render()
 {
-    /// Add new ImGui controls here
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    static bool show_demo_window = true;
+
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+
     {
-        static float f = 0.0f;
-        static int counter = 0;
+        ImGui::Begin("Hello, world!");
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Checkbox("Demo Window", &show_demo_window);
+		ImGui::Checkbox("Wireframe", &show_wireframe);
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
 
-    // 3. Show another simple window.
-    if (show_another_window)
-    {
-        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
+		ImGui::NewLine();
+
+        imgui_children(scene.GetRoot());
+
+
         ImGui::End();
     }
 }
+
+void imgui_obj_info(GameObject* obj)
+{
+	ImGui::PushID(obj);
+
+	if (ImGui::CollapsingHeader("[Object Name Here]", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Indent();
+		imgui_transform(obj);
+        ImGui::Unindent();
+
+		if (obj->GetChildCount() > 0)
+		{
+			ImGui::Indent();
+			ImGui::NewLine();
+
+			imgui_children(obj);
+			ImGui::Unindent();
+		}
+	}
+
+	ImGui::PopID();
+}
+
+void imgui_transform(GameObject* obj)
+{
+	Transform* transform = obj->components.GetComponent<Transform>();
+
+    if (!transform)
+        return;
+
+    ImGui::PushID(transform);
+
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		glm::vec3 translation = transform->getTranslation();
+		glm::vec3 rotation = transform->getRotation();
+		glm::vec3 scale = transform->getScale();
+		if (ImGui::DragFloat3("Position", &translation[0], 0.1f))
+		{
+			transform->setTranslation(translation);
+			obj->MarkDirty();
+		}
+		if (ImGui::DragFloat3("Rotation", &rotation[0], 0.1f))
+		{
+			transform->setRotation(rotation);
+			obj->MarkDirty();
+		}
+		if (ImGui::DragFloat3("Scale", &scale[0], 0.1f))
+		{
+			transform->setScale(scale);
+			obj->MarkDirty();
+		}
+	}
+
+	ImGui::PopID();
+}
+
+void imgui_children(GameObject* obj)
+{
+	GameObject** children = obj->GetChildren();
+	for (int i = 0; i < obj->GetChildCount(); i++)
+	{
+		if (children[i])
+		{
+			imgui_obj_info(children[i]);
+		}
+	}
+}
+
+
 
 void imgui_end()
 {

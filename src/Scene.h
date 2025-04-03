@@ -20,6 +20,10 @@ public:
     void addChild(GameObject* obj);
     void Update();
     void Draw(Shader &shader);
+
+	GameObject* GetRoot() {
+		return root;
+	}
 };
 
 
