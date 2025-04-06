@@ -7,12 +7,14 @@
 
 
 #include "GameObject.h"
+#include "CollisionSystem.h"
 
 constexpr int MAX_OBJECTS = 100;
 
 class Scene {
 private:
     GameObject* root;
+    CollisionSystem collisionSystem = CollisionSystem(this);
 
 public:
     Scene();
@@ -23,6 +25,10 @@ public:
 
 	GameObject* GetRoot() {
 		return root;
+	}
+
+	CollisionSystem* GetCollisionSystem() {
+		return &collisionSystem;
 	}
 };
 

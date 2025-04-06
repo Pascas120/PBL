@@ -88,3 +88,11 @@ GameObject** GameObject::GetChildren() {
 int GameObject::GetChildCount() {
     return childCount;
 }
+
+std::string GameObject::GetName() const {
+	return name;
+}
+
+void GameObject::SetName(const std::string& newName) {
+	name = newName;
+}

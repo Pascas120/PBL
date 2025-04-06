@@ -13,6 +13,7 @@
 #include "Scene.h"
 #include "Transform.h"
 #include "ModelComponent.h"
+#include "ColliderComponent.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
@@ -38,6 +39,7 @@ void imgui_end();
 
 void imgui_obj_info(GameObject* obj);
 void imgui_transform(GameObject* obj);
+void imgui_collider(GameObject* obj);
 void imgui_children(GameObject* obj);
 
 void end_frame();
@@ -65,6 +67,7 @@ Model ourModel;
 Scene scene;
 GameObject* obj1 = new GameObject();
 GameObject* obj2 = new GameObject();
+GameObject* obj3 = new GameObject();
 float osc = 0;
 
 int main(int, char**)
@@ -151,12 +154,24 @@ bool init()
     ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
     ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
 
+	scene.GetRoot()->SetName("Root");
+
     scene.addChild(obj1);
     obj1->AddChild(obj2);
     obj1->components.AddComponent<Transform>();
     obj1->components.AddComponent<ModelComponent>(&ourModel);
+    obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
+    obj1->SetName("Parent");
+
     obj2->components.AddComponent<Transform>();
     obj2->components.AddComponent<ModelComponent>(&ourModel);
+	obj2->components.AddComponent<ColliderComponent>(ColliderType::CAPSULE);
+	obj2->SetName("Child");
+
+	obj1->AddChild(obj3);
+	obj3->components.AddComponent<Transform>();
+	obj3->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
+	obj3->SetName("Invisible Child");
 
 //==============================================================================================
     return true;
@@ -244,6 +259,7 @@ void update()
     scene.Update();*/
 
 	scene.Update();
+	scene.GetCollisionSystem()->CheckCollisions();
 }
 
 void render()
@@ -292,7 +308,7 @@ void imgui_render()
 
 		ImGui::NewLine();
 
-        imgui_children(scene.GetRoot());
+        imgui_obj_info(scene.GetRoot());
 
 
         ImGui::End();
@@ -303,10 +319,27 @@ void imgui_obj_info(GameObject* obj)
 {
 	ImGui::PushID(obj);
 
-	if (ImGui::CollapsingHeader("[Object Name Here]", ImGuiTreeNodeFlags_DefaultOpen))
+    std::string objName = obj->GetName();
+    std::string displayName = objName + "###objName";
+    const char* name = objName.c_str();
+
+
+	bool header_open = ImGui::CollapsingHeader(displayName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+    if (ImGui::BeginPopupContextItem("Object Context Menu"))
+    {
+        if (ImGui::InputText("Name", (char*)name, 64))
+        {
+            obj->SetName(name);
+        }
+
+        ImGui::EndPopup();
+    }
+	if (header_open)
 	{
+
 		ImGui::Indent();
 		imgui_transform(obj);
+		imgui_collider(obj);
         ImGui::Unindent();
 
 		if (obj->GetChildCount() > 0)
@@ -318,6 +351,7 @@ void imgui_obj_info(GameObject* obj)
 			ImGui::Unindent();
 		}
 	}
+    
 
 	ImGui::PopID();
 }
@@ -352,6 +386,67 @@ void imgui_transform(GameObject* obj)
 			obj->MarkDirty();
 		}
 	}
+
+	ImGui::PopID();
+}
+
+void imgui_collider(GameObject* obj)
+{
+	ColliderComponent* collider = obj->components.GetComponent<ColliderComponent>();
+
+	if (!collider)
+		return;
+
+	ImGui::PushID(collider);
+
+	ColliderShape* shape = collider->GetColliderShape();
+    std::string tabName;
+
+	switch (shape->getType())
+	{
+	case ColliderType::BOX:
+		tabName = "Box Collider";
+		break;
+	case ColliderType::SPHERE:
+		tabName = "Sphere Collider";
+		break;
+	case ColliderType::CAPSULE:
+		tabName = "Capsule Collider";
+		break;
+	default:
+		tabName = "Unknown Collider";
+		break;
+	}
+
+	if (ImGui::CollapsingHeader(tabName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		glm::vec3 center = shape->center;
+		if (ImGui::DragFloat3("Center", &center[0], 0.1f))
+		{
+			shape->center = center;
+			obj->MarkDirty();
+		}
+
+		switch (shape->getType())
+		{
+		case ColliderType::BOX:
+			ImGui::DragFloat3("Half Size", &((BoxCollider*)shape)->halfSize[0], 0.1f, 0.0f, 1000.0f);
+			break;
+		case ColliderType::SPHERE:
+			ImGui::DragFloat("Radius", &((SphereCollider*)shape)->radius, 0.1f, 0.0f, 1000.0f);
+			break;
+        case ColliderType::CAPSULE:
+        {
+            CapsuleCollider* capsule = (CapsuleCollider*)shape;
+			ImGui::DragFloat("Radius", &capsule->radius, 0.1f, 0.0f, 1000.0f);
+			ImGui::DragFloat("Height", &capsule->height, 0.1f, 0.0f, 1000.0f);
+        }
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	ImGui::PopID();
 }

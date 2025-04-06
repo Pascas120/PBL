@@ -17,6 +17,8 @@ private:
     int childCount;
     bool dirty;
 
+    std::string name;
+
 public:
     ComponentList components;
 
@@ -29,6 +31,10 @@ public:
     GameObject* GetParent();
     GameObject** GetChildren();
     int GetChildCount();
+
+    std::string GetName() const;
+
+    void SetName(const std::string& newName);
 };
 
 
