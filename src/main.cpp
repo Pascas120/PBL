@@ -21,6 +21,8 @@
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 #include <spdlog/spdlog.h>
 
+#include "debug.h"
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -41,6 +43,7 @@ void imgui_obj_info(GameObject* obj);
 void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
 void imgui_children(GameObject* obj);
+void imgui_collisions();
 
 void end_frame();
 
@@ -55,6 +58,7 @@ constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 1;
 
 bool show_wireframe = false;
+bool show_colliders = true;
 
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
@@ -159,21 +163,25 @@ bool init()
     scene.addChild(obj1);
     obj1->AddChild(obj2);
     obj1->components.AddComponent<Transform>();
-    obj1->components.AddComponent<ModelComponent>(&ourModel);
+    //obj1->components.AddComponent<ModelComponent>(&ourModel);
     obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
     obj1->SetName("Parent");
 
     obj2->components.AddComponent<Transform>();
-    obj2->components.AddComponent<ModelComponent>(&ourModel);
-	obj2->components.AddComponent<ColliderComponent>(ColliderType::CAPSULE);
+    //obj2->components.AddComponent<ModelComponent>(&ourModel);
+	obj2->components.AddComponent<ColliderComponent>(ColliderType::BOX);
 	obj2->SetName("Child");
 
 	obj1->AddChild(obj3);
 	obj3->components.AddComponent<Transform>();
-	obj3->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
+	obj3->components.AddComponent<ColliderComponent>(ColliderType::BOX);
 	obj3->SetName("Invisible Child");
 
 //==============================================================================================
+
+	Debug::Init();
+
+
     return true;
 }
 
@@ -249,16 +257,7 @@ void input()
 
 void update()
 {
-    /*float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-    osc += 0.01f;
-    obj1->components.GetComponent<Transform>()->setScale(glm::vec3(sin(osc)));
-    obj1->MarkDirty();
-    obj2->components.GetComponent<Transform>()->setTranslation(glm::vec3(sin(osc+0.5)*10));
-    scene.Update();*/
-
-	scene.Update();
+    scene.Update();
 	scene.GetCollisionSystem()->CheckCollisions();
 }
 
@@ -279,6 +278,26 @@ void render()
     ourShader.setMat4("view", view);
 
     scene.Draw(ourShader);
+
+	Debug::SetProjectionView(projection, view);
+
+    if (show_colliders)
+    {
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+        GameObject* obj[] = { obj1, obj2, obj3 };
+        for (int i = 0; i < 3; i++)
+        {
+            Transform* transform = obj[i]->components.GetComponent<Transform>();
+            ColliderComponent* collider = obj[i]->components.GetComponent<ColliderComponent>();
+            if (collider)
+            {
+                Debug::DrawCollider(collider->GetColliderShape(), transform, glm::vec3(1.0f, 0.0f, 0.0f));
+            }
+        }
+        glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST);
+    }
 }
 
 void imgui_begin()
@@ -291,16 +310,21 @@ void imgui_begin()
 
 void imgui_render()
 {
-    static bool show_demo_window = true;
+	static bool show_demo_window = false;
+    static bool show_collisions = false;
 
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
+
+	if (show_collisions)
+		imgui_collisions();
 
 
     {
         ImGui::Begin("Hello, world!");
 
         ImGui::Checkbox("Demo Window", &show_demo_window);
+		ImGui::Checkbox("Collisions", &show_collisions);
 		ImGui::Checkbox("Wireframe", &show_wireframe);
 
 
@@ -461,6 +485,23 @@ void imgui_children(GameObject* obj)
 			imgui_obj_info(children[i]);
 		}
 	}
+}
+
+void imgui_collisions()
+{
+    ImGui::Begin("Collisions");
+	ImGui::Checkbox("Show Colliders", &show_colliders);
+
+    std::vector<CollisionInfo> collisions = scene.GetCollisionSystem()->GetCollisions();
+    for (const CollisionInfo& collision : collisions)
+    {
+		ImGui::Text("Object A: %s", collision.objectA->GetName().c_str());
+		ImGui::Text("Object B: %s", collision.objectB->GetName().c_str());
+        ImGui::Text("Separation Vector: (%f, %f, %f)", collision.separationVector.x, collision.separationVector.y, collision.separationVector.z);
+        ImGui::Separator();
+    }
+
+    ImGui::End();
 }
 
 

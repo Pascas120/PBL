@@ -108,6 +108,7 @@ void CollisionSystem::CheckCollisions()
 				auto it = collisionFunctions.find(colliderPair);
 				if (it != collisionFunctions.end())
 				{
+					spdlog::info("Checking collision between {} and {}", objects[i]->GetName(), objects[j]->GetName());
 					CollisionFunction collisionFunction = it->second;
 					collisionInfo = collisionFunction(
 						{ transformFirst, colliderFirst, shapeFirst },
@@ -119,6 +120,10 @@ void CollisionSystem::CheckCollisions()
 				{
 					collisionInfo.objectA = objects[i];
 					collisionInfo.objectB = objects[j];
+					if (swapOrder)
+					{
+						std::swap(collisionInfo.objectA, collisionInfo.objectB);
+					}
 
 					collisions.push_back(collisionInfo);
 				}
@@ -128,17 +133,111 @@ void CollisionSystem::CheckCollisions()
 
 }
 
-//static CollisionInfo BoxBoxCollision(const BoxCollider& boxA, const BoxCollider& boxB)
-//{
-//	CollisionInfo collisionInfo = {};
-//
-//	return collisionInfo;
-//}
+
+// TODO: move to another file
+struct OBB
+{
+	glm::vec3 center;
+	glm::vec3 halfSize;
+	glm::vec3 axes[3];
+};
+
+static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform)
+{
+	OBB obb;
+	const glm::mat4& modelMatrix = transform->getModelMatrix();
+
+	obb.center = glm::vec3(modelMatrix * glm::vec4(shape->center, 1.0f));
+
+	obb.halfSize = shape->halfSize;
+	obb.halfSize.x *= glm::length(glm::vec3(modelMatrix[0]));
+	obb.halfSize.y *= glm::length(glm::vec3(modelMatrix[1]));
+	obb.halfSize.z *= glm::length(glm::vec3(modelMatrix[2]));
+
+	obb.axes[0] = glm::normalize(glm::vec3(modelMatrix[0]));
+	obb.axes[1] = glm::normalize(glm::vec3(modelMatrix[1]));
+	obb.axes[2] = glm::normalize(glm::vec3(modelMatrix[2]));
+
+
+	return obb;
+}
+
+static float SATgetAxisOverlap(const glm::vec3& axis, const OBB& obbA, const OBB& obbB)
+{
+	/*float p0 = glm::dot(axis, obbA.center - obbB.center);
+	float r0 = glm::dot(axis, obbA.halfSize);
+	float r1 = glm::dot(axis, obbB.halfSize);
+
+	
+	return r0 + r1 - std::abs(p0);*/
+
+	float projA = 0.0f;
+	float projB = 0.0f;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		projA += obbA.halfSize[i] * std::abs(glm::dot(axis, obbA.axes[i]));
+		projB += obbB.halfSize[i] * std::abs(glm::dot(axis, obbB.axes[i]));
+	}
+
+	float distance = std::abs(glm::dot(axis, obbA.center - obbB.center));
+	return projA + projB - distance;
+}	
+
 static CollisionInfo BoxBoxCollision(const TransformCollider objA, const TransformCollider objB)
 {
 	CollisionInfo collisionInfo = {};
-
 	spdlog::info("Checking Box-Box Collision");
+
+	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(objA.shape), objA.transform);
+	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(objB.shape), objB.transform);
+
+	glm::vec3 axes[15];
+	int axes_i = 0;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		axes[axes_i++] = obbA.axes[i];
+	}
+	for (int i = 0; i < 3; ++i)
+	{
+		axes[axes_i++] = obbB.axes[i];
+	}
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			axes[axes_i++] = glm::cross(obbA.axes[i], obbB.axes[j]);
+		}
+	}
+
+	float minOverlap = std::numeric_limits<float>::max();
+	glm::vec3 minOverlapAxis;
+
+	for (int i = 0; i < axes_i; ++i)
+	{
+		glm::vec3 normalizedAxis = glm::normalize(axes[i]);
+		float overlap = SATgetAxisOverlap(normalizedAxis, obbA, obbB);
+		if (overlap <= 0.0f)
+		{
+			return collisionInfo;
+		}
+		
+		if (overlap < minOverlap)
+		{
+			minOverlap = overlap;
+			minOverlapAxis = normalizedAxis;
+			if (glm::dot(minOverlapAxis, obbA.center - obbB.center) < 0.0f)
+			{
+				minOverlapAxis = -minOverlapAxis;
+			}
+		}
+	}
+
+	collisionInfo.isColliding = true;
+	collisionInfo.separationVector = minOverlapAxis * minOverlap;
+
+
 
 	return collisionInfo;
 }

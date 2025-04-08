@@ -14,7 +14,6 @@ struct CollisionInfo
 	bool isColliding = false;
 	GameObject* objectA = nullptr;
 	GameObject* objectB = nullptr;
-	glm::vec3 collisionPoint;
 	glm::vec3 separationVector;
 };
 
@@ -29,7 +28,7 @@ public:
 	~CollisionSystem();
 
 	void CheckCollisions();
-	std::vector<CollisionInfo> GetCollisions() const
+	std::vector<CollisionInfo> const &GetCollisions() const
 	{
 		return collisions;
 	}
