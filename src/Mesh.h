@@ -15,7 +15,6 @@
 
 #define MAX_BONE_INFLUENCE 4
 
-//TODO nie korzystać z std::vector
 
 struct Vertex {
     glm::vec3 Position;
@@ -41,7 +40,7 @@ public:
     unsigned int VAO;
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-    void Draw(Shader &shader);
+    void draw(Shader &shader);
 
 private:
     unsigned int VBO, EBO;

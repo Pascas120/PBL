@@ -13,18 +13,19 @@ constexpr int MAX_CHILDREN = 10;
 class GameObject {
 private:
     GameObject* parent;
-    GameObject* children[MAX_CHILDREN];
-    int childCount;
     bool dirty;
 
+protected:
+    int childCount;
+    GameObject* children[MAX_CHILDREN];
 public:
     ComponentList components;
 
     GameObject();
-    void AddChild(GameObject* child);
-    void MarkDirty();
-    void Update();
-    void Draw(Shader& shader);
+    void addChild(GameObject* child);
+    void markDirty();
+    void update();
+    virtual void draw(Shader& shader);
 
     GameObject* GetParent();
     GameObject** GetChildren();

@@ -13,7 +13,7 @@ GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
     }
 }
 
-void GameObject::AddChild(GameObject* child) {
+void GameObject::addChild(GameObject* child) {
     if (childCount >= MAX_CHILDREN) return;
 
     if (child->parent) {
@@ -33,16 +33,16 @@ void GameObject::AddChild(GameObject* child) {
     child->parent = this;
 }
 
-void GameObject::MarkDirty() {
+void GameObject::markDirty() {
     dirty = true;
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
-            children[i]->MarkDirty();
+            children[i]->markDirty();
         }
     }
 }
 
-void GameObject::Update() {
+void GameObject::update() {
     if (dirty) {
         if (parent) {
             Transform* parentTransform = parent->components.GetComponent<Transform>();
@@ -57,12 +57,12 @@ void GameObject::Update() {
 
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
-            children[i]->Update();
+            children[i]->update();
         }
     }
 }
 
-void GameObject::Draw(Shader& shader) {
+void GameObject::draw(Shader& shader) {
     ModelComponent* modelComp = components.GetComponent<ModelComponent>();
     Transform* transform = components.GetComponent<Transform>();
     if (modelComp) {
@@ -72,7 +72,7 @@ void GameObject::Draw(Shader& shader) {
 
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
-            children[i]->Draw(shader);
+            children[i]->draw(shader);
         }
     }
 }

@@ -1,7 +1,6 @@
 // dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
-
 #include "imgui.h"
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
@@ -13,6 +12,8 @@
 #include "Scene.h"
 #include "Transform.h"
 #include "ModelComponent.h"
+#include "Hud.h"
+#include "TextRenderer.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
@@ -56,12 +57,22 @@ float lastFrame = 0.0f;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Shader ourShader;
+Shader hudShader;
+Shader textShader;
+
 Model ourModel;
 
 Scene scene;
 GameObject* obj1 = new GameObject();
 GameObject* obj2 = new GameObject();
+
+Hud hud;
+HudElement* h1 = new HudElement();
+HudElement* h2 = new HudElement();
+TextRenderer* t1 = new TextRenderer();
+
 float osc = 0;
+float width = 0.3;
 
 int main(int, char**)
 {
@@ -143,16 +154,36 @@ bool init()
     }
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     stbi_set_flip_vertically_on_load(true);
+    glm::mat4 ortho = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
+
     ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
+    hudShader = Shader("../../res/shaders/HUD.vert", "../../res/shaders/HUD.frag");
+    hudShader.use();
+    hudShader.setMat4("projection", ortho);
+    textShader = Shader("../../res/shaders/text.vert", "../../res/shaders/text.frag");
+    textShader.use();
+    textShader.setMat4("projection", ortho);
+
     ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
 
     scene.addChild(obj1);
-    obj1->AddChild(obj2);
+    obj1->addChild(obj2);
     obj1->components.AddComponent<Transform>();
     obj1->components.AddComponent<ModelComponent>(&ourModel);
     obj2->components.AddComponent<Transform>();
     obj2->components.AddComponent<ModelComponent>(&ourModel);
+
+    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
+    h1->setColor(glm::vec4(1,0,0,1));
+
+    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
+    h2->setTexture("../../res/textures/cloud.png");
+    hud.setRoot(h1);
+    h1->addChild(h2);
+    if(t1->init()!=0){return false;}
 
 //==============================================================================================
     return true;
@@ -229,12 +260,9 @@ void update()
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-    osc += 0.01f;
-    obj1->components.GetComponent<Transform>()->setScale(glm::vec3(sin(osc)));
-    obj1->MarkDirty();
-    obj2->components.GetComponent<Transform>()->setTranslation(glm::vec3(sin(osc+0.5)*10));
-    //obj1->Update();
     scene.Update();
+    osc+=0.001;
+    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
 }
 
 void render()
@@ -252,8 +280,14 @@ void render()
     glm::mat4 view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
-
+    glDisable(GL_BLEND);
     scene.Draw(ourShader);
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    hudShader.use();
+    hud.draw(hudShader);
+    t1->renderText(textShader, std::to_string(abs(sin(osc))), 0.01 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT, 1.0f, glm::vec3(1.0, 0.0f, 0.0f));
+    glEnable(GL_DEPTH_TEST);
 }
 
 void imgui_begin()

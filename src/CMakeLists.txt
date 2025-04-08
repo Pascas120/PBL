@@ -20,26 +20,8 @@ source_group(TREE ${CMAKE_SOURCE_DIR}         FILES ${ASSETS_FILES})
 
 # Define the executable
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
-		Shader.h
-		Shader.cpp
-		Mesh.cpp
-		Mesh.h
-		Model.cpp
-		Model.h
-		Camera.cpp
-		Camera.h
-		Transform.cpp
-		Transform.h
-		GameObject.cpp
-		GameObject.h
-		Component.cpp
-		Component.h
-		ComponentList.cpp
-		ComponentList.h
-		ModelComponent.cpp
-		ModelComponent.h
-		Scene.cpp
-		Scene.h
+		TextRenderer.cpp
+		TextRenderer.h
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
@@ -58,6 +40,7 @@ target_link_libraries(${PROJECT_NAME} glfw)
 target_link_libraries(${PROJECT_NAME} imgui)
 target_link_libraries(${PROJECT_NAME} spdlog)
 target_link_libraries(${PROJECT_NAME} glm::glm)
+target_link_libraries(${PROJECT_NAME} freetype)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD 
 				   COMMAND ${CMAKE_COMMAND} -E create_symlink 

@@ -20,8 +20,15 @@ target_include_directories(stb_image PRIVATE ${STB_IMAGE_DIR})
 CPMAddPackage("gh:assimp/assimp@5.4.3")
 CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#0.9.9.8")
-CPMAddPackage("gh:ocornut/imgui@1.88")
+CPMAddPackage("gh:ocornut/imgui@1.91.1")
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
+CPMAddPackage(
+		NAME freetype
+		GITHUB_REPOSITORY freetype/freetype
+		GIT_TAG VER-2-13-2
+		OPTIONS "FT_DISABLE_HARFBUZZ ON" # jeżeli chcesz uniknąć dodatkowej zależności
+)
+
 
 set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "")
 add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
@@ -29,15 +36,19 @@ add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
 					     ${imgui_SOURCE_DIR}/imgui_draw.cpp
 						 ${imgui_SOURCE_DIR}/imgui_tables.cpp
 					     ${imgui_SOURCE_DIR}/imgui_widgets.cpp)
-						 
+
+
 set_target_properties(glad
-                      stb_image 
-                      assimp 
-                      glfw 
-                      glm 
-                      imgui 
+                      stb_image
+                      assimp
+                      glfw
+                      glm
+                      imgui
                       spdlog PROPERTIES FOLDER "thirdparty")
 
 if (TARGET zlibstatic)
     set_target_properties(zlibstatic PROPERTIES FOLDER "thirdparty")
+endif()
+if (TARGET freetype)
+	set_target_properties(freetype PROPERTIES FOLDER "thirdparty")
 endif()

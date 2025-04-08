@@ -11,13 +11,13 @@ Scene::Scene(){
 
 // Tworzy nowy GameObject w scenie
 void Scene::addChild(GameObject *obj){
-    root->AddChild(obj);
+    root->addChild(obj);
 }
 
 void Scene::Update() {
-    root->Update();
+    root->update();
 }
 
 void Scene::Draw(Shader& shader) {
-    root->Draw(shader);
+    root->draw(shader);
 }
