@@ -259,6 +259,18 @@ void update()
 {
     scene.Update();
 	scene.GetCollisionSystem()->CheckCollisions();
+
+    std::vector<CollisionInfo> collisions = scene.GetCollisionSystem()->GetCollisions();
+    for (const CollisionInfo& collision : collisions)
+    {
+		Transform* transformA = collision.objectA->components.GetComponent<Transform>();
+		Transform* transformB = collision.objectB->components.GetComponent<Transform>();
+
+		transformA->setTranslation(transformA->getTranslation() + collision.separationVector / 2.0f);
+		collision.objectA->MarkDirty();
+		transformB->setTranslation(transformB->getTranslation() - collision.separationVector / 2.0f);
+		collision.objectB->MarkDirty();
+    }
 }
 
 void render()
