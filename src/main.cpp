@@ -167,7 +167,7 @@ bool init()
     textShader.use();
     textShader.setMat4("projection", ortho);
 
-    ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
+    ourModel = Model("../../res/models/untitled.fbx");
 
     scene.addChild(obj1);
     obj1->addChild(obj2);
