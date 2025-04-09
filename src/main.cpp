@@ -164,7 +164,7 @@ bool init()
     obj1->AddChild(obj2);
     obj1->components.AddComponent<Transform>();
     //obj1->components.AddComponent<ModelComponent>(&ourModel);
-    obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
+    //obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
     obj1->SetName("Parent");
 
     obj2->components.AddComponent<Transform>();

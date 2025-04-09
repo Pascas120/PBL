@@ -164,13 +164,6 @@ static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform)
 
 static float SATgetAxisOverlap(const glm::vec3& axis, const OBB& obbA, const OBB& obbB)
 {
-	/*float p0 = glm::dot(axis, obbA.center - obbB.center);
-	float r0 = glm::dot(axis, obbA.halfSize);
-	float r1 = glm::dot(axis, obbB.halfSize);
-
-	
-	return r0 + r1 - std::abs(p0);*/
-
 	float projA = 0.0f;
 	float projB = 0.0f;
 
@@ -193,28 +186,21 @@ static CollisionInfo BoxBoxCollision(const TransformCollider objA, const Transfo
 	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(objB.shape), objB.transform);
 
 	glm::vec3 axes[15];
-	int axes_i = 0;
 
 	for (int i = 0; i < 3; ++i)
 	{
-		axes[axes_i++] = obbA.axes[i];
-	}
-	for (int i = 0; i < 3; ++i)
-	{
-		axes[axes_i++] = obbB.axes[i];
-	}
-	for (int i = 0; i < 3; ++i)
-	{
+		axes[i] = obbA.axes[i];
+		axes[i + 3] = obbB.axes[i];
 		for (int j = 0; j < 3; ++j)
 		{
-			axes[axes_i++] = glm::cross(obbA.axes[i], obbB.axes[j]);
+			axes[3 * i + j + 6] = glm::cross(obbA.axes[i], obbB.axes[j]);
 		}
 	}
 
 	float minOverlap = std::numeric_limits<float>::max();
 	glm::vec3 minOverlapAxis;
 
-	for (int i = 0; i < axes_i; ++i)
+	for (int i = 0; i < 15; ++i)
 	{
 		glm::vec3 normalizedAxis = glm::normalize(axes[i]);
 		float overlap = SATgetAxisOverlap(normalizedAxis, obbA, obbB);
