@@ -72,6 +72,7 @@ Scene scene;
 GameObject* obj1 = new GameObject();
 GameObject* obj2 = new GameObject();
 GameObject* obj3 = new GameObject();
+GameObject* obj4 = new GameObject();
 float osc = 0;
 
 int main(int, char**)
@@ -170,12 +171,17 @@ bool init()
     obj2->components.AddComponent<Transform>();
     //obj2->components.AddComponent<ModelComponent>(&ourModel);
 	obj2->components.AddComponent<ColliderComponent>(ColliderType::BOX);
-	obj2->SetName("Child");
+	obj2->SetName("Child A");
 
 	obj1->AddChild(obj3);
 	obj3->components.AddComponent<Transform>();
-	obj3->components.AddComponent<ColliderComponent>(ColliderType::BOX);
-	obj3->SetName("Invisible Child");
+	obj3->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
+	obj3->SetName("Child B");
+
+	obj1->AddChild(obj4);
+	obj4->components.AddComponent<Transform>();
+	obj4->components.AddComponent<ColliderComponent>(ColliderType::BOX);
+	obj4->SetName("Child C");
 
 //==============================================================================================
 
@@ -297,8 +303,8 @@ void render()
     {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
-        GameObject* obj[] = { obj1, obj2, obj3 };
-        for (int i = 0; i < 3; i++)
+		GameObject* obj[] = { obj1, obj2, obj3, obj4 };
+        for (int i = 0; i < 4; i++)
         {
             Transform* transform = obj[i]->components.GetComponent<Transform>();
             ColliderComponent* collider = obj[i]->components.GetComponent<ColliderComponent>();

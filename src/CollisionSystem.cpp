@@ -25,12 +25,12 @@ struct ColliderTypePairHash
 
 using CollisionFunction = std::function<CollisionInfo(const TransformCollider, const TransformCollider)>;
 
-static CollisionInfo BoxBoxCollision(const TransformCollider objA, const TransformCollider objB);
-static CollisionInfo BoxSphereCollision(const TransformCollider objA, const TransformCollider objB);
-static CollisionInfo BoxCapsuleCollision(const TransformCollider objA, const TransformCollider objB);
-static CollisionInfo SphereSphereCollision(const TransformCollider objA, const TransformCollider objB);
-static CollisionInfo SphereCapsuleCollision(const TransformCollider objA, const TransformCollider objB);
-static CollisionInfo CapsuleCapsuleCollision(const TransformCollider objA, const TransformCollider objB);
+static CollisionInfo BoxBoxCollision(const TransformCollider boxA, const TransformCollider boxB);
+static CollisionInfo BoxSphereCollision(const TransformCollider box, const TransformCollider sphere);
+static CollisionInfo BoxCapsuleCollision(const TransformCollider box, const TransformCollider capsule);
+static CollisionInfo SphereSphereCollision(const TransformCollider sphereA, const TransformCollider sphereB);
+static CollisionInfo SphereCapsuleCollision(const TransformCollider sphere, const TransformCollider capsule);
+static CollisionInfo CapsuleCapsuleCollision(const TransformCollider capsuleA, const TransformCollider capsuleB);
 
 static std::unordered_map<
 	std::pair<ColliderType, ColliderType>,
@@ -154,12 +154,35 @@ static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform)
 	obb.halfSize.y *= glm::length(glm::vec3(modelMatrix[1]));
 	obb.halfSize.z *= glm::length(glm::vec3(modelMatrix[2]));
 
-	obb.axes[0] = glm::normalize(glm::vec3(modelMatrix[0]));
-	obb.axes[1] = glm::normalize(glm::vec3(modelMatrix[1]));
-	obb.axes[2] = glm::normalize(glm::vec3(modelMatrix[2]));
+	for (int i = 0; i < 3; ++i)
+	{
+		glm::vec3 axis = glm::vec3(modelMatrix[i]);
+		float length = glm::length(axis);
+		if (length > 0.0f)
+		{
+			obb.axes[i] = axis / length;
+		}
+		else
+		{
+			obb.axes[i] = glm::vec3(0.0f);
+		}
+	}
 
 
 	return obb;
+}
+
+
+static float sphereColliderWorldRadius(SphereCollider* shape, Transform* transform)
+{
+	const glm::mat4& modelMatrix = transform->getModelMatrix();
+	glm::vec3 scale;
+	scale.x = glm::length(glm::vec3(modelMatrix[0]));
+	scale.y = glm::length(glm::vec3(modelMatrix[1]));
+	scale.z = glm::length(glm::vec3(modelMatrix[2]));
+	float maxScale = std::max(scale.x, std::max(scale.y, scale.z));
+
+	return shape->radius * maxScale;
 }
 
 static float SATgetAxisOverlap(const glm::vec3& axis, const OBB& obbA, const OBB& obbB)
@@ -177,13 +200,29 @@ static float SATgetAxisOverlap(const glm::vec3& axis, const OBB& obbA, const OBB
 	return projA + projB - distance;
 }	
 
-static CollisionInfo BoxBoxCollision(const TransformCollider objA, const TransformCollider objB)
+static glm::vec3 closestPointOnOBB(const OBB& obb, const glm::vec3& point)
+{
+	glm::vec3 closestPoint = obb.center;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		float distance = glm::dot(point - obb.center, obb.axes[i]);
+		distance = glm::clamp(distance, -obb.halfSize[i], obb.halfSize[i]);
+		closestPoint += distance * obb.axes[i];
+	}
+
+	return closestPoint;
+}
+
+
+
+static CollisionInfo BoxBoxCollision(const TransformCollider boxA, const TransformCollider boxB)
 {
 	CollisionInfo collisionInfo = {};
 	spdlog::info("Checking Box-Box Collision");
 
-	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(objA.shape), objA.transform);
-	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(objB.shape), objB.transform);
+	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(boxA.shape), boxA.transform);
+	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(boxB.shape), boxB.transform);
 
 	glm::vec3 axes[15];
 
@@ -223,52 +262,120 @@ static CollisionInfo BoxBoxCollision(const TransformCollider objA, const Transfo
 	collisionInfo.isColliding = true;
 	collisionInfo.separationVector = minOverlapAxis * minOverlap;
 
-
-
 	return collisionInfo;
 }
 
-static CollisionInfo BoxSphereCollision(const TransformCollider objA, const TransformCollider objB)
+static CollisionInfo BoxSphereCollision(const TransformCollider box, const TransformCollider sphere)
 {
 	CollisionInfo collisionInfo = {};
-
 	spdlog::info("Checking Box-Sphere Collision");
 
+	OBB obb = boxColliderToOBB(static_cast<BoxCollider*>(box.shape), box.transform);
+
+	SphereCollider* sphereCollider = static_cast<SphereCollider*>(sphere.shape);
+	glm::vec3 sphereCenter = sphere.transform->getModelMatrix() * glm::vec4(sphereCollider->center, 1.0f);
+	float sphereRadius = sphereColliderWorldRadius(sphereCollider, sphere.transform);
+
+	glm::vec3 delta = sphereCenter - closestPointOnOBB(obb, sphereCenter);
+	float distance = glm::length(delta);
+
+	if (distance < sphereRadius)
+	{
+		collisionInfo.isColliding = true;
+		float separationDistance = distance - sphereRadius;
+
+		if (distance > 0.0f)
+		{
+			collisionInfo.separationVector = delta / distance * (distance - sphereRadius);
+		}
+		else if (sphereCenter == obb.center)
+		{
+			collisionInfo.separationVector = glm::vec3(0.0f);
+		}
+		else
+		{
+			glm::vec3 local = glm::vec3(
+				glm::dot(delta, obb.axes[0]),
+				glm::dot(delta, obb.axes[1]),
+				glm::dot(delta, obb.axes[2])
+			);
+
+			int maxAxis = 0;
+			float maxVal = std::abs(local[0]);
+			for (int i = 1; i < 3; ++i)
+			{
+				float absVal = std::abs(local[i]);
+				if (absVal > maxVal)
+				{
+					maxAxis = i;
+					maxVal = absVal;
+				}
+			}
+
+			collisionInfo.separationVector = obb.axes[maxAxis] * (local[maxAxis] < 0.0f ? 1.0f : -1.0f) * separationDistance;
+		}
+	}
+	
 	return collisionInfo;
 }
 
-static CollisionInfo BoxCapsuleCollision(const TransformCollider objA, const TransformCollider objB)
+static CollisionInfo BoxCapsuleCollision(const TransformCollider box, const TransformCollider capsule)
 {
 	CollisionInfo collisionInfo = {};
 
-	spdlog::info("Checking Box-Capsule Collision");
+	spdlog::info("Checking Box-Capsule Collision [NOT IMPLEMENTED]");
 
 	return collisionInfo;
 }
 
-static CollisionInfo SphereSphereCollision(const TransformCollider objA, const TransformCollider objB)
+static CollisionInfo SphereSphereCollision(const TransformCollider sphereA, const TransformCollider sphereB)
 {
 	CollisionInfo collisionInfo = {};
-
 	spdlog::info("Checking Sphere-Sphere Collision");
 
+	SphereCollider* sphereColliderA = static_cast<SphereCollider*>(sphereA.shape);
+	SphereCollider* sphereColliderB = static_cast<SphereCollider*>(sphereB.shape);
+
+	glm::vec3 centerA = sphereA.transform->getModelMatrix() * glm::vec4(sphereColliderA->center, 1.0f);
+	glm::vec3 centerB = sphereB.transform->getModelMatrix() * glm::vec4(sphereColliderB->center, 1.0f);
+
+	float radiusA = sphereColliderWorldRadius(sphereColliderA, sphereA.transform);
+	float radiusB = sphereColliderWorldRadius(sphereColliderB, sphereB.transform);
+
+	glm::vec3 delta = centerA - centerB;
+	float distance = glm::length(delta);
+	float radiusSum = radiusA + radiusB;
+
+	if (distance < radiusSum)
+	{
+		collisionInfo.isColliding = true;
+		if (distance > 0.0f)
+		{
+			collisionInfo.separationVector = delta / distance * (radiusSum - distance);
+		}
+		else
+		{
+			collisionInfo.separationVector = glm::vec3(0.0f);
+		}
+	}
+
 	return collisionInfo;
 }
 
-static CollisionInfo SphereCapsuleCollision(const TransformCollider objA, const TransformCollider objB)
+static CollisionInfo SphereCapsuleCollision(const TransformCollider sphere, const TransformCollider capsule)
 {
 	CollisionInfo collisionInfo = {};
 
-	spdlog::info("Checking Sphere-Capsule Collision");
+	spdlog::info("Checking Sphere-Capsule Collision [NOT IMPLEMENTED]");
 
 	return collisionInfo;
 }
 
-static CollisionInfo CapsuleCapsuleCollision(const TransformCollider objA, const TransformCollider objB)
+static CollisionInfo CapsuleCapsuleCollision(const TransformCollider capsuleA, const TransformCollider capsuleB)
 {
 	CollisionInfo collisionInfo = {};
 
-	spdlog::info("Checking Capsule-Capsule Collision");
+	spdlog::info("Checking Capsule-Capsule Collision [NOT IMPLEMENTED]");
 
 	return collisionInfo;
 }
