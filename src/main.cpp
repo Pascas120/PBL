@@ -43,7 +43,8 @@ void imgui_obj_info(GameObject* obj);
 void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
 void imgui_children(GameObject* obj);
-void imgui_collisions();
+void imgui_collisions(bool& show);
+void imgui_viewport();
 
 void end_frame();
 
@@ -74,6 +75,10 @@ GameObject* obj2 = new GameObject();
 GameObject* obj3 = new GameObject();
 GameObject* obj4 = new GameObject();
 float osc = 0;
+
+GLuint fbo;
+GLuint texture;
+GLuint depthTexture;
 
 int main(int, char**)
 {
@@ -153,6 +158,51 @@ bool init()
         spdlog::error("Failed to initialize OpenGL loader!");
         return false;
     }
+
+	/*glCreateFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
+
+	glTextureStorage2D(texture, 1, GL_RGB8, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glNamedFramebufferTexture(fbo, GL_COLOR_ATTACHMENT0, texture, 0);
+
+	glCreateTextures(GL_TEXTURE_2D, 1, &depthTexture);
+	glTextureStorage2D(depthTexture, 1, GL_DEPTH24_STENCIL8, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+	glNamedFramebufferTexture(fbo, GL_DEPTH_STENCIL_ATTACHMENT, depthTexture, 0);
+
+	if (glCheckNamedFramebufferStatus(fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		spdlog::error("Framebuffer is not complete!");
+		return false;
+	}*/
+
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+	glGenTextures(1, &depthTexture);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
     stbi_set_flip_vertically_on_load(true);
@@ -164,12 +214,12 @@ bool init()
     scene.addChild(obj1);
     obj1->AddChild(obj2);
     obj1->components.AddComponent<Transform>();
-    //obj1->components.AddComponent<ModelComponent>(&ourModel);
+    obj1->components.AddComponent<ModelComponent>(&ourModel);
     //obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
     obj1->SetName("Parent");
 
     obj2->components.AddComponent<Transform>();
-    //obj2->components.AddComponent<ModelComponent>(&ourModel);
+    obj2->components.AddComponent<ModelComponent>(&ourModel);
 	obj2->components.AddComponent<ColliderComponent>(ColliderType::BOX);
 	obj2->SetName("Child A");
 
@@ -199,6 +249,7 @@ void init_imgui()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
@@ -281,6 +332,7 @@ void update()
 
 void render()
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!show_wireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -316,6 +368,7 @@ void render()
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
     }
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void imgui_begin()
@@ -331,22 +384,42 @@ void imgui_render()
 	static bool show_demo_window = false;
     static bool show_collisions = false;
 
+    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("Settings"))
+		{
+			ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
+			ImGui::MenuItem("Collisions", NULL, &show_collisions);
+			ImGui::MenuItem("Wireframe", NULL, &show_wireframe);
+			ImGui::EndMenu();
+		}
+		
+        ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x);
+		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::EndTooltip();
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-	if (show_collisions)
-		imgui_collisions();
+    if (show_collisions)
+        imgui_collisions(show_collisions);
+
+	imgui_viewport();
 
 
     {
         ImGui::Begin("Hello, world!");
 
-        ImGui::Checkbox("Demo Window", &show_demo_window);
-		ImGui::Checkbox("Collisions", &show_collisions);
-		ImGui::Checkbox("Wireframe", &show_wireframe);
-
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		ImGui::NewLine();
 
@@ -505,9 +578,9 @@ void imgui_children(GameObject* obj)
 	}
 }
 
-void imgui_collisions()
+void imgui_collisions(bool& show)
 {
-    ImGui::Begin("Collisions");
+    ImGui::Begin("Collisions", &show);
 	ImGui::Checkbox("Show Colliders", &show_colliders);
 
     std::vector<CollisionInfo> collisions = scene.GetCollisionSystem()->GetCollisions();
@@ -520,6 +593,16 @@ void imgui_collisions()
     }
 
     ImGui::End();
+}
+
+
+void imgui_viewport()
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::Begin("Viewport");
+	ImGui::Image(texture, ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT), ImVec2(0, 1), ImVec2(1, 0));
+	ImGui::End();
+	ImGui::PopStyleVar();
 }
 
 
