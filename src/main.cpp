@@ -36,7 +36,7 @@ void init_imgui();
 
 void input();
 void update();
-void render();
+void render(const Framebuffer& framebuffer = DefaultFramebuffer::GetInstance());
 
 void imgui_begin();
 void imgui_render();
@@ -83,7 +83,7 @@ float osc = 0;
 //GLuint texture;
 //GLuint depthTexture;
 
-std::unique_ptr<Framebuffer> sceneFramebuffer;
+std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 
 
 int main(int, char**)
@@ -113,7 +113,7 @@ int main(int, char**)
         update();
 
         // OpenGL rendering code here
-        render();
+		render(*sceneFramebuffer); // mo¿na tak robiæ z unique_ptrami?
 
         // Draw ImGui
         imgui_begin();
@@ -171,57 +171,7 @@ bool init()
         return false;
     }
 
-
-	// gl 4.6
-
-	/*glCreateFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	glCreateTextures(GL_TEXTURE_2D, 1, &texture);
-
-	glTextureStorage2D(texture, 1, GL_RGB8, WINDOW_WIDTH, WINDOW_HEIGHT);
-	glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glNamedFramebufferTexture(fbo, GL_COLOR_ATTACHMENT0, texture, 0);
-
-	glCreateTextures(GL_TEXTURE_2D, 1, &depthTexture);
-	glTextureStorage2D(depthTexture, 1, GL_DEPTH24_STENCIL8, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-	glNamedFramebufferTexture(fbo, GL_DEPTH_STENCIL_ATTACHMENT, depthTexture, 0);
-
-	if (glCheckNamedFramebufferStatus(fbo, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		spdlog::error("Framebuffer is not complete!");
-		return false;
-	}*/
-
-
-    // gl 4.1
-
-	/*glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-
-	glGenTextures(1, &depthTexture);
-	glBindTexture(GL_TEXTURE_2D, depthTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
-
-	sceneFramebuffer = std::make_unique<Framebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
+	sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
 
 
 //==============================================================================================
@@ -342,10 +292,12 @@ void update()
     }
 }
 
-void render()
+void render(const Framebuffer& framebuffer)
 {
 	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	sceneFramebuffer->Bind();
+	//sceneFramebuffer->Bind();
+
+	framebuffer.Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!show_wireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -354,9 +306,12 @@ void render()
     }
 
     ourShader.use();
-	FramebufferConfig config = sceneFramebuffer->GetConfig();
+	//FramebufferConfig config = sceneFramebuffer->GetConfig();
+	uint32_t width, height;
+	framebuffer.GetSize(width, height);
 
-	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)config.width / (float)config.height, 0.1f, 100.0f);
+	//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)config.width / (float)config.height, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
@@ -383,11 +338,11 @@ void render()
         glEnable(GL_DEPTH_TEST);
     }
 	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	sceneFramebuffer->Unbind();
 }
 
 void imgui_begin()
 {
+    DefaultFramebuffer::GetInstance().Bind();
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

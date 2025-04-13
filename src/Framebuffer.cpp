@@ -1,27 +1,38 @@
 #include "Framebuffer.h"
 
 #include <spdlog/spdlog.h>
+#include <GLFW/glfw3.h>
 
+Framebuffer::~Framebuffer() = default;
 
+void DefaultFramebuffer::Bind() const
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
-Framebuffer::Framebuffer(const FramebufferConfig& config) : config(config)
+void DefaultFramebuffer::GetSize(uint32_t& width, uint32_t& height) const
+{
+	glfwGetFramebufferSize(glfwGetCurrentContext(), (int*)&width, (int*)&height);
+}
+
+CustomFramebuffer::CustomFramebuffer(const FramebufferConfig& config) : config(config)
 {
 	Setup();
 }
 
-Framebuffer::~Framebuffer()
+CustomFramebuffer::~CustomFramebuffer()
 {
 	Clear();
 }
 
-void Framebuffer::Clear() const
+void CustomFramebuffer::Clear() const
 {
 	glDeleteFramebuffers(1, &fbo);
 	glDeleteTextures(1, &colorTexture);
 	glDeleteTextures(1, &depthTexture);
 }
 
-void Framebuffer::Setup()
+void CustomFramebuffer::Setup()
 {
 	if (fbo)
 	{
@@ -61,18 +72,13 @@ void Framebuffer::Setup()
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebuffer);
 }
 
-void Framebuffer::Bind() const
+void CustomFramebuffer::Bind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glViewport(0, 0, config.width, config.height);
 }
 
-void Framebuffer::Unbind() const
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Framebuffer::Resize(uint32_t width, uint32_t height)
+void CustomFramebuffer::Resize(uint32_t width, uint32_t height)
 {
 	config.width = width;
 	config.height = height;
