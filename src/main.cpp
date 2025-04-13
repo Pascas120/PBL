@@ -2,6 +2,8 @@
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
 
+#include <memory>
+
 #include "imgui.h"
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
@@ -22,6 +24,7 @@
 #include <spdlog/spdlog.h>
 
 #include "debug.h"
+#include "Framebuffer.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -76,9 +79,12 @@ GameObject* obj3 = new GameObject();
 GameObject* obj4 = new GameObject();
 float osc = 0;
 
-GLuint fbo;
-GLuint texture;
-GLuint depthTexture;
+//GLuint fbo;
+//GLuint texture;
+//GLuint depthTexture;
+
+std::unique_ptr<Framebuffer> sceneFramebuffer;
+
 
 int main(int, char**)
 {
@@ -92,9 +98,14 @@ int main(int, char**)
     init_imgui();
     spdlog::info("Initialized ImGui.");
 
+	lastFrame = glfwGetTime();
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         // Process I/O operations here
         input();
 
@@ -139,6 +150,7 @@ bool init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
     glfwWindowHint(GLFW_OPENGL_PROFILE,        GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+    glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
     // Create window with graphics context
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Dear ImGui GLFW+OpenGL4 example", NULL, NULL);
@@ -158,6 +170,9 @@ bool init()
         spdlog::error("Failed to initialize OpenGL loader!");
         return false;
     }
+
+
+	// gl 4.6
 
 	/*glCreateFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -181,7 +196,10 @@ bool init()
 		return false;
 	}*/
 
-	glGenFramebuffers(1, &fbo);
+
+    // gl 4.1
+
+	/*glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	glGenTextures(1, &texture);
@@ -201,7 +219,10 @@ bool init()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+
+	sceneFramebuffer = std::make_unique<Framebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
+
 
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
@@ -235,6 +256,10 @@ bool init()
 
 //==============================================================================================
 
+	glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
+		camera.ProcessMouseScroll(yoffset);
+		});
+
 	Debug::Init();
 
 
@@ -259,17 +284,8 @@ void init_imgui()
 
 }
 
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset){
-    camera.ProcessMouseScroll(yoffset);
-}
-
 void input()
 {
-    float currentFrame = glfwGetTime();
-    static float lastFrame = 0.0f;
-    float deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -306,10 +322,6 @@ void input()
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
         camera.ProcessMouseMovement(xoffset, yoffset);
-
-    float scrollOffset;
-
-    glfwSetScrollCallback(window, scrollCallback);
 }
 
 void update()
@@ -332,7 +344,8 @@ void update()
 
 void render()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	sceneFramebuffer->Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!show_wireframe) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -341,8 +354,9 @@ void render()
     }
 
     ourShader.use();
+	FramebufferConfig config = sceneFramebuffer->GetConfig();
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)config.width / (float)config.height, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
@@ -368,7 +382,8 @@ void render()
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
     }
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	sceneFramebuffer->Unbind();
 }
 
 void imgui_begin()
@@ -595,12 +610,28 @@ void imgui_collisions(bool& show)
     ImGui::End();
 }
 
+bool resize = false;
+ImVec2 newSize = ImVec2(0, 0);
 
 void imgui_viewport()
 {
+    static ImVec2 lastSize = ImVec2(0, 0);
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::Begin("Viewport");
-	ImGui::Image(texture, ImVec2(WINDOW_WIDTH, WINDOW_HEIGHT), ImVec2(0, 1), ImVec2(1, 0));
+
+	ImVec2 size = ImGui::GetContentRegionAvail();
+	if (size.x != lastSize.x || size.y != lastSize.y)
+	{
+		//sceneFramebuffer->Resize(size.x, size.y);
+		lastSize = size;
+		resize = true;
+		newSize = size;
+	}
+
+	GLuint texture = sceneFramebuffer->GetColorTexture();
+	ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));
+
 	ImGui::End();
 	ImGui::PopStyleVar();
 }
@@ -618,6 +649,12 @@ void imgui_end()
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (resize)
+    {
+        sceneFramebuffer->Resize(newSize.x, newSize.y);
+        resize = false;
+    }
 }
 
 void end_frame()

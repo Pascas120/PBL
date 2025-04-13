@@ -40,6 +40,8 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		ModelComponent.h
 		Scene.cpp
 		Scene.h
+		Framebuffer.cpp
+		Framebuffer.h
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
