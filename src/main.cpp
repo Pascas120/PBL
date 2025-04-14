@@ -1,12 +1,16 @@
-// dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
+ï»¿// dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
 
 #include <memory>
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
+
+#include "glm/gtc/quaternion.hpp"
+
 //#include <stdio.h>
 #include "Shader.h"
 #include "stb_image.h"
@@ -47,7 +51,7 @@ void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
 void imgui_children(GameObject* obj);
 void imgui_collisions(bool& show);
-void imgui_viewport();
+void imgui_scene();
 
 void end_frame();
 
@@ -61,6 +65,9 @@ const     char*   glsl_version     = "#version 410";
 constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 1;
 
+double scrollXOffset = 0.0f;
+double scrollYOffset = 0.0f;
+
 bool show_wireframe = false;
 bool show_colliders = true;
 
@@ -71,12 +78,17 @@ float lastFrame = 0.0f;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Shader ourShader;
 Model ourModel;
+Model model2;
+Model model3;
 
 Scene scene;
-GameObject* obj1 = new GameObject();
-GameObject* obj2 = new GameObject();
-GameObject* obj3 = new GameObject();
-GameObject* obj4 = new GameObject();
+//GameObject* obj1 = new GameObject();
+//GameObject* obj2 = new GameObject();
+//GameObject* obj3 = new GameObject();
+//GameObject* obj4 = new GameObject();
+
+std::vector<GameObject*> objects;
+GameObject* player = nullptr;
 float osc = 0;
 
 //GLuint fbo;
@@ -107,17 +119,18 @@ int main(int, char**)
         lastFrame = currentFrame;
 
         // Process I/O operations here
-        input();
-
-        // Update game objects' state here
-        update();
-
-        // OpenGL rendering code here
-		render(*sceneFramebuffer); // mo¿na tak robiæ z unique_ptrami?
+        // input();
 
         // Draw ImGui
         imgui_begin();
         imgui_render(); // edit this function to add your own ImGui controls
+
+        // Update game objects' state here
+        update();
+        // OpenGL rendering code here
+		render(*sceneFramebuffer); // moÅ¼na tak robiÄ‡ z unique_ptrami?
+
+        
         imgui_end(); // this call effectively renders ImGui
 
         // End frame and swap buffers (double buffering)
@@ -131,6 +144,15 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+	for (GameObject* obj : objects)
+	{
+		if (obj)
+		{
+			delete obj;
+			obj = nullptr;
+		}
+	}
 
     return 0;
 }
@@ -176,38 +198,102 @@ bool init()
 
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
-    stbi_set_flip_vertically_on_load(true);
-    ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
-    ourModel = Model("../../res/models/nanosuit/nanosuit.obj");
+    ourShader = Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+    ourModel = Model("res/models/nanosuit/nanosuit.obj");
+	model2 = Model("res/models/dee/waddledee.obj");
+	model3 = Model("res/models/grass_block/grass_block.obj");
 
+    objects.reserve(10);
 	scene.GetRoot()->SetName("Root");
 
-    scene.addChild(obj1);
-    obj1->AddChild(obj2);
-    obj1->components.AddComponent<Transform>();
-    obj1->components.AddComponent<ModelComponent>(&ourModel);
-    //obj1->components.AddComponent<ColliderComponent>(ColliderType::BOX);
-    obj1->SetName("Parent");
+	GameObject* obj = new GameObject();
+	objects.emplace_back(obj);
+    scene.addChild(obj);
+    
+    obj->components.AddComponent<Transform>();
+    obj->components.GetComponent<Transform>()->setScale(glm::vec3(5.0f, 5.0f, 5.0f));
+    obj->components.AddComponent<ModelComponent>(&model2);
+    obj->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
 
-    obj2->components.AddComponent<Transform>();
-    obj2->components.AddComponent<ModelComponent>(&ourModel);
-	obj2->components.AddComponent<ColliderComponent>(ColliderType::BOX);
-	obj2->SetName("Child A");
+    SphereCollider* sphereCollider = static_cast<SphereCollider*>(obj->components.GetComponent<ColliderComponent>()->GetColliderShape());
+    sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
+    sphereCollider->radius = 0.1f;
+    obj->SetName("Player");
+	player = obj;
 
-	obj1->AddChild(obj3);
-	obj3->components.AddComponent<Transform>();
-	obj3->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
-	obj3->SetName("Child B");
 
-	obj1->AddChild(obj4);
-	obj4->components.AddComponent<Transform>();
-	obj4->components.AddComponent<ColliderComponent>(ColliderType::BOX);
-	obj4->SetName("Child C");
+	obj = new GameObject();
+	objects.emplace_back(obj);
+	scene.addChild(obj);
+
+	obj->components.AddComponent<Transform>();
+	Transform* transform = obj->components.GetComponent<Transform>();
+	transform->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
+	transform->setTranslation(glm::vec3(2.5f, 0.0f, 0.0f));
+	obj->components.AddComponent<ModelComponent>(&ourModel);
+	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX);
+
+	BoxCollider* boxCollider = static_cast<BoxCollider*>(obj->components.GetComponent<ColliderComponent>()->GetColliderShape());
+	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
+	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
+	obj->SetName("Nanosuit");
+
+
+    obj = new GameObject();
+    objects.emplace_back(obj);
+    scene.addChild(obj);
+
+    obj->components.AddComponent<Transform>();
+	transform = obj->components.GetComponent<Transform>();
+	transform->setScale(glm::vec3(5.0f, 0.1f, 5.0f));
+
+	obj->components.AddComponent<ModelComponent>(&model3);
+	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
+	obj->SetName("Floor");
+
+	std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
+		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
+		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, -6.0f) },
+		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(6.0f, 1.0f, 0.0f) },
+		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(-6.0f, 1.0f, 0.0f) },
+	};
+
+	for (int i = 0; i < 4; ++i)
+	{
+		obj = new GameObject();
+		objects.emplace_back(obj);
+		scene.addChild(obj);
+
+		obj->components.AddComponent<Transform>();
+		transform = obj->components.GetComponent<Transform>();
+		transform->setScale(wallScalesAndTranslations[i].first);
+		transform->setTranslation(wallScalesAndTranslations[i].second);
+
+		obj->components.AddComponent<ModelComponent>(&model3);
+		obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
+		obj->SetName("Wall " + std::to_string(i + 1));
+	}
+
+	obj = new GameObject();
+	objects.emplace_back(obj);
+	scene.addChild(obj);
+
+	obj->components.AddComponent<Transform>();
+	transform = obj->components.GetComponent<Transform>();
+	transform->setRotation(glm::vec3(0.0f, 30.0f, 180.0f));
+	transform->setTranslation(glm::vec3(1.0f, 1.0f, 2.0f));
+	transform->setScale(glm::vec3(0.5f, 2.0f, 0.5f));
+
+	obj->components.AddComponent<ModelComponent>(&model3);
+	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
+	obj->SetName("Wall 5");
 
 //==============================================================================================
 
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
-		camera.ProcessMouseScroll(yoffset);
+		//camera.ProcessMouseScroll(yoffset);
+		scrollXOffset += xoffset;
+		scrollYOffset += yoffset;
 		});
 
 	Debug::Init();
@@ -234,25 +320,88 @@ void init_imgui()
 
 }
 
+void game_input()
+{
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		return;
+
+	spdlog::info("Game input");
+	Transform* transform = player->components.GetComponent<Transform>();
+	glm::vec3 translation = transform->getTranslation();
+	glm::vec3 rotation = transform->getRotation();
+
+	constexpr float moveSpeed = 3.0f;
+	constexpr float rotateSpeed = 180.0f;
+	bool change = false;
+
+
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		rotation.y += rotateSpeed * deltaTime;
+		change = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		rotation.y -= rotateSpeed * deltaTime;
+		change = true;
+	}
+
+	glm::quat quatRotation = glm::quat(glm::radians(rotation));
+	glm::vec3 forward = quatRotation * glm::vec3(0.0f, 0.0f, 1.0f) * (moveSpeed * deltaTime);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		translation += forward;
+		change = true;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		translation -= forward;
+		change = true;
+	}
+
+	if (change)
+	{
+		transform->setTranslation(translation);
+		transform->setRotation(rotation);
+		player->MarkDirty();
+	}
+}
+
 void input()
 {
+    static bool firstMouse = true;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS)
+    {
+		firstMouse = true;
+        return;
+    }
+
+	static float cameraSpeed = 1.0f;
+	if (scrollYOffset != 0.0f)
+	{
+		cameraSpeed += scrollYOffset * 0.1f;
+		cameraSpeed = glm::clamp(cameraSpeed, 0.1f, 2.0f);
+	}
+	float scaledCamSpeed = cameraSpeed * deltaTime;
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.ProcessKeyboard(FORWARD, scaledCamSpeed);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+		camera.ProcessKeyboard(BACKWARD, scaledCamSpeed);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.ProcessKeyboard(LEFT, scaledCamSpeed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera.ProcessKeyboard(RIGHT, scaledCamSpeed);
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		camera.ProcessKeyboard(DOWN, deltaTime);
+		camera.ProcessKeyboard(DOWN, scaledCamSpeed);
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		camera.ProcessKeyboard(UP, deltaTime);
+		camera.ProcessKeyboard(UP, scaledCamSpeed);
 
     // Add mouse controls if needed
     static double lastX = WINDOW_WIDTH/2.0f;
     static double lastY = WINDOW_HEIGHT/2.0f;
-    static bool firstMouse = true;
 
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
@@ -270,8 +419,7 @@ void input()
     lastX = xpos;
     lastY = ypos;
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        camera.ProcessMouseMovement(xoffset, yoffset);
+    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void update()
@@ -279,17 +427,44 @@ void update()
     scene.Update();
 	scene.GetCollisionSystem()->CheckCollisions();
 
+	bool updateScene = false;
+
     std::vector<CollisionInfo> collisions = scene.GetCollisionSystem()->GetCollisions();
     for (const CollisionInfo& collision : collisions)
     {
 		Transform* transformA = collision.objectA->components.GetComponent<Transform>();
 		Transform* transformB = collision.objectB->components.GetComponent<Transform>();
 
-		transformA->setTranslation(transformA->getTranslation() + collision.separationVector / 2.0f);
-		collision.objectA->MarkDirty();
-		transformB->setTranslation(transformB->getTranslation() - collision.separationVector / 2.0f);
-		collision.objectB->MarkDirty();
+		ColliderComponent* colliderA = collision.objectA->components.GetComponent<ColliderComponent>();
+		ColliderComponent* colliderB = collision.objectB->components.GetComponent<ColliderComponent>();
+
+		if (colliderA->isStatic && colliderB->isStatic)
+		{
+			continue;
+		}
+
+		updateScene = true;
+		glm::vec3 separationVector = collision.separationVector;
+		if (!colliderA->isStatic && !colliderB->isStatic)
+		{
+			separationVector /= 2.0f;
+		}
+
+		if (!colliderA->isStatic)
+        {
+			transformA->setTranslation(transformA->getTranslation() + separationVector);
+            collision.objectA->MarkDirty();
+        }
+
+		if (!colliderB->isStatic)
+        {
+			transformB->setTranslation(transformB->getTranslation() - separationVector);
+            collision.objectB->MarkDirty();
+        }
     }
+
+	if (updateScene)
+		scene.Update();
 }
 
 void render(const Framebuffer& framebuffer)
@@ -324,11 +499,10 @@ void render(const Framebuffer& framebuffer)
     {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
-		GameObject* obj[] = { obj1, obj2, obj3, obj4 };
-        for (int i = 0; i < 4; i++)
+		for (GameObject* obj : objects)
         {
-            Transform* transform = obj[i]->components.GetComponent<Transform>();
-            ColliderComponent* collider = obj[i]->components.GetComponent<ColliderComponent>();
+            Transform* transform = obj->components.GetComponent<Transform>();
+            ColliderComponent* collider = obj->components.GetComponent<ColliderComponent>();
             if (collider)
             {
                 Debug::DrawCollider(collider->GetColliderShape(), transform, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -342,7 +516,6 @@ void render(const Framebuffer& framebuffer)
 
 void imgui_begin()
 {
-    DefaultFramebuffer::GetInstance().Bind();
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -362,11 +535,13 @@ void imgui_render()
 			ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
 			ImGui::MenuItem("Collisions", NULL, &show_collisions);
 			ImGui::MenuItem("Wireframe", NULL, &show_wireframe);
+			ImGui::MenuItem("Show colliders", NULL, &show_colliders);
 			ImGui::EndMenu();
 		}
-		
-        ImGui::SetCursorPosX(ImGui::GetContentRegionAvail().x);
-		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+
+        std::string fpsText = std::format("{:.1f} FPS", ImGui::GetIO().Framerate);
+		ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(fpsText.c_str()).x - 10.0f);
+		ImGui::Text(fpsText.c_str());
 		if (ImGui::IsItemHovered())
 		{
 			ImGui::BeginTooltip();
@@ -383,21 +558,23 @@ void imgui_render()
     if (show_collisions)
         imgui_collisions(show_collisions);
 
-	imgui_viewport();
-
-
+	imgui_scene();
+	
     {
+		ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
         ImGui::Begin("Hello, world!");
 
         //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-		ImGui::NewLine();
+		//ImGui::NewLine();
 
         imgui_obj_info(scene.GetRoot());
 
 
         ImGui::End();
     }
+    
+
+    ImGui::Render();
 }
 
 void imgui_obj_info(GameObject* obj)
@@ -565,23 +742,35 @@ void imgui_collisions(bool& show)
     ImGui::End();
 }
 
-bool resize = false;
-ImVec2 newSize = ImVec2(0, 0);
-
-void imgui_viewport()
+void imgui_scene()
 {
     static ImVec2 lastSize = ImVec2(0, 0);
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::Begin("Viewport");
+	ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Scene");
+
+    //ImVec2 mousePos = ImGui::GetMousePos();
+    //ImVec2 imguiCursorPos = ImGui::GetCursorScreenPos();
+    //ImVec2 relativeCursorPos = ImVec2(mousePos.x - imguiCursorPos.x, mousePos.y - imguiCursorPos.y);
+
+	if (!ImGui::IsAnyItemActive())// && ImGui::IsWindowHovered())
+	{
+		if (ImGui::IsWindowFocused())
+		{
+			game_input();
+		}
+		if (ImGui::IsWindowHovered())
+		{
+			input();
+		}
+	}
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
 	if (size.x != lastSize.x || size.y != lastSize.y)
 	{
-		//sceneFramebuffer->Resize(size.x, size.y);
+		sceneFramebuffer->Resize(size.x, size.y);
 		lastSize = size;
-		resize = true;
-		newSize = size;
 	}
 
 	GLuint texture = sceneFramebuffer->GetColorTexture();
@@ -595,25 +784,20 @@ void imgui_viewport()
 
 void imgui_end()
 {
-    ImGui::Render();
     int display_w, display_h;
     glfwMakeContextCurrent(window);
     glfwGetFramebufferSize(window, &display_w, &display_h);
 
+    DefaultFramebuffer::GetInstance().Bind();
     glViewport(0, 0, display_w, display_h);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    if (resize)
-    {
-        sceneFramebuffer->Resize(newSize.x, newSize.y);
-        resize = false;
-    }
 }
 
 void end_frame()
 {
+    scrollXOffset = scrollYOffset = 0.0f;
     glfwPollEvents();
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);

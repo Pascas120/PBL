@@ -54,8 +54,10 @@ class ColliderComponent : public Component
 {
 	ColliderShape* colliderShape;
 public:
-	ColliderComponent(ColliderType colliderType);
+	ColliderComponent(ColliderType colliderType, bool isStatic = false);
 	~ColliderComponent();
+
+	bool isStatic = false;
 
 	void update() override {}
 

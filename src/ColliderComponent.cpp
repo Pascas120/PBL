@@ -1,6 +1,7 @@
 #include "ColliderComponent.h"
 
-ColliderComponent::ColliderComponent(ColliderType colliderType)
+ColliderComponent::ColliderComponent(ColliderType colliderType, bool isStatic)
+	: isStatic(isStatic)
 {
 	switch (colliderType)
 	{

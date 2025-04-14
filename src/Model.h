@@ -18,7 +18,6 @@
 class Model
 {
 public:
-    std::vector<Texture> textures_loaded;
     std::vector<Mesh> meshes;
     std::string directory;
     bool gammaCorrection;
@@ -28,6 +27,7 @@ public:
     void Draw(Shader &shader);
 
 private:
+
     void loadModel(std::string const &path);
     void processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
