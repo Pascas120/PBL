@@ -5,18 +5,95 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "ECS/Components.h"
+#include "ECS/ComponentStorage.h"
+#include "ECS/EntityManager.h"
+#include <unordered_map>
+#include <typeindex>
+#include "SceneGraph.h"
 
-constexpr int MAX_OBJECTS = 100;
+class Scene {
+public:
+    using EntityID = uint16_t;
 
-struct Scene {
-Transform transforms[MAX_OBJECTS] = {};
-uint8_t transformCount = 0;
-ModelComponent modelComponents[MAX_OBJECTS] = {};
-uint8_t modelComponentCount = 0;
-ImageComponent imageComponents[MAX_OBJECTS] = {};
-uint8_t imageComponentCount = 0;
-TextComponent textComponents[MAX_OBJECTS] = {};
-uint8_t textComponentCount = 0;
+    Scene() {
+        entityManager = EntityManager();
+        rootEntity = entityManager.CreateEntity();
+        sceneGraph = SceneGraph(rootEntity);
+        AddComponent<Transform>(rootEntity, Transform{});
+    }
+
+    EntityID GetRootEntity() const { return sceneGraphRoot; }
+
+    // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
+    EntityID CreateEntity(EntityID parent = -1) {
+        EntityID id = entityManager.CreateEntity();
+        AddComponent<Transform>(id, Transform{});
+        if (parent > 5000) parent = sceneGraphRoot;
+        sceneGraph.addNode(id, parent);
+        return id;
+    }
+
+    template<typename T>
+    void AddComponent(EntityID id, const T& value) {
+        GetOrCreateStorage<T>()->Add(id, value);
+    }
+
+    template<typename T>
+    void RemoveComponent(EntityID id) {
+        auto storage = GetStorage<T>();
+        if (storage) {
+            storage->Remove(id);
+        }
+    }
+
+    template<typename T>
+    bool HasComponent(EntityID id) const {
+        auto storage = GetStorage<T>();
+        return storage && storage->Has(id);
+    }
+
+    template<typename T>
+    T& GetComponent(EntityID id) {
+        return GetOrCreateStorage<T>()->Get(id);
+    }
+
+    template<typename T>
+    T* GetComponentArray() {
+        auto storage = GetStorage<T>();
+        if (!storage) return nullptr;
+        return storage->components;
+    }
+
+    SceneGraph* GetSceneGraph() {
+        return &sceneGraph;
+    }
+
+private:
+    std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
+    SceneGraph sceneGraph;
+    EntityManager entityManager;
+    EntityID sceneGraphRoot = 0;
+    EntityID rootEntity = 0;
+
+    template<typename T>
+    ComponentStorage<T>* GetStorage() const {
+        auto it = storages.find(std::type_index(typeid(T)));
+        if (it == storages.end()) return nullptr;
+        return static_cast<ComponentStorage<T>*>(it->second.get());
+    }
+
+    template<typename T>
+    ComponentStorage<T>* GetOrCreateStorage() {
+        auto type = std::type_index(typeid(T));
+        auto it = storages.find(type);
+        if (it == storages.end()) {
+            auto storage = std::make_unique<ComponentStorage<T>>();
+            auto ptr = storage.get();
+            storages[type] = std::move(storage);
+            return ptr;
+        }
+        return static_cast<ComponentStorage<T>*>(it->second.get());
+    }
 };
 
 

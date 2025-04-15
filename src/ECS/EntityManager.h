@@ -1,32 +1,26 @@
-//
-// Created by Łukasz Moskwin on 14/04/2025.
-//
-
 #ifndef PBL_ENTITYMANAGER_H
 #define PBL_ENTITYMANAGER_H
 
-
-#pragma once
-
+#include <bitset>
 #include <queue>
-#include <array>
-#include <cassert>
+#include <iostream>
+#include <cstdint>
 
-using Entity = uint16_t;
-const Entity MAX_ENTITIES = 5000;
+constexpr size_t MAX_ENTITIES = 5000;
 
 class EntityManager {
-private:
-    std::queue<Entity> availableEntities{};
-    uint32_t livingEntityCount = 0;
-
 public:
     EntityManager();
 
-    Entity CreateEntity();
+    using EntityID = std::uint16_t;
 
-    void DestroyEntity(Entity entity);
+    EntityID CreateEntity();
+    void DestroyEntity(EntityID id);
+    bool IsAlive(EntityID id) const;
+
+private:
+    std::bitset<MAX_ENTITIES> aliveEntities;
+    std::queue<EntityID> availableIDs;
 };
-
 
 #endif //PBL_ENTITYMANAGER_H

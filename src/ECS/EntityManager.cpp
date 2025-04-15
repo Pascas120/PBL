@@ -1,28 +1,30 @@
-//
-// Created by Łukasz Moskwin on 14/04/2025.
-//
-
 #include "EntityManager.h"
-EntityManager::EntityManager()  {
-    for (Entity entity = 0; entity < MAX_ENTITIES; ++entity) {
-        availableEntities.push(entity);
+#include <cassert>
+
+EntityManager::EntityManager() {
+    for (EntityID id = 0; id < MAX_ENTITIES; ++id) {
+        availableIDs.push(id);
     }
 }
 
-Entity EntityManager::CreateEntity() {
-    assert(livingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
+EntityManager::EntityID EntityManager::CreateEntity() {
+    assert(!availableIDs.empty() && "Maximum number of entities reached!");
 
-    Entity id = availableEntities.front();
-    availableEntities.pop();
-    ++livingEntityCount;
-
+    EntityID id = availableIDs.front();
+    availableIDs.pop();
+    aliveEntities.set(id);
     return id;
 }
 
-void EntityManager::DestroyEntity(Entity entity) {
-    assert(entity < MAX_ENTITIES && "Entity out of range.");
-    assert(livingEntityCount > 0 && "No entities to destroy.");
+void EntityManager::DestroyEntity(EntityID id) {
+    assert(id < MAX_ENTITIES && "Entity ID is out of range!");
+    assert(aliveEntities.test(id) && "Attempt to destroy a non-existent entity!");
 
-    availableEntities.push(entity);
-    --livingEntityCount;
+    aliveEntities.reset(id);
+    availableIDs.push(id);
+}
+
+bool EntityManager::IsAlive(EntityID id) const {
+    assert(id < MAX_ENTITIES && "Entity ID is out of range!");
+    return aliveEntities.test(id);
 }
