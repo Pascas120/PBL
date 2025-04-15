@@ -6,7 +6,7 @@
 
 TextRenderer::TextRenderer(){}
 
-int TextRenderer::init(){
+int TextRenderer::init(std::string font_name){
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
     {
@@ -15,7 +15,7 @@ int TextRenderer::init(){
     }
 
     // find path to font
-    std::string font_name = "../../res/fonts/sixtyfour.ttf";
+    //std::string font_name = "../../res/fonts/sixtyfour.ttf";
     if (font_name.empty())
     {
         std::cout << "ERROR::FREETYPE: Failed to load font_name" << std::endl;

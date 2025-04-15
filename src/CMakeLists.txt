@@ -22,8 +22,18 @@ source_group(TREE ${CMAKE_SOURCE_DIR}         FILES ${ASSETS_FILES})
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		TextRenderer.cpp
 		TextRenderer.h
-		ButtonComponent.cpp
-		ButtonComponent.h
+		ECS/Components.h
+		ECS/EntityManager.cpp
+		ECS/EntityManager.h
+		ECS/ComponentArray.h
+		ECS/ComponentManager.cpp
+		ECS/ComponentManager.h
+		ECS/SystemManager.cpp
+		ECS/SystemManager.h
+		ECS/Coordinator.cpp
+		ECS/Coordinator.h
+		ECS/TransformSystem.cpp
+		ECS/TransformSystem.h
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)

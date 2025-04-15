@@ -10,9 +10,6 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Scene.h"
-#include "Transform.h"
-#include "ModelComponent.h"
-#include "Hud.h"
 #include "TextRenderer.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
@@ -63,12 +60,7 @@ Shader textShader;
 Model ourModel;
 
 Scene scene;
-GameObject* obj1 = new GameObject();
-GameObject* obj2 = new GameObject();
 
-Hud hud;
-HudElement* h1 = new HudElement();
-HudElement* h2 = new HudElement();
 TextRenderer* t1 = new TextRenderer();
 
 float osc = 0;
@@ -169,21 +161,21 @@ bool init()
 
     ourModel = Model("../../res/models/untitled.fbx");
 
-    scene.addChild(obj1);
-    obj1->addChild(obj2);
-    obj1->components.AddComponent<Transform>();
-    obj1->components.AddComponent<ModelComponent>(&ourModel);
-    obj2->components.AddComponent<Transform>();
-    obj2->components.AddComponent<ModelComponent>(&ourModel);
-
-    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
-    h1->setColor(glm::vec4(1,0,0,1));
-
-    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
-    h2->setTexture("../../res/textures/cloud.png");
-    hud.setRoot(h1);
-    h1->addChild(h2);
-    if(t1->init()!=0){return false;}
+//    scene.addChild(obj1);
+//    obj1->addChild(obj2);
+//    obj1->components.AddComponent<Transform>();
+//    obj1->components.AddComponent<ModelComponent>(&ourModel);
+//    obj2->components.AddComponent<Transform>();
+//    obj2->components.AddComponent<ModelComponent>(&ourModel);
+//
+//    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
+//    h1->setColor(glm::vec4(1,0,0,1));
+//
+//    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
+//    h2->setTexture("../../res/textures/cloud.png");
+//    hud.setRoot(h1);
+//    h1->addChild(h2);
+    if(!t1->init("../../res/fonts/sixtyfour.ttf")){return false;}
 
 //==============================================================================================
     return true;
@@ -260,9 +252,9 @@ void update()
     float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-    scene.Update();
+//    scene.Update();
     osc+=0.001;
-    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
+//    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
 }
 
 void render()
@@ -281,11 +273,11 @@ void render()
     ourShader.setMat4("projection", projection);
     ourShader.setMat4("view", view);
     glDisable(GL_BLEND);
-    scene.Draw(ourShader);
+//    scene.Draw(ourShader);
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     hudShader.use();
-    hud.draw(hudShader);
+//    hud.draw(hudShader);
     t1->renderText(textShader, std::to_string(abs(sin(osc))), 0.01 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT, 1.0f, glm::vec3(1.0, 0.0f, 0.0f));
     glEnable(GL_DEPTH_TEST);
 }
