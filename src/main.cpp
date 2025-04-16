@@ -66,6 +66,8 @@ Scene scene;
 
 TransformSystem transformSystem = TransformSystem(&scene);
 RenderingSystem renderingSystem = RenderingSystem();
+EntityID  ent1;
+EntityID  ent2;
 
 TextRenderer* t1 = new TextRenderer();
 
@@ -166,11 +168,13 @@ bool init()
     textShader.setMat4("projection", ortho);
 
     ourModel = Model("../../res/models/untitled.fbx");
-
     scene = Scene();
 
-    EntityID ent1 = scene.CreateEntity();
+    ent1 = scene.CreateEntity();
     scene.AddComponent(ent1, ModelComponent{&ourModel});
+    ent2 = scene.CreateEntity(ent1);
+    scene.AddComponent(ent2, ModelComponent{&ourModel});
+    transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
 
     renderingSystem = RenderingSystem(&scene, ourShader, hudShader);
 
@@ -268,20 +272,15 @@ void update()
 //    scene.Update();
     osc+=0.001;
 //    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
+    transformSystem.scaleEntity(ent1, glm::vec3(abs(sin(osc))));
     transformSystem.update();
 }
 
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    if(show_demo_window){
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//    }else{
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//    }
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     renderingSystem.drawScene(camera);
-
 }
 
 void imgui_begin()

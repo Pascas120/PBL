@@ -7,7 +7,6 @@
 #include "stb_image.h"
 
 //TODO Nie możemy tworzyć tekstur w każdej klatce, trzeba zrobić manager zasobów
-
 constexpr int32_t WINDOW_WIDTH  = 1920;
 constexpr int32_t WINDOW_HEIGHT = 1080;
 
@@ -23,6 +22,7 @@ void RenderingSystem::drawScene(Camera& camera){
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
+    sceneShader.use();
     sceneShader.setMat4("projection", projection);
     sceneShader.setMat4("view", view);
 
