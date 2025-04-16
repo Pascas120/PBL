@@ -11,6 +11,8 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "TextRenderer.h"
+#include "ECS/TransformSystem.h"
+#include "ECS/RenderingSystem.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
@@ -52,6 +54,7 @@ ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 Shader ourShader;
 Shader hudShader;
@@ -60,6 +63,9 @@ Shader textShader;
 Model ourModel;
 
 Scene scene;
+
+TransformSystem transformSystem = TransformSystem(&scene);
+RenderingSystem renderingSystem = RenderingSystem();
 
 TextRenderer* t1 = new TextRenderer();
 
@@ -161,6 +167,13 @@ bool init()
 
     ourModel = Model("../../res/models/untitled.fbx");
 
+    scene = Scene();
+
+    EntityID ent1 = scene.CreateEntity();
+    scene.AddComponent(ent1, ModelComponent{&ourModel});
+
+    renderingSystem = RenderingSystem(&scene, ourShader, hudShader);
+
 //    scene.addChild(obj1);
 //    obj1->addChild(obj2);
 //    obj1->components.AddComponent<Transform>();
@@ -175,7 +188,7 @@ bool init()
 //    h2->setTexture("../../res/textures/cloud.png");
 //    hud.setRoot(h1);
 //    h1->addChild(h2);
-    if(!t1->init("../../res/fonts/sixtyfour.ttf")){return false;}
+    if(t1->init("../../res/fonts/sixtyfour.ttf")){return false;}
 
 //==============================================================================================
     return true;
@@ -255,31 +268,20 @@ void update()
 //    scene.Update();
     osc+=0.001;
 //    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
+    transformSystem.update();
 }
 
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    if(show_demo_window){
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }else{
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
+//    if(show_demo_window){
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//    }else{
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//    }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    renderingSystem.drawScene(camera);
 
-    ourShader.use();
-
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-    ourShader.setMat4("projection", projection);
-    ourShader.setMat4("view", view);
-    glDisable(GL_BLEND);
-//    scene.Draw(ourShader);
-    glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    hudShader.use();
-//    hud.draw(hudShader);
-    t1->renderText(textShader, std::to_string(abs(sin(osc))), 0.01 * WINDOW_WIDTH, 0.1 * WINDOW_HEIGHT, 1.0f, glm::vec3(1.0, 0.0f, 0.0f));
-    glEnable(GL_DEPTH_TEST);
 }
 
 void imgui_begin()

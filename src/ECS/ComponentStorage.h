@@ -18,13 +18,13 @@ public:
     T components[MAX_OBJECTS] = {};
     std::bitset<MAX_OBJECTS> exists;
 
-    bool Has(EntityID id) const { return exists.test(id); }
-    T& Get(EntityID id) { return components[id]; }
-    void Add(EntityID id, const T& value) {
+    bool has(EntityID id) const { return exists.test(id); }
+    T& get(EntityID id) { return components[id]; }
+    void add(EntityID id, const T& value) {
         components[id] = value;
         exists.set(id);
     }
-    void Remove(EntityID id) {
+    void remove(EntityID id) {
         exists.reset(id);
     }
 };

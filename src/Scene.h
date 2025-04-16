@@ -35,7 +35,7 @@ public:
 
     template<typename T>
     void AddComponent(EntityID id, const T& value) {
-        GetOrCreateStorage<T>()->Add(id, value);
+        GetOrCreateStorage<T>()->add(id, value);
     }
 
     template<typename T>
@@ -54,7 +54,7 @@ public:
 
     template<typename T>
     T& GetComponent(EntityID id) {
-        return GetOrCreateStorage<T>()->Get(id);
+        return GetOrCreateStorage<T>()->get(id);
     }
 
     template<typename T>
@@ -68,19 +68,19 @@ public:
         return &sceneGraph;
     }
 
-private:
-    std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
-    SceneGraph sceneGraph;
-    EntityManager entityManager;
-    EntityID sceneGraphRoot = 0;
-    EntityID rootEntity = 0;
-
     template<typename T>
     ComponentStorage<T>* GetStorage() const {
         auto it = storages.find(std::type_index(typeid(T)));
         if (it == storages.end()) return nullptr;
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
+
+private:
+    std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
+    SceneGraph sceneGraph;
+    EntityManager entityManager;
+    EntityID sceneGraphRoot = 0;
+    EntityID rootEntity = 0;
 
     template<typename T>
     ComponentStorage<T>* GetOrCreateStorage() {
