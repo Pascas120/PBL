@@ -12,6 +12,25 @@
 #include "SceneGraph.h"
 
 class Scene {
+private:
+    std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
+    SceneGraph sceneGraph;
+    EntityManager entityManager;
+    EntityID sceneGraphRoot = 0;
+    EntityID rootEntity = 0;
+
+    template<typename T>
+    ComponentStorage<T>* GetOrCreateStorage() {
+        auto type = std::type_index(typeid(T));
+        auto it = storages.find(type);
+        if (it == storages.end()) {
+            auto storage = std::make_unique<ComponentStorage<T>>();
+            auto ptr = storage.get();
+            storages[type] = std::move(storage);
+            return ptr;
+        }
+        return static_cast<ComponentStorage<T>*>(it->second.get());
+    }
 public:
     using EntityID = uint16_t;
 
@@ -75,25 +94,6 @@ public:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 
-private:
-    std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
-    SceneGraph sceneGraph;
-    EntityManager entityManager;
-    EntityID sceneGraphRoot = 0;
-    EntityID rootEntity = 0;
-
-    template<typename T>
-    ComponentStorage<T>* GetOrCreateStorage() {
-        auto type = std::type_index(typeid(T));
-        auto it = storages.find(type);
-        if (it == storages.end()) {
-            auto storage = std::make_unique<ComponentStorage<T>>();
-            auto ptr = storage.get();
-            storages[type] = std::move(storage);
-            return ptr;
-        }
-        return static_cast<ComponentStorage<T>*>(it->second.get());
-    }
 };
 
 

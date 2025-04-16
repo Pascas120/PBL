@@ -35,6 +35,7 @@ void RenderingSystem::drawScene(Camera& camera){
 }
 
 void RenderingSystem::drawHud() {
+
     float vertices[] = {
             // Pozycja      // Tekstura
             -0.5f, -0.5f,   0.0f, 0.0f, // Lewy dolny
@@ -48,6 +49,7 @@ void RenderingSystem::drawHud() {
             0, 2, 3  // Drugi trójkąt
     };
 
+    glEnable(GL_BLEND);
     unsigned int VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -110,6 +112,7 @@ void RenderingSystem::drawHud() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+    glDisable(GL_BLEND);
 }
 
 void RenderingSystem::draw(Camera& camera){

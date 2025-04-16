@@ -68,6 +68,7 @@ TransformSystem transformSystem = TransformSystem(&scene);
 RenderingSystem renderingSystem = RenderingSystem();
 EntityID  ent1;
 EntityID  ent2;
+EntityID  ent3;
 
 TextRenderer* t1 = new TextRenderer();
 
@@ -156,7 +157,7 @@ bool init()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
     glm::mat4 ortho = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 
     ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
@@ -175,6 +176,11 @@ bool init()
     ent2 = scene.CreateEntity(ent1);
     scene.AddComponent(ent2, ModelComponent{&ourModel});
     transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
+
+//    ent3 = scene.CreateEntity();
+//    scene.AddComponent(ent3, ImageComponent{"../../res/textures/cloud.png"});
+//    transformSystem.translateEntity(ent3, glm::vec3(WINDOW_WIDTH*8/9, WINDOW_WIDTH/10, 0.0f));
+//    transformSystem.scaleEntity(ent3, glm::vec3(100.0f));
 
     renderingSystem = RenderingSystem(&scene, ourShader, hudShader);
 
