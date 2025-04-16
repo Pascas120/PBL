@@ -52,6 +52,9 @@ void SceneGraph::markDirty(EntityID id) {
     if (nodes.find(id) != nodes.end()) {
         nodes[id].setDirty(true);
     }
+    for (const auto& child : nodes[id].getChildren()) {
+        markDirty(child);
+    }
 }
 
 void SceneGraph::addNode(EntityID id, EntityID parent) {
