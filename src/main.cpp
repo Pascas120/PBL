@@ -177,10 +177,10 @@ bool init()
     scene.AddComponent(ent2, ModelComponent{&ourModel});
     transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
 
-//    ent3 = scene.CreateEntity();
-//    scene.AddComponent(ent3, ImageComponent{"../../res/textures/cloud.png"});
-//    transformSystem.translateEntity(ent3, glm::vec3(WINDOW_WIDTH*8/9, WINDOW_WIDTH/10, 0.0f));
-//    transformSystem.scaleEntity(ent3, glm::vec3(100.0f));
+    ent3 = scene.CreateEntity();
+    scene.AddComponent(ent3, ImageComponent{"../../res/textures/cloud.png"});
+    transformSystem.translateEntity(ent3, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
+    transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
 
     renderingSystem = RenderingSystem(&scene, ourShader, hudShader);
 
@@ -286,7 +286,7 @@ void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    renderingSystem.drawScene(camera);
+    renderingSystem.draw(camera);
 }
 
 void imgui_begin()
@@ -302,7 +302,7 @@ void imgui_render()
     /// Add new ImGui controls here
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
     if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
+        //ImGui::ShowDemoWindow(&show_demo_window);
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     {
@@ -312,7 +312,7 @@ void imgui_render()
         ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
         ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+        //ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
 
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f

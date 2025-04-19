@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include "SceneGraph.h"
+#include <memory>
 
 class Scene {
 private:

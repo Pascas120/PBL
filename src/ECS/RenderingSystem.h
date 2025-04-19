@@ -6,6 +6,8 @@
 #define PBL_RENDERINGSYSTEM_H
 
 
+#include <map>
+
 #include "Scene.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -15,6 +17,12 @@ private:
     Scene* scene;
     Shader sceneShader;
     Shader hudShader;
+    std::map<std::string, GLuint> textures;
+    GLuint getTexture(std::string path);
+    GLuint hudVAO, hudVBO, hudEBO;
+    bool initializedHud = false;
+    void initHud();
+
 public:
     RenderingSystem();
     RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader);
