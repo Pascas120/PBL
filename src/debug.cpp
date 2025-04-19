@@ -97,7 +97,6 @@ void Debug::DrawCollider(ColliderShape* collider, Transform* transform, const gl
 		mesh = sphereMesh;
 	}
 		break;
-	case CAPSULE:
 	default:
 		return;
 	}

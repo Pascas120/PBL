@@ -6,7 +6,6 @@
 #include <stack>
 #include <unordered_map>
 #include <functional>
-#include <spdlog/spdlog.h>
 
 struct TransformCollider
 {
@@ -27,10 +26,7 @@ using CollisionFunction = std::function<CollisionInfo(const TransformCollider, c
 
 static CollisionInfo BoxBoxCollision(const TransformCollider boxA, const TransformCollider boxB);
 static CollisionInfo BoxSphereCollision(const TransformCollider box, const TransformCollider sphere);
-static CollisionInfo BoxCapsuleCollision(const TransformCollider box, const TransformCollider capsule);
 static CollisionInfo SphereSphereCollision(const TransformCollider sphereA, const TransformCollider sphereB);
-static CollisionInfo SphereCapsuleCollision(const TransformCollider sphere, const TransformCollider capsule);
-static CollisionInfo CapsuleCapsuleCollision(const TransformCollider capsuleA, const TransformCollider capsuleB);
 
 static std::unordered_map<
 	std::pair<ColliderType, ColliderType>,
@@ -39,10 +35,7 @@ static std::unordered_map<
 	{
 		{{ColliderType::BOX, ColliderType::BOX}, BoxBoxCollision},
 		{{ColliderType::BOX, ColliderType::SPHERE}, BoxSphereCollision},
-		{{ColliderType::BOX, ColliderType::CAPSULE}, BoxCapsuleCollision},
 		{{ColliderType::SPHERE, ColliderType::SPHERE}, SphereSphereCollision},
-		{{ColliderType::SPHERE, ColliderType::CAPSULE}, SphereCapsuleCollision},
-		{{ColliderType::CAPSULE, ColliderType::CAPSULE}, CapsuleCapsuleCollision}
 	};
 
 
@@ -108,7 +101,6 @@ void CollisionSystem::CheckCollisions()
 				auto it = collisionFunctions.find(colliderPair);
 				if (it != collisionFunctions.end())
 				{
-					spdlog::info("Checking collision between {} and {}", objects[i]->GetName(), objects[j]->GetName());
 					CollisionFunction collisionFunction = it->second;
 					collisionInfo = collisionFunction(
 						{ transformFirst, colliderFirst, shapeFirst },
@@ -219,7 +211,6 @@ static glm::vec3 closestPointOnOBB(const OBB& obb, const glm::vec3& point)
 static CollisionInfo BoxBoxCollision(const TransformCollider boxA, const TransformCollider boxB)
 {
 	CollisionInfo collisionInfo = {};
-	spdlog::info("Checking Box-Box Collision");
 
 	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(boxA.shape), boxA.transform);
 	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(boxB.shape), boxB.transform);
@@ -268,7 +259,6 @@ static CollisionInfo BoxBoxCollision(const TransformCollider boxA, const Transfo
 static CollisionInfo BoxSphereCollision(const TransformCollider box, const TransformCollider sphere)
 {
 	CollisionInfo collisionInfo = {};
-	spdlog::info("Checking Box-Sphere Collision");
 
 	OBB obb = boxColliderToOBB(static_cast<BoxCollider*>(box.shape), box.transform);
 
@@ -319,19 +309,9 @@ static CollisionInfo BoxSphereCollision(const TransformCollider box, const Trans
 	return collisionInfo;
 }
 
-static CollisionInfo BoxCapsuleCollision(const TransformCollider box, const TransformCollider capsule)
-{
-	CollisionInfo collisionInfo = {};
-
-	spdlog::info("Checking Box-Capsule Collision [NOT IMPLEMENTED]");
-
-	return collisionInfo;
-}
-
 static CollisionInfo SphereSphereCollision(const TransformCollider sphereA, const TransformCollider sphereB)
 {
 	CollisionInfo collisionInfo = {};
-	spdlog::info("Checking Sphere-Sphere Collision");
 
 	SphereCollider* sphereColliderA = static_cast<SphereCollider*>(sphereA.shape);
 	SphereCollider* sphereColliderB = static_cast<SphereCollider*>(sphereB.shape);
@@ -361,22 +341,3 @@ static CollisionInfo SphereSphereCollision(const TransformCollider sphereA, cons
 
 	return collisionInfo;
 }
-
-static CollisionInfo SphereCapsuleCollision(const TransformCollider sphere, const TransformCollider capsule)
-{
-	CollisionInfo collisionInfo = {};
-
-	spdlog::info("Checking Sphere-Capsule Collision [NOT IMPLEMENTED]");
-
-	return collisionInfo;
-}
-
-static CollisionInfo CapsuleCapsuleCollision(const TransformCollider capsuleA, const TransformCollider capsuleB)
-{
-	CollisionInfo collisionInfo = {};
-
-	spdlog::info("Checking Capsule-Capsule Collision [NOT IMPLEMENTED]");
-
-	return collisionInfo;
-}
-

@@ -11,9 +11,6 @@ ColliderComponent::ColliderComponent(ColliderType colliderType, bool isStatic)
 	case ColliderType::SPHERE:
 		colliderShape = new SphereCollider();
 		break;
-	case ColliderType::CAPSULE:
-		colliderShape = new CapsuleCollider();
-		break;
 	default:
 		colliderShape = nullptr;
 		break;

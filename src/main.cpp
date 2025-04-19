@@ -536,6 +536,21 @@ void imgui_render()
 			ImGui::MenuItem("Collisions", NULL, &show_collisions);
 			ImGui::MenuItem("Wireframe", NULL, &show_wireframe);
 			ImGui::MenuItem("Show colliders", NULL, &show_colliders);
+
+			static bool enable_logging = true;
+			if (ImGui::MenuItem("Logging", NULL, &enable_logging))
+			{
+				if (enable_logging)
+				{
+					spdlog::set_level(spdlog::level::info);
+				}
+				else
+				{
+					spdlog::set_level(spdlog::level::off);
+				}
+			}
+
+
 			ImGui::EndMenu();
 		}
 
@@ -672,9 +687,6 @@ void imgui_collider(GameObject* obj)
 	case ColliderType::SPHERE:
 		tabName = "Sphere Collider";
 		break;
-	case ColliderType::CAPSULE:
-		tabName = "Capsule Collider";
-		break;
 	default:
 		tabName = "Unknown Collider";
 		break;
@@ -696,13 +708,6 @@ void imgui_collider(GameObject* obj)
 			break;
 		case ColliderType::SPHERE:
 			ImGui::DragFloat("Radius", &((SphereCollider*)shape)->radius, 0.1f, 0.0f, 1000.0f);
-			break;
-        case ColliderType::CAPSULE:
-        {
-            CapsuleCollider* capsule = (CapsuleCollider*)shape;
-			ImGui::DragFloat("Radius", &capsule->radius, 0.1f, 0.0f, 1000.0f);
-			ImGui::DragFloat("Height", &capsule->height, 0.1f, 0.0f, 1000.0f);
-        }
 			break;
 		default:
 			break;

@@ -7,7 +7,6 @@ enum ColliderType
 {
 	BOX = 0,
 	SPHERE,
-	CAPSULE
 };
 
 struct ColliderShape
@@ -34,17 +33,6 @@ struct SphereCollider : public ColliderShape
 	ColliderType getType() const override
 	{
 		return ColliderType::SPHERE;
-	}
-};
-
-struct CapsuleCollider : public ColliderShape
-{
-	float radius = 0.5f;
-	float height = 1.0f;
-
-	ColliderType getType() const override
-	{
-		return ColliderType::CAPSULE;
 	}
 };
 
