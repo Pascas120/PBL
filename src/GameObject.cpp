@@ -6,6 +6,10 @@
 
 #include "ModelComponent.h"
 #include "Transform.h"
+#include "glm/gtc/quaternion.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/euler_angles.hpp>
+#include <algorithm>
 
 GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
     for (int i = 0; i < MAX_CHILDREN; i++) {
@@ -31,6 +35,77 @@ void GameObject::AddChild(GameObject* child) {
 
     children[childCount++] = child;
     child->parent = this;
+
+
+
+
+	Transform* transform = components.GetComponent<Transform>();
+	Transform* childTransform = child->components.GetComponent<Transform>();
+
+	if (childTransform) {
+
+        glm::mat4 parentMatrix = transform ? transform->getModelMatrix() : glm::mat4(1.0f);
+
+		glm::mat4 childMatrix = childTransform->getModelMatrix();
+
+		glm::mat4 localMatrix = glm::inverse(parentMatrix) * childMatrix;
+
+
+		glm::vec3 position = glm::vec3(localMatrix[3]);
+		localMatrix[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+		glm::vec3 scale;
+		for (int i = 0; i < 3; ++i) {
+			scale[i] = glm::length(glm::vec3(localMatrix[i]));
+		}
+
+		for (int i = 0; i < 3; ++i) {
+            if (scale[i] != 0.0f) {
+                localMatrix[i] /= scale[i];
+            }
+		}
+        glm::vec3 rotation;
+		glm::extractEulerAngleXYZ(localMatrix, rotation.x, rotation.y, rotation.z);
+
+
+		childTransform->setTranslation(position);
+		childTransform->setRotation(glm::degrees(rotation));
+		childTransform->setScale(scale);
+
+		childTransform->setParentMatrix(parentMatrix);
+		child->MarkDirty();
+	}
+}
+
+void GameObject::RemoveChild(GameObject* child) {
+
+	for (int i = 0; i < childCount; i++) {
+		if (children[i] == child) {
+			for (int j = i; j < childCount - 1; j++) {
+				children[j] = children[j + 1];
+			}
+			children[--childCount] = nullptr;
+			child->parent = nullptr;
+			break;
+		}
+	}
+}
+
+void GameObject::SetChildIndex(int oldIndex, int newIndex) {
+	if (oldIndex < 0 || oldIndex >= childCount || oldIndex == newIndex) {
+		return;
+	}
+
+	newIndex = std::clamp(newIndex, 0, childCount - 1);
+
+	GameObject* child = children[oldIndex];
+	if (oldIndex < newIndex) {
+		std::move(children + oldIndex + 1, children + newIndex + 1, children + oldIndex);
+	}
+    else {
+        std::move_backward(children + newIndex, children + oldIndex, children + oldIndex + 1);
+    }
+	children[newIndex] = child;
 }
 
 void GameObject::MarkDirty() {
@@ -95,4 +170,25 @@ std::string GameObject::GetName() const {
 
 void GameObject::SetName(const std::string& newName) {
 	name = newName;
+}
+
+bool GameObject::ChangeParent(GameObject* child, GameObject* newParent) {
+	if (newParent->GetChildCount() >= MAX_CHILDREN)
+		return false;
+
+    GameObject* parentTree = newParent;
+	while (parentTree) {
+		if (parentTree == child)
+			return false;
+
+		parentTree = parentTree->GetParent();
+	}
+    
+	GameObject* oldParent = child->GetParent();
+	if (oldParent) {
+		oldParent->RemoveChild(child);
+	}
+	newParent->AddChild(child);
+
+	return true;
 }

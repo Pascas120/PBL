@@ -518,6 +518,7 @@ void imgui_begin()
 
 void imgui_hierarchy(Scene* scene);
 void imgui_hierarchy_node(GameObject* obj);
+void imgui_rearrange_target(GameObject* obj, int targetIndex);
 
 //void imgui_obj_info(GameObject* obj);
 void imgui_inspector();
@@ -584,12 +585,6 @@ void imgui_render()
 		ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
         ImGui::Begin("Hello, world!");
 
-        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		//ImGui::NewLine();
-
-        //imgui_obj_info(scene.GetRoot());
-
-
         ImGui::End();
     }
 	imgui_hierarchy(&scene);
@@ -600,6 +595,7 @@ void imgui_render()
 
 void imgui_hierarchy(Scene* scene)
 {
+	ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Hierarchy"))
 	{
 		GameObject* root = scene->GetRoot();
@@ -637,16 +633,38 @@ void imgui_hierarchy_node(GameObject* obj)
 
 		ImGui::EndPopup();
 	}
+	if (ImGui::BeginDragDropSource())
+	{
+		ImGui::SetDragDropPayload("HIERARCHY_NODE", &obj, sizeof(GameObject*));
+		ImGui::Text(objName.c_str());
+		ImGui::EndDragDropSource();
+	}
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_NODE"))
+		{
+			GameObject* draggedObj = *(GameObject**)payload->Data;
+
+			if (GameObject::ChangeParent(draggedObj, obj))
+				childCount = obj->GetChildCount();
+		}
+		ImGui::EndDragDropTarget();
+	}
 
 	if (opened)
 	{
-		GameObject** children = obj->GetChildren();
-		for (int i = 0; i < childCount; i++)
+		if (childCount > 0)
 		{
-			if (children[i])
+			GameObject** children = obj->GetChildren();
+			for (int i = 0; i < childCount; i++)
 			{
-				imgui_hierarchy_node(children[i]);
+				if (children[i])
+				{
+					imgui_rearrange_target(obj, i);
+					imgui_hierarchy_node(children[i]);
+				}
 			}
+			imgui_rearrange_target(obj, childCount);
 		}
 
 		ImGui::TreePop();
@@ -654,49 +672,36 @@ void imgui_hierarchy_node(GameObject* obj)
 	ImGui::PopID();
 }
 
-//void imgui_obj_info(GameObject* obj)
-//{
-//	ImGui::PushID(obj);
-//
-//    std::string objName = obj->GetName();
-//    std::string displayName = objName + "###objName";
-//    const char* name = objName.c_str();
-//
-//
-//	bool header_open = ImGui::CollapsingHeader(displayName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
-//    if (ImGui::BeginPopupContextItem("Object Context Menu"))
-//    {
-//        if (ImGui::InputText("Name", (char*)name, 64))
-//        {
-//            obj->SetName(name);
-//        }
-//
-//        ImGui::EndPopup();
-//    }
-//	if (header_open)
-//	{
-//
-//		ImGui::Indent();
-//		imgui_transform(obj);
-//		imgui_collider(obj);
-//        ImGui::Unindent();
-//
-//		if (obj->GetChildCount() > 0)
-//		{
-//			ImGui::Indent();
-//			ImGui::NewLine();
-//
-//			imgui_children(obj);
-//			ImGui::Unindent();
-//		}
-//	}
-//    
-//
-//	ImGui::PopID();
-//}
+void imgui_rearrange_target(GameObject* obj, int targetIndex)
+{
+	const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+	float separatorThickness = ImGui::GetStyle().ItemSpacing.y;
+
+	if (payload && strcmp(payload->DataType, "HIERARCHY_NODE") == 0)
+	{
+		float cursorPosY = ImGui::GetCursorPosY();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - separatorThickness);
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, separatorThickness);
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_NODE"))
+			{
+				GameObject* draggedObj = *(GameObject**)payload->Data;
+
+				if (GameObject::ChangeParent(draggedObj, obj))
+				{
+					obj->SetChildIndex(obj->GetChildCount() - 1, targetIndex);
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		ImGui::SetCursorPosY(cursorPosY);
+	}
+}
 
 void imgui_inspector()
 {
+	ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Inspector"))
 	{
 		if (selectedObject)
@@ -801,18 +806,6 @@ void imgui_collider(GameObject* obj)
 
 	ImGui::PopID();
 }
-
-//void imgui_children(GameObject* obj)
-//{
-//	GameObject** children = obj->GetChildren();
-//	for (int i = 0; i < obj->GetChildCount(); i++)
-//	{
-//		if (children[i])
-//		{
-//			imgui_obj_info(children[i]);
-//		}
-//	}
-//}
 
 void imgui_collisions(bool& show)
 {

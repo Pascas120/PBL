@@ -24,6 +24,8 @@ public:
 
     GameObject();
     void AddChild(GameObject* child);
+	void RemoveChild(GameObject* child);
+	void SetChildIndex(int oldIndex, int newIndex);
     void MarkDirty();
     void Update();
     void Draw(Shader& shader);
@@ -35,6 +37,8 @@ public:
     std::string GetName() const;
 
     void SetName(const std::string& newName);
+
+    static bool ChangeParent(GameObject* child, GameObject* newParent);
 };
 
 
