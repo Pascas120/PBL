@@ -8,7 +8,7 @@
 #include "Shader.h"
 
 
-constexpr int MAX_CHILDREN = 10;
+constexpr int MAX_CHILDREN = 100;
 
 class GameObject {
 private:
@@ -16,6 +16,8 @@ private:
     GameObject* children[MAX_CHILDREN];
     int childCount;
     bool dirty;
+
+    int index = -1;
 
     std::string name;
 
@@ -35,6 +37,7 @@ public:
     int GetChildCount();
 
     std::string GetName() const;
+    int GetIndex() const;
 
     void SetName(const std::string& newName);
 

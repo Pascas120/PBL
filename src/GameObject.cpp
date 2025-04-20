@@ -35,7 +35,7 @@ void GameObject::AddChild(GameObject* child) {
 
     children[childCount++] = child;
     child->parent = this;
-
+	child->index = childCount - 1;
 
 
 
@@ -86,6 +86,7 @@ void GameObject::RemoveChild(GameObject* child) {
 			}
 			children[--childCount] = nullptr;
 			child->parent = nullptr;
+			child->index = -1;
 			break;
 		}
 	}
@@ -106,6 +107,7 @@ void GameObject::SetChildIndex(int oldIndex, int newIndex) {
         std::move_backward(children + newIndex, children + oldIndex, children + oldIndex + 1);
     }
 	children[newIndex] = child;
+	child->index = newIndex;
 }
 
 void GameObject::MarkDirty() {
@@ -166,6 +168,10 @@ int GameObject::GetChildCount() {
 
 std::string GameObject::GetName() const {
 	return name;
+}
+
+int GameObject::GetIndex() const {
+	return index;
 }
 
 void GameObject::SetName(const std::string& newName) {

@@ -3,6 +3,7 @@
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
 
 #include <memory>
+#include <algorithm>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -62,7 +63,7 @@ double scrollXOffset = 0.0f;
 double scrollYOffset = 0.0f;
 
 bool show_wireframe = false;
-bool show_colliders = true;
+bool show_colliders = false;
 
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
@@ -75,19 +76,11 @@ Model model2;
 Model model3;
 
 Scene scene;
-//GameObject* obj1 = new GameObject();
-//GameObject* obj2 = new GameObject();
-//GameObject* obj3 = new GameObject();
-//GameObject* obj4 = new GameObject();
 
 std::vector<GameObject*> objects;
 GameObject* player = nullptr;
 
 GameObject* selectedObject = nullptr;
-
-//GLuint fbo;
-//GLuint texture;
-//GLuint depthTexture;
 
 std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 
@@ -516,24 +509,45 @@ void imgui_begin()
     ImGui::NewFrame();
 }
 
+void remove_object(GameObject* obj)
+{
+	if (obj)
+	{
+		objects.erase(std::remove(objects.begin(), objects.end(), obj), objects.end());
+		GameObject** children = obj->GetChildren();
+		for (int i = 0; i < obj->GetChildCount(); i++)
+		{
+			GameObject* child = children[i];
+			if (child)
+			{
+				remove_object(child);
+			}
+		}
+		delete obj;
+		obj = nullptr;
+	}
+}
+
+const char* HIERARCHY_NODE = "HIERARCHY_NODE";
+
 void imgui_hierarchy(Scene* scene);
 void imgui_hierarchy_node(GameObject* obj);
 void imgui_rearrange_target(GameObject* obj, int targetIndex);
 
-//void imgui_obj_info(GameObject* obj);
 void imgui_inspector();
 void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
-//void imgui_children(GameObject* obj);
 void imgui_collisions(bool& show);
 void imgui_scene();
+
 
 void imgui_render()
 {
 	static bool show_demo_window = false;
     static bool show_collisions = false;
 
-    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("Settings"))
@@ -542,7 +556,7 @@ void imgui_render()
 			ImGui::MenuItem("Collisions", NULL, &show_collisions);
 			ImGui::MenuItem("Wireframe", NULL, &show_wireframe);
 			ImGui::MenuItem("Show colliders", NULL, &show_colliders);
-
+			
 			static bool enable_logging = true;
 			if (ImGui::MenuItem("Logging", NULL, &enable_logging))
 			{
@@ -590,16 +604,54 @@ void imgui_render()
 	imgui_hierarchy(&scene);
 	imgui_inspector();
 
+	if (ImGui::BeginViewportSideBar("Log sidebar", ImGui::GetMainViewport(), ImGuiDir_Down,
+		ImGui::GetFrameHeight(), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar))
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			ImGui::Text("Log?");
+			ImGui::EndMenuBar();
+		}
+	}
+	ImGui::End();
+
     ImGui::Render();
 }
 
 void imgui_hierarchy(Scene* scene)
 {
+	constexpr float rightMargin = 40.0f;
+
 	ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Hierarchy"))
 	{
-		GameObject* root = scene->GetRoot();
-		imgui_hierarchy_node(root);
+		if (ImGui::BeginChild("HierarchyScrollArea", ImVec2(0, 0), 
+			ImGuiChildFlags_None,
+			ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoSavedSettings
+		))
+		{
+			GameObject* root = scene->GetRoot();
+
+			if (ImGui::BeginPopupContextWindow("Hierarchy Context Menu"))
+			{
+				bool disabled;
+				if (disabled = root->GetChildCount() == MAX_CHILDREN) ImGui::BeginDisabled();
+				if (ImGui::MenuItem("Add Object"))
+				{
+					GameObject* child = new GameObject();
+					root->AddChild(child);
+					objects.emplace_back(child);
+					child->components.AddComponent<Transform>();
+					child->SetName("New Object");
+				}
+				if (disabled) ImGui::EndDisabled();
+
+				ImGui::EndPopup();
+			}
+
+			imgui_hierarchy_node(root);
+		}
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }
@@ -610,7 +662,7 @@ void imgui_hierarchy_node(GameObject* obj)
 		return;
 
 	ImGui::PushID(obj);
-
+	
 	std::string objName = obj->GetName();
 	std::string displayName = objName + "###objName";
 	int childCount = obj->GetChildCount();
@@ -623,25 +675,53 @@ void imgui_hierarchy_node(GameObject* obj)
 	if (obj == selectedObject)
 		nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
+
+	// tree node start
 	bool opened = ImGui::TreeNodeEx(displayName.c_str(), nodeFlags);
+
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 	{
 		selectedObject = obj;
 	}
+
+	// Context Menu
+	bool deleteObject = false;
 	if (ImGui::BeginPopupContextItem("Context Menu"))
 	{
+		bool disabled;
+
+		if (disabled = obj->GetChildCount() == MAX_CHILDREN) ImGui::BeginDisabled();
+		if (ImGui::MenuItem("Add Child"))
+		{
+			GameObject* child = new GameObject();
+			obj->AddChild(child);
+			objects.emplace_back(child);
+			child->components.AddComponent<Transform>();
+			child->SetName("New Object");
+		}
+		if (disabled) ImGui::EndDisabled();
+
+		if (disabled = obj == scene.GetRoot()) ImGui::BeginDisabled();
+		if (ImGui::MenuItem("Delete"))
+		{
+			deleteObject = true;
+		}
+		if (disabled) ImGui::EndDisabled();
 
 		ImGui::EndPopup();
 	}
+
+
+	// Drag and Drop
 	if (ImGui::BeginDragDropSource())
 	{
-		ImGui::SetDragDropPayload("HIERARCHY_NODE", &obj, sizeof(GameObject*));
+		ImGui::SetDragDropPayload(HIERARCHY_NODE, &obj, sizeof(GameObject*));
 		ImGui::Text(objName.c_str());
 		ImGui::EndDragDropSource();
 	}
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_NODE"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HIERARCHY_NODE))
 		{
 			GameObject* draggedObj = *(GameObject**)payload->Data;
 
@@ -670,25 +750,40 @@ void imgui_hierarchy_node(GameObject* obj)
 		ImGui::TreePop();
 	}
 	ImGui::PopID();
+
+	if (deleteObject)
+	{
+		obj->GetParent()->RemoveChild(obj);
+		remove_object(obj);
+		if (obj == selectedObject)
+			selectedObject = nullptr;
+	}
 }
 
 void imgui_rearrange_target(GameObject* obj, int targetIndex)
 {
 	const ImGuiPayload* payload = ImGui::GetDragDropPayload();
-	float separatorThickness = ImGui::GetStyle().ItemSpacing.y;
 
-	if (payload && strcmp(payload->DataType, "HIERARCHY_NODE") == 0)
+	if (payload && payload->IsDataType(HIERARCHY_NODE))
 	{
+		float separatorThickness = ImGui::GetStyle().ItemSpacing.y;
 		float cursorPosY = ImGui::GetCursorPosY();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - separatorThickness);
+
+		ImGui::SetCursorPosY(cursorPosY - separatorThickness);
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, separatorThickness);
+
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_NODE"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HIERARCHY_NODE))
 			{
 				GameObject* draggedObj = *(GameObject**)payload->Data;
 
-				if (GameObject::ChangeParent(draggedObj, obj))
+				if (draggedObj->GetParent() == obj)
+				{
+					int previousIndex = draggedObj->GetIndex();
+					obj->SetChildIndex(previousIndex, (previousIndex < targetIndex) ? targetIndex - 1 : targetIndex);
+				}
+				else if (GameObject::ChangeParent(draggedObj, obj))
 				{
 					obj->SetChildIndex(obj->GetChildCount() - 1, targetIndex);
 				}
