@@ -30,7 +30,7 @@ public:
 	void SetChildIndex(int oldIndex, int newIndex);
     void MarkDirty();
     void Update();
-    void Draw(Shader& shader);
+    void Draw();
 
     GameObject* GetParent();
     GameObject** GetChildren();

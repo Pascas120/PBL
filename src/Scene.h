@@ -21,7 +21,7 @@ public:
 
     void addChild(GameObject* obj);
     void Update();
-    void Draw(Shader &shader);
+    void Draw();
 
 	GameObject* GetRoot() {
 		return root;

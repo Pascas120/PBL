@@ -3,7 +3,10 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <spdlog/spdlog.h>
+#include <algorithm>
 
+static void processUniformNode(std::vector<UniformInfo>& uniforms, const std::string& name, GLenum type, GLint size);
 
 //TODO asercje zamiast exceptions, printf zamiast cout, nie korzystać z stringstreama
 
@@ -61,6 +64,90 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     // Cleanup
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+
+
+	// Get uniforms
+	GLint numUniforms;
+	glGetProgramiv(ID, GL_ACTIVE_UNIFORMS, &numUniforms);
+	for (GLint i = 0; i < numUniforms; ++i)
+	{
+		GLchar name[256];
+        GLenum type;
+        GLint size;
+
+		glGetActiveUniform(ID, i, sizeof(name), NULL, &size, &type, name);
+
+		processUniformNode(uniforms, name, type, size);
+
+	}
+}
+
+Shader::~Shader()
+{
+	glDeleteProgram(ID);
+}
+
+static void processUniformNode(std::vector<UniformInfo>& uniforms, const std::string& name, GLenum type, GLint size)
+{
+	bool leaf = true;
+	std::string nodeName = name;
+    GLint nodeSize = size;
+
+	int dotPos = nodeName.find_first_of('.');
+	if (dotPos != std::string::npos)
+	{
+		leaf = false;
+		nodeName = nodeName.substr(0, dotPos);
+	}
+
+	int leftBracketPos = nodeName.find_first_of('[');
+	int rightBracketPos = nodeName.find_first_of(']');
+	if (leftBracketPos != std::string::npos && rightBracketPos != std::string::npos && leftBracketPos < rightBracketPos)
+    {
+		if (!leaf)
+		{
+            nodeSize = std::stoi(nodeName.substr(leftBracketPos + 1, rightBracketPos - leftBracketPos - 1)) + 1;
+		}
+        nodeName = nodeName.substr(0, leftBracketPos);
+	}
+
+    if (!leaf)
+    {
+        auto it = std::find_if(uniforms.begin(), uniforms.end(), [&nodeName](const UniformInfo& uniform) {
+            return uniform.name == nodeName;
+            });
+        if (it != uniforms.end())
+        {
+			if (it->size < nodeSize)
+			{
+				it->size = nodeSize;
+			}
+			processUniformNode(it->members, name.substr(dotPos + 1), type, size);
+		}
+        else
+        {
+            UniformInfo newUniform;
+            newUniform.name = nodeName;
+            newUniform.size = nodeSize;
+            processUniformNode(newUniform.members, name.substr(dotPos + 1), type, size);
+            uniforms.push_back(newUniform);
+        }
+    }
+    else
+    {
+        auto it = std::find_if(uniforms.begin(), uniforms.end(), [&nodeName](const UniformInfo& uniform) {
+            return uniform.name == nodeName;
+            });
+        if (it == uniforms.end())
+        {
+            UniformInfo newUniform;
+            newUniform.name = nodeName;
+            newUniform.type = type;
+            newUniform.size = nodeSize;
+            uniforms.push_back(newUniform);
+        }
+    }
+
 }
 
 // Use shader

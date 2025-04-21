@@ -3,8 +3,18 @@
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <vector>
 
 #include <string>
+
+struct UniformInfo
+{
+	std::string name;
+    GLenum type = 0;
+    GLint size;
+	std::vector<UniformInfo> members;
+};
+
 
 class Shader
 {
@@ -14,6 +24,7 @@ public:
     // Constructor
     Shader();
     Shader(const char* vertexPath, const char* fragmentPath);
+    ~Shader();
 
     // Activate the shader
     void use() const;
@@ -32,8 +43,12 @@ public:
     void setMat3(const std::string &name, const glm::mat3 &mat) const;
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
+	const std::vector<UniformInfo>& getUniforms() const { return uniforms; }
+
 private:
     void checkCompileErrors(GLuint shader, std::string type);
+
+	std::vector<UniformInfo> uniforms;
 };
 
 #endif

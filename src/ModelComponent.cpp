@@ -11,8 +11,10 @@ ModelComponent::ModelComponent(Model* model) {
     this->model = *model;
 }
 
-void ModelComponent::Draw(Shader& shader) {
-    model.Draw(shader);
+void ModelComponent::Draw() {
+	if (shader) {
+		model.Draw(*shader);
+	}
 }
 
 void ModelComponent::update() {

@@ -139,17 +139,19 @@ void GameObject::Update() {
     }
 }
 
-void GameObject::Draw(Shader& shader) {
+void GameObject::Draw() {
     ModelComponent* modelComp = components.GetComponent<ModelComponent>();
     Transform* transform = components.GetComponent<Transform>();
     if (modelComp) {
-        shader.setMat4("model", transform->getModelMatrix());
-        modelComp->Draw(shader);
+		Shader* shader = modelComp->getShader();
+		shader->use();
+        shader->setMat4("model", transform->getModelMatrix());
+        modelComp->Draw();
     }
 
     for (int i = 0; i < childCount; i++) {
         if (children[i]) {
-            children[i]->Draw(shader);
+            children[i]->Draw();
         }
     }
 }

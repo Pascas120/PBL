@@ -70,7 +70,10 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-Shader ourShader;
+
+std::vector<Shader*> shaders;
+
+//Shader ourShader;
 Model ourModel;
 Model model2;
 Model model3;
@@ -132,6 +135,15 @@ int main(int, char**)
     glfwDestroyWindow(window);
     glfwTerminate();
 
+	for (Shader* shader : shaders)
+	{
+		if (shader)
+		{
+			delete shader;
+			shader = nullptr;
+		}
+	}
+
 	for (GameObject* obj : objects)
 	{
 		if (obj)
@@ -185,7 +197,11 @@ bool init()
 
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
-    ourShader = Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+    //ourShader = Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
+	shaders.emplace_back(new Shader("res/shaders/basic.vert", "res/shaders/basic.frag"));
+	shaders.emplace_back(new Shader("res/shaders/flat.vert", "res/shaders/flat.frag"));
+	shaders.emplace_back(new Shader("res/shaders/guitest.vert", "res/shaders/guitest.frag"));
+
     ourModel = Model("res/models/nanosuit/nanosuit.obj");
 	model2 = Model("res/models/dee/waddledee.obj");
 	model3 = Model("res/models/grass_block/grass_block.obj");
@@ -199,7 +215,8 @@ bool init()
     
     obj->components.AddComponent<Transform>();
     obj->components.GetComponent<Transform>()->setScale(glm::vec3(5.0f, 5.0f, 5.0f));
-    obj->components.AddComponent<ModelComponent>(&model2);
+	ModelComponent* modelComponent = obj->components.AddComponent<ModelComponent>(&model2);
+	modelComponent->setShader(shaders[0]);
     obj->components.AddComponent<ColliderComponent>(ColliderType::SPHERE);
 
     SphereCollider* sphereCollider = static_cast<SphereCollider*>(obj->components.GetComponent<ColliderComponent>()->GetColliderShape());
@@ -213,11 +230,11 @@ bool init()
 	objects.emplace_back(obj);
 	scene.addChild(obj);
 
-	obj->components.AddComponent<Transform>();
-	Transform* transform = obj->components.GetComponent<Transform>();
+	Transform* transform = obj->components.AddComponent<Transform>();
 	transform->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
 	transform->setTranslation(glm::vec3(2.5f, 0.0f, 0.0f));
-	obj->components.AddComponent<ModelComponent>(&ourModel);
+	modelComponent = obj->components.AddComponent<ModelComponent>(&ourModel);
+	modelComponent->setShader(shaders[0]);
 	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX);
 
 	BoxCollider* boxCollider = static_cast<BoxCollider*>(obj->components.GetComponent<ColliderComponent>()->GetColliderShape());
@@ -230,11 +247,11 @@ bool init()
     objects.emplace_back(obj);
     scene.addChild(obj);
 
-    obj->components.AddComponent<Transform>();
-	transform = obj->components.GetComponent<Transform>();
+	transform = obj->components.AddComponent<Transform>();
 	transform->setScale(glm::vec3(5.0f, 0.1f, 5.0f));
 
-	obj->components.AddComponent<ModelComponent>(&model3);
+	modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
+	modelComponent->setShader(shaders[1]);
 	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 	obj->SetName("Floor");
 
@@ -251,12 +268,12 @@ bool init()
 		objects.emplace_back(obj);
 		scene.addChild(obj);
 
-		obj->components.AddComponent<Transform>();
-		transform = obj->components.GetComponent<Transform>();
+		transform = obj->components.AddComponent<Transform>();
 		transform->setScale(wallScalesAndTranslations[i].first);
 		transform->setTranslation(wallScalesAndTranslations[i].second);
 
-		obj->components.AddComponent<ModelComponent>(&model3);
+		modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
+		modelComponent->setShader(shaders[i % 2]);
 		obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 		obj->SetName("Wall " + std::to_string(i + 1));
 	}
@@ -265,13 +282,13 @@ bool init()
 	objects.emplace_back(obj);
 	scene.addChild(obj);
 
-	obj->components.AddComponent<Transform>();
-	transform = obj->components.GetComponent<Transform>();
+	transform = obj->components.AddComponent<Transform>();
 	transform->setRotation(glm::vec3(0.0f, 30.0f, 180.0f));
 	transform->setTranslation(glm::vec3(1.0f, 1.0f, 2.0f));
 	transform->setScale(glm::vec3(0.5f, 2.0f, 0.5f));
 
-	obj->components.AddComponent<ModelComponent>(&model3);
+	modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
+	modelComponent->setShader(shaders[1]);
 	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 	obj->SetName("Wall 5");
 
@@ -456,9 +473,6 @@ void update()
 
 void render(const Framebuffer& framebuffer)
 {
-	//glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	//sceneFramebuffer->Bind();
-
 	framebuffer.Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (!show_wireframe) {
@@ -467,18 +481,22 @@ void render(const Framebuffer& framebuffer)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    ourShader.use();
-	//FramebufferConfig config = sceneFramebuffer->GetConfig();
 	uint32_t width, height;
 	framebuffer.GetSize(width, height);
 
-	//glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)config.width / (float)config.height, 0.1f, 100.0f);
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
-    ourShader.setMat4("projection", projection);
-    ourShader.setMat4("view", view);
+    //ourShader.setMat4("projection", projection);
+    //ourShader.setMat4("view", view);
 
-    scene.Draw(ourShader);
+	for (Shader* shader : shaders)
+	{
+		shader->use();
+		shader->setMat4("projection", projection);
+		shader->setMat4("view", view);
+	}
+
+    scene.Draw();
 
 	Debug::SetProjectionView(projection, view);
 
@@ -537,6 +555,13 @@ void imgui_rearrange_target(GameObject* obj, int targetIndex);
 void imgui_inspector();
 void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
+
+void imgui_shaders();
+void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformInfo>& uniforms, const std::string& fullName);
+void imgui_uniform_class(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
+void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const std::string& fullName);
+void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
+
 void imgui_collisions(bool& show);
 void imgui_scene();
 
@@ -603,6 +628,7 @@ void imgui_render()
     }
 	imgui_hierarchy(&scene);
 	imgui_inspector();
+	imgui_shaders();
 
 	if (ImGui::BeginViewportSideBar("Log sidebar", ImGui::GetMainViewport(), ImGuiDir_Down,
 		ImGui::GetFrameHeight(), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar))
@@ -901,6 +927,230 @@ void imgui_collider(GameObject* obj)
 
 	ImGui::PopID();
 }
+
+
+
+// Shader gui
+
+
+void imgui_shaders()
+{
+	ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Shaders");
+	static Shader* shader = shaders[0];
+	if (ImGui::BeginCombo("Shader##Combo", std::to_string(shader->ID).c_str()))
+	{
+		for (int i = 0; i < shaders.size(); i++)
+		{
+			if (ImGui::Selectable(std::to_string(shaders[i]->ID).c_str(), shader == shaders[i]))
+			{
+				shader = shaders[i];
+			}
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::Dummy(ImVec2(0, 20));
+	shader->use();
+
+	imgui_uniform_descendants(*shader, shader->getUniforms(), "");
+
+	ImGui::End();
+}
+
+void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformInfo>& uniforms, const std::string& fullName)
+{
+	for (auto& uniform : uniforms)
+	{
+		if (uniform.size > 1)
+			imgui_uniform_array(shader, uniform, fullName + uniform.name);
+		else if (uniform.members.size() > 0)
+			imgui_uniform_class(shader, uniform, fullName + uniform.name, -1);
+		else
+			imgui_uniform_leaf(shader, uniform, fullName + uniform.name, -1);
+
+	}
+	ImGui::Dummy(ImVec2(0, 10));
+}
+
+void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const std::string& fullName)
+{
+	std::string displayString = uniform.name + "[]";
+	ImGui::PushID(fullName.c_str());
+	if (ImGui::TreeNodeEx(displayString.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth
+		| ImGuiTreeNodeFlags_FramePadding))
+	{
+		for (int i = 0; i < uniform.size; i++)
+		{
+			std::string uniformName = fullName + "[" + std::to_string(i) + "]";
+
+			if (uniform.members.empty())
+				imgui_uniform_leaf(shader, uniform, uniformName, i);
+			else
+				imgui_uniform_class(shader, uniform, uniformName, i);
+
+			ImGui::Spacing();
+		}
+
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+
+}
+
+void imgui_uniform_class(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
+{
+	std::string displayString = uniform.name;
+	if (index >= 0)
+	{
+		displayString += "[" + std::to_string(index) + "]";
+	}
+	ImGui::PushID(fullName.c_str());
+
+	if (ImGui::TreeNodeEx(displayString.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth
+		| ImGuiTreeNodeFlags_FramePadding))
+	{
+		imgui_uniform_descendants(shader, uniform.members, fullName + '.');
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
+
+}
+
+void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
+{
+	if (uniform.name == "projection" || uniform.name == "view" || uniform.name == "model")
+		return;
+
+	ImGui::PushID(fullName.c_str());
+
+	GLuint location = glGetUniformLocation(shader.ID, fullName.c_str());
+	if (location == -1)
+		ImGui::BeginDisabled();
+
+	std::string label;
+	bool treeOpen = false;
+	if (index >= 0)
+	{
+		label = std::to_string(index);
+	}
+	else
+	{
+		label = uniform.name;
+	}
+	
+	bool changed = false;
+	switch (uniform.type)
+	{
+	case GL_FLOAT:
+		GLfloat floatValue;
+		glGetUniformfv(shader.ID, location, &floatValue);
+		if (ImGui::DragFloat(label.c_str(), &floatValue, 0.01f))
+		{
+			shader.setFloat(fullName, floatValue);
+		}
+		break;
+	case GL_INT:
+		GLint intValue;
+		glGetUniformiv(shader.ID, location, &intValue);
+		if (ImGui::DragInt(label.c_str(), &intValue))
+		{
+			shader.setInt(fullName, intValue);
+		}
+		break;
+	case GL_BOOL:
+		GLint boolValue;
+		glGetUniformiv(shader.ID, location, &boolValue);
+		if (ImGui::Checkbox(label.c_str(), (bool*)&boolValue))
+		{
+			shader.setBool(fullName, boolValue);
+		}
+		break;
+	case GL_FLOAT_VEC2:
+		glm::vec2 vec2Value;
+		glGetUniformfv(shader.ID, location, &vec2Value[0]);
+		if (ImGui::DragFloat2(label.c_str(), &vec2Value[0], 0.01f))
+		{
+			shader.setVec2(fullName, vec2Value);
+		}
+		break;
+	case GL_FLOAT_VEC3:
+		glm::vec3 vec3Value;
+		glGetUniformfv(shader.ID, location, &vec3Value[0]);
+		if (ImGui::DragFloat3(label.c_str(), &vec3Value[0], 0.01f))
+		{
+			shader.setVec3(fullName, vec3Value);
+		}
+		break;
+	case GL_FLOAT_VEC4:
+		glm::vec4 vec4Value;
+		glGetUniformfv(shader.ID, location, &vec4Value[0]);
+		if (ImGui::DragFloat4(label.c_str(), &vec4Value[0], 0.01f))
+		{
+			shader.setVec4(fullName, vec4Value);
+		}
+		break;
+	case GL_FLOAT_MAT2:
+		glm::mat2 mat2Value;
+		glGetUniformfv(shader.ID, location, &mat2Value[0][0]);
+
+		changed = false;
+		for (int i = 0; i < 2; ++i)
+		{
+			changed |= ImGui::DragFloat2((label + "##" + std::to_string(i)).c_str(), &mat2Value[i][0], 0.01f);
+			label.clear();
+		}
+		if (changed)
+		{
+			shader.setMat2(fullName, mat2Value);
+		}
+		break;
+	case GL_FLOAT_MAT3:
+		glm::mat3 mat3Value;
+		glGetUniformfv(shader.ID, location, &mat3Value[0][0]);
+
+		changed = false;
+		for (int i = 0; i < 3; ++i)
+		{
+			changed |= ImGui::DragFloat3((label + "##" + std::to_string(i)).c_str(), &mat3Value[i][0], 0.01f);
+			label.clear();
+		}
+		if (changed)
+		{
+			shader.setMat3(fullName, mat3Value);
+		}
+		break;
+	case GL_FLOAT_MAT4:
+		glm::mat4 mat4Value;
+		glGetUniformfv(shader.ID, location, &mat4Value[0][0]);
+
+		changed = false;
+		for (int i = 0; i < 4; ++i)
+		{
+			changed |= ImGui::DragFloat4((label + "##" + std::to_string(i)).c_str(), &mat4Value[i][0], 0.01f);
+			label.clear();
+		}
+		if (changed)
+		{
+			shader.setMat4(fullName, mat4Value);
+		}
+		break;
+	default:
+		ImGui::TreeNodeEx(uniform.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth
+			| ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+		break;
+	}
+
+	if (location == -1)
+		ImGui::EndDisabled();
+	ImGui::PopID();
+
+}
+
+
+
+
+
+
 
 void imgui_collisions(bool& show)
 {

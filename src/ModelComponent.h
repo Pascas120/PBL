@@ -11,13 +11,17 @@
 class ModelComponent : public Component {
 private:
     Model model;
+	Shader* shader = nullptr;
 
 public:
     ModelComponent(const std::string& modelPath, bool gamma = false);
     ModelComponent(Model* model);
 
-    void Draw(Shader& shader);
+    void Draw();
     void update() override;
+
+	void setShader(Shader* shader) { this->shader = shader; }
+	Shader* getShader() { return shader; }
 
     Model& GetModel();
 };
