@@ -14,7 +14,7 @@ RenderingSystem::RenderingSystem(){
 
 }
 
-RenderingSystem::RenderingSystem(Scene *scene, Shader &sceneShader, Shader &hudShader): scene(scene), sceneShader(sceneShader), hudShader(hudShader) {}
+RenderingSystem::RenderingSystem(Scene *scene, Shader &sceneShader, Shader &hudShader, Shader &textShader): scene(scene), sceneShader(sceneShader), hudShader(hudShader), textShader(textShader) {}
 
 void RenderingSystem::drawScene(Camera& camera){
     auto models = scene->GetStorage<ModelComponent>();
@@ -41,29 +41,42 @@ void RenderingSystem::drawHud() {
     glDisable(GL_DEPTH_TEST);
     auto transforms = scene->GetStorage<Transform>();
     auto images = scene->GetStorage<ImageComponent>();
-    hudShader.use();
-    for (int i = 0; i < 5000; i++) {
-        if (images->has(i)) {
-            auto& image = images->get(i);
+    auto texts = scene->GetStorage<TextComponent>();
+
+    if(images != NULL) {
+        hudShader.use();
+        for (int i = 0; i < 5000; i++) {
+            if (images->has(i)) {
+                auto& image = images->get(i);
 
 
-            sceneShader.setMat4("model", transforms->get(i).globalMatrix);
-            if (!image.texturePath.empty()) {
-                if (GLuint textureID = getTexture(image.texturePath)) {
-                    glActiveTexture(GL_TEXTURE0);
-                    glBindTexture(GL_TEXTURE_2D, textureID);
-                    hudShader.setInt("useTexture", true);
+                hudShader.setMat4("model", glm::scale(transforms->get(i).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
+                if (!image.texturePath.empty()) {
+                    if (GLuint textureID = getTexture(image.texturePath)) {
+                        glActiveTexture(GL_TEXTURE0);
+                        glBindTexture(GL_TEXTURE_2D, textureID);
+                        hudShader.setInt("useTexture", true);
+                    } else {
+                        hudShader.setInt("useTexture", false);
+                        hudShader.setVec4("color", image.color);
+                    }
                 } else {
                     hudShader.setInt("useTexture", false);
                     hudShader.setVec4("color", image.color);
                 }
-            } else {
-                hudShader.setInt("useTexture", false);
-                hudShader.setVec4("color", image.color);
+                glBindVertexArray(hudVAO);
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+                glBindVertexArray(0);
             }
-            glBindVertexArray(hudVAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
+        }
+    }
+
+    if(texts != NULL) {
+        for (int i = 0; i < 5000; i++) {
+            if (texts->has(i)) {
+                auto& text = texts->get(i);
+                t1.renderText(textShader, text.text, transforms->get(i).translation.x, transforms->get(i).translation.y, 1.0f, text.color);
+            }
         }
     }
 
@@ -102,7 +115,7 @@ GLuint RenderingSystem::getTexture(std::string path) {
 }
 
 void RenderingSystem::initHud() {
-    if (initializedHud) return; // Zapobiega wielokrotnej inicjalizacji
+    if (initializedHud) return;
 
     float vertices[] = {
         -0.5f, -0.5f, 0.0f, 0.0f,
@@ -136,6 +149,8 @@ void RenderingSystem::initHud() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    t1.init("../../res/fonts/sixtyfour.ttf");
 
     initializedHud = true;
 }

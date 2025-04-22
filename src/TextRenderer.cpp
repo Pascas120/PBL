@@ -6,6 +6,9 @@
 
 TextRenderer::TextRenderer(){}
 
+TextRenderer::~TextRenderer() {
+}
+
 int TextRenderer::init(std::string font_name){
     FT_Library ft;
     if (FT_Init_FreeType(&ft))

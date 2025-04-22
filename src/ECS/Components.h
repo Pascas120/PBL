@@ -23,6 +23,8 @@ struct ModelComponent {
 
 struct ImageComponent {
     std::string texturePath;
+    float width;
+    float height;
     glm::vec4 color;
 };
 

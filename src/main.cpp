@@ -69,8 +69,7 @@ RenderingSystem renderingSystem = RenderingSystem();
 EntityID  ent1;
 EntityID  ent2;
 EntityID  ent3;
-
-TextRenderer* t1 = new TextRenderer();
+EntityID  ent4;
 
 float osc = 0;
 float width = 0.3;
@@ -182,7 +181,11 @@ bool init()
     transformSystem.translateEntity(ent3, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
     transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
 
-    renderingSystem = RenderingSystem(&scene, ourShader, hudShader);
+    ent3 = scene.CreateEntity();
+    scene.AddComponent(ent3, TextComponent{"foo", glm::vec4(1,0,0,0), "text"});
+    transformSystem.translateEntity(ent3, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
+
+    renderingSystem = RenderingSystem(&scene, ourShader, hudShader, textShader);
 
 //    scene.addChild(obj1);
 //    obj1->addChild(obj2);
@@ -198,7 +201,6 @@ bool init()
 //    h2->setTexture("../../res/textures/cloud.png");
 //    hud.setRoot(h1);
 //    h1->addChild(h2);
-    if(t1->init("../../res/fonts/sixtyfour.ttf")){return false;}
 
 //==============================================================================================
     return true;
@@ -280,6 +282,7 @@ void update()
 //    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
     transformSystem.scaleEntity(ent1, glm::vec3(abs(sin(osc))));
     transformSystem.update();
+    scene.GetComponent<TextComponent>(ent3).text = std::to_string(abs(sin(osc)));
 }
 
 void render()
