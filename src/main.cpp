@@ -73,7 +73,6 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 std::vector<Shader*> shaders;
 
-//Shader ourShader;
 Model ourModel;
 Model model2;
 Model model3;
@@ -197,10 +196,28 @@ bool init()
 
 //==============================================================================================
     glEnable(GL_DEPTH_TEST);
-    //ourShader = Shader("res/shaders/basic.vert", "res/shaders/basic.frag");
-	shaders.emplace_back(new Shader("res/shaders/basic.vert", "res/shaders/basic.frag"));
-	shaders.emplace_back(new Shader("res/shaders/flat.vert", "res/shaders/flat.frag"));
-	shaders.emplace_back(new Shader("res/shaders/guitest.vert", "res/shaders/guitest.frag"));
+
+	shaders.emplace_back(
+		new Shader("Basic", {
+				{ GL_VERTEX_SHADER, "res/shaders/basic.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/basic.frag" }
+			}));
+	shaders.emplace_back(
+		new Shader("Flat", {
+				{ GL_VERTEX_SHADER, "res/shaders/flat.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/flat.frag" }
+			}));
+	shaders.emplace_back(
+		new Shader("GUITest", {
+				{ GL_VERTEX_SHADER, "res/shaders/guitest.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/guitest.frag" }
+			}));
+	shaders.emplace_back(
+		new Shader("Dithered transparency - IW", {
+				{ GL_VERTEX_SHADER, "res/shaders/basic.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/dither.frag" }
+			}));
+
 
     ourModel = Model("res/models/nanosuit/nanosuit.obj");
 	model2 = Model("res/models/dee/waddledee.obj");
@@ -251,7 +268,7 @@ bool init()
 	transform->setScale(glm::vec3(5.0f, 0.1f, 5.0f));
 
 	modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
-	modelComponent->setShader(shaders[1]);
+	modelComponent->setShader(shaders[0]);
 	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 	obj->SetName("Floor");
 
@@ -273,7 +290,7 @@ bool init()
 		transform->setTranslation(wallScalesAndTranslations[i].second);
 
 		modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
-		modelComponent->setShader(shaders[i % 2]);
+		modelComponent->setShader(shaders[0]);
 		obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 		obj->SetName("Wall " + std::to_string(i + 1));
 	}
@@ -288,19 +305,18 @@ bool init()
 	transform->setScale(glm::vec3(0.5f, 2.0f, 0.5f));
 
 	modelComponent = obj->components.AddComponent<ModelComponent>(&model3);
-	modelComponent->setShader(shaders[1]);
+	modelComponent->setShader(shaders[0]);
 	obj->components.AddComponent<ColliderComponent>(ColliderType::BOX, true);
 	obj->SetName("Wall 5");
 
 //==============================================================================================
 
 	glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
-		//camera.ProcessMouseScroll(yoffset);
 		scrollXOffset += xoffset;
 		scrollYOffset += yoffset;
 		});
 
-	Debug::Init();
+	Debug::Init(shaders[1]);
 
 
     return true;
@@ -486,9 +502,8 @@ void render(const Framebuffer& framebuffer)
 
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.GetViewMatrix();
-    //ourShader.setMat4("projection", projection);
-    //ourShader.setMat4("view", view);
 
+	// TODO: uniform blocks
 	for (Shader* shader : shaders)
 	{
 		shader->use();
@@ -516,7 +531,6 @@ void render(const Framebuffer& framebuffer)
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST);
     }
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void imgui_begin()
@@ -555,10 +569,11 @@ void imgui_rearrange_target(GameObject* obj, int targetIndex);
 void imgui_inspector();
 void imgui_transform(GameObject* obj);
 void imgui_collider(GameObject* obj);
+void imgui_model(GameObject* obj);
 
 void imgui_shaders();
 void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformInfo>& uniforms, const std::string& fullName);
-void imgui_uniform_class(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
+void imgui_uniform_struct(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
 void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const std::string& fullName);
 void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
 
@@ -838,6 +853,7 @@ void imgui_inspector()
 
 			imgui_transform(selectedObject);
 			imgui_collider(selectedObject);
+			imgui_model(selectedObject);
 		}
 	}
 	ImGui::End();
@@ -928,6 +944,37 @@ void imgui_collider(GameObject* obj)
 	ImGui::PopID();
 }
 
+void imgui_model(GameObject* obj)
+{
+	ModelComponent* modelComponent = obj->components.GetComponent<ModelComponent>();
+
+	if (!modelComponent)
+		return;
+
+	ImGui::PushID(modelComponent);
+
+	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		Shader* modelShader = modelComponent->getShader();
+		if (ImGui::BeginCombo("Shader##Combo", modelShader->getName().c_str()))
+		{
+			for (int i = 0; i < shaders.size(); i++)
+			{
+				if (ImGui::Selectable(shaders[i]->getName().c_str(), modelShader == shaders[i]))
+				{
+					modelShader = shaders[i];
+					modelComponent->setShader(modelShader);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+	}
+
+
+	ImGui::PopID();
+}
+
 
 
 // Shader gui
@@ -938,18 +985,18 @@ void imgui_shaders()
 	ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Shaders");
 	static Shader* shader = shaders[0];
-	if (ImGui::BeginCombo("Shader##Combo", std::to_string(shader->ID).c_str()))
+	if (ImGui::BeginCombo("Shader##Combo", shader->getName().c_str()))
 	{
 		for (int i = 0; i < shaders.size(); i++)
 		{
-			if (ImGui::Selectable(std::to_string(shaders[i]->ID).c_str(), shader == shaders[i]))
+			if (ImGui::Selectable(shaders[i]->getName().c_str(), shader == shaders[i]))
 			{
 				shader = shaders[i];
 			}
 		}
 		ImGui::EndCombo();
 	}
-	ImGui::Dummy(ImVec2(0, 20));
+	ImGui::Dummy(ImVec2(0, 15));
 	shader->use();
 
 	imgui_uniform_descendants(*shader, shader->getUniforms(), "");
@@ -964,7 +1011,7 @@ void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformIn
 		if (uniform.size > 1)
 			imgui_uniform_array(shader, uniform, fullName + uniform.name);
 		else if (uniform.members.size() > 0)
-			imgui_uniform_class(shader, uniform, fullName + uniform.name, -1);
+			imgui_uniform_struct(shader, uniform, fullName + uniform.name, -1);
 		else
 			imgui_uniform_leaf(shader, uniform, fullName + uniform.name, -1);
 
@@ -986,7 +1033,7 @@ void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const
 			if (uniform.members.empty())
 				imgui_uniform_leaf(shader, uniform, uniformName, i);
 			else
-				imgui_uniform_class(shader, uniform, uniformName, i);
+				imgui_uniform_struct(shader, uniform, uniformName, i);
 
 			ImGui::Spacing();
 		}
@@ -997,7 +1044,7 @@ void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const
 
 }
 
-void imgui_uniform_class(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
+void imgui_uniform_struct(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
 {
 	std::string displayString = uniform.name;
 	if (index >= 0)
@@ -1052,7 +1099,7 @@ void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const 
 	case GL_INT:
 		GLint intValue;
 		glGetUniformiv(shader.ID, location, &intValue);
-		if (ImGui::DragInt(label.c_str(), &intValue))
+		if (ImGui::InputInt(label.c_str(), &intValue))
 		{
 			shader.setInt(fullName, intValue);
 		}

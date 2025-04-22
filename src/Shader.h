@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <unordered_map>
 
 #include <string>
 
@@ -22,8 +23,7 @@ public:
     unsigned int ID;
 
     // Constructor
-    Shader();
-    Shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const std::string& name, const std::unordered_map<GLenum, const char*>& shaders);
     ~Shader();
 
     // Activate the shader
@@ -44,10 +44,10 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
 	const std::vector<UniformInfo>& getUniforms() const { return uniforms; }
+	const std::string& getName() const { return name; }
 
 private:
-    void checkCompileErrors(GLuint shader, std::string type);
-
+	std::string name;
 	std::vector<UniformInfo> uniforms;
 };
 

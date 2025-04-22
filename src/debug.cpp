@@ -7,7 +7,6 @@
 #include <Mesh.h>
 #include <vector>
 
-#include "Shader.h"
 #include "ColliderComponent.h"
 #include "Transform.h"
 
@@ -19,14 +18,14 @@ static std::vector<Vertex> pointsToVertices(const std::vector<glm::vec3>& points
 static std::shared_ptr<Mesh> createSphereMesh();
 
 static bool initialized = false;
-static Shader debugShader;
+static Shader* debugShader;
 static std::shared_ptr<Mesh> boxMesh;
 
 static std::shared_ptr<Mesh> sphereMesh;
 
-void Debug::Init()
+void Debug::Init(Shader* shader)
 {
-	debugShader = Shader("res/shaders/flat.vert", "res/shaders/flat.frag");
+	debugShader = shader;
 	boxMesh = std::shared_ptr<Mesh>(new Mesh(
 		// vertices
 		pointsToVertices({
@@ -54,9 +53,9 @@ void Debug::Init()
 void Debug::SetProjectionView(const glm::mat4& projection, const glm::mat4& view)
 {
 	if (!initialized) return;
-	debugShader.use();
-	debugShader.setMat4("projection", projection);
-	debugShader.setMat4("view", view);
+	debugShader->use();
+	debugShader->setMat4("projection", projection);
+	debugShader->setMat4("view", view);
 }
 
 void Debug::DrawCollider(ColliderShape* collider, Transform* transform, const glm::vec3& color)
@@ -101,10 +100,10 @@ void Debug::DrawCollider(ColliderShape* collider, Transform* transform, const gl
 		return;
 	}
 
-	debugShader.use();
-	debugShader.setVec3("color", color);
-	debugShader.setMat4("model", colliderMatrix);
-	mesh->Draw(debugShader);
+	debugShader->use();
+	debugShader->setVec3("color", color);
+	debugShader->setMat4("model", colliderMatrix);
+	mesh->Draw(*debugShader);
 }
 
 
