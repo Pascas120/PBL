@@ -9,13 +9,11 @@
 #include "ECS/EntityManager.h"
 #include <unordered_map>
 #include <typeindex>
-#include "SceneGraph.h"
 #include <memory>
 
 class Scene {
 private:
     std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
-    SceneGraph sceneGraph;
     EntityManager entityManager;
     EntityID sceneGraphRoot = 0;
     EntityID rootEntity = 0;
@@ -38,18 +36,20 @@ public:
     Scene() {
         entityManager = EntityManager();
         rootEntity = entityManager.CreateEntity();
-        sceneGraph = SceneGraph(rootEntity);
         AddComponent<Transform>(rootEntity, Transform{});
+        sceneGraphRoot = rootEntity;
     }
 
-    EntityID GetRootEntity() const { return sceneGraphRoot; }
+    EntityID GetSceneRootEntity() const { return sceneGraphRoot; }
 
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
     EntityID CreateEntity(EntityID parent = -1) {
         EntityID id = entityManager.CreateEntity();
         AddComponent<Transform>(id, Transform{});
         if (parent > 5000) parent = sceneGraphRoot;
-        sceneGraph.addNode(id, parent);
+        auto& transform = GetComponent<Transform>(parent);
+        transform.children.push_back(id);
+        GetComponent<Transform>(id).parent = parent;
         return id;
     }
 
@@ -82,10 +82,6 @@ public:
         auto storage = GetStorage<T>();
         if (!storage) return nullptr;
         return storage->components;
-    }
-
-    SceneGraph* GetSceneGraph() {
-        return &sceneGraph;
     }
 
     template<typename T>

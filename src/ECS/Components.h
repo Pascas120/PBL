@@ -8,13 +8,17 @@
 #include "glm/gtc/quaternion.hpp"
 #include <string>
 #include "Model.h"
+#include "EntityManager.h"
 
 struct Transform {
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 scale = {1.0f, 1.0f, 1.0f};
-//    glm::mat4 localMatrix = glm::mat4(1.0f);
     glm::mat4 globalMatrix = glm::mat4(1.0f);
+
+    bool isDirty = false;
+    std::vector<EntityID> children;
+    EntityID  parent = -1;
 };
 
 struct ModelComponent {

@@ -3,7 +3,6 @@
 #ifndef PBL_TRANSFORMSYSTEM_H
 #define PBL_TRANSFORMSYSTEM_H
 
-#include "SceneGraph.h"
 #include "Components.h"
 #include "Scene.h"
 #include "glm/glm.hpp"
@@ -16,6 +15,7 @@ private:
 
     void updateNode(EntityID id);
     void updateNodeRecursive(EntityID id);
+    void markDirty(EntityID id);
 
 public:
     explicit TransformSystem(Scene* scene);

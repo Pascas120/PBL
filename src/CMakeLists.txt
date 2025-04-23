@@ -27,9 +27,7 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		ECS/EntityManager.h
 		ECS/ComponentStorage.cpp
 		ECS/ComponentStorage.h
-		SceneGraph.cpp
-		SceneGraph.h
-		ECS/TransformSystem.cpp
+        ECS/TransformSystem.cpp
 		ECS/TransformSystem.h
 		ECS/RenderingSystem.cpp
 		ECS/RenderingSystem.h

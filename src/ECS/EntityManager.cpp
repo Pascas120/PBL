@@ -7,7 +7,7 @@ EntityManager::EntityManager() {
     }
 }
 
-EntityManager::EntityID EntityManager::CreateEntity() {
+EntityID EntityManager::CreateEntity() {
     assert(!availableIDs.empty() && "Maximum number of entities reached!");
 
     EntityID id = availableIDs.front();

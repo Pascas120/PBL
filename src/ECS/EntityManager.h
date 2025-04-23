@@ -7,12 +7,10 @@
 #include <cstdint>
 
 constexpr size_t MAX_ENTITIES = 5000;
-
+using EntityID = std::uint16_t;
 class EntityManager {
 public:
     EntityManager();
-
-    using EntityID = std::uint16_t;
 
     EntityID CreateEntity();
     void DestroyEntity(EntityID id);
