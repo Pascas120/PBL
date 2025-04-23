@@ -31,7 +31,7 @@ private:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 public:
-    using EntityID = uint16_t;
+    //using EntityID = uint16_t;
 
     Scene() {
         entityManager = EntityManager();

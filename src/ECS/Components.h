@@ -9,6 +9,7 @@
 #include <string>
 #include "Model.h"
 #include "EntityManager.h"
+#include "ColliderShape.h"
 
 struct Transform {
     EntityID id;
@@ -19,7 +20,7 @@ struct Transform {
 
     bool isDirty = false;
     std::vector<EntityID> children;
-    EntityID  parent = -1;
+    EntityID parent = (EntityID) - 1;
 };
 
 struct ModelComponent {
@@ -40,6 +41,43 @@ struct TextComponent {
     std::string font;
     glm::vec4 color;
     std::string text;
+};
+
+struct ColliderComponent {
+    ColliderComponent(ColliderType colliderType, bool isStatic) : isStatic{ isStatic }
+    {
+        switch (colliderType)
+        {
+        case ColliderType::BOX:
+            colliderShape = new BoxCollider();
+            break;
+        case ColliderType::SPHERE:
+            colliderShape = new SphereCollider();
+            break;
+        default:
+            colliderShape = nullptr;
+            break;
+        }
+    }
+
+
+    ~ColliderComponent()
+    {
+        if (colliderShape)
+        {
+            delete colliderShape;
+        }
+    }
+
+    ColliderShape* GetColliderShape() const
+    {
+        return colliderShape;
+    }
+
+    bool isStatic;
+
+private:
+    ColliderShape* colliderShape;
 };
 
 #endif //PBL_COMPONENTS_H
