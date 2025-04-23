@@ -19,9 +19,10 @@ target_include_directories(stb_image PRIVATE ${STB_IMAGE_DIR})
 # other
 CPMAddPackage("gh:assimp/assimp@5.4.3")
 CPMAddPackage("gh:glfw/glfw#3.3.8")
-CPMAddPackage("gh:g-truc/glm#0.9.9.8")
-CPMAddPackage("gh:ocornut/imgui@1.91.1")
+CPMAddPackage("gh:g-truc/glm#1.0.1")
+CPMAddPackage("gh:ocornut/imgui@1.91.9b-docking")
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
+CPMAddPackage("gh:nlohmann/json@3.12.0")
 CPMAddPackage(
 		NAME freetype
 		GITHUB_REPOSITORY freetype/freetype
