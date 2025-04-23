@@ -22,6 +22,7 @@ CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 CPMAddPackage("gh:ocornut/imgui@1.91.9b-docking")
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
+CPMAddPackage("gh:nlohmann/json@3.12.0")
 
 set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "")
 add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp

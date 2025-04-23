@@ -47,6 +47,27 @@ public:
         return static_cast<T*>(nodes[newIndex].component);
     }
 
+	// for serialization
+	template<typename T>
+	T* AddComponent(T* component) {
+		if (freeIndex == -1) {
+			printf("No space for more components!\n");
+			return nullptr;
+		}
+		int newIndex = freeIndex;
+		freeIndex = nodes[newIndex].next;
+		nodes[newIndex].component = component;
+		nodes[newIndex].next = -1;
+		if (head == -1) {
+			head = tail = newIndex;
+		}
+		else {
+			nodes[tail].next = newIndex;
+			tail = newIndex;
+		}
+		return static_cast<T*>(nodes[newIndex].component);
+	}
+
 
     void RemoveComponent(Component* component);
     void Update();

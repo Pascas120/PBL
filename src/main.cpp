@@ -31,6 +31,11 @@
 #include "debug.h"
 #include "Framebuffer.h"
 
+#include "nlohmann/json.hpp"
+#include <fstream>
+
+using json = nlohmann::json;
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -48,6 +53,8 @@ void imgui_render();
 void imgui_end();
 
 void end_frame();
+
+void remove_object(GameObject* obj);
 
 constexpr int32_t WINDOW_WIDTH  = 1920;
 constexpr int32_t WINDOW_HEIGHT = 1080;
@@ -73,9 +80,11 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 std::vector<Shader*> shaders;
 
-Model ourModel;
-Model model2;
-Model model3;
+//Model ourModel;
+//Model model2;
+//Model model3;
+
+std::vector<Model*> models;
 
 Scene scene;
 
@@ -152,6 +161,15 @@ int main(int, char**)
 		}
 	}
 
+	for (Model* model : models)
+	{
+		if (model)
+		{
+			delete model;
+			model = nullptr;
+		}
+	}
+
     return 0;
 }
 
@@ -217,11 +235,29 @@ bool init()
 				{ GL_VERTEX_SHADER, "res/shaders/basic.vert" },
 				{ GL_FRAGMENT_SHADER, "res/shaders/dither.frag" }
 			}));
+	shaders.emplace_back(
+		new Shader("Phong - DO", {
+				{ GL_VERTEX_SHADER, "res/shaders/phong.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/phong.frag" }
+			}));
+	shaders.emplace_back(
+		new Shader("Glow - MH", {
+				{ GL_VERTEX_SHADER, "res/shaders/glow.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/glow.frag" }
+			}));
 
 
-    ourModel = Model("res/models/nanosuit/nanosuit.obj");
+    /*ourModel = Model("res/models/nanosuit/nanosuit.obj");
 	model2 = Model("res/models/dee/waddledee.obj");
-	model3 = Model("res/models/grass_block/grass_block.obj");
+	model3 = Model("res/models/grass_block/grass_block.obj");*/
+
+	models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
+	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
+	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
+
+	Model& ourModel = *models[0];
+	Model& model2 = *models[1];
+	Model& model3 = *models[2];
 
     objects.reserve(10);
 	scene.GetRoot()->SetName("Root");
@@ -342,10 +378,9 @@ void init_imgui()
 
 void game_input()
 {
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS || !player)
 		return;
 
-	spdlog::info("Game input");
 	Transform* transform = player->components.GetComponent<Transform>();
 	glm::vec3 translation = transform->getTranslation();
 	glm::vec3 rotation = transform->getRotation();
@@ -533,6 +568,262 @@ void render(const Framebuffer& framebuffer)
     }
 }
 
+
+
+
+// serializacja
+void to_json(json& j, Transform* obj)
+{
+	j["translation"] = { obj->getTranslation().x, obj->getTranslation().y, obj->getTranslation().z };
+	j["rotation"] = { obj->getRotation().x, obj->getRotation().y, obj->getRotation().z };
+	j["scale"] = { obj->getScale().x, obj->getScale().y, obj->getScale().z };
+}
+
+void to_json(json& j, ColliderComponent* obj)
+{
+	j["isStatic"] = obj->isStatic;
+	j["type"] = obj->GetColliderShape()->getType();
+
+	json shapeJ;
+
+	shapeJ["center"] = { obj->GetColliderShape()->center.x, obj->GetColliderShape()->center.y, obj->GetColliderShape()->center.z };
+
+	if (obj->GetColliderShape()->getType() == ColliderType::BOX)
+	{
+		BoxCollider* box = static_cast<BoxCollider*>(obj->GetColliderShape());
+		shapeJ["halfSize"] = { box->halfSize.x, box->halfSize.y, box->halfSize.z };
+	}
+	else if (obj->GetColliderShape()->getType() == ColliderType::SPHERE)
+	{
+		SphereCollider* sphere = static_cast<SphereCollider*>(obj->GetColliderShape());
+		shapeJ["radius"] = sphere->radius;
+	}
+
+	j["shape"] = shapeJ;
+}
+
+void to_json(json& j, ModelComponent* obj)
+{
+	j["model"] = obj->GetModel().directory;
+	j["shader"] = obj->getShader()->getName();
+}
+
+void to_json(json& j, GameObject* obj)
+{
+	j["name"] = obj->GetName();
+
+	j["children"] = json::array();
+	GameObject** children = obj->GetChildren();
+
+	for (int i = 0; i < obj->GetChildCount(); i++)
+	{
+		GameObject* child = children[i];
+		if (child)
+		{
+			j["children"].push_back(children[i]);
+		}
+	}
+
+	json componentsJ;
+	Transform* transform = obj->components.GetComponent<Transform>();
+	if (transform)
+	{
+		to_json(componentsJ["transform"], transform);
+	}
+
+	ColliderComponent* collider = obj->components.GetComponent<ColliderComponent>();
+	if (collider)
+	{
+		to_json(componentsJ["collider"], collider);
+	}
+
+	ModelComponent* model = obj->components.GetComponent<ModelComponent>();
+	if (model)
+	{
+		to_json(componentsJ["model"], model);
+	}
+
+	j["components"] = componentsJ;
+}
+
+
+void serialize(const std::string& filename)
+{
+	json j;
+	GameObject* root = scene.GetRoot();
+	j["root"] = root->GetName();
+	j["children"] = json::array();
+	GameObject** children = root->GetChildren();
+
+	for (int i = 0; i < root->GetChildCount(); i++)
+	{
+		GameObject* child = children[i];
+		if (child)
+		{
+			j["children"].push_back(children[i]);
+		}
+	}
+
+	std::ofstream file(filename);
+	if (file.is_open())
+	{
+		file << j.dump(4);
+		file.close();
+	}
+	else
+	{
+		spdlog::error("Failed to open file for serialization: {}", filename);
+	}
+}
+
+// deserializacja
+
+void from_json(const json& j, Transform*& obj)
+{
+	obj = new Transform();
+	obj->setTranslation(glm::vec3(j["translation"][0], j["translation"][1], j["translation"][2]));
+	obj->setRotation(glm::vec3(j["rotation"][0], j["rotation"][1], j["rotation"][2]));
+	obj->setScale(glm::vec3(j["scale"][0], j["scale"][1], j["scale"][2]));
+}
+
+void from_json(const json& j, ColliderComponent*& obj)
+{
+	obj = new ColliderComponent(static_cast<ColliderType>(j["type"]));
+	obj->isStatic = j["isStatic"];
+
+	ColliderShape* shape = obj->GetColliderShape();
+	shape->center = glm::vec3(j["shape"]["center"][0], j["shape"]["center"][1], j["shape"]["center"][2]);
+	if (shape->getType() == ColliderType::BOX)
+	{
+		BoxCollider* box = static_cast<BoxCollider*>(shape);
+		box->halfSize = glm::vec3(j["shape"]["halfSize"][0], j["shape"]["halfSize"][1], j["shape"]["halfSize"][2]);
+	}
+	else if (shape->getType() == ColliderType::SPHERE)
+	{
+		SphereCollider* sphere = static_cast<SphereCollider*>(shape);
+		sphere->radius = j["shape"]["radius"];
+	}
+}
+
+void from_json(const json& j, ModelComponent*& obj)
+{
+	std::string modelPath = j["model"];
+	std::string shaderName = j["shader"];
+
+	Model* objModel = nullptr;
+	for (Model* model : models)
+	{
+		if (model->directory == modelPath)
+		{
+			objModel = model;
+			break;
+		}
+	}
+
+	if (objModel == nullptr)
+	{
+		spdlog::error("Model not found: {}", modelPath);
+		return;
+	}
+
+	obj = new ModelComponent(objModel);
+
+	for (Shader* shader : shaders)
+	{
+		if (shader->getName() == shaderName)
+		{
+			obj->setShader(shader);
+			break;
+		}
+	}
+}
+
+void from_json(const json& j, GameObject*& obj)
+{
+	obj = new GameObject();
+	obj->SetName(j["name"].get<std::string>());
+	std::string name = obj->GetName();
+	const json& children = j["children"];
+	for (const auto& child : children)
+	{
+		GameObject* childObj = nullptr;
+		from_json(child, childObj);
+		obj->AddChild(childObj, false);
+	}
+
+	const json& components = j["components"];
+
+	if (components.contains("transform"))
+	{
+		Transform* transform = nullptr;
+		from_json(components["transform"], transform);
+		obj->components.AddComponent(transform);
+	}
+	if (components.contains("collider"))
+	{
+		ColliderComponent* collider = nullptr;
+		from_json(components["collider"], collider);
+		obj->components.AddComponent(collider);
+	}
+	if (components.contains("model"))
+	{
+		ModelComponent* model = nullptr;
+		from_json(components["model"], model);
+		obj->components.AddComponent(model);
+	}
+
+	objects.emplace_back(obj);
+
+	if (name == "Player")
+	{
+		player = obj;
+	}
+}
+
+void deserialize(const std::string filename)
+{
+	json j;
+	std::ifstream file(filename);
+
+	if (file.is_open())
+	{
+		file >> j;
+
+		file.close();
+	}
+	else
+	{
+		spdlog::error("Failed to open file for deserialization: {}", filename);
+		return;
+	}
+	GameObject* root = scene.GetRoot();
+
+	GameObject** children = root->GetChildren();
+
+	for (int i = root->GetChildCount() - 1; i >= 0; i--)
+	{
+		GameObject* child = children[i];
+
+		if (child)
+		{
+			root->RemoveChild(child);
+			remove_object(child);
+		}
+	}
+	spdlog::info("Object count before: {}", objects.size());
+
+	root->SetName(j["root"].get<std::string>());
+	const json& childrenJ = j["children"];
+	for (const auto& child : childrenJ)
+	{
+		GameObject* childObj = nullptr;
+		from_json(child, childObj);
+		root->AddChild(childObj, false);
+	}
+	spdlog::info("Object count after: {}", objects.size());
+}
+
+
 void imgui_begin()
 {
     // Start the Dear ImGui frame
@@ -547,7 +838,7 @@ void remove_object(GameObject* obj)
 	{
 		objects.erase(std::remove(objects.begin(), objects.end(), obj), objects.end());
 		GameObject** children = obj->GetChildren();
-		for (int i = 0; i < obj->GetChildCount(); i++)
+		for (int i = obj->GetChildCount() - 1; i >= 0; i--)
 		{
 			GameObject* child = children[i];
 			if (child)
@@ -555,6 +846,11 @@ void remove_object(GameObject* obj)
 				remove_object(child);
 			}
 		}
+		if (obj == selectedObject)
+			selectedObject = nullptr;
+		if (obj == player)
+			player = nullptr;
+
 		delete obj;
 		obj = nullptr;
 	}
@@ -580,11 +876,38 @@ void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const 
 void imgui_collisions(bool& show);
 void imgui_scene();
 
+void imgui_save_load()
+{
+	if (ImGui::BeginPopupModal("Save/Load##Popup"))
+	{
+		static char filename[128] = "scene.json";
+		ImGui::InputText("Filename", filename, sizeof(filename));
+		if (ImGui::Button("Save"))
+		{
+			serialize(filename);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load"))
+		{
+			deserialize(filename);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+}
+
 
 void imgui_render()
 {
 	static bool show_demo_window = false;
     static bool show_collisions = false;
+	static bool show_save_load = false;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
@@ -610,6 +933,7 @@ void imgui_render()
 				}
 			}
 
+			ImGui::MenuItem("Save/Load", NULL, &show_save_load);
 
 			ImGui::EndMenu();
 		}
@@ -634,6 +958,14 @@ void imgui_render()
         imgui_collisions(show_collisions);
 
 	imgui_scene();
+
+	if (show_save_load)
+	{
+		ImGui::OpenPopup("Save/Load##Popup");
+		show_save_load = false;
+	}
+	imgui_save_load();
+
 	
     {
 		ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
@@ -747,6 +1079,16 @@ void imgui_hierarchy_node(GameObject* obj)
 		{
 			deleteObject = true;
 		}
+		if (ImGui::MenuItem("Duplicate") && obj->GetParent()->GetChildCount() < MAX_CHILDREN)
+		{
+			GameObject* duplicate = nullptr;
+			json j;
+			to_json(j, obj);
+			from_json(j, duplicate);
+
+			duplicate->SetName(obj->GetName() + " Copy");
+			obj->GetParent()->AddChild(duplicate, false);
+		}
 		if (disabled) ImGui::EndDisabled();
 
 		ImGui::EndPopup();
@@ -796,8 +1138,6 @@ void imgui_hierarchy_node(GameObject* obj)
 	{
 		obj->GetParent()->RemoveChild(obj);
 		remove_object(obj);
-		if (obj == selectedObject)
-			selectedObject = nullptr;
 	}
 }
 

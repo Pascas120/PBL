@@ -17,7 +17,7 @@ GameObject::GameObject() : parent(nullptr), childCount(0), dirty(true) {
     }
 }
 
-void GameObject::AddChild(GameObject* child) {
+void GameObject::AddChild(GameObject* child, bool changeTransform) {
     if (childCount >= MAX_CHILDREN) return;
 
     if (child->parent) {
@@ -37,7 +37,10 @@ void GameObject::AddChild(GameObject* child) {
     child->parent = this;
 	child->index = childCount - 1;
 
-
+	if (!changeTransform) {
+		child->MarkDirty();
+		return;
+	}
 
 	Transform* transform = components.GetComponent<Transform>();
 	Transform* childTransform = child->components.GetComponent<Transform>();

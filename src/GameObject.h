@@ -25,7 +25,7 @@ public:
     ComponentList components;
 
     GameObject();
-    void AddChild(GameObject* child);
+	void AddChild(GameObject* child, bool changeTransform = true);
 	void RemoveChild(GameObject* child);
 	void SetChildIndex(int oldIndex, int newIndex);
     void MarkDirty();

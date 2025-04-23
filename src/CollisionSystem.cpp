@@ -82,8 +82,14 @@ void CollisionSystem::CheckCollisions()
 			ColliderComponent* colliderFirst = objects[i]->components.GetComponent<ColliderComponent>();
 			ColliderComponent* colliderSecond = objects[j]->components.GetComponent<ColliderComponent>();
 
+
 			if (transformFirst && transformSecond && colliderFirst && colliderSecond)
 			{
+				if (colliderFirst->isStatic && colliderSecond->isStatic)
+				{
+					continue;
+				}
+
 				CollisionInfo collisionInfo = {};
 
 				ColliderShape* shapeFirst = colliderFirst->GetColliderShape();
