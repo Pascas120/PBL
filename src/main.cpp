@@ -171,18 +171,18 @@ bool init()
     scene = Scene();
 
     ent1 = scene.CreateEntity();
-    scene.AddComponent(ent1, ModelComponent{&ourModel});
+    scene.AddComponent(ent1, ModelComponent{ent1, &ourModel});
     ent2 = scene.CreateEntity(ent1);
-    scene.AddComponent(ent2, ModelComponent{&ourModel});
+    scene.AddComponent(ent2, ModelComponent{ent2, &ourModel});
     transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
 
     ent3 = scene.CreateEntity();
-    scene.AddComponent(ent3, ImageComponent{"../../res/textures/cloud.png"});
+    scene.AddComponent(ent3, ImageComponent{ent3, "../../res/textures/cloud.png", 400.0f, 400.0f});
     transformSystem.translateEntity(ent3, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
-    transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
+//transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
 
     ent3 = scene.CreateEntity();
-    scene.AddComponent(ent3, TextComponent{"foo", glm::vec4(1,0,0,0), "text"});
+    scene.AddComponent(ent3, TextComponent{ent3, "foo", glm::vec4(1,0,0,0), "text"});
     transformSystem.translateEntity(ent3, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 
     renderingSystem = RenderingSystem(&scene, ourShader, hudShader, textShader);

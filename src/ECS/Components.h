@@ -11,6 +11,7 @@
 #include "EntityManager.h"
 
 struct Transform {
+    EntityID id;
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 scale = {1.0f, 1.0f, 1.0f};
@@ -22,10 +23,12 @@ struct Transform {
 };
 
 struct ModelComponent {
+    EntityID id;
     Model* model;
 };
 
 struct ImageComponent {
+    EntityID id;
     std::string texturePath;
     float width;
     float height;
@@ -33,6 +36,7 @@ struct ImageComponent {
 };
 
 struct TextComponent {
+    EntityID id;
     std::string font;
     glm::vec4 color;
     std::string text;

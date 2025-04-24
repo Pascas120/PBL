@@ -26,9 +26,10 @@ void RenderingSystem::drawScene(Camera& camera){
     sceneShader.setMat4("projection", projection);
     sceneShader.setMat4("view", view);
 
-    for(int i = 0; i < 5000; i++) {
+    for(int i = 0; i <= models->getQuantity(); i++) {
         if (models->has(i)) {
-            sceneShader.setMat4("model", transforms->get(i).globalMatrix);
+            Transform transform = transforms->get(models->get(i).id);
+            sceneShader.setMat4("model", transform.globalMatrix);
             models->get(i).model->Draw(sceneShader);
         }
     }
@@ -45,12 +46,10 @@ void RenderingSystem::drawHud() {
 
     if(images != NULL) {
         hudShader.use();
-        for (int i = 0; i < 5000; i++) {
-            if (images->has(i)) {
-                auto& image = images->get(i);
+        for (int i = 0; i < images->getQuantity(); i++) {
+                auto& image = images->components[i];
 
-
-                hudShader.setMat4("model", glm::scale(transforms->get(i).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
+                hudShader.setMat4("model", glm::scale(transforms->get(image.id).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
                 if (!image.texturePath.empty()) {
                     if (GLuint textureID = getTexture(image.texturePath)) {
                         glActiveTexture(GL_TEXTURE0);
@@ -67,16 +66,13 @@ void RenderingSystem::drawHud() {
                 glBindVertexArray(hudVAO);
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
                 glBindVertexArray(0);
-            }
         }
     }
 
     if(texts != NULL) {
-        for (int i = 0; i < 5000; i++) {
-            if (texts->has(i)) {
-                auto& text = texts->get(i);
-                t1.renderText(textShader, text.text, transforms->get(i).translation.x, transforms->get(i).translation.y, 1.0f, text.color);
-            }
+        for (int i = 0; i < texts->getQuantity(); i++) {
+                auto& text = texts->components[i];
+                t1.renderText(textShader, text.text, transforms->get(text.id).translation.x, transforms->get(text.id).translation.y, 1.0f, text.color);
         }
     }
 

@@ -45,7 +45,7 @@ public:
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
     EntityID CreateEntity(EntityID parent = -1) {
         EntityID id = entityManager.CreateEntity();
-        AddComponent<Transform>(id, Transform{});
+        AddComponent<Transform>(id, Transform{id});
         if (parent > 5000) parent = sceneGraphRoot;
         auto& transform = GetComponent<Transform>(parent);
         transform.children.push_back(id);
