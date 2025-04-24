@@ -1,5 +1,7 @@
 #include "Model.h"
 
+static std::vector<Texture> textures_loaded;
+
 Model::Model(){}
 
 Model::Model(std::string const &path, bool gamma) : gammaCorrection(gamma)
@@ -10,7 +12,7 @@ Model::Model(std::string const &path, bool gamma) : gammaCorrection(gamma)
 void Model::draw(Shader &shader)
 {
     for(unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].draw(shader);
+        meshes[i].Draw(shader);
 }
 
 void Model::loadModel(std::string const &path)
