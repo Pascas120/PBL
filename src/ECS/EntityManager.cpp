@@ -7,7 +7,7 @@ EntityManager::EntityManager() {
     }
 }
 
-EntityID EntityManager::CreateEntity() {
+EntityID EntityManager::createEntity() {
     assert(!availableIDs.empty() && "Maximum number of entities reached!");
 
     EntityID id = availableIDs.front();
@@ -16,7 +16,7 @@ EntityID EntityManager::CreateEntity() {
     return id;
 }
 
-void EntityManager::DestroyEntity(EntityID id) {
+void EntityManager::destroyEntity(EntityID id) {
     assert(id < MAX_ENTITIES && "Entity ID is out of range!");
     assert(aliveEntities.test(id) && "Attempt to destroy a non-existent entity!");
 
@@ -24,7 +24,7 @@ void EntityManager::DestroyEntity(EntityID id) {
     availableIDs.push(id);
 }
 
-bool EntityManager::IsAlive(EntityID id) const {
+bool EntityManager::isAlive(EntityID id) const {
     assert(id < MAX_ENTITIES && "Entity ID is out of range!");
     return aliveEntities.test(id);
 }

@@ -12,9 +12,9 @@ class EntityManager {
 public:
     EntityManager();
 
-    EntityID CreateEntity();
-    void DestroyEntity(EntityID id);
-    bool IsAlive(EntityID id) const;
+    EntityID createEntity();
+    void destroyEntity(EntityID id);
+    bool isAlive(EntityID id) const;
 
 private:
     std::bitset<MAX_ENTITIES> aliveEntities;

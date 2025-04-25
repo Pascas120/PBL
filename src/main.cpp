@@ -170,19 +170,19 @@ bool init()
     ourModel = Model("../../res/models/untitled.fbx");
     scene = Scene();
 
-    ent1 = scene.CreateEntity();
-    scene.AddComponent(ent1, ModelComponent{ent1, &ourModel});
-    ent2 = scene.CreateEntity(ent1);
-    scene.AddComponent(ent2, ModelComponent{ent2, &ourModel});
+    ent1 = scene.createEntity();
+    scene.addComponent(ent1, ModelComponent{ent1, &ourModel});
+    ent2 = scene.createEntity(ent1);
+    scene.addComponent(ent2, ModelComponent{ent2, &ourModel});
     transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
 
-    ent3 = scene.CreateEntity();
-    scene.AddComponent(ent3, ImageComponent{ent3, "../../res/textures/cloud.png", 400.0f, 400.0f});
+    ent3 = scene.createEntity();
+    scene.addComponent(ent3, ImageComponent{ent3, "../../res/textures/cloud.png", 400.0f, 400.0f});
     transformSystem.translateEntity(ent3, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 //transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
 
-    ent3 = scene.CreateEntity();
-    scene.AddComponent(ent3, TextComponent{ent3, "foo", glm::vec4(1,0,0,0), "text"});
+    ent3 = scene.createEntity();
+    scene.addComponent(ent3, TextComponent{ent3, "foo", glm::vec4(1,0,0,0), "text"});
     transformSystem.translateEntity(ent3, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 
     renderingSystem = RenderingSystem(&scene, ourShader, hudShader, textShader);
@@ -224,7 +224,7 @@ void init_imgui()
 }
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset){
-    camera.ProcessMouseScroll(yoffset);
+    camera.processMouseScroll(yoffset);
 }
 
 void input()
@@ -235,13 +235,13 @@ void input()
     lastFrame = currentFrame;
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.processKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.processKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.processKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera.processKeyboard(RIGHT, deltaTime);
 
     // Add mouse controls if needed
     static double lastX = WINDOW_WIDTH/2.0f;
@@ -265,7 +265,7 @@ void input()
     lastY = ypos;
 
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        camera.ProcessMouseMovement(xoffset, yoffset);
+        camera.processMouseMovement(xoffset, yoffset);
 
     float scrollOffset;
 
@@ -282,7 +282,7 @@ void update()
 //    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
     transformSystem.scaleEntity(ent1, glm::vec3(abs(sin(osc))));
     transformSystem.update();
-    scene.GetComponent<TextComponent>(ent3).text = std::to_string(abs(sin(osc)));
+    scene.getComponent<TextComponent>(ent3).text = std::to_string(abs(sin(osc)));
 }
 
 void render()

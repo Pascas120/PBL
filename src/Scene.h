@@ -19,7 +19,7 @@ private:
     EntityID rootEntity = 0;
 
     template<typename T>
-    ComponentStorage<T>* GetOrCreateStorage() {
+    ComponentStorage<T>* getOrCreateStorage() {
         auto type = std::type_index(typeid(T));
         auto it = storages.find(type);
         if (it == storages.end()) {
@@ -35,57 +35,57 @@ public:
 
     Scene() {
         entityManager = EntityManager();
-        rootEntity = entityManager.CreateEntity();
-        AddComponent<Transform>(rootEntity, Transform{});
+        rootEntity = entityManager.createEntity();
+        addComponent<Transform>(rootEntity, Transform{});
         sceneGraphRoot = rootEntity;
     }
 
-    EntityID GetSceneRootEntity() const { return sceneGraphRoot; }
+    EntityID getSceneRootEntity() const { return sceneGraphRoot; }
 
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
-    EntityID CreateEntity(EntityID parent = -1) {
-        EntityID id = entityManager.CreateEntity();
-        AddComponent<Transform>(id, Transform{id});
+    EntityID createEntity(EntityID parent = -1) {
+        EntityID id = entityManager.createEntity();
+        addComponent<Transform>(id, Transform{id});
         if (parent > 5000) parent = sceneGraphRoot;
-        auto& transform = GetComponent<Transform>(parent);
+        auto& transform = getComponent<Transform>(parent);
         transform.children.push_back(id);
-        GetComponent<Transform>(id).parent = parent;
+        getComponent<Transform>(id).parent = parent;
         return id;
     }
 
     template<typename T>
-    void AddComponent(EntityID id, const T& value) {
-        GetOrCreateStorage<T>()->add(id, value);
+    void addComponent(EntityID id, const T& value) {
+        getOrCreateStorage<T>()->add(id, value);
     }
 
     template<typename T>
-    void RemoveComponent(EntityID id) {
-        auto storage = GetStorage<T>();
+    void removeComponent(EntityID id) {
+        auto storage = getStorage<T>();
         if (storage) {
             storage->Remove(id);
         }
     }
 
     template<typename T>
-    bool HasComponent(EntityID id) const {
-        auto storage = GetStorage<T>();
+    bool hasComponent(EntityID id) const {
+        auto storage = getStorage<T>();
         return storage && storage->Has(id);
     }
 
     template<typename T>
-    T& GetComponent(EntityID id) {
-        return GetOrCreateStorage<T>()->get(id);
+    T& getComponent(EntityID id) {
+        return getOrCreateStorage<T>()->get(id);
     }
 
     template<typename T>
-    T* GetComponentArray() {
-        auto storage = GetStorage<T>();
+    T* getComponentArray() {
+        auto storage = getStorage<T>();
         if (!storage) return nullptr;
         return storage->components;
     }
 
     template<typename T>
-    ComponentStorage<T>* GetStorage() const {
+    ComponentStorage<T>* getStorage() const {
         auto it = storages.find(std::type_index(typeid(T)));
         if (it == storages.end()) return nullptr;
         return static_cast<ComponentStorage<T>*>(it->second.get());

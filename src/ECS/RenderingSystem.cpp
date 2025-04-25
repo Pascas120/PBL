@@ -17,11 +17,11 @@ RenderingSystem::RenderingSystem(){
 RenderingSystem::RenderingSystem(Scene *scene, Shader &sceneShader, Shader &hudShader, Shader &textShader): scene(scene), sceneShader(sceneShader), hudShader(hudShader), textShader(textShader) {}
 
 void RenderingSystem::drawScene(Camera& camera){
-    auto models = scene->GetStorage<ModelComponent>();
-    auto transforms = scene->GetStorage<Transform>();
+    auto models = scene->getStorage<ModelComponent>();
+    auto transforms = scene->getStorage<Transform>();
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
+    glm::mat4 view = camera.getViewMatrix();
     sceneShader.use();
     sceneShader.setMat4("projection", projection);
     sceneShader.setMat4("view", view);
@@ -30,7 +30,7 @@ void RenderingSystem::drawScene(Camera& camera){
         if (models->has(i)) {
             Transform transform = transforms->get(models->get(i).id);
             sceneShader.setMat4("model", transform.globalMatrix);
-            models->get(i).model->Draw(sceneShader);
+            models->get(i).model->draw(sceneShader);
         }
     }
 }
@@ -40,9 +40,9 @@ void RenderingSystem::drawHud() {
 
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
-    auto transforms = scene->GetStorage<Transform>();
-    auto images = scene->GetStorage<ImageComponent>();
-    auto texts = scene->GetStorage<TextComponent>();
+    auto transforms = scene->getStorage<Transform>();
+    auto images = scene->getStorage<ImageComponent>();
+    auto texts = scene->getStorage<TextComponent>();
 
     if(images != NULL) {
         hudShader.use();
