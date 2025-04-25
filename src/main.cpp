@@ -11,8 +11,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "TextRenderer.h"
-#include "ECS/TransformSystem.h"
-#include "ECS/RenderingSystem.h"
+
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 
@@ -48,31 +47,39 @@ const     char*   glsl_version     = "#version 410";
 constexpr int32_t GL_VERSION_MAJOR = 4;
 constexpr int32_t GL_VERSION_MINOR = 1;
 
-bool   show_demo_window    = true;
-bool   show_another_window = false;
+double scrollXOffset = 0.0f;
+double scrollYOffset = 0.0f;
+
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-Shader ourShader;
-Shader hudShader;
-Shader textShader;
+//Shader ourShader;
+//Shader hudShader;
+//Shader textShader;
+std::vector<Shader*> shaders;
+std::vector<Model*> models;
 
-Model ourModel;
+//Model ourModel;
 
 Scene scene;
 
-TransformSystem transformSystem = TransformSystem(&scene);
-RenderingSystem renderingSystem = RenderingSystem();
-EntityID  ent1;
-EntityID  ent2;
-EntityID  ent3;
-EntityID  ent4;
+EntityID player = (EntityID)-1;
+EntityID selectedObject = (EntityID)-1;
 
-float osc = 0;
-float width = 0.3;
+std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
+
+//TransformSystem transformSystem = TransformSystem(&scene);
+//RenderingSystem renderingSystem = RenderingSystem();
+//EntityID  ent1;
+//EntityID  ent2;
+//EntityID  ent3;
+//EntityID  ent4;
+//
+//float osc = 0;
+//float width = 0.3;
 
 int main(int, char**)
 {
@@ -86,24 +93,22 @@ int main(int, char**)
     init_imgui();
     spdlog::info("Initialized ImGui.");
 
+    lastFrame = glfwGetTime();
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
-        // Process I/O operations here
-        input();
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
-        // Update game objects' state here
-        update();
-
-        // OpenGL rendering code here
-        render();
-
-        // Draw ImGui
         imgui_begin();
-        imgui_render(); // edit this function to add your own ImGui controls
-        imgui_end(); // this call effectively renders ImGui
+        imgui_render();
 
-        // End frame and swap buffers (double buffering)
+        update();
+        render();      
+        
+        imgui_end();
+
         end_frame();
     }
 
@@ -114,6 +119,24 @@ int main(int, char**)
 
     glfwDestroyWindow(window);
     glfwTerminate();
+
+    for (Shader* shader : shaders)
+    {
+        if (shader)
+        {
+            delete shader;
+            shader = nullptr;
+        }
+    }
+
+    for (Model* model : models)
+    {
+        if (model)
+        {
+            delete model;
+            model = nullptr;
+        }
+    }
 
     return 0;
 }
@@ -133,6 +156,7 @@ bool init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
     glfwWindowHint(GLFW_OPENGL_PROFILE,        GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+    glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
     // Create window with graphics context
     window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Dear ImGui GLFW+OpenGL4 example", NULL, NULL);
@@ -153,39 +177,142 @@ bool init()
         return false;
     }
 //==============================================================================================
+
+    sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
+
+
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //stbi_set_flip_vertically_on_load(true);
-    glm::mat4 ortho = glm::ortho(0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT, 0.0f, -1.0f, 1.0f);
 
-    ourShader = Shader("../../res/shaders/basic.vert", "../../res/shaders/basic.frag");
-    hudShader = Shader("../../res/shaders/HUD.vert", "../../res/shaders/HUD.frag");
-    hudShader.use();
-    hudShader.setMat4("projection", ortho);
-    textShader = Shader("../../res/shaders/text.vert", "../../res/shaders/text.frag");
-    textShader.use();
-    textShader.setMat4("projection", ortho);
+    shaders.emplace_back(
+        new Shader("Basic", {
+                { GL_VERTEX_SHADER, "res/shaders/basic.vert" },
+                { GL_FRAGMENT_SHADER, "res/shaders/basic.frag" }
+            }));
+    shaders.emplace_back(
+        new Shader("Flat", {
+                { GL_VERTEX_SHADER, "res/shaders/flat.vert" },
+                { GL_FRAGMENT_SHADER, "res/shaders/flat.frag" }
+            }));
+    shaders.emplace_back(
+        new Shader("GUITest", {
+                { GL_VERTEX_SHADER, "res/shaders/guitest.vert" },
+                { GL_FRAGMENT_SHADER, "res/shaders/guitest.frag" }
+            }));
+	shaders.emplace_back(
+		new Shader("HUD", {
+				{ GL_VERTEX_SHADER, "res/shaders/HUD.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/HUD.frag" }
+			}));
+	shaders.emplace_back(
+		new Shader("Text", {
+				{ GL_VERTEX_SHADER, "res/shaders/text.vert" },
+				{ GL_FRAGMENT_SHADER, "res/shaders/text.frag" }
+			}));
 
-    ourModel = Model("../../res/models/untitled.fbx");
+    models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
+    models.emplace_back(new Model("res/models/dee/waddledee.obj"));
+    models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
+	models.emplace_back(new Model("res/models/untitled.fbx"));
+
+    Model& ourModel = *models[0];
+    Model& model2 = *models[1];
+    Model& model3 = *models[2];
+
     scene = Scene();
 
-    ent1 = scene.createEntity();
-    scene.addComponent(ent1, ModelComponent{ent1, &ourModel});
-    ent2 = scene.createEntity(ent1);
-    scene.addComponent(ent2, ModelComponent{ent2, &ourModel});
-    transformSystem.translateEntity(ent2, glm::vec3(0.0f, 2.0f, 0.0f));
+    EntityID ent;
+	ImageComponent* imageComponent;
+	TextComponent* textComponent;
+	ColliderComponent* colliderComponent;
 
-    ent3 = scene.createEntity();
-    scene.addComponent(ent3, ImageComponent{ent3, "../../res/textures/cloud.png", 400.0f, 400.0f});
-    transformSystem.translateEntity(ent3, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
-//transformSystem.scaleEntity(ent3, glm::vec3(250.0f));
+	auto& ts = scene.GetTransformSystem();
 
-    ent3 = scene.createEntity();
-    scene.addComponent(ent3, TextComponent{ent3, "foo", glm::vec4(1,0,0,0), "text"});
-    transformSystem.translateEntity(ent3, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 
-    renderingSystem = RenderingSystem(&scene, ourShader, hudShader, textShader);
+    ent = scene.GetSceneRootEntity();
+	scene.GetComponent<ObjectInfoComponent>(ent).name = "Root";
+
+
+	ent = scene.CreateEntity();
+    scene.GetComponent<ObjectInfoComponent>(ent).name = "Player";
+    ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+
+    scene.AddComponent<ModelComponent>(ent, { shaders[0], &model2 });
+
+    colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
+    SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
+    sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
+    sphereCollider->radius = 0.1f;
+
+
+	ent = scene.CreateEntity();
+	scene.GetComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
+
+	ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+
+	scene.AddComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+
+	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+    BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+    boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
+    boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
+
+
+	ent = scene.CreateEntity();
+    scene.GetComponent<ObjectInfoComponent>(ent).name = "Floor";
+
+	ts.scaleEntity(ent, glm::vec3(5.0, 0.1f, 5.0f));
+
+	scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
+
+	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+
+    std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
+        { glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
+        { glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, -6.0f) },
+        { glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(6.0f, 1.0f, 0.0f) },
+        { glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(-6.0f, 1.0f, 0.0f) },
+    };
+
+	for (int i = 1; i <= 4; ++i) {
+		ent = scene.CreateEntity();
+		scene.GetComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i);
+
+		ts.scaleEntity(ent, wallScalesAndTranslations[i].first);
+		ts.translateEntity(ent, wallScalesAndTranslations[i].second);
+
+		scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
+		colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+	}
+
+
+	ent = scene.CreateEntity();
+	scene.GetComponent<ObjectInfoComponent>(ent).name = "Wall 5";
+
+	ts.rotateEntity(ent, glm::vec3(0.0f, 30.0f, 180.0f));
+	ts.translateEntity(ent, glm::vec3(1.0f, 1.0f, 2.0f));
+	ts.scaleEntity(ent, glm::vec3(0.5f, 2.0f, 0.5f));
+
+	scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+
+    ent = scene.CreateEntity();
+    scene.GetComponent<ObjectInfoComponent>(ent).name = "Cloud";
+
+	scene.AddComponent(ent, ImageComponent{ shaders[3], "res/textures/cloud.png" });
+    ts.translateEntity(ent, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
+    ts.scaleEntity(ent, glm::vec3(250.0f));
+
+    ent = scene.CreateEntity();
+	scene.GetComponent<ObjectInfoComponent>(ent).name = "Text";
+
+	scene.AddComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
+    ts.translateEntity(ent, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
+
 
 //    scene.addChild(obj1);
 //    obj1->addChild(obj2);
@@ -202,6 +329,11 @@ bool init()
 //    hud.setRoot(h1);
 //    h1->addChild(h2);
 
+    glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
+        scrollXOffset += xoffset;
+        scrollYOffset += yoffset;
+    });
+
 //==============================================================================================
     return true;
 }
@@ -214,6 +346,7 @@ void init_imgui()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
@@ -221,10 +354,6 @@ void init_imgui()
     // Setup style
     ImGui::StyleColorsDark();
 
-}
-
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset){
-    camera.processMouseScroll(yoffset);
 }
 
 void input()
@@ -268,28 +397,18 @@ void input()
         camera.processMouseMovement(xoffset, yoffset);
 
     float scrollOffset;
-
-    glfwSetScrollCallback(window, scrollCallback);
 }
 
 void update()
 {
-    float currentFrame = static_cast<float>(glfwGetTime());
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-//    scene.Update();
-    osc+=0.001;
-//    h1->setWidth(abs(sin(osc)) * width * WINDOW_WIDTH);
-    transformSystem.scaleEntity(ent1, glm::vec3(abs(sin(osc))));
-    transformSystem.update();
-    scene.getComponent<TextComponent>(ent3).text = std::to_string(abs(sin(osc)));
 }
 
 void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    renderingSystem.draw(camera);
+	scene.GetRenderingSystem().drawScene(*sceneFramebuffer, camera);
+	scene.GetRenderingSystem().drawHud(*sceneFramebuffer);
 }
 
 void imgui_begin()
@@ -304,8 +423,7 @@ void imgui_render()
 {
     /// Add new ImGui controls here
     // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    if (show_demo_window)
-        //ImGui::ShowDemoWindow(&show_demo_window);
+
 
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     {
@@ -316,7 +434,6 @@ void imgui_render()
 
         ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
         //ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
 
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
         ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
@@ -331,14 +448,14 @@ void imgui_render()
     }
 
     // 3. Show another simple window.
-    if (show_another_window)
-    {
-        ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me"))
-            show_another_window = false;
-        ImGui::End();
-    }
+    //if (show_another_window)
+    //{
+    //    ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+    //    ImGui::Text("Hello from another window!");
+    //    if (ImGui::Button("Close Me"))
+    //        show_another_window = false;
+    //    ImGui::End();
+    //}
 }
 
 void imgui_end()

@@ -11,10 +11,20 @@
 #include <typeindex>
 #include <memory>
 
+#include "ECS/TransformSystem.h"
+#include "ECS/RenderingSystem.h"
+#include "ECS/CollisionSystem.h"
+
 class Scene {
 private:
     std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
     EntityManager entityManager;
+    TransformSystem transformSystem = TransformSystem(this);
+    RenderingSystem renderingSystem = RenderingSystem(this);
+    CollisionSystem collisionSystem = CollisionSystem(this);
+
+
+
     EntityID sceneGraphRoot = 0;
     EntityID rootEntity = 0;
 
@@ -31,31 +41,35 @@ private:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 public:
-    //using EntityID = uint16_t;
+	using EntityID = uint16_t;
 
     Scene() {
         entityManager = EntityManager();
         rootEntity = entityManager.createEntity();
         addComponent<Transform>(rootEntity, Transform{});
+        addComponent<ObjectInfoComponent>(rootEntity);
         sceneGraphRoot = rootEntity;
     }
 
     EntityID getSceneRootEntity() const { return sceneGraphRoot; }
 
-    // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
-    EntityID createEntity(EntityID parent = -1) {
-        EntityID id = entityManager.createEntity();
-        addComponent<Transform>(id, Transform{id});
-        if (parent > 5000) parent = sceneGraphRoot;
-        auto& transform = getComponent<Transform>(parent);
-        transform.children.push_back(id);
-        getComponent<Transform>(id).parent = parent;
-        return id;
+    TransformSystem& getTransformSystem() {
+        return transformSystem;
     }
 
+	RenderingSystem& getRenderingSystem() {
+		return renderingSystem;
+	}
+
+	CollisionSystem& getCollisionSystem() {
+		return collisionSystem;
+	}
+
+
     template<typename T>
-    void addComponent(EntityID id, const T& value) {
+    T& addComponent(EntityID id, const T& value = T{}) {
         getOrCreateStorage<T>()->add(id, value);
+        return getComponent<T>(id);
     }
 
     template<typename T>
@@ -69,7 +83,7 @@ public:
     template<typename T>
     bool hasComponent(EntityID id) const {
         auto storage = getStorage<T>();
-        return storage && storage->Has(id);
+        return storage && storage->has(id);
     }
 
     template<typename T>
@@ -89,6 +103,33 @@ public:
         auto it = storages.find(std::type_index(typeid(T)));
         if (it == storages.end()) return nullptr;
         return static_cast<ComponentStorage<T>*>(it->second.get());
+    }
+
+
+
+    // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
+    EntityID createEntity(EntityID parent = -1) {
+        EntityID id = entityManager.createEntity();
+        addComponent<Transform>(id, Transform{});
+        addComponent<ObjectInfoComponent>(id);
+
+        if (parent < 0 || parent > 5000) parent = sceneGraphRoot;
+        auto& transform = getComponent<Transform>(parent);
+        transform.children.push_back(id);
+        getComponent<Transform>(id).parent = parent;
+        return id;
+    }
+
+    void destroyEntity(EntityID id) {
+        if (hasComponent<Transform>(id)) {
+            auto& transform = getComponent<Transform>(id);
+
+            for (auto& child : transform.children) {
+                destroyEntity(child);
+            }
+
+            transformSystem.removeChild(transform.parent, id);
+        }
     }
 
 };

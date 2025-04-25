@@ -5,6 +5,16 @@
 #include <glm/glm.hpp>
 
 #include <string>
+#include <vector>
+#include <unordered_map>
+
+struct UniformInfo
+{
+    std::string name;
+    GLenum type = 0;
+    GLint size;
+    std::vector<UniformInfo> members;
+};
 
 class Shader
 {
@@ -12,8 +22,8 @@ public:
     unsigned int ID;
 
     // Constructor
-    Shader();
-    Shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const std::string& name, const std::unordered_map<GLenum, const char*>& shaders);
+    ~Shader();
 
     // Activate the shader
     void use() const;
@@ -32,8 +42,12 @@ public:
     void setMat3(const std::string &name, const glm::mat3 &mat) const;
     void setMat4(const std::string &name, const glm::mat4 &mat) const;
 
+    const std::vector<UniformInfo>& getUniforms() const { return uniforms; }
+    const std::string& getName() const { return name; }
+
 private:
-    void checkCompileErrors(GLuint shader, std::string type);
+    std::string name;
+    std::vector<UniformInfo> uniforms;
 };
 
 #endif

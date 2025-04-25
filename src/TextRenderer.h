@@ -25,7 +25,7 @@ public:
     TextRenderer();
     ~TextRenderer();
     int init(std::string font_name);
-    void renderText(Shader &shader, std::string text, float x, float y, float scale, glm::vec3 color);
+    void renderText(Shader *shader, std::string text, float x, float y, float scale, glm::vec3 color);
 };
 
 

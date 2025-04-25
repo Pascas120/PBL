@@ -24,7 +24,7 @@ public:
 
     Model();
     Model(std::string const &path, bool gamma = false);
-    void draw(Shader &shader);
+    void draw(Shader *shader);
 
 private:
     void loadModel(std::string const &path);
