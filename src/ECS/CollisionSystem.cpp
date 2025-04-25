@@ -59,7 +59,7 @@ void CollisionSystem::CheckCollisions()
 
 	if (colliderStorage != nullptr)
 	{
-		for (int i = 0; i < MAX_OBJECTS; i++) // serio?
+		for (int i = 0; i < MAX_OBJECTS; i++)
 		{
 			if (colliderStorage->has(i) && transformStorage->has(i))
 			{

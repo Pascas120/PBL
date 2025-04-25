@@ -11,22 +11,29 @@
 #include "EntityManager.h"
 #include "ColliderShape.h"
 
+struct ObjectInfoComponent {
+    std::string name;
+};
+
 struct Transform {
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
+    glm::vec3 eulerRotation = glm::vec3(0.0f);
     glm::vec3 scale = {1.0f, 1.0f, 1.0f};
     glm::mat4 globalMatrix = glm::mat4(1.0f);
 
     bool isDirty = false;
     std::vector<EntityID> children;
-    EntityID parent = (EntityID) - 1;
+    EntityID parent = (EntityID) -1;
 };
 
 struct ModelComponent {
+    Shader* shader;
     Model* model;
 };
 
 struct ImageComponent {
+    Shader* shader;
     std::string texturePath;
     float width;
     float height;
@@ -34,13 +41,14 @@ struct ImageComponent {
 };
 
 struct TextComponent {
+    Shader* shader;
     std::string font;
     glm::vec4 color;
     std::string text;
 };
 
 struct ColliderComponent {
-    ColliderComponent(ColliderType colliderType, bool isStatic) : isStatic{ isStatic }
+    ColliderComponent(ColliderType colliderType, bool isStatic = false) : isStatic{ isStatic }
     {
         switch (colliderType)
         {
@@ -55,7 +63,7 @@ struct ColliderComponent {
             break;
         }
     }
-
+	ColliderComponent() = default;
 
     ~ColliderComponent()
     {

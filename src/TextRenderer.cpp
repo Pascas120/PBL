@@ -94,11 +94,11 @@ int TextRenderer::init(std::string font_name){
     return 0;
 }
 
-void TextRenderer::renderText(Shader &shader, std::string text, float x, float y, float scale, glm::vec3 color)
+void TextRenderer::renderText(Shader *shader, std::string text, float x, float y, float scale, glm::vec3 color)
 {
     // activate corresponding render state
-    shader.use();
-    glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+    shader->use();
+    glUniform3f(glGetUniformLocation(shader->ID, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 

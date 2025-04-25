@@ -8,17 +8,18 @@
 
 #include <map>
 
-#include "Scene.h"
+class Scene;
 #include "Camera.h"
 #include "Shader.h"
 #include "TextRenderer.h"
+#include "Framebuffer.h"
 
-class RenderingSystem{
+class RenderingSystem {
 private:
     Scene* scene;
-    Shader sceneShader;
-    Shader hudShader;
-    Shader textShader;
+    //Shader sceneShader;
+    //Shader hudShader;
+    //Shader textShader;
 
     std::map<std::string, GLuint> textures;
     GLuint getTexture(std::string path);
@@ -28,11 +29,10 @@ private:
     TextRenderer t1;
 
 public:
-    RenderingSystem();
-    RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
-    void drawScene(Camera& camera);
-    void drawHud();
-    void draw(Camera& camera);
+    //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
+    RenderingSystem(Scene* scene);
+    void drawScene(const Framebuffer& framebuffer, const Camera& camera);
+    void drawHud(const Framebuffer& framebuffer);
 };
 
 

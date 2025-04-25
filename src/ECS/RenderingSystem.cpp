@@ -5,37 +5,45 @@
 #include "RenderingSystem.h"
 #include "Model.h"
 #include "stb_image.h"
+#include "glm/gtc/matrix_transform.hpp"
+#include "Scene.h"
 
 //TODO Nie możemy tworzyć tekstur w każdej klatce, trzeba zrobić manager zasobów
-constexpr int32_t WINDOW_WIDTH  = 1920;
-constexpr int32_t WINDOW_HEIGHT = 1080;
 
-RenderingSystem::RenderingSystem(){
+RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
-}
-
-RenderingSystem::RenderingSystem(Scene *scene, Shader &sceneShader, Shader &hudShader, Shader &textShader): scene(scene), sceneShader(sceneShader), hudShader(hudShader), textShader(textShader) {}
-
-void RenderingSystem::drawScene(Camera& camera){
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, const Camera& camera) {
     auto models = scene->GetStorage<ModelComponent>();
     auto transforms = scene->GetStorage<Transform>();
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-    sceneShader.use();
-    sceneShader.setMat4("projection", projection);
-    sceneShader.setMat4("view", view);
+    auto [width, height] = framebuffer.GetSize();
 
-    for(int i = 0; i < 5000; i++) {
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+
+    for (int i = 0; i < 5000; i++) {
         if (models->has(i)) {
-            sceneShader.setMat4("model", transforms->get(i).globalMatrix);
-            models->get(i).model->Draw(sceneShader);
+            ModelComponent modelComponent = models->get(i);
+
+			modelComponent.shader->use();
+
+			// TODO: uniform blocks
+			modelComponent.shader->setMat4("projection", projection);
+			modelComponent.shader->setMat4("view", view);
+
+
+            modelComponent.shader->setMat4("model", transforms->get(i).globalMatrix);
+            modelComponent.model->Draw(modelComponent.shader);
         }
     }
 }
 
-void RenderingSystem::drawHud() {
+void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
     if (!initializedHud) initHud(); // Inicjalizacja, jeśli nie została wykonana
+
+    auto [width, height] = framebuffer.GetSize();
+    glm::mat4 ortho = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
+
 
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
@@ -43,26 +51,28 @@ void RenderingSystem::drawHud() {
     auto images = scene->GetStorage<ImageComponent>();
     auto texts = scene->GetStorage<TextComponent>();
 
-    if(images != NULL) {
-        hudShader.use();
+    if (images != NULL) {
         for (int i = 0; i < 5000; i++) {
             if (images->has(i)) {
                 auto& image = images->get(i);
+                image.shader->use();
 
+                // TODO: uniform blocks
+                image.shader->setMat4("projection", ortho);
 
-                hudShader.setMat4("model", glm::scale(transforms->get(i).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
+                image.shader->setMat4("model", glm::scale(transforms->get(i).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
                 if (!image.texturePath.empty()) {
                     if (GLuint textureID = getTexture(image.texturePath)) {
                         glActiveTexture(GL_TEXTURE0);
                         glBindTexture(GL_TEXTURE_2D, textureID);
-                        hudShader.setInt("useTexture", true);
+                        image.shader->setInt("useTexture", true);
                     } else {
-                        hudShader.setInt("useTexture", false);
-                        hudShader.setVec4("color", image.color);
+                        image.shader->setInt("useTexture", false);
+                        image.shader->setVec4("color", image.color);
                     }
                 } else {
-                    hudShader.setInt("useTexture", false);
-                    hudShader.setVec4("color", image.color);
+                    image.shader->setInt("useTexture", false);
+                    image.shader->setVec4("color", image.color);
                 }
                 glBindVertexArray(hudVAO);
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -71,22 +81,19 @@ void RenderingSystem::drawHud() {
         }
     }
 
-    if(texts != NULL) {
+    if (texts != NULL) {
         for (int i = 0; i < 5000; i++) {
             if (texts->has(i)) {
                 auto& text = texts->get(i);
-                t1.renderText(textShader, text.text, transforms->get(i).translation.x, transforms->get(i).translation.y, 1.0f, text.color);
+				text.shader->use();
+				text.shader->setMat4("projection", ortho);
+                t1.renderText(text.shader, text.text, transforms->get(i).translation.x, transforms->get(i).translation.y, 1.0f, text.color);
             }
         }
     }
 
     glDisable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-}
-
-void RenderingSystem::draw(Camera& camera){
-    drawScene(camera);
-    drawHud();
 }
 
 GLuint RenderingSystem::getTexture(std::string path) {
