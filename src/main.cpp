@@ -59,13 +59,10 @@ float lastFrame = 0.0f;
 
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-//Shader ourShader;
-//Shader hudShader;
-//Shader textShader;
+
 std::vector<Shader*> shaders;
 std::vector<Model*> models;
 
-//Model ourModel;
 
 Scene scene;
 
@@ -74,15 +71,6 @@ EntityID selectedObject = (EntityID)-1;
 
 std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 
-//TransformSystem transformSystem = TransformSystem(&scene);
-//RenderingSystem renderingSystem = RenderingSystem();
-//EntityID  ent1;
-//EntityID  ent2;
-//EntityID  ent3;
-//EntityID  ent4;
-//
-//float osc = 0;
-//float width = 0.3;
 
 int main(int, char**)
 {
@@ -480,9 +468,7 @@ void update()
         auto& colliderA = scene.getComponent<ColliderComponent>(collision.objectA);
         auto& colliderB = scene.getComponent<ColliderComponent>(collision.objectB);
 
-		spdlog::info("Collision: {} - {}", colliderA.id, colliderB.id);
-		spdlog::info("Separation Vector: {} {} {}", collision.separationVector.x, collision.separationVector.y, collision.separationVector.z);
-        if (colliderA.isStatic && colliderB.isStatic)
+		if (colliderA.isStatic && colliderB.isStatic)
         {
             continue;
         }
@@ -496,8 +482,6 @@ void update()
 
         if (!colliderA.isStatic)
         {
-			//ts.translateEntity(collision.objectA, separationVector);
-			//ts.setGlobalMatrix(collision.objectA, glm::translate(transformA.globalMatrix, separationVector));
 			glm::mat4 newMatrix = transformA.globalMatrix;
 			newMatrix[3] += glm::vec4(separationVector, 0.0f);
 			ts.setGlobalMatrix(collision.objectA, newMatrix);
@@ -505,8 +489,6 @@ void update()
 
         if (!colliderB.isStatic)
         {
-			//ts.translateEntity(collision.objectB, -separationVector);
-			//ts.setGlobalMatrix(collision.objectB, glm::translate(transformB.globalMatrix, -separationVector));
 			glm::mat4 newMatrix = transformB.globalMatrix;
 			newMatrix[3] -= glm::vec4(separationVector, 0.0f);
 			ts.setGlobalMatrix(collision.objectB, newMatrix);
@@ -552,6 +534,12 @@ void imgui_inspector(Scene* scene);
 void imgui_transform(Scene* scene, EntityID id);
 void imgui_collider(Scene* scene, EntityID id);
 void imgui_model(Scene* scene, EntityID id);
+
+void imgui_shaders();
+void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformInfo>& uniforms, const std::string& fullName);
+void imgui_uniform_struct(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
+void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const std::string& fullName);
+void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index);
 
 void imgui_scene();
 
@@ -605,14 +593,12 @@ void imgui_render()
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    /*if (show_collisions)
-        imgui_collisions(show_collisions);*/
 
     imgui_scene();
 
     imgui_hierarchy(&scene);
 	imgui_inspector(&scene);
-    //imgui_shaders();
+    imgui_shaders();
 
     if (ImGui::BeginViewportSideBar("Log sidebar", ImGui::GetMainViewport(), ImGuiDir_Down,
         ImGui::GetFrameHeight(), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar))
@@ -913,6 +899,224 @@ void imgui_model(Scene* scene, EntityID id)
 
     ImGui::PopID();
 }
+
+
+
+void imgui_shaders()
+{
+    ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Shaders");
+    static Shader* shader = shaders[0];
+    if (ImGui::BeginCombo("Shader##Combo", shader->getName().c_str()))
+    {
+        for (int i = 0; i < shaders.size(); i++)
+        {
+            if (ImGui::Selectable(shaders[i]->getName().c_str(), shader == shaders[i]))
+            {
+                shader = shaders[i];
+            }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::Dummy(ImVec2(0, 15));
+    shader->use();
+
+    imgui_uniform_descendants(*shader, shader->getUniforms(), "");
+
+    ImGui::End();
+}
+
+void imgui_uniform_descendants(const Shader& shader, const std::vector<UniformInfo>& uniforms, const std::string& fullName)
+{
+    for (auto& uniform : uniforms)
+    {
+        if (uniform.size > 1)
+            imgui_uniform_array(shader, uniform, fullName + uniform.name);
+        else if (uniform.members.size() > 0)
+            imgui_uniform_struct(shader, uniform, fullName + uniform.name, -1);
+        else
+            imgui_uniform_leaf(shader, uniform, fullName + uniform.name, -1);
+
+    }
+    ImGui::Dummy(ImVec2(0, 10));
+}
+
+void imgui_uniform_array(const Shader& shader, const UniformInfo& uniform, const std::string& fullName)
+{
+    std::string displayString = uniform.name + "[]";
+    ImGui::PushID(fullName.c_str());
+    if (ImGui::TreeNodeEx(displayString.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth
+        | ImGuiTreeNodeFlags_FramePadding))
+    {
+        for (int i = 0; i < uniform.size; i++)
+        {
+            std::string uniformName = fullName + "[" + std::to_string(i) + "]";
+
+            if (uniform.members.empty())
+                imgui_uniform_leaf(shader, uniform, uniformName, i);
+            else
+                imgui_uniform_struct(shader, uniform, uniformName, i);
+
+            ImGui::Spacing();
+        }
+
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+
+}
+
+void imgui_uniform_struct(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
+{
+    std::string displayString = uniform.name;
+    if (index >= 0)
+    {
+        displayString += "[" + std::to_string(index) + "]";
+    }
+    ImGui::PushID(fullName.c_str());
+
+    if (ImGui::TreeNodeEx(displayString.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth
+        | ImGuiTreeNodeFlags_FramePadding))
+    {
+        imgui_uniform_descendants(shader, uniform.members, fullName + '.');
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+
+}
+
+void imgui_uniform_leaf(const Shader& shader, const UniformInfo& uniform, const std::string& fullName, int index)
+{
+    if (uniform.name == "projection" || uniform.name == "view" || uniform.name == "model")
+        return;
+
+    ImGui::PushID(fullName.c_str());
+
+    GLuint location = glGetUniformLocation(shader.ID, fullName.c_str());
+    if (location == -1)
+        ImGui::BeginDisabled();
+
+    std::string label;
+    bool treeOpen = false;
+    if (index >= 0)
+    {
+        label = std::to_string(index);
+    }
+    else
+    {
+        label = uniform.name;
+    }
+
+    bool changed = false;
+    switch (uniform.type)
+    {
+    case GL_FLOAT:
+        GLfloat floatValue;
+        glGetUniformfv(shader.ID, location, &floatValue);
+        if (ImGui::DragFloat(label.c_str(), &floatValue, 0.01f))
+        {
+            shader.setFloat(fullName, floatValue);
+        }
+        break;
+    case GL_INT:
+        GLint intValue;
+        glGetUniformiv(shader.ID, location, &intValue);
+        if (ImGui::InputInt(label.c_str(), &intValue))
+        {
+            shader.setInt(fullName, intValue);
+        }
+        break;
+    case GL_BOOL:
+        GLint boolValue;
+        glGetUniformiv(shader.ID, location, &boolValue);
+        if (ImGui::Checkbox(label.c_str(), (bool*)&boolValue))
+        {
+            shader.setBool(fullName, boolValue);
+        }
+        break;
+    case GL_FLOAT_VEC2:
+        glm::vec2 vec2Value;
+        glGetUniformfv(shader.ID, location, &vec2Value[0]);
+        if (ImGui::DragFloat2(label.c_str(), &vec2Value[0], 0.01f))
+        {
+            shader.setVec2(fullName, vec2Value);
+        }
+        break;
+    case GL_FLOAT_VEC3:
+        glm::vec3 vec3Value;
+        glGetUniformfv(shader.ID, location, &vec3Value[0]);
+        if (ImGui::DragFloat3(label.c_str(), &vec3Value[0], 0.01f))
+        {
+            shader.setVec3(fullName, vec3Value);
+        }
+        break;
+    case GL_FLOAT_VEC4:
+        glm::vec4 vec4Value;
+        glGetUniformfv(shader.ID, location, &vec4Value[0]);
+        if (ImGui::DragFloat4(label.c_str(), &vec4Value[0], 0.01f))
+        {
+            shader.setVec4(fullName, vec4Value);
+        }
+        break;
+    case GL_FLOAT_MAT2:
+        glm::mat2 mat2Value;
+        glGetUniformfv(shader.ID, location, &mat2Value[0][0]);
+
+        changed = false;
+        for (int i = 0; i < 2; ++i)
+        {
+            changed |= ImGui::DragFloat2((label + "##" + std::to_string(i)).c_str(), &mat2Value[i][0], 0.01f);
+            label.clear();
+        }
+        if (changed)
+        {
+            shader.setMat2(fullName, mat2Value);
+        }
+        break;
+    case GL_FLOAT_MAT3:
+        glm::mat3 mat3Value;
+        glGetUniformfv(shader.ID, location, &mat3Value[0][0]);
+
+        changed = false;
+        for (int i = 0; i < 3; ++i)
+        {
+            changed |= ImGui::DragFloat3((label + "##" + std::to_string(i)).c_str(), &mat3Value[i][0], 0.01f);
+            label.clear();
+        }
+        if (changed)
+        {
+            shader.setMat3(fullName, mat3Value);
+        }
+        break;
+    case GL_FLOAT_MAT4:
+        glm::mat4 mat4Value;
+        glGetUniformfv(shader.ID, location, &mat4Value[0][0]);
+
+        changed = false;
+        for (int i = 0; i < 4; ++i)
+        {
+            changed |= ImGui::DragFloat4((label + "##" + std::to_string(i)).c_str(), &mat4Value[i][0], 0.01f);
+            label.clear();
+        }
+        if (changed)
+        {
+            shader.setMat4(fullName, mat4Value);
+        }
+        break;
+    default:
+        ImGui::TreeNodeEx(uniform.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth
+            | ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+        break;
+    }
+
+    if (location == -1)
+        ImGui::EndDisabled();
+    ImGui::PopID();
+
+}
+
+
+
 
 void imgui_scene()
 {
