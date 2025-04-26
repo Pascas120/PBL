@@ -8,11 +8,11 @@
 TransformSystem::TransformSystem(Scene* scene) : scene(scene) {}
 
 void TransformSystem::updateNode(EntityID id) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
 
     if (transform.isDirty) {
         if (transform.parent != -1) {
-            auto& parentTransform = scene->GetComponent<Transform>(transform.parent);
+            auto& parentTransform = scene->getComponent<Transform>(transform.parent);
             transform.globalMatrix = parentTransform.globalMatrix;
         }
         transform.globalMatrix = glm::translate(transform.globalMatrix, transform.translation);
@@ -31,42 +31,42 @@ void TransformSystem::updateNodeRecursive(EntityID id) const {
 }
 
 void TransformSystem::update() const {
-    updateNodeRecursive(scene->GetSceneRootEntity());
+    updateNodeRecursive(scene->getSceneRootEntity());
 }
 
 void TransformSystem::translateEntity(EntityID id, const glm::vec3& translation) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.translation = translation;
     markDirty(id);
 }
 
 void TransformSystem::rotateEntity(EntityID id, const glm::quat& rotation) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.rotation = rotation;
     transform.eulerRotation = glm::degrees(glm::eulerAngles(rotation));
     markDirty(id);
 }
 
 void TransformSystem::rotateEntity(EntityID id, const glm::vec3& eulerRotation) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.eulerRotation = eulerRotation;
     transform.rotation = glm::quat(glm::radians(eulerRotation));
     markDirty(id);
 }
 
 void TransformSystem::scaleEntity(EntityID id, const glm::vec3& scale) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.scale = scale;
     markDirty(id);
 }
 
 void TransformSystem::setGlobalMatrix(EntityID id, const glm::mat4& mat) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.globalMatrix = mat;
 
     glm::mat4 parentMatrix = glm::mat4(1.0);
     if (transform.parent != -1) {
-        parentMatrix = scene->GetComponent<Transform>(transform.parent).globalMatrix;
+        parentMatrix = scene->getComponent<Transform>(transform.parent).globalMatrix;
     }
 
 
@@ -100,7 +100,7 @@ void TransformSystem::setGlobalMatrix(EntityID id, const glm::mat4& mat) const {
 
 
 void TransformSystem::markDirty(EntityID id) const {
-    auto& transform = scene->GetComponent<Transform>(id);
+    auto& transform = scene->getComponent<Transform>(id);
     transform.isDirty = true;
     for (auto child : transform.children) {
         markDirty(child);
@@ -109,8 +109,8 @@ void TransformSystem::markDirty(EntityID id) const {
 
 
 void TransformSystem::addChild(EntityID parent, EntityID child) const {
-    auto& parentTransform = scene->GetComponent<Transform>(parent);
-    auto& childTransform = scene->GetComponent<Transform>(child);
+    auto& parentTransform = scene->getComponent<Transform>(parent);
+    auto& childTransform = scene->getComponent<Transform>(child);
 
     if (childTransform.parent == parent)
         return;
@@ -121,7 +121,7 @@ void TransformSystem::addChild(EntityID parent, EntityID child) const {
             return;
         }
 
-        auto& ancestorTransform = scene->GetComponent<Transform>(ancestor);
+        auto& ancestorTransform = scene->getComponent<Transform>(ancestor);
         ancestor = ancestorTransform.parent;
     }
 
@@ -136,8 +136,8 @@ void TransformSystem::addChild(EntityID parent, EntityID child) const {
 }
 
 void TransformSystem::removeChild(EntityID parent, EntityID child) const {
-    auto& parentTransform = scene->GetComponent<Transform>(parent);
-    auto& childTransform = scene->GetComponent<Transform>(child);
+    auto& parentTransform = scene->getComponent<Transform>(parent);
+    auto& childTransform = scene->getComponent<Transform>(child);
 
     if (childTransform.parent != parent)
         return;

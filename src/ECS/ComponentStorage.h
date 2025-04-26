@@ -31,11 +31,11 @@ public:
                 return components[i];
             }
         }
-        assert(false && "Component not found");
     }
 
     void add(EntityID id, const T &value) {
         components[quantity] = value;
+		components[quantity].id = id;
         quantity++;
         exists.set(id);
     }

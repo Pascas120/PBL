@@ -7,7 +7,6 @@
 
 struct ColliderObjectInfo
 {
-	EntityID id;
 	Transform* transform;
 	ColliderComponent* collider;
 	ColliderShape* shape;
@@ -52,12 +51,22 @@ void CollisionSystem::CheckCollisions()
 {
 	collisions.clear();
 
-	auto colliderStorage = scene->GetStorage<ColliderComponent>();
-	auto transformStorage = scene->GetStorage<Transform>();
+	auto colliderStorage = scene->getStorage<ColliderComponent>();
+	auto transformStorage = scene->getStorage<Transform>();
 
 	std::vector<ColliderObjectInfo> colliderObjects;
 
-	if (colliderStorage != nullptr)
+	for (int i = 0; i < colliderStorage->getQuantity(); i++)
+	{
+		auto& colliderComponent = colliderStorage->components[i];
+		colliderObjects.push_back({
+				.transform = &transformStorage->get(colliderComponent.id),
+				.collider = &colliderComponent,
+				.shape = colliderComponent.GetColliderShape()
+			});
+	}
+
+	/*if (colliderStorage != nullptr)
 	{
 		for (int i = 0; i < MAX_OBJECTS; i++)
 		{
@@ -74,7 +83,7 @@ void CollisionSystem::CheckCollisions()
 
 			}
 		}
-	}
+	}*/
 
 	for (size_t i = 0; i < colliderObjects.size(); ++i)
 	{
@@ -105,8 +114,8 @@ void CollisionSystem::CheckCollisions()
 
 			if (collisionInfo.isColliding)
 			{
-				collisionInfo.objectA = objectFirst.id;
-				collisionInfo.objectB = objectSecond.id;
+				collisionInfo.objectA = objectFirst.collider->id;
+				collisionInfo.objectB = objectSecond.collider->id;
 
 				collisions.push_back(collisionInfo);
 			}

@@ -116,6 +116,8 @@ public:
         if (parent < 0 || parent > 5000) parent = sceneGraphRoot;
         auto& transform = getComponent<Transform>(parent);
         transform.children.push_back(id);
+
+
         getComponent<Transform>(id).parent = parent;
         return id;
     }

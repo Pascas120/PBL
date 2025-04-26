@@ -14,10 +14,11 @@
 
 struct ObjectInfoComponent {
     std::string name;
+
+	EntityID id;
 };
 
 struct Transform {
-    EntityID id;
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 eulerRotation = glm::vec3(0.0f);
@@ -27,29 +28,34 @@ struct Transform {
     bool isDirty = false;
     std::vector<EntityID> children;
     EntityID parent = (EntityID) -1;
+
+	EntityID id = (EntityID)-1;
 };
 
 struct ModelComponent {
-    EntityID id;
     Shader* shader;
     Model* model;
+
+    EntityID id = (EntityID)-1;
 };
 
 struct ImageComponent {
-    EntityID id;
     Shader* shader;
     std::string texturePath;
     float width;
     float height;
     glm::vec4 color;
+
+    EntityID id = (EntityID)-1;
 };
 
 struct TextComponent {
-    EntityID id;
     Shader* shader;
     std::string font;
     glm::vec4 color;
     std::string text;
+
+    EntityID id = (EntityID)-1;
 };
 
 struct ColliderComponent {
@@ -77,6 +83,9 @@ struct ColliderComponent {
     }
 
     bool isStatic;
+
+
+    EntityID id = (EntityID)-1;
 
 private:
     std::shared_ptr<ColliderShape> colliderShape = nullptr;

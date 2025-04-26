@@ -13,16 +13,16 @@
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, const Camera& camera) {
-    auto models = scene->GetStorage<ModelComponent>();
-    auto transforms = scene->GetStorage<Transform>();
+    auto models = scene->getStorage<ModelComponent>();
+    auto transforms = scene->getStorage<Transform>();
 
     auto [width, height] = framebuffer.GetSize();
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
+    glm::mat4 view = camera.getViewMatrix();
 
     for (int i = 0; i < models->getQuantity(); i++) {
-        ModelComponent modelComponent = models->components[i];
+        auto& modelComponent = models->components[i];
 
         EntityID entityID = modelComponent.id;
 
@@ -35,7 +35,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, const Camera& ca
 
 
         modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
-        modelComponent.model->Draw(modelComponent.shader);
+        modelComponent.model->draw(modelComponent.shader);
     }
 }
 

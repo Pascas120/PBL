@@ -40,9 +40,9 @@ public:
     unsigned int VAO;
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-    void Draw(Shader *shader);
+    void draw(Shader *shader);
 
-    void SetDrawMode(GLenum mode) {
+    void setDrawMode(GLenum mode) {
         drawMode = mode;
     }
 
@@ -50,7 +50,7 @@ private:
     unsigned int VBO, EBO;
     GLenum drawMode = GL_TRIANGLES;
 
-    void SetupMesh();
+    void setupMesh();
 };
 
 

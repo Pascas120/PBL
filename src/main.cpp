@@ -225,47 +225,47 @@ bool init()
 	TextComponent* textComponent;
 	ColliderComponent* colliderComponent;
 
-	auto& ts = scene.GetTransformSystem();
+	auto& ts = scene.getTransformSystem();
 
 
-    ent = scene.GetSceneRootEntity();
-	scene.GetComponent<ObjectInfoComponent>(ent).name = "Root";
+    ent = scene.getSceneRootEntity();
+	scene.getComponent<ObjectInfoComponent>(ent).name = "Root";
 
 
-	ent = scene.CreateEntity();
-    scene.GetComponent<ObjectInfoComponent>(ent).name = "Player";
+	ent = scene.createEntity();
+    scene.getComponent<ObjectInfoComponent>(ent).name = "Player";
     ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
 
-    scene.AddComponent<ModelComponent>(ent, { shaders[0], &model2 });
+    scene.addComponent<ModelComponent>(ent, { shaders[0], &model2 });
 
-    colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
+    colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
     SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
     sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
     sphereCollider->radius = 0.1f;
 
 
-	ent = scene.CreateEntity();
-	scene.GetComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
+	ent = scene.createEntity();
+	scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
 
 	ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
 
-	scene.AddComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+	scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
 
-	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
     BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
     boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
     boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
 
-	ent = scene.CreateEntity();
-    scene.GetComponent<ObjectInfoComponent>(ent).name = "Floor";
+	ent = scene.createEntity();
+    scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
 
 	ts.scaleEntity(ent, glm::vec3(5.0, 0.1f, 5.0f));
 
-	scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 
-	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 
     std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
@@ -276,39 +276,39 @@ bool init()
     };
 
 	for (int i = 1; i <= 4; ++i) {
-		ent = scene.CreateEntity();
-		scene.GetComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i);
+		ent = scene.createEntity();
+		scene.getComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i);
 
 		ts.scaleEntity(ent, wallScalesAndTranslations[i].first);
 		ts.translateEntity(ent, wallScalesAndTranslations[i].second);
 
-		scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
-		colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+		scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+		colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 	}
 
 
-	ent = scene.CreateEntity();
-	scene.GetComponent<ObjectInfoComponent>(ent).name = "Wall 5";
+	ent = scene.createEntity();
+	scene.getComponent<ObjectInfoComponent>(ent).name = "Wall 5";
 
 	ts.rotateEntity(ent, glm::vec3(0.0f, 30.0f, 180.0f));
 	ts.translateEntity(ent, glm::vec3(1.0f, 1.0f, 2.0f));
 	ts.scaleEntity(ent, glm::vec3(0.5f, 2.0f, 0.5f));
 
-	scene.AddComponent<ModelComponent>(ent, { shaders[0], &model3 });
-	colliderComponent = &scene.AddComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 
-    ent = scene.CreateEntity();
-    scene.GetComponent<ObjectInfoComponent>(ent).name = "Cloud";
+    ent = scene.createEntity();
+    scene.getComponent<ObjectInfoComponent>(ent).name = "Cloud";
 
-	scene.AddComponent(ent, ImageComponent{ shaders[3], "res/textures/cloud.png" });
+	scene.addComponent(ent, ImageComponent{ shaders[3], "res/textures/cloud.png" });
     ts.translateEntity(ent, glm::vec3(9*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
     ts.scaleEntity(ent, glm::vec3(250.0f));
 
-    ent = scene.CreateEntity();
-	scene.GetComponent<ObjectInfoComponent>(ent).name = "Text";
+    ent = scene.createEntity();
+	scene.getComponent<ObjectInfoComponent>(ent).name = "Text";
 
-	scene.AddComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
+	scene.addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
     ts.translateEntity(ent, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 
 
@@ -405,8 +405,8 @@ void render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	scene.GetRenderingSystem().drawScene(*sceneFramebuffer, camera);
-	scene.GetRenderingSystem().drawHud(*sceneFramebuffer);
+	scene.getRenderingSystem().drawScene(*sceneFramebuffer, camera);
+	scene.getRenderingSystem().drawHud(*sceneFramebuffer);
 }
 
 void imgui_begin()
