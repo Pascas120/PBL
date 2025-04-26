@@ -10,6 +10,7 @@
 #include "Model.h"
 #include "EntityManager.h"
 #include "ColliderShape.h"
+#include <memory>
 
 struct ObjectInfoComponent {
     std::string name;
@@ -57,10 +58,10 @@ struct ColliderComponent {
         switch (colliderType)
         {
         case ColliderType::BOX:
-            colliderShape = new BoxCollider();
+			colliderShape = std::make_unique<BoxCollider>();
             break;
         case ColliderType::SPHERE:
-            colliderShape = new SphereCollider();
+			colliderShape = std::make_unique<SphereCollider>();
             break;
         default:
             colliderShape = nullptr;
@@ -69,23 +70,16 @@ struct ColliderComponent {
     }
 	ColliderComponent() = default;
 
-    ~ColliderComponent()
-    {
-        if (colliderShape)
-        {
-            delete colliderShape;
-        }
-    }
-
+    // unsafe (TODO)
     ColliderShape* GetColliderShape() const
     {
-        return colliderShape;
+        return colliderShape.get();
     }
 
     bool isStatic;
 
 private:
-    ColliderShape* colliderShape;
+    std::shared_ptr<ColliderShape> colliderShape = nullptr;
 };
 
 #endif //PBL_COMPONENTS_H

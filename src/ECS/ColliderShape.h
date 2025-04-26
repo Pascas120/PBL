@@ -13,6 +13,7 @@ struct ColliderShape
 	glm::vec3 center;
 
 	virtual ColliderType getType() const = 0;
+	virtual ~ColliderShape() = default;
 };
 
 struct BoxCollider : public ColliderShape

@@ -220,8 +220,6 @@ bool init()
     Model& model2 = *models[1];
     Model& model3 = *models[2];
 
-    scene = Scene();
-
     EntityID ent;
 	ImageComponent* imageComponent;
 	TextComponent* textComponent;
