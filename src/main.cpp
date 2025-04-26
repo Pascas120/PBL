@@ -2,6 +2,7 @@
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
 //#include <stdio.h>
@@ -29,7 +30,7 @@ void init_imgui();
 
 void input();
 void update();
-void render();
+void render(const Framebuffer& framebuffer = DefaultFramebuffer::GetInstance());
 
 void imgui_begin();
 void imgui_render();
@@ -49,6 +50,8 @@ constexpr int32_t GL_VERSION_MINOR = 1;
 
 double scrollXOffset = 0.0f;
 double scrollYOffset = 0.0f;
+
+bool show_wireframe = false;
 
 ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 float deltaTime = 0.0f;
@@ -105,7 +108,7 @@ int main(int, char**)
         imgui_render();
 
         update();
-        render();      
+        render(*sceneFramebuffer);
         
         imgui_end();
 
@@ -232,7 +235,7 @@ bool init()
 	scene.getComponent<ObjectInfoComponent>(ent).name = "Root";
 
 
-	ent = scene.createEntity();
+	ent = player = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Player";
     ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
 
@@ -275,9 +278,9 @@ bool init()
         { glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(-6.0f, 1.0f, 0.0f) },
     };
 
-	for (int i = 1; i <= 4; ++i) {
+	for (int i = 0; i < 4; ++i) {
 		ent = scene.createEntity();
-		scene.getComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i);
+		scene.getComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i + 1);
 
 		ts.scaleEntity(ent, wallScalesAndTranslations[i].first);
 		ts.translateEntity(ent, wallScalesAndTranslations[i].second);
@@ -354,26 +357,88 @@ void init_imgui()
 
 }
 
-void input()
+
+void game_input()
 {
-    float currentFrame = glfwGetTime();
-    static float lastFrame = 0.0f;
-    float deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS || player == (EntityID)-1)
+		return;
+
+    auto& transform = scene.getComponent<Transform>(player);
+    glm::vec3 translation = transform.translation;
+    glm::vec3 rotation = transform.eulerRotation;
+
+    constexpr float moveSpeed = 3.0f;
+    constexpr float rotateSpeed = 180.0f;
+    bool change = false;
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        rotation.y += rotateSpeed * deltaTime;
+        change = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        rotation.y -= rotateSpeed * deltaTime;
+        change = true;
+    }
+
+    glm::quat quatRotation = glm::quat(glm::radians(rotation));
+    glm::vec3 forward = quatRotation * glm::vec3(0.0f, 0.0f, 1.0f) * (moveSpeed * deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(FORWARD, deltaTime);
+    {
+        translation += forward;
+        change = true;
+    }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(BACKWARD, deltaTime);
+    {
+        translation -= forward;
+        change = true;
+    }
+
+
+    if (change)
+    {
+        auto& ts = scene.getTransformSystem();
+        ts.translateEntity(player, translation);
+        ts.rotateEntity(player, rotation);
+    }
+}
+
+void input()
+{
+    static bool firstMouse = true;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS)
+    {
+        firstMouse = true;
+        return;
+    }
+
+    static float cameraSpeed = 1.0f;
+    if (scrollYOffset != 0.0f)
+    {
+        cameraSpeed += scrollYOffset * 0.1f;
+        cameraSpeed = glm::clamp(cameraSpeed, 0.1f, 2.0f);
+    }
+    float scaledCamSpeed = cameraSpeed * deltaTime;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.processKeyboard(FORWARD, scaledCamSpeed);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.processKeyboard(BACKWARD, scaledCamSpeed);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(LEFT, deltaTime);
+        camera.processKeyboard(LEFT, scaledCamSpeed);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(RIGHT, deltaTime);
+        camera.processKeyboard(RIGHT, scaledCamSpeed);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        camera.processKeyboard(DOWN, scaledCamSpeed);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        camera.processKeyboard(UP, scaledCamSpeed);
 
     // Add mouse controls if needed
-    static double lastX = WINDOW_WIDTH/2.0f;
-    static double lastY = WINDOW_HEIGHT/2.0f;
-    static bool firstMouse = true;
+    static double lastX = WINDOW_WIDTH / 2.0f;
+    static double lastY = WINDOW_HEIGHT / 2.0f;
 
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
@@ -391,22 +456,81 @@ void input()
     lastX = xpos;
     lastY = ypos;
 
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-        camera.processMouseMovement(xoffset, yoffset);
-
-    float scrollOffset;
+    camera.processMouseMovement(xoffset, yoffset);
 }
 
 void update()
 {
+    auto& ts = scene.getTransformSystem();
+    ts.update();
+
+	auto& cs = scene.getCollisionSystem();
+	cs.CheckCollisions();
+
+    auto& collisions = cs.GetCollisions();
+	spdlog::info("Collisions: {}", collisions.size());
+
+	bool updateScene = false;
+
+    for (const CollisionInfo& collision : collisions)
+    {
+		auto& transformA = scene.getComponent<Transform>(collision.objectA);
+		auto& transformB = scene.getComponent<Transform>(collision.objectB);
+
+        auto& colliderA = scene.getComponent<ColliderComponent>(collision.objectA);
+        auto& colliderB = scene.getComponent<ColliderComponent>(collision.objectB);
+
+		spdlog::info("Collision: {} - {}", colliderA.id, colliderB.id);
+		spdlog::info("Separation Vector: {} {} {}", collision.separationVector.x, collision.separationVector.y, collision.separationVector.z);
+        if (colliderA.isStatic && colliderB.isStatic)
+        {
+            continue;
+        }
+
+        updateScene = true;
+        glm::vec3 separationVector = collision.separationVector;
+        if (!colliderA.isStatic && !colliderB.isStatic)
+        {
+            separationVector /= 2.0f;
+        }
+
+        if (!colliderA.isStatic)
+        {
+			//ts.translateEntity(collision.objectA, separationVector);
+			//ts.setGlobalMatrix(collision.objectA, glm::translate(transformA.globalMatrix, separationVector));
+			glm::mat4 newMatrix = transformA.globalMatrix;
+			newMatrix[3] += glm::vec4(separationVector, 0.0f);
+			ts.setGlobalMatrix(collision.objectA, newMatrix);
+        }
+
+        if (!colliderB.isStatic)
+        {
+			//ts.translateEntity(collision.objectB, -separationVector);
+			//ts.setGlobalMatrix(collision.objectB, glm::translate(transformB.globalMatrix, -separationVector));
+			glm::mat4 newMatrix = transformB.globalMatrix;
+			newMatrix[3] -= glm::vec4(separationVector, 0.0f);
+			ts.setGlobalMatrix(collision.objectB, newMatrix);
+        }
+    }
+
+    if (updateScene)
+		ts.update();
 }
 
-void render()
+void render(const Framebuffer& framebuffer)
 {
+	framebuffer.Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	scene.getRenderingSystem().drawScene(*sceneFramebuffer, camera);
-	scene.getRenderingSystem().drawHud(*sceneFramebuffer);
+
+    if (!show_wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    else {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+	scene.getRenderingSystem().drawScene(framebuffer, camera);
+	scene.getRenderingSystem().drawHud(framebuffer);
 }
 
 void imgui_begin()
@@ -417,52 +541,426 @@ void imgui_begin()
     ImGui::NewFrame();
 }
 
+
+const char* HIERARCHY_NODE = "HIERARCHY_NODE";
+
+void imgui_hierarchy(Scene* scene);
+void imgui_hierarchy_node(Scene* scene, EntityID id);
+void imgui_rearrange_target(Scene* scene, EntityID id, int targetIndex);
+
+void imgui_inspector(Scene* scene);
+void imgui_transform(Scene* scene, EntityID id);
+void imgui_collider(Scene* scene, EntityID id);
+void imgui_model(Scene* scene, EntityID id);
+
+void imgui_scene();
+
+
+
 void imgui_render()
 {
-    /// Add new ImGui controls here
-    // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+    static bool show_demo_window = false;
+    static bool show_collisions = false;
 
+    ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+    if (ImGui::BeginMainMenuBar())
     {
-        static float f = 0.0f;
-        static int counter = 0;
+        if (ImGui::BeginMenu("Settings"))
+        {
+            ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
+            ImGui::MenuItem("Collisions", NULL, &show_collisions);
+            ImGui::MenuItem("Wireframe", NULL, &show_wireframe);
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            static bool enable_logging = true;
+            if (ImGui::MenuItem("Logging", NULL, &enable_logging))
+            {
+                if (enable_logging)
+                {
+                    spdlog::set_level(spdlog::level::info);
+                }
+                else
+                {
+                    spdlog::set_level(spdlog::level::off);
+                }
+            }
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        //ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+            ImGui::EndMenu();
+        }
 
-        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
+        std::string fpsText = std::format("{:.1f} FPS", ImGui::GetIO().Framerate);
+        ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(fpsText.c_str()).x - 10.0f);
+        ImGui::Text(fpsText.c_str());
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::EndTooltip();
+        }
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
+        ImGui::EndMainMenuBar();
     }
 
-    // 3. Show another simple window.
-    //if (show_another_window)
-    //{
-    //    ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-    //    ImGui::Text("Hello from another window!");
-    //    if (ImGui::Button("Close Me"))
-    //        show_another_window = false;
-    //    ImGui::End();
-    //}
+    if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
+
+    /*if (show_collisions)
+        imgui_collisions(show_collisions);*/
+
+    imgui_scene();
+
+    imgui_hierarchy(&scene);
+	imgui_inspector(&scene);
+    //imgui_shaders();
+
+    if (ImGui::BeginViewportSideBar("Log sidebar", ImGui::GetMainViewport(), ImGuiDir_Down,
+        ImGui::GetFrameHeight(), ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar))
+    {
+        if (ImGui::BeginMenuBar())
+        {
+            ImGui::Text("Log?");
+            ImGui::EndMenuBar();
+        }
+    }
+    ImGui::End();
+
+    ImGui::Render();
 }
+
+void imgui_hierarchy(Scene* scene)
+{
+    constexpr float rightMargin = 40.0f;
+
+    ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("Hierarchy"))
+    {
+        if (ImGui::BeginChild("HierarchyScrollArea", ImVec2(0, 0),
+            ImGuiChildFlags_None,
+            ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoSavedSettings
+        ))
+        {
+			EntityID root = scene->getSceneRootEntity();
+
+            if (ImGui::BeginPopupContextWindow("Hierarchy Context Menu"))
+            {
+                bool disabled;
+                if (ImGui::MenuItem("Add Object"))
+                {
+					EntityID newObject = scene->createEntity(root);
+					scene->getComponent<ObjectInfoComponent>(newObject).name = "New Object";
+                }
+
+                ImGui::EndPopup();
+            }
+
+			imgui_hierarchy_node(scene, root);
+        }
+        ImGui::EndChild();
+    }
+    ImGui::End();
+}
+
+void imgui_hierarchy_node(Scene* scene, EntityID id)
+{
+    ImGui::PushID(id);
+
+	std::string objName = scene->getComponent<ObjectInfoComponent>(id).name;
+    std::string displayName = objName + "###objName";
+	Transform& transform = scene->getComponent<Transform>(id);
+
+
+    ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick
+        | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+
+    nodeFlags |= (transform.children.size() == 0) ? ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_DefaultOpen;
+    if (id == selectedObject)
+        nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+
+    // tree node start
+    bool opened = ImGui::TreeNodeEx(displayName.c_str(), nodeFlags);
+
+    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+    {
+        selectedObject = id;
+    }
+
+    // Context Menu
+    bool deleteObject = false;
+    if (ImGui::BeginPopupContextItem("Context Menu"))
+    {
+        bool disabled;
+
+        if (ImGui::MenuItem("Add Child"))
+        {
+			EntityID newObject = scene->createEntity(id);
+			scene->getComponent<ObjectInfoComponent>(newObject).name = "New Object";
+        }
+
+        if (disabled = id == scene->getSceneRootEntity()) ImGui::BeginDisabled();
+        if (ImGui::MenuItem("Delete"))
+        {
+            deleteObject = true;
+        }
+        if (disabled) ImGui::EndDisabled();
+
+        ImGui::EndPopup();
+    }
+
+
+    // Drag and Drop
+    if (ImGui::BeginDragDropSource())
+    {
+		ImGui::SetDragDropPayload(HIERARCHY_NODE, &id, sizeof(EntityID));
+        ImGui::Text(objName.c_str());
+        ImGui::EndDragDropSource();
+    }
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HIERARCHY_NODE))
+        {
+			EntityID draggedObj = *(EntityID*)payload->Data;
+			scene->getTransformSystem().addChildKeepTransform(id, draggedObj);
+        }
+        ImGui::EndDragDropTarget();
+    }
+
+    if (opened)
+    {
+        if (transform.children.size() > 0)
+        {
+            for (int i = 0; i < transform.children.size(); i++)
+            {
+				imgui_rearrange_target(scene, id, i);
+				imgui_hierarchy_node(scene, transform.children[i]);
+            }
+			imgui_rearrange_target(scene, id, transform.children.size());
+        }
+
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+
+    if (deleteObject)
+    {
+		scene->destroyEntity(id);
+    }
+}
+
+void imgui_rearrange_target(Scene* scene, EntityID id, int targetIndex)
+{
+    const ImGuiPayload* payload = ImGui::GetDragDropPayload();
+
+    if (payload && payload->IsDataType(HIERARCHY_NODE))
+    {
+        float separatorThickness = ImGui::GetStyle().ItemSpacing.y;
+        float cursorPosY = ImGui::GetCursorPosY();
+
+        ImGui::SetCursorPosY(cursorPosY - separatorThickness);
+        ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal, separatorThickness);
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(HIERARCHY_NODE))
+            {
+				EntityID draggedObj = *(EntityID*)payload->Data;
+				auto& ts = scene->getTransformSystem();
+				ts.addChildKeepTransform(id, draggedObj);
+				ts.setChildIndex(id, draggedObj, targetIndex);
+                
+            }
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::SetCursorPosY(cursorPosY);
+    }
+}
+
+void imgui_inspector(Scene* scene)
+{
+    ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("Inspector"))
+    {
+        if (selectedObject != (EntityID)-1)
+        {
+			assert(scene->hasComponent<ObjectInfoComponent>(selectedObject));
+			auto& objectInfo = scene->getComponent<ObjectInfoComponent>(selectedObject);
+			std::string objName = objectInfo.name;
+            std::string displayName = objName + "###objName";
+            const char* name = objName.c_str();
+
+            if (ImGui::InputText("Name", (char*)name, 64))
+            {
+				objectInfo.name = name;
+            }
+
+            imgui_transform(scene, selectedObject);
+            imgui_collider(scene, selectedObject);
+            imgui_model(scene, selectedObject);
+        }
+    }
+    ImGui::End();
+}
+
+
+void imgui_transform(Scene* scene, EntityID id)
+{
+	if (!scene->hasComponent<Transform>(id))
+		return;
+
+	auto& ts = scene->getTransformSystem();
+	auto& transform = scene->getComponent<Transform>(id);
+
+    ImGui::PushID(&transform);
+
+    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+		glm::vec3 translation = transform.translation;
+		glm::vec3 rotation = transform.eulerRotation;
+		glm::vec3 scale = transform.scale;
+
+        if (ImGui::DragFloat3("Position", &translation[0], 0.1f))
+        {
+			ts.translateEntity(id, translation);
+        }
+        if (ImGui::DragFloat3("Rotation", &rotation[0], 0.1f))
+        {
+			ts.rotateEntity(id, rotation);
+        }
+        if (ImGui::DragFloat3("Scale", &scale[0], 0.1f))
+        {
+			ts.scaleEntity(id, scale);
+        }
+    }
+
+    ImGui::PopID();
+}
+
+void imgui_collider(Scene* scene, EntityID id)
+{
+	if (!scene->hasComponent<ColliderComponent>(id))
+		return;
+	auto& collider = scene->getComponent<ColliderComponent>(id);
+
+    ImGui::PushID(&collider);
+
+    ColliderShape* shape = collider.GetColliderShape();
+    std::string tabName;
+
+    switch (shape->getType())
+    {
+    case ColliderType::BOX:
+        tabName = "Box Collider";
+        break;
+    case ColliderType::SPHERE:
+        tabName = "Sphere Collider";
+        break;
+    default:
+        tabName = "Unknown Collider";
+        break;
+    }
+
+    if (ImGui::CollapsingHeader(tabName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        glm::vec3 center = shape->center;
+        if (ImGui::DragFloat3("Center", &center[0], 0.1f))
+        {
+            shape->center = center;
+        }
+
+        switch (shape->getType())
+        {
+        case ColliderType::BOX:
+            ImGui::DragFloat3("Half Size", &((BoxCollider*)shape)->halfSize[0], 0.1f, 0.0f, 1000.0f);
+            break;
+        case ColliderType::SPHERE:
+            ImGui::DragFloat("Radius", &((SphereCollider*)shape)->radius, 0.1f, 0.0f, 1000.0f);
+            break;
+        default:
+            break;
+        }
+    }
+
+
+    ImGui::PopID();
+}
+
+void imgui_model(Scene* scene, EntityID id)
+{
+	if (!scene->hasComponent<ModelComponent>(id))
+		return;
+	auto& modelComponent = scene->getComponent<ModelComponent>(id);
+	ImGui::PushID(&modelComponent);
+
+    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+		Shader* modelShader = modelComponent.shader;
+        if (ImGui::BeginCombo("Shader##Combo", modelShader->getName().c_str()))
+        {
+            for (int i = 0; i < shaders.size(); i++)
+            {
+                if (ImGui::Selectable(shaders[i]->getName().c_str(), modelShader == shaders[i]))
+                {
+                    modelShader = shaders[i];
+					modelComponent.shader = modelShader;
+                }
+            }
+
+            ImGui::EndCombo();
+        }
+    }
+
+
+    ImGui::PopID();
+}
+
+void imgui_scene()
+{
+    static ImVec2 lastSize = ImVec2(0, 0);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
+    ImGui::Begin("Scene");
+
+    //ImVec2 mousePos = ImGui::GetMousePos();
+    //ImVec2 imguiCursorPos = ImGui::GetCursorScreenPos();
+    //ImVec2 relativeCursorPos = ImVec2(mousePos.x - imguiCursorPos.x, mousePos.y - imguiCursorPos.y);
+
+    if (!ImGui::IsAnyItemActive())
+    {
+        if (ImGui::IsWindowFocused())
+        {
+            game_input();
+        }
+        if (ImGui::IsWindowHovered())
+        {
+            input();
+        }
+    }
+
+    ImVec2 size = ImGui::GetContentRegionAvail();
+    if (size.x != lastSize.x || size.y != lastSize.y)
+    {
+        sceneFramebuffer->Resize(size.x, size.y);
+        lastSize = size;
+    }
+
+    GLuint texture = sceneFramebuffer->GetColorTexture();
+    ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+    ImGui::End();
+    ImGui::PopStyleVar();
+}
+
+
 
 void imgui_end()
 {
-    ImGui::Render();
     int display_w, display_h;
     glfwMakeContextCurrent(window);
     glfwGetFramebufferSize(window, &display_w, &display_h);
 
+	DefaultFramebuffer::GetInstance().Bind();
     glViewport(0, 0, display_w, display_h);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 
@@ -471,6 +969,7 @@ void imgui_end()
 
 void end_frame()
 {
+	scrollXOffset = scrollYOffset = 0.0f;
     glfwPollEvents();
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);

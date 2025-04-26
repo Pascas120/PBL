@@ -17,9 +17,14 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, const Camera& ca
     auto transforms = scene->getStorage<Transform>();
 
     auto [width, height] = framebuffer.GetSize();
+	if (width == 0 || height == 0) {
+		return;
+	}
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.getViewMatrix();
+
+	framebuffer.Bind();
 
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];

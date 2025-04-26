@@ -28,8 +28,10 @@ public:
     void scaleEntity(EntityID id, const glm::vec3& scale) const;
     void setGlobalMatrix(EntityID id, const glm::mat4& mat) const;
 
-    void addChild(EntityID parent, EntityID child) const;
+    bool addChild(EntityID parent, EntityID child) const;
+	void addChildKeepTransform(EntityID parent, EntityID child) const;
     void removeChild(EntityID parent, EntityID child) const;
+	void setChildIndex(EntityID parent, EntityID child, int index) const;
 };
 
 #endif //PBL_TRANSFORMSYSTEM_H

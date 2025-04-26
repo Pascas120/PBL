@@ -4,6 +4,44 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "Scene.h"
 
+static void continuousQuatToEuler(glm::vec3& eulerAngles, const glm::quat& quat)
+{
+	glm::vec3 newEuler = glm::degrees(glm::eulerAngles(quat));
+	glm::vec3 delta = newEuler - eulerAngles;
+	for (int i = 0; i < 3; ++i) {
+		//while (delta[i] > 180.0f) delta[i] -= 360.0f;
+		//while (delta[i] < -180.0f) delta[i] += 360.0f;
+		delta[i] = std::fmod(delta[i] + 180.0f, 360.0f) - 180.0f;
+	}
+
+	int flippedIndex1 = -1, flippedIndex2 = -1;
+	for (int i = 0; i < 3; ++i) {
+		if (std::abs(std::abs(delta[i]) - 180.0f) < 1e-6f) {
+			if (flippedIndex1 == -1) {
+				flippedIndex1 = i;
+			}
+			else if (flippedIndex2 == -1) {
+				flippedIndex2 = i;
+			}
+            else {
+                flippedIndex1 = -1;
+            }
+		}
+	}
+
+	if (flippedIndex1 != -1 && flippedIndex2 != -1) {
+		delta[flippedIndex1] = delta[flippedIndex2] = 0.0f;
+		int otherIndex = 3 - flippedIndex1 - flippedIndex2;
+
+		float unflipped = 180.0 - newEuler[otherIndex];
+		delta[otherIndex] = std::fmod(unflipped - eulerAngles[otherIndex] + 180.0f, 360.0f) - 180.0f;
+
+	}
+
+	eulerAngles += delta;
+
+}
+
 
 TransformSystem::TransformSystem(Scene* scene) : scene(scene) {}
 
@@ -43,7 +81,8 @@ void TransformSystem::translateEntity(EntityID id, const glm::vec3& translation)
 void TransformSystem::rotateEntity(EntityID id, const glm::quat& rotation) const {
     auto& transform = scene->getComponent<Transform>(id);
     transform.rotation = rotation;
-    transform.eulerRotation = glm::degrees(glm::eulerAngles(rotation));
+    //transform.eulerRotation = glm::degrees(glm::eulerAngles(rotation));
+	continuousQuatToEuler(transform.eulerRotation, rotation);
     markDirty(id);
 }
 
@@ -86,13 +125,14 @@ void TransformSystem::setGlobalMatrix(EntityID id, const glm::mat4& mat) const {
             localMatrix[i] /= scale[i];
         }
     }
-    glm::vec3 rotation;
-    glm::extractEulerAngleXYZ(localMatrix, rotation.x, rotation.y, rotation.z);
+	glm::quat rotation = glm::quat_cast(localMatrix);
+
 
 
     transform.translation = position;
-    transform.eulerRotation = glm::degrees(rotation);
-    transform.rotation = glm::quat(rotation);
+    //transform.eulerRotation = glm::degrees(glm::eulerAngles(rotation));
+	continuousQuatToEuler(transform.eulerRotation, rotation);
+    transform.rotation = rotation;
     transform.scale = scale;
 
     markDirty(id);
@@ -108,17 +148,17 @@ void TransformSystem::markDirty(EntityID id) const {
 }
 
 
-void TransformSystem::addChild(EntityID parent, EntityID child) const {
+bool TransformSystem::addChild(EntityID parent, EntityID child) const {
     auto& parentTransform = scene->getComponent<Transform>(parent);
     auto& childTransform = scene->getComponent<Transform>(child);
 
     if (childTransform.parent == parent)
-        return;
+        return false;
 
-    EntityID ancestor = childTransform.parent;
-    while (ancestor != -1) {
+    EntityID ancestor = parentTransform.id;
+	while (ancestor != scene->getSceneRootEntity()) {
         if (ancestor == child) {
-            return;
+            return false;
         }
 
         auto& ancestorTransform = scene->getComponent<Transform>(ancestor);
@@ -133,6 +173,14 @@ void TransformSystem::addChild(EntityID parent, EntityID child) const {
     childTransform.parent = parent;
 
     setGlobalMatrix(child, childTransform.globalMatrix);
+
+	return true;
+}
+
+void TransformSystem::addChildKeepTransform(EntityID parent, EntityID child) const {
+	glm::mat4 globalMatrix = scene->getComponent<Transform>(child).globalMatrix;
+	if (addChild(parent, child))
+	    setGlobalMatrix(child, globalMatrix);
 }
 
 void TransformSystem::removeChild(EntityID parent, EntityID child) const {
@@ -144,4 +192,23 @@ void TransformSystem::removeChild(EntityID parent, EntityID child) const {
 
     std::erase(parentTransform.children, child);
     childTransform.parent = (EntityID) -1;
+}
+
+void TransformSystem::setChildIndex(EntityID parent, EntityID child, int index) const {
+	auto& parentTransform = scene->getComponent<Transform>(parent);
+	auto& childTransform = scene->getComponent<Transform>(child);
+
+	if (childTransform.parent != parent)
+		return;
+
+	int currentIndex = std::find(parentTransform.children.begin(), parentTransform.children.end(), child) - parentTransform.children.begin();
+	if (currentIndex == index)
+		return;
+
+	if (currentIndex < index) {
+		index--;
+	}
+
+	std::erase(parentTransform.children, child);
+	parentTransform.children.insert(parentTransform.children.begin() + index, child);
 }

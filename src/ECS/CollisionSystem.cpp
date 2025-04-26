@@ -66,25 +66,6 @@ void CollisionSystem::CheckCollisions()
 			});
 	}
 
-	/*if (colliderStorage != nullptr)
-	{
-		for (int i = 0; i < MAX_OBJECTS; i++)
-		{
-			if (colliderStorage->has(i) && transformStorage->has(i))
-			{
-				ColliderComponent& collider = colliderStorage->get(i);
-				ColliderObjectInfo colliderObject
-				{
-					.id = (EntityID)i,
-					.transform = &transformStorage->get(i),
-					.collider = &collider,
-					.shape = collider.GetColliderShape()
-				};
-
-			}
-		}
-	}*/
-
 	for (size_t i = 0; i < colliderObjects.size(); ++i)
 	{
 		for (size_t j = i + 1; j < colliderObjects.size(); ++j)
