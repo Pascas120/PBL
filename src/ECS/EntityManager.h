@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cstdint>
 
-constexpr size_t MAX_ENTITIES = 5000;
+constexpr size_t MAX_ENTITIES = 15000;
 using EntityID = std::uint16_t;
 class EntityManager {
 public:

@@ -7,7 +7,7 @@
 #include <assert.h>
 
 #include "EntityManager.h"
-#define MAX_OBJECTS 5000
+#define MAX_OBJECTS 15000
 
 struct IComponentStorage {
     virtual ~IComponentStorage() = default;

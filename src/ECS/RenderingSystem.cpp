@@ -19,7 +19,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
     uint16_t renderingQueueSize = 0;
     //TODO chyba lepiej przechowywać komponenty zamiast ID
-    EntityID renderingQueue[MAX_ENTITIES];
+    ModelComponent renderingQueue[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSize();
 	if (width == 0 || height == 0) {
@@ -33,7 +33,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         }
         auto& bvComponent = boundingVolumes->get(modelComponent.id);
         if (bvComponent.GetBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
-            renderingQueue[renderingQueueSize++] = modelComponent.id;
+            renderingQueue[renderingQueueSize++] = modelComponent;
             boundingVolumes->get(modelComponent.id).onFrustum;
         }
     }
@@ -45,7 +45,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     printf("All models: %d\n", models->getQuantity());
     printf("Rendering %d objects\n", renderingQueueSize);
     for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = models->get(renderingQueue[i]);
+        auto& modelComponent = renderingQueue[i];
 
         EntityID entityID = modelComponent.id;
 

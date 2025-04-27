@@ -174,6 +174,7 @@ bool init()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     shaders.emplace_back(
@@ -251,6 +252,22 @@ bool init()
     boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
     scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, boxCollider->halfSize.x, boxCollider->halfSize.y, boxCollider->halfSize.z)));
+
+
+    for (int x = 0; x < 100; ++x) {
+        for (int z = 0; z < 10; ++z) {
+            EntityID ent = scene.createEntity();
+            scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
+
+            ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
+            ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
+
+            scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+
+
+            scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, 4.0f, 7.7f, 1.778f)));
+        }
+    }
 
 	ent = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
