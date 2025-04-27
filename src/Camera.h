@@ -26,6 +26,36 @@ const float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
 
+struct Plane
+{
+    glm::vec3 normal = { 0.0f, 1.0f, 0.0f };
+    float     distance = 0.0f;
+
+    Plane() = default;
+
+    Plane(const glm::vec3& p1, const glm::vec3& norm)
+        : normal(glm::normalize(norm)),
+        distance(glm::dot(normal, p1))
+    {}
+
+    float getSignedDistanceToPlane(const glm::vec3& point) const
+    {
+        return glm::dot(normal, point) - distance;
+    }
+};
+
+struct Frustum
+{
+    Plane topFace;
+    Plane bottomFace;
+
+    Plane rightFace;
+    Plane leftFace;
+
+    Plane farFace;
+    Plane nearFace;
+};
+
 class Camera
 {
 public:
@@ -42,6 +72,11 @@ public:
     float MouseSensitivity;
     float Zoom;
 
+    float zNear = 0.1f;
+    float zFar = 100.0f;
+
+    Frustum frustum;
+
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
     Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
@@ -50,6 +85,24 @@ public:
     void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
     void processMouseScroll(float yoffset);
 
+    void createFrustum(float aspect)
+    {
+        const float halfVSide = zFar * tanf(Zoom * .5f);
+        const float halfHSide = halfVSide * aspect;
+        const glm::vec3 frontMultFar = zFar * Front;
+
+        frustum.nearFace = { Position + zNear * Front, Front };
+        frustum.farFace = { Position + frontMultFar, -Front };
+        frustum.rightFace = { Position,
+                                glm::cross(frontMultFar - Right * halfHSide, Up) };
+        frustum.leftFace = { Position,
+                                glm::cross(Up,frontMultFar + Right * halfHSide) };
+        frustum.topFace = { Position,
+                                glm::cross(Right, frontMultFar - Up * halfVSide) };
+        frustum.bottomFace = { Position,
+                                glm::cross(frontMultFar + Up * halfVSide, Right) };
+
+    }
 private:
     void updateCameraVectors();
 };

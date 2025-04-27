@@ -4,6 +4,8 @@
 
 #ifndef PBL_COMPONENTS_H
 #define PBL_COMPONENTS_H
+#include <array>
+
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 #include <string>
@@ -11,6 +13,9 @@
 #include "EntityManager.h"
 #include "ColliderShape.h"
 #include <memory>
+
+#include "ECS/BoundingVolumes.h"
+
 
 struct ObjectInfoComponent {
     std::string name;
@@ -91,4 +96,24 @@ private:
     std::shared_ptr<ColliderShape> colliderShape = nullptr;
 };
 
+class BoundingVolume;
+
+struct BoundingVolumeComponent {
+    BoundingVolumeComponent(std::unique_ptr<BoundingVolume> volume)
+        : boundingVolume(std::move(volume)) {}
+
+    BoundingVolumeComponent() = default;
+
+
+    std::shared_ptr<BoundingVolume> GetBoundingVolume() const {
+        return boundingVolume;
+    }
+
+    bool onFrustum = false;
+
+    EntityID id = (EntityID)-1;
+
+private:
+    std::shared_ptr<BoundingVolume> boundingVolume = nullptr;
+};
 #endif //PBL_COMPONENTS_H

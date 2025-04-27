@@ -12,22 +12,40 @@
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
-void RenderingSystem::drawScene(const Framebuffer& framebuffer, const Camera& camera) {
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) {
     auto models = scene->getStorage<ModelComponent>();
+    auto boundingVolumes = scene->getStorage<BoundingVolumeComponent>();
     auto transforms = scene->getStorage<Transform>();
+
+    uint16_t renderingQueueSize = 0;
+    //TODO chyba lepiej przechowywać komponenty zamiast ID
+    EntityID renderingQueue[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSize();
 	if (width == 0 || height == 0) {
 		return;
 	}
+    camera.createFrustum(width/height);
+    for (int i = 0; i < models->getQuantity(); i++) {
+        auto& modelComponent = models->components[i];
+        if(!boundingVolumes->has(modelComponent.id)) {
+            continue;
+        }
+        auto& bvComponent = boundingVolumes->get(modelComponent.id);
+        if (bvComponent.GetBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
+            renderingQueue[renderingQueueSize++] = modelComponent.id;
+            boundingVolumes->get(modelComponent.id).onFrustum;
+        }
+    }
 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.getViewMatrix();
 
 	framebuffer.Bind();
-
-    for (int i = 0; i < models->getQuantity(); i++) {
-        auto& modelComponent = models->components[i];
+    printf("All models: %d\n", models->getQuantity());
+    printf("Rendering %d objects\n", renderingQueueSize);
+    for (int i = 0; i < renderingQueueSize; i++) {
+        auto& modelComponent = models->get(renderingQueue[i]);
 
         EntityID entityID = modelComponent.id;
 

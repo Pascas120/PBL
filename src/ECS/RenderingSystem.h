@@ -8,6 +8,9 @@
 
 #include <map>
 
+#include "ComponentStorage.h"
+#include "Components.h"
+
 class Scene;
 #include "Camera.h"
 #include "Shader.h"
@@ -21,6 +24,7 @@ private:
     //Shader hudShader;
     //Shader textShader;
 
+
     std::map<std::string, GLuint> textures;
     GLuint getTexture(std::string path);
     GLuint hudVAO, hudVBO, hudEBO;
@@ -31,7 +35,7 @@ private:
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
-    void drawScene(const Framebuffer& framebuffer, const Camera& camera);
+    void drawScene(const Framebuffer& framebuffer, Camera& camera);
     void drawHud(const Framebuffer& framebuffer);
 };
 

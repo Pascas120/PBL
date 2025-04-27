@@ -21,7 +21,7 @@ private:
 public:
     using EntityID = std::uint16_t;
     T components[MAX_OBJECTS] = {};
-    std::bitset<MAX_OBJECTS> exists;
+    std::bitset<MAX_OBJECTS> exists = {0};
 
     bool has(EntityID id) const { return exists.test(id); }
 

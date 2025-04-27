@@ -234,6 +234,8 @@ bool init()
     sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
     sphereCollider->radius = 0.1f;
 
+    scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<SphereBV>(sphereCollider->center, sphereCollider->radius)));
+
 
 	ent = scene.createEntity();
 	scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
@@ -248,6 +250,7 @@ bool init()
     boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
     boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, boxCollider->halfSize.x, boxCollider->halfSize.y, boxCollider->halfSize.z)));
 
 	ent = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
