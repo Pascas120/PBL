@@ -20,41 +20,58 @@ private:
 
 public:
     using EntityID = std::uint16_t;
-    T components[MAX_OBJECTS] = {};
-    std::bitset<MAX_OBJECTS> exists = {0};
 
-    bool has(EntityID id) const { return exists.test(id); }
+    T components[MAX_OBJECTS];
+    int entityToIndex[MAX_OBJECTS];
 
-    T &get(EntityID id) {
-        for(int i = 0; i < quantity; i++) {
-            if (components[i].id == id) {
-                return components[i];
-            }
+    ComponentStorage() {
+        for (int i = 0; i < MAX_OBJECTS; i++) {
+            entityToIndex[i] = -1;
         }
     }
 
-    void add(EntityID id, const T &value) {
-        components[quantity] = value;
-		components[quantity].id = id;
+    bool has(EntityID id) const {
+        return entityToIndex[id] != -1;
+    }
+
+    T& get(EntityID id) {
+        assert(has(id) && "ComponentStorage: trying to get a non-existing component");
+        return components[entityToIndex[id]];
+    }
+
+    void add(EntityID id, const T& component) {
+        assert(!has(id) && "ComponentStorage: trying to add an already existing component");
+
+        components[quantity] = component;
+        components[quantity].id = id;  // upewniamy się, że id jest ustawione poprawnie
+        entityToIndex[id] = quantity;
         quantity++;
-        exists.set(id);
     }
 
     void remove(EntityID id) {
-        for(int i = 0; i < quantity; i++) {
-            if (components[i].id == id) {
-                components[i] = components[quantity - 1];
-                exists.reset(id);
-                quantity--;
-                return;
-            }
-        }
+        assert(has(id) && "ComponentStorage: trying to remove a non-existing component");
+
+        int idx = entityToIndex[id];
+        int lastIdx = quantity - 1;
+
+        components[idx] = components[lastIdx];  // przepisujemy ostatni komponent na miejsce usuwanego
+        entityToIndex[components[idx].id] = idx; // aktualizujemy indeks nowego komponentu na tym miejscu
+
+        entityToIndex[id] = -1;
+        quantity--;
     }
 
     uint16_t getQuantity() const {
         return quantity;
     }
+
+    T* begin() { return components; }
+    T* end() { return components + quantity; }
+
+    const T* begin() const { return components; }
+    const T* end() const { return components + quantity; }
 };
+
 
 
 #endif //PBL_COMPONENTSTORAGE_H
