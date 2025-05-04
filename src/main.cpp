@@ -262,7 +262,7 @@ bool init()
             ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
             ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
 
-            scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+            scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 
 
             scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, 4.0f, 7.7f, 1.778f)));
@@ -591,6 +591,12 @@ void imgui_render()
                 {
                     spdlog::set_level(spdlog::level::off);
                 }
+            }
+
+            static bool vsync = true;
+            if (ImGui::MenuItem("VSync", NULL, &vsync))
+            {
+                glfwSwapInterval(vsync ? 1 : 0);
             }
 
 
