@@ -168,7 +168,7 @@ bool init()
         return false;
     }
 //==============================================================================================
-
+    spdlog::info("editor glGenFramebuffers: {}", (void*)glGenFramebuffers);
     sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
 
 

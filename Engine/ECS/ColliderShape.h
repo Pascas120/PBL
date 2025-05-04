@@ -1,14 +1,16 @@
 #pragma once
 
+#include "Export.h"
+
 #include "glm/vec3.hpp"
 
-enum class ColliderType
+enum class ENGINE_API ColliderType
 {
 	BOX = 0,
 	SPHERE,
 };
 
-struct ColliderShape
+struct ENGINE_API ColliderShape
 {
 	glm::vec3 center;
 
@@ -16,7 +18,7 @@ struct ColliderShape
 	virtual ~ColliderShape() = default;
 };
 
-struct BoxCollider : public ColliderShape
+struct ENGINE_API BoxCollider : public ColliderShape
 {
 	glm::vec3 halfSize = glm::vec3(1.0f, 1.0f, 1.0f);
 
@@ -26,7 +28,7 @@ struct BoxCollider : public ColliderShape
 	}
 };
 
-struct SphereCollider : public ColliderShape
+struct ENGINE_API SphereCollider : public ColliderShape
 {
 	float radius = 0.5f;
 

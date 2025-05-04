@@ -17,6 +17,7 @@ void DefaultFramebuffer::GetSize(uint32_t& width, uint32_t& height) const
 
 CustomFramebuffer::CustomFramebuffer(const FramebufferConfig& config) : config(config)
 {
+	spdlog::info("engine glGenFramebuffers: {}", (void*)glGenFramebuffers);
 	Setup();
 }
 
@@ -41,7 +42,6 @@ void CustomFramebuffer::Setup()
 
 	GLint currentFramebuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
-
 
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);

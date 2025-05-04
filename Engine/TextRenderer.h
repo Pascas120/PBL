@@ -4,20 +4,22 @@
 
 #ifndef PBL_TEXTRENDERER_H
 #define PBL_TEXTRENDERER_H
+#include "Export.h"
+
 #include <map>
 #include <iostream>
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include "Shader.h"
 
-struct Character {
+struct ENGINE_API Character {
     unsigned int TextureID; // ID handle of the glyph texture
     glm::ivec2   Size;      // Size of glyph
     glm::ivec2   Bearing;   // Offset from baseline to left/top of glyph
     unsigned int Advance;   // Horizontal offset to advance to next glyph
 };
 
-class TextRenderer{
+class ENGINE_API TextRenderer {
 private:
     unsigned int VAO, VBO;
     std::map<GLchar, Character> Characters;

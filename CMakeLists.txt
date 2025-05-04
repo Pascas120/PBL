@@ -18,4 +18,5 @@ include(global_settings)
 add_subdirectory(thirdparty)
 
 # ---- Main project's files ----
-add_subdirectory(src)
+add_subdirectory(Engine)
+add_subdirectory(Editor)

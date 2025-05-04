@@ -4,6 +4,9 @@
 
 #ifndef SCENE_H
 #define SCENE_H
+
+#include "Export.h"
+
 #include "ECS/Components.h"
 #include "ECS/ComponentStorage.h"
 #include "ECS/EntityManager.h"

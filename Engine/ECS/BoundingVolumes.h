@@ -5,13 +5,15 @@
 #ifndef BOUNDINGVOLUMES_H
 #define BOUNDINGVOLUMES_H
 
+#include "Export.h"
+
 #include "glm/glm.hpp"
 #include "Camera.h"
 #include "Components.h"
 
 struct Transform;
 
-class BoundingVolume
+class ENGINE_API BoundingVolume
 {
 public:
     virtual ~BoundingVolume() = default;
@@ -22,7 +24,7 @@ public:
     bool isOnFrustum(const Frustum& camFrustum) const;
 };
 
-class SphereBV : public BoundingVolume
+class ENGINE_API SphereBV : public BoundingVolume
 {
 public:
     SphereBV(const glm::vec3& inCenter, float inRadius);
@@ -35,7 +37,7 @@ private:
     float radius;
 };
 
-class AABBBV : public BoundingVolume
+class ENGINE_API AABBBV : public BoundingVolume
 {
 public:
     AABBBV(const glm::vec3& min, const glm::vec3& max);

@@ -5,6 +5,7 @@
 #ifndef PBL_RENDERINGSYSTEM_H
 #define PBL_RENDERINGSYSTEM_H
 
+#include "Export.h"
 
 #include <map>
 
@@ -17,7 +18,7 @@ class Scene;
 #include "TextRenderer.h"
 #include "Framebuffer.h"
 
-class RenderingSystem {
+class ENGINE_API RenderingSystem {
 private:
     Scene* scene;
     //Shader sceneShader;

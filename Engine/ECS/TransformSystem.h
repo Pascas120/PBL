@@ -3,6 +3,8 @@
 #ifndef PBL_TRANSFORMSYSTEM_H
 #define PBL_TRANSFORMSYSTEM_H
 
+#include "Export.h"
+
 #include "Components.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -10,7 +12,7 @@
 
 class Scene;
 
-class TransformSystem {
+class ENGINE_API TransformSystem {
 private:
     Scene* scene;
 

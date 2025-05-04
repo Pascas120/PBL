@@ -1,6 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
+#include "Export.h"
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
@@ -8,7 +10,7 @@
 #include <vector>
 #include <unordered_map>
 
-struct UniformInfo
+struct ENGINE_API UniformInfo
 {
     std::string name;
     GLenum type = 0;
@@ -16,7 +18,7 @@ struct UniformInfo
     std::vector<UniformInfo> members;
 };
 
-class Shader
+class ENGINE_API Shader
 {
 public:
     unsigned int ID;

@@ -5,12 +5,13 @@
 #ifndef PBL_CAMERA_H
 #define PBL_CAMERA_H
 
+#include "Export.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-enum Camera_Movement {
+enum ENGINE_API Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
@@ -26,7 +27,7 @@ const float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
 
-struct Plane
+struct ENGINE_API Plane
 {
     glm::vec3 normal = { 0.0f, 1.0f, 0.0f };
     float     distance = 0.0f;
@@ -44,7 +45,7 @@ struct Plane
     }
 };
 
-struct Frustum
+struct ENGINE_API Frustum
 {
     Plane topFace;
     Plane bottomFace;
@@ -56,7 +57,7 @@ struct Frustum
     Plane nearFace;
 };
 
-class Camera
+class ENGINE_API Camera
 {
 public:
     glm::vec3 Position;

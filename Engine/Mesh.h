@@ -5,6 +5,8 @@
 #ifndef PBL_MESH_H
 #define PBL_MESH_H
 
+#include "Export.h"
+
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +18,7 @@
 #define MAX_BONE_INFLUENCE 4
 
 
-struct Vertex {
+struct ENGINE_API Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
@@ -26,13 +28,13 @@ struct Vertex {
     float m_Weights[MAX_BONE_INFLUENCE];
 };
 
-struct Texture {
+struct ENGINE_API Texture {
     unsigned int id;
     std::string type;
     std::string path;
 };
 
-class Mesh {
+class ENGINE_API Mesh {
 public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;

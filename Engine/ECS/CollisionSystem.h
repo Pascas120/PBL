@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Export.h"
+
 #include <glm/vec3.hpp>
 #include <vector>
 #include "EntityManager.h"
@@ -7,7 +9,7 @@
 class Scene;
 
 
-struct CollisionInfo
+struct ENGINE_API CollisionInfo
 {
 	bool isColliding = false;
 	EntityID objectA = -1;
@@ -15,7 +17,7 @@ struct CollisionInfo
 	glm::vec3 separationVector;
 };
 
-class CollisionSystem
+class ENGINE_API CollisionSystem
 {
 private:
 	Scene* scene;

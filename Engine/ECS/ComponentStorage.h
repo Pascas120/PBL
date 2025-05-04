@@ -4,6 +4,9 @@
 
 #ifndef PBL_COMPONENTSTORAGE_H
 #define PBL_COMPONENTSTORAGE_H
+
+#include "Export.h"
+
 #include <assert.h>
 
 #include "EntityManager.h"

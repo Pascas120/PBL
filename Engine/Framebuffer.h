@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Export.h"
+
 #include <glad/glad.h>
 #include <stdint.h>
 #include <utility>
 
-class Framebuffer
+class ENGINE_API Framebuffer
 {
 public:
 	virtual ~Framebuffer() = 0;
@@ -19,7 +21,7 @@ public:
 	}
 };
 
-class DefaultFramebuffer : public Framebuffer
+class ENGINE_API DefaultFramebuffer : public Framebuffer
 {
 private:
 	DefaultFramebuffer() = default;
@@ -42,13 +44,13 @@ public:
 
 
 
-struct FramebufferConfig
+struct ENGINE_API FramebufferConfig
 {
 	uint32_t width;
 	uint32_t height;
 };
 
-class CustomFramebuffer : public Framebuffer
+class ENGINE_API CustomFramebuffer : public Framebuffer
 {
 private:
 	GLuint fbo = 0;

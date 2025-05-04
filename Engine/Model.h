@@ -5,6 +5,8 @@
 #ifndef PBL_MODEL_H
 #define PBL_MODEL_H
 
+#include "Export.h"
+
 #include <vector>
 #include <string>
 #include <iostream>
@@ -15,7 +17,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-class Model
+class ENGINE_API Model
 {
 public:
     std::vector<Mesh> meshes;

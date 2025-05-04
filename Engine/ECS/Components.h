@@ -4,6 +4,9 @@
 
 #ifndef PBL_COMPONENTS_H
 #define PBL_COMPONENTS_H
+
+#include "Export.h"
+
 #include <array>
 
 #include "glm/glm.hpp"
@@ -17,13 +20,13 @@
 #include "ECS/BoundingVolumes.h"
 
 
-struct ObjectInfoComponent {
+struct ENGINE_API ObjectInfoComponent {
     std::string name;
 
 	EntityID id;
 };
 
-struct Transform {
+struct ENGINE_API Transform {
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 eulerRotation = glm::vec3(0.0f);
@@ -37,14 +40,14 @@ struct Transform {
 	EntityID id = (EntityID)-1;
 };
 
-struct ModelComponent {
+struct ENGINE_API ModelComponent {
     Shader* shader;
     Model* model;
 
     EntityID id = (EntityID)-1;
 };
 
-struct ImageComponent {
+struct ENGINE_API ImageComponent {
     Shader* shader;
     std::string texturePath;
     float width;
@@ -54,7 +57,7 @@ struct ImageComponent {
     EntityID id = (EntityID)-1;
 };
 
-struct TextComponent {
+struct ENGINE_API TextComponent {
     Shader* shader;
     std::string font;
     glm::vec4 color;
@@ -63,7 +66,7 @@ struct TextComponent {
     EntityID id = (EntityID)-1;
 };
 
-struct ColliderComponent {
+struct ENGINE_API ColliderComponent {
     ColliderComponent(ColliderType colliderType, bool isStatic = false) : isStatic{ isStatic }
     {
         switch (colliderType)
@@ -98,7 +101,7 @@ private:
 
 class BoundingVolume;
 
-struct BoundingVolumeComponent {
+struct ENGINE_API BoundingVolumeComponent {
     BoundingVolumeComponent(std::unique_ptr<BoundingVolume> volume)
         : boundingVolume(std::move(volume)) {}
 
