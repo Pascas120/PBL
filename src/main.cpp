@@ -20,6 +20,10 @@
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 #include <spdlog/spdlog.h>
 
+
+#include "Application.h"
+#include "Editor/EditorApp.h"
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
@@ -71,9 +75,23 @@ EntityID selectedObject = (EntityID)-1;
 
 std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 
+#define EDITOR_APP
+
+void newMain() {
+#ifdef EDITOR_APP
+	Application* app = new EditorApp();
+#else
+	Application* app = new Application();
+#endif
+	app->run();
+	delete app;
+}
 
 int main(int, char**)
 {
+	newMain();
+	return 0;
+
     if (!init())
     {
         spdlog::error("Failed to initialize project!");
@@ -254,7 +272,7 @@ bool init()
     scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, boxCollider->halfSize.x, boxCollider->halfSize.y, boxCollider->halfSize.z)));
 
 
-    for (int x = 0; x < 100; ++x) {
+    /*for (int x = 0; x < 100; ++x) {
         for (int z = 0; z < 10; ++z) {
             EntityID ent = scene.createEntity();
             scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
@@ -267,7 +285,7 @@ bool init()
 
             scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, 4.0f, 7.7f, 1.778f)));
         }
-    }
+    }*/
 
 	ent = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -277,6 +295,8 @@ bool init()
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+	scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
+		std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 
 
     std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
@@ -295,6 +315,9 @@ bool init()
 
 		scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 		colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+        scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
+            std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 	}
 
 
@@ -307,6 +330,9 @@ bool init()
 
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
+        std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 
 
     ent = scene.createEntity();
@@ -476,7 +502,6 @@ void update()
 	cs.CheckCollisions();
 
     auto& collisions = cs.GetCollisions();
-	spdlog::info("Collisions: {}", collisions.size());
 
 	bool updateScene = false;
 
@@ -530,6 +555,8 @@ void render(const Framebuffer& framebuffer)
     else {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+    auto& ts = scene.getTransformSystem();
+    ts.update();
 
 	scene.getRenderingSystem().drawScene(framebuffer, camera);
 	scene.getRenderingSystem().drawHud(framebuffer);

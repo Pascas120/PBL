@@ -25,7 +25,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 	if (width == 0 || height == 0) {
 		return;
 	}
-    camera.createFrustum(width/height);
+    camera.createFrustum((float)width / (float)height);
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
         if(!boundingVolumes->has(modelComponent.id)) {
