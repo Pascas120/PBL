@@ -1,6 +1,9 @@
+#ifdef OLD_MAIN_CPP
+
 // dear imgui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
 // If you are new to dear imgui, see examples/README.txt and documentation at the top of imgui.cpp.
 // (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan graphics context creation, etc.)
+
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl/imgui_impl_glfw.h"
@@ -21,8 +24,7 @@
 #include <spdlog/spdlog.h>
 
 
-#include "Application.h"
-#include "Editor/EditorApp.h"
+
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -74,12 +76,19 @@ EntityID player = (EntityID)-1;
 EntityID selectedObject = (EntityID)-1;
 
 std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
+#endif // OLD_MAIN_CPP
+
+
+
+#include "Application.h"
+#include "Editor/EditorApp.h"
 
 #define EDITOR_APP
 
-void newMain() {
+int main(int, char**)
+{
 #ifdef EDITOR_APP
-	Application* app = new EditorApp();
+	Application* app = new Editor::EditorApp();
 #else
 	Application* app = new Application();
 #endif
@@ -87,11 +96,11 @@ void newMain() {
 	delete app;
 }
 
+// jeszcze zostawiam star¹ treœæ maina, u¿ywam ifdef bo on nie zmienia kolorów kodu
+#ifdef OLD_MAIN_CPP
+
 int main(int, char**)
 {
-	newMain();
-	return 0;
-
     if (!init())
     {
         spdlog::error("Failed to initialize project!");
@@ -1225,4 +1234,5 @@ void end_frame()
     glfwMakeContextCurrent(window);
     glfwSwapBuffers(window);
 }
+#endif // OLD_MAIN_CPP
 

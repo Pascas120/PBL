@@ -288,7 +288,7 @@ void Application::setupScene()
 	Model& model2 = *models[1];
 	Model& model3 = *models[2];
 
-	scene = std::make_unique<Scene>();
+	scene = std::make_shared<Scene>();
 
 	EntityID ent;
 	ImageComponent* imageComponent;

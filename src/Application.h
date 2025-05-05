@@ -50,7 +50,7 @@ protected:
 	std::vector<Shader*> shaders;
 	std::vector<Model*> models;
 
-	std::unique_ptr<Scene> scene;
+	std::shared_ptr<Scene> scene;
 
 	// TODO: player component
 	EntityID player = (EntityID)-1;
