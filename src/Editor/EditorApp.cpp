@@ -8,6 +8,12 @@
 #include "imgui_impl/imgui_impl_glfw.h"
 #include "imgui_impl/imgui_impl_opengl3.h"
 
+#include "ImGuizmo.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
 #include "HierarchyWindow.h"
 #include "InspectorWindow.h"
 #include "ShaderWindow.h"
@@ -54,6 +60,8 @@ namespace Editor
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigWindowsMoveFromTitleBarOnly = true;
+
 
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(glsl_version);
@@ -69,6 +77,7 @@ namespace Editor
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
 
 
         static bool show_demo_window = false;
@@ -151,8 +160,12 @@ namespace Editor
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
+
         if (ImGui::Begin("Scene"))
         {
+            ImVec2 pos = ImGui::GetCursorScreenPos();
+            ImVec2 size = ImGui::GetContentRegionAvail();
+
             //ImVec2 mousePos = ImGui::GetMousePos();
             //ImVec2 imguiCursorPos = ImGui::GetCursorScreenPos();
             //ImVec2 relativeCursorPos = ImVec2(mousePos.x - imguiCursorPos.x, mousePos.y - imguiCursorPos.y);
@@ -169,7 +182,6 @@ namespace Editor
                 }*/
             }
 
-            ImVec2 size = ImGui::GetContentRegionAvail();
             if (size.x != lastSize.x || size.y != lastSize.y)
             {
                 sceneFramebuffer->Resize(size.x, size.y);
@@ -180,6 +192,28 @@ namespace Editor
 
             GLuint texture = sceneFramebuffer->GetColorTexture();
             ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+			if (selectedObject != (EntityID)-1)
+			{
+                auto [width, height] = sceneFramebuffer->GetSizePair();
+                glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
+				glm::mat4 cameraView = camera.getViewMatrix();
+
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+				//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, size.x, size.y);
+				ImGuizmo::SetRect(pos.x, pos.y, size.x, size.y);
+
+                auto entityMatrix = scene->getComponent<Transform>(selectedObject).globalMatrix;
+				auto& ts = scene->getTransformSystem();
+
+                if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection),
+                    ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
+                {
+					ts.setGlobalMatrix(selectedObject, entityMatrix);
+                }
+
+			}
         }
 
         ImGui::End();

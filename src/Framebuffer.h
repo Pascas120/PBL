@@ -11,7 +11,7 @@ public:
 
 	virtual void Bind() const = 0;
 	virtual void GetSize(uint32_t& width, uint32_t& height) const = 0;
-	std::pair<uint32_t, uint32_t> GetSize() const
+	std::pair<uint32_t, uint32_t> GetSizePair() const
 	{
 		uint32_t width, height;
 		GetSize(width, height);

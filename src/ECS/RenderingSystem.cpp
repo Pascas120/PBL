@@ -21,7 +21,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     //TODO chyba lepiej przechowywać komponenty zamiast ID
     ModelComponent renderingQueue[MAX_ENTITIES];
 
-    auto [width, height] = framebuffer.GetSize();
+    auto [width, height] = framebuffer.GetSizePair();
 	if (width == 0 || height == 0) {
 		return;
 	}
@@ -42,8 +42,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     glm::mat4 view = camera.getViewMatrix();
 
 	framebuffer.Bind();
-    printf("All models: %d\n", models->getQuantity());
-    printf("Rendering %d objects\n", renderingQueueSize);
+
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = renderingQueue[i];
 
@@ -65,7 +64,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
     if (!initializedHud) initHud(); // Inicjalizacja, jeśli nie została wykonana
 
-    auto [width, height] = framebuffer.GetSize();
+    auto [width, height] = framebuffer.GetSizePair();
     glm::mat4 ortho = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
 
 
