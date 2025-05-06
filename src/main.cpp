@@ -322,7 +322,14 @@ bool init()
 	scene.addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
     ts.translateEntity(ent, glm::vec3(1*WINDOW_WIDTH/10, WINDOW_HEIGHT/10, 0.0f));
 
-
+    EventSystem& eventSystem = scene.getEventSystem();
+    eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+        const auto& event = static_cast<const CollisionEvent&>(e);
+        if (event.isColliding)
+        {
+            spdlog::info("Collision detected between {} and {}", event.objectA, event.objectB);
+        }
+    });
 //    scene.addChild(obj1);
 //    obj1->addChild(obj2);
 //    obj1->components.AddComponent<Transform>();
@@ -480,7 +487,7 @@ void update()
 
 	bool updateScene = false;
 
-    for (const CollisionInfo& collision : collisions)
+    for (const CollisionEvent& collision : collisions)
     {
 		auto& transformA = scene.getComponent<Transform>(collision.objectA);
 		auto& transformB = scene.getComponent<Transform>(collision.objectB);
@@ -514,9 +521,11 @@ void update()
 			ts.setGlobalMatrix(collision.objectB, newMatrix);
         }
     }
-
     if (updateScene)
 		ts.update();
+
+    EventSystem& eventSystem = scene.getEventSystem();
+    eventSystem.processEvents();
 }
 
 void render(const Framebuffer& framebuffer)

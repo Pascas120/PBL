@@ -21,11 +21,11 @@ struct ColliderTypePairHash
 	}
 };
 
-using CollisionFunction = std::function<CollisionInfo(const ColliderObjectInfo&, const ColliderObjectInfo&)>;
+using CollisionFunction = std::function<CollisionEvent(const ColliderObjectInfo&, const ColliderObjectInfo&)>;
 
-static CollisionInfo BoxBoxCollision(const ColliderObjectInfo& boxA, const ColliderObjectInfo& boxB);
-static CollisionInfo BoxSphereCollision(const ColliderObjectInfo& box, const ColliderObjectInfo& sphere);
-static CollisionInfo SphereSphereCollision(const ColliderObjectInfo& sphereA, const ColliderObjectInfo& sphereB);
+static CollisionEvent BoxBoxCollision(const ColliderObjectInfo& boxA, const ColliderObjectInfo& boxB);
+static CollisionEvent BoxSphereCollision(const ColliderObjectInfo& box, const ColliderObjectInfo& sphere);
+static CollisionEvent SphereSphereCollision(const ColliderObjectInfo& sphereA, const ColliderObjectInfo& sphereB);
 
 static std::unordered_map<
 	std::pair<ColliderType, ColliderType>,
@@ -76,7 +76,7 @@ void CollisionSystem::CheckCollisions()
 			if (objectFirst.collider->isStatic && objectSecond.collider->isStatic)
 				continue;
 
-			CollisionInfo collisionInfo{};
+			CollisionEvent collisionInfo{};
 
 			if (objectFirst.shape->getType() > objectSecond.shape->getType())
 				std::swap(objectFirst, objectSecond);
@@ -99,6 +99,7 @@ void CollisionSystem::CheckCollisions()
 				collisionInfo.objectB = objectSecond.collider->id;
 
 				collisions.push_back(collisionInfo);
+				scene->getEventSystem().queueEvent(collisionInfo);
 			}
 
 		}
@@ -190,9 +191,9 @@ static glm::vec3 closestPointOnOBB(const OBB& obb, const glm::vec3& point)
 // collision functions
 
 
-static CollisionInfo BoxBoxCollision(const ColliderObjectInfo& boxA, const ColliderObjectInfo& boxB)
+static CollisionEvent BoxBoxCollision(const ColliderObjectInfo& boxA, const ColliderObjectInfo& boxB)
 {
-	CollisionInfo collisionInfo = {};
+	CollisionEvent collisionInfo = {};
 
 	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(boxA.shape), boxA.transform);
 	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(boxB.shape), boxB.transform);
@@ -239,9 +240,9 @@ static CollisionInfo BoxBoxCollision(const ColliderObjectInfo& boxA, const Colli
 }
 
 
-static CollisionInfo BoxSphereCollision(const ColliderObjectInfo& box, const ColliderObjectInfo& sphere)
+static CollisionEvent BoxSphereCollision(const ColliderObjectInfo& box, const ColliderObjectInfo& sphere)
 {
-	CollisionInfo collisionInfo = {};
+	CollisionEvent collisionInfo = {};
 
 	OBB obb = boxColliderToOBB(static_cast<BoxCollider*>(box.shape), box.transform);
 
@@ -292,9 +293,9 @@ static CollisionInfo BoxSphereCollision(const ColliderObjectInfo& box, const Col
 	return collisionInfo;
 }
 
-static CollisionInfo SphereSphereCollision(const ColliderObjectInfo& sphereA, const ColliderObjectInfo& sphereB)
+static CollisionEvent SphereSphereCollision(const ColliderObjectInfo& sphereA, const ColliderObjectInfo& sphereB)
 {
-	CollisionInfo collisionInfo = {};
+	CollisionEvent collisionInfo = {};
 
 	SphereCollider* sphereColliderA = static_cast<SphereCollider*>(sphereA.shape);
 	SphereCollider* sphereColliderB = static_cast<SphereCollider*>(sphereB.shape);

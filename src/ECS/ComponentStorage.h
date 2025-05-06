@@ -11,6 +11,7 @@
 
 struct IComponentStorage {
     virtual ~IComponentStorage() = default;
+    virtual void remove(EntityID id) = 0;
 };
 
 template<typename T>
@@ -19,8 +20,6 @@ private:
     uint16_t quantity = 0;
 
 public:
-    using EntityID = std::uint16_t;
-
     T components[MAX_OBJECTS];
     int entityToIndex[MAX_OBJECTS];
 

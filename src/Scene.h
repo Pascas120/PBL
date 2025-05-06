@@ -22,11 +22,11 @@ private:
     TransformSystem transformSystem = TransformSystem(this);
     RenderingSystem renderingSystem = RenderingSystem(this);
     CollisionSystem collisionSystem = CollisionSystem(this);
+    EventSystem eventSystem = EventSystem();
 
 
 
     EntityID sceneGraphRoot = 0;
-    EntityID rootEntity = 0;
 
     template<typename T>
     ComponentStorage<T>* getOrCreateStorage() {
@@ -41,16 +41,18 @@ private:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 public:
-	using EntityID = uint16_t;
 
     Scene() {
         entityManager = EntityManager();
-        rootEntity = entityManager.createEntity();
-        addComponent<Transform>(rootEntity, Transform{});
-        addComponent<ObjectInfoComponent>(rootEntity);
-        sceneGraphRoot = rootEntity;
+        sceneGraphRoot = entityManager.createEntity();
+        addComponent<Transform>(sceneGraphRoot, Transform{});
+        addComponent<ObjectInfoComponent>(sceneGraphRoot);
     }
 
+    Scene(const Scene&) = delete; // Wyłączenie kopiowania
+    Scene& operator=(const Scene&) = delete; // Wyłączenie przypisania
+    Scene(Scene&&) = default; // Przenoszenie dozwolone
+    Scene& operator=(Scene&&) = default;
     EntityID getSceneRootEntity() const { return sceneGraphRoot; }
 
     TransformSystem& getTransformSystem() {
@@ -65,6 +67,9 @@ public:
 		return collisionSystem;
 	}
 
+    EventSystem& getEventSystem() {
+        return eventSystem;
+    }
 
     template<typename T>
     T& addComponent(EntityID id, const T& value = T{}) {
@@ -122,15 +127,18 @@ public:
         return id;
     }
 
+
     void destroyEntity(EntityID id) {
         if (hasComponent<Transform>(id)) {
             auto& transform = getComponent<Transform>(id);
 
-            for (auto& child : transform.children) {
+            for (const auto& child : transform.children) {
                 destroyEntity(child);
             }
-
             transformSystem.removeChild(transform.parent, id);
+            for(auto& component : storages) {
+                component.second->remove(id);
+            }
         }
     }
 
