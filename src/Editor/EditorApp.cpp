@@ -26,6 +26,7 @@ namespace Editor
         spdlog::info("Initialized ImGui.");
 
         sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ WINDOW_WIDTH, WINDOW_HEIGHT });
+		camera.Position = glm::vec3(0.0f, 0.0f, camDistance);
     }
 
     EditorApp::~EditorApp()
@@ -68,6 +69,10 @@ namespace Editor
 
         // Setup style
         ImGui::StyleColorsDark();
+
+
+
+		ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
 
     }
 
@@ -128,7 +133,7 @@ namespace Editor
 
 
         imguiScene();
-		EditorContext context{ this, scene, shaders, models };
+		EditorContext context{ this, scene, shaders, models, camera };
 
 		hierarchyWindow->draw(context);
 		inspectorWindow->draw(context);
@@ -153,6 +158,26 @@ namespace Editor
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
+    static void wrapCursor(ImVec2 pos, ImVec2 size)
+    {
+        ImVec2 mousePos = ImGui::GetMousePos();
+
+        float relX = mousePos.x - pos.x;
+        float relY = mousePos.y - pos.y;
+
+        if (relX < 0.0f || relX >= size.x || relY < 0.0f || relY >= size.y)
+        {
+            relX = fmodf(relX + size.x, size.x);
+            relY = fmodf(relY + size.y, size.y);
+
+
+            mousePos.x = pos.x + relX;
+            mousePos.y = pos.y + relY;
+
+            ImGui::TeleportMousePos(mousePos);
+        }
+    }
+
 
     void EditorApp::imguiScene()
     {
@@ -163,24 +188,32 @@ namespace Editor
 
         if (ImGui::Begin("Scene"))
         {
+
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
+
+			if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+                ImGui::SetWindowFocus();
+			}
+
+            // TODO: fix (doesn't work with imguizmo)
+            if (ImGui::IsWindowFocused() && ImGui::IsAnyItemActive())
+            {
+				wrapCursor(pos, size);
+            }
 
             //ImVec2 mousePos = ImGui::GetMousePos();
             //ImVec2 imguiCursorPos = ImGui::GetCursorScreenPos();
             //ImVec2 relativeCursorPos = ImVec2(mousePos.x - imguiCursorPos.x, mousePos.y - imguiCursorPos.y);
 
-            if (!ImGui::IsAnyItemActive())
+            /*if (!ImGui::IsAnyItemActive())
             {
                 if (ImGui::IsWindowFocused())
                 {
                     input();
                 }
-                /*if (ImGui::IsWindowHovered())
-                {
-                    input();
-                }*/
-            }
+            }*/
 
             if (size.x != lastSize.x || size.y != lastSize.y)
             {
@@ -193,31 +226,84 @@ namespace Editor
             GLuint texture = sceneFramebuffer->GetColorTexture();
             ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));
 
-			if (selectedObject != (EntityID)-1)
+
+            if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            {
+				cameraControls();
+                wrapCursor(pos, size);
+				ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
+            }
+            else if (ImGui::IsWindowHovered() && !ImGui::IsAnyItemActive() && scrollYOffset != 0.0f)
+            {
+				glm::vec3 cameraFocus = camera.Position + camera.Front * camDistance;
+				camDistance -= scrollYOffset * std::clamp(camDistance * 0.05f, 0.01f, 2.0f);
+				camDistance = glm::max(camDistance, 0.1f);
+				camera.Position = cameraFocus - camera.Front * camDistance;
+            }
+
+            ImGuizmo::SetOrthographic(false);
+            ImGuizmo::SetDrawlist();
+            ImGuizmo::SetRect(pos.x, pos.y, size.x, size.y);
+
+            glm::mat4 cameraView = camera.getViewMatrix();
+            const ImVec2 viewManipSize = ImVec2(150, 150);
+            ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), camDistance,
+                ImVec2(pos.x + size.x - viewManipSize.x, pos.y), viewManipSize, 0x10101010);
+
+			if (ImGuizmo::IsUsingViewManipulate())
+			{
+                camera.setViewMatrix(cameraView);
+			}
+
+			if (selectedObject != (EntityID)-1 && selectedObject != scene->getSceneRootEntity())
 			{
                 auto [width, height] = sceneFramebuffer->GetSizePair();
                 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-				glm::mat4 cameraView = camera.getViewMatrix();
-
-				ImGuizmo::SetOrthographic(false);
-				ImGuizmo::SetDrawlist();
-				//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, size.x, size.y);
-				ImGuizmo::SetRect(pos.x, pos.y, size.x, size.y);
 
                 auto entityMatrix = scene->getComponent<Transform>(selectedObject).globalMatrix;
 				auto& ts = scene->getTransformSystem();
 
                 if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection),
-                    ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
+                    ImGuizmo::OPERATION::UNIVERSAL, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
                 {
 					ts.setGlobalMatrix(selectedObject, entityMatrix);
                 }
-
 			}
+
         }
 
         ImGui::End();
         ImGui::PopStyleVar();
     }
+
+
+    void EditorApp::cameraControls()
+    {
+        bool firstMouse = ImGui::IsMouseClicked(ImGuiMouseButton_Right);
+        if (scrollYOffset != 0.0f)
+        {
+            cameraSpeed += scrollYOffset * 0.1f;
+            cameraSpeed = glm::clamp(cameraSpeed, 0.1f, 2.0f);
+        }
+        float scaledCamSpeed = cameraSpeed * deltaTime;
+
+		if (ImGui::IsKeyDown(ImGuiKey_W))
+			camera.processKeyboard(FORWARD, scaledCamSpeed);
+		if (ImGui::IsKeyDown(ImGuiKey_S))
+			camera.processKeyboard(BACKWARD, scaledCamSpeed);
+		if (ImGui::IsKeyDown(ImGuiKey_A))
+			camera.processKeyboard(LEFT, scaledCamSpeed);
+		if (ImGui::IsKeyDown(ImGuiKey_D))
+			camera.processKeyboard(RIGHT, scaledCamSpeed);
+		if (ImGui::IsKeyDown(ImGuiKey_Q))
+			camera.processKeyboard(DOWN, scaledCamSpeed);
+		if (ImGui::IsKeyDown(ImGuiKey_E))
+			camera.processKeyboard(UP, scaledCamSpeed);
+
+		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+
+		camera.processMouseMovement(mouseDelta.x, -mouseDelta.y);
+    }
+
 }
 

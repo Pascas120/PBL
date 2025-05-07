@@ -75,6 +75,13 @@ namespace Editor
         {
             editor->selectedObject = id;
         }
+		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
+		{
+			auto& camera = context.camera;
+			glm::vec3& pos = transform.translation;
+
+			camera.Position = pos - camera.Front * editor->camDistance;
+		}
 
         // Context Menu
         bool deleteObject = false;

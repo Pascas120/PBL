@@ -16,6 +16,8 @@ namespace Editor
 		void run() override;
 
 		EntityID selectedObject = (EntityID)-1;
+		float camDistance = 10.0f;
+		float cameraSpeed = 1.0f;
 
 	protected:
 		void initImGui();
@@ -27,6 +29,7 @@ namespace Editor
 
 		// TODO: scene window class?
 		void imguiScene();
+		void cameraControls();
 
 		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
 		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>();
@@ -40,6 +43,7 @@ namespace Editor
 		std::shared_ptr<Scene> scene;
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
+		Camera& camera;
 	};
 
 	namespace Payload

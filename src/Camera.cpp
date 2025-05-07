@@ -29,6 +29,26 @@ glm::mat4 Camera::getViewMatrix() const
     return glm::lookAt(Position, Position + Front, Up);
 }
 
+void Camera::setViewMatrix(const glm::mat4& view)
+{
+    // Invert the view matrix to get the world transform
+    glm::mat4 invView = glm::inverse(view);
+
+    // Extract position from the inverted matrix
+    Position = glm::vec3(invView[3]);
+
+    // Extract orientation basis vectors (Right, Up, -Front) from original view matrix
+    Right = glm::vec3(invView[0]); // X axis
+    Up = glm::vec3(invView[1]);    // Y axis
+    Front = -glm::vec3(invView[2]); // Z axis (negated because OpenGL looks -Z)
+
+    // Recompute yaw and pitch from front vector
+    Yaw = glm::degrees(atan2(Front.z, Front.x));
+    Pitch = glm::degrees(asin(Front.y));
+
+    updateCameraVectors();
+}
+
 void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
