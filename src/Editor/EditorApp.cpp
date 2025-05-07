@@ -71,9 +71,10 @@ namespace Editor
         ImGui::StyleColorsDark();
 
 
+        // ImGuizmo
 
+        gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
 		ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
-
     }
 
     void EditorApp::createImGuiDrawData()
@@ -186,13 +187,33 @@ namespace Editor
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 
-        if (ImGui::Begin("Scene"))
+        if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar));
         {
+            /*if (ImGui::BeginMenuBar())
+            {
+                if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE))
+                    gizmoOperation = ImGuizmo::TRANSLATE;
+                ImGui::SameLine();
+
+                if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE))
+                    gizmoOperation = ImGuizmo::ROTATE;
+                ImGui::SameLine();
+
+                if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE))
+                    gizmoOperation = ImGuizmo::SCALE;
+                ImGui::SameLine();
+
+                if (ImGui::RadioButton("Universal", gizmoOperation == ImGuizmo::UNIVERSAL))
+                    gizmoOperation = ImGuizmo::UNIVERSAL;
+
+                ImGui::EndMenuBar();
+            }*/
 
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
 
-			if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			if (ImGui::IsWindowHovered() && 
+                (ImGui::IsMouseClicked(ImGuiMouseButton_Right) || ImGui::IsMouseClicked(ImGuiMouseButton_Middle)))
 			{
                 ImGui::SetWindowFocus();
 			}
@@ -202,10 +223,6 @@ namespace Editor
             {
 				wrapCursor(pos, size);
             }
-
-            //ImVec2 mousePos = ImGui::GetMousePos();
-            //ImVec2 imguiCursorPos = ImGui::GetCursorScreenPos();
-            //ImVec2 relativeCursorPos = ImVec2(mousePos.x - imguiCursorPos.x, mousePos.y - imguiCursorPos.y);
 
             /*if (!ImGui::IsAnyItemActive())
             {
@@ -227,30 +244,70 @@ namespace Editor
             ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 
+			bool disableGizmo = false;
+
             if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
 				cameraControls();
                 wrapCursor(pos, size);
-				ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
+				disableGizmo = true;
             }
-            else if (ImGui::IsWindowHovered() && !ImGui::IsAnyItemActive() && scrollYOffset != 0.0f)
+            else if (ImGui::IsWindowHovered() && !Utils::isActiveInAnotherWindow())
             {
-				glm::vec3 cameraFocus = camera.Position + camera.Front * camDistance;
-				camDistance -= scrollYOffset * std::clamp(camDistance * 0.05f, 0.01f, 2.0f);
-				camDistance = glm::max(camDistance, 0.1f);
-				camera.Position = cameraFocus - camera.Front * camDistance;
+                glm::vec3 cameraFocus = camera.Position + camera.Front * camDistance;
+                if (scrollYOffset != 0.0f)
+                {
+                    camDistance -= scrollYOffset * std::clamp(camDistance * 0.05f, 0.01f, 2.0f);
+                    camDistance = glm::max(camDistance, 0.1f);
+                    camera.Position = cameraFocus - camera.Front * camDistance;
+                }
+                if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f))
+                {
+                    ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.0f);
+					camera.Yaw += mouseDrag.x * 0.15f;
+                    camera.Pitch -= mouseDrag.y * 0.15f;
+					camera.Pitch = glm::clamp(camera.Pitch, -89.0f, 89.0f);
+					spdlog::info("Yaw: {}, Pitch: {}", camera.Yaw, camera.Pitch);
+
+                    camera.updateCameraVectors();
+
+					camera.Position = cameraFocus - camera.Front * camDistance;
+
+					disableGizmo = true;
+				}
+                else if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle, 0.0f))
+                {
+                    ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle, 0.0f);
+                    camera.Position += camera.Right * -mouseDrag.x * 0.01f;
+                    camera.Position += camera.Up * mouseDrag.y * 0.01f;
+
+					disableGizmo = true;
+                }
             }
+            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
+            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+			ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
+
 
             ImGuizmo::SetOrthographic(false);
             ImGuizmo::SetDrawlist();
             ImGuizmo::SetRect(pos.x, pos.y, size.x, size.y);
+
+			if (disableGizmo)
+			{
+				ImGuizmo::Enable(false);
+			}
+			else
+			{
+				ImGuizmo::Enable(true);
+			}
 
             glm::mat4 cameraView = camera.getViewMatrix();
             const ImVec2 viewManipSize = ImVec2(150, 150);
             ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), camDistance,
                 ImVec2(pos.x + size.x - viewManipSize.x, pos.y), viewManipSize, 0x10101010);
 
-			if (ImGuizmo::IsUsingViewManipulate())
+			if (ImGuizmo::IsUsingViewManipulate() && !disableGizmo)
 			{
                 camera.setViewMatrix(cameraView);
 			}
@@ -264,7 +321,7 @@ namespace Editor
 				auto& ts = scene->getTransformSystem();
 
                 if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection),
-                    ImGuizmo::OPERATION::UNIVERSAL, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
+                    gizmoOperation, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
                 {
 					ts.setGlobalMatrix(selectedObject, entityMatrix);
                 }
@@ -300,10 +357,23 @@ namespace Editor
 		if (ImGui::IsKeyDown(ImGuiKey_E))
 			camera.processKeyboard(UP, scaledCamSpeed);
 
-		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right);
+		ImVec2 mouseDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right, 0.0f);
 
 		camera.processMouseMovement(mouseDelta.x, -mouseDelta.y);
     }
+
+
+
+
+
+
+	namespace Utils
+	{
+		bool isActiveInAnotherWindow()
+		{
+			return ImGui::IsAnyItemActive && !ImGui::IsWindowFocused();
+		}
+	}
 
 }
 

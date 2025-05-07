@@ -104,7 +104,6 @@ public:
                                 glm::cross(frontMultFar + Up * halfVSide, Right) };
 
     }
-private:
     void updateCameraVectors();
 };
 

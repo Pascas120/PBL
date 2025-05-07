@@ -2,6 +2,11 @@
 
 #include "Application.h"
 
+// include w headerze nie kompiluje siê (idk czemu)
+namespace ImGuizmo {
+	enum OPERATION : int;
+}
+
 namespace Editor
 {
 	class HierarchyWindow;
@@ -31,6 +36,8 @@ namespace Editor
 		void imguiScene();
 		void cameraControls();
 
+		ImGuizmo::OPERATION gizmoOperation;
+
 		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
 		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>();
 		std::unique_ptr<ShaderWindow> shaderWindow = std::make_unique<ShaderWindow>();
@@ -49,5 +56,10 @@ namespace Editor
 	namespace Payload
 	{
 		static const char* HIERARCHY_NODE = "HIERARCHY_NODE";
+	}
+
+	namespace Utils
+	{
+		bool isActiveInAnotherWindow();
 	}
 }
