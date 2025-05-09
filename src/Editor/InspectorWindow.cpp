@@ -30,6 +30,13 @@ namespace Editor
                 {
                     objectInfo.name = name;
                 }
+                if (editor->selectedObject == scene->getSceneRootEntity())
+                {
+					ImGui::End();
+					return;
+                }
+
+				ImGui::Separator();
 
                 drawTransform(context, editor->selectedObject);
                 drawCollider(context, editor->selectedObject);

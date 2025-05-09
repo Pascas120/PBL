@@ -1,4 +1,6 @@
-#include "EditorApp.h"
+﻿#include "EditorApp.h"
+
+#include "editor_utils.h"
 
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <spdlog/spdlog.h>
@@ -46,6 +48,11 @@ namespace Editor
             lastFrame = currentFrame;
 
             createImGuiDrawData();
+			if (playMode)
+			{
+                update();
+			}
+
             renderToWindow();
             renderImGui();
             endFrame();
@@ -93,6 +100,8 @@ namespace Editor
 
         if (ImGui::BeginMainMenuBar())
         {
+			ImVec2 menuBarSize = ImGui::GetWindowSize();
+
             if (ImGui::BeginMenu("Settings"))
             {
                 ImGui::MenuItem("Demo Window", NULL, &show_demo_window);
@@ -112,12 +121,35 @@ namespace Editor
                     }
                 }
 
-
                 ImGui::EndMenu();
             }
 
+            constexpr float playButtonWidth = 50;
+            float playButtonPos = (menuBarSize.x - playButtonWidth) / 2;
+			ImGui::SetCursorPosX(playButtonPos);
+			/*if (ImGui::Button(playMode ? "Stop###playButton" : "Play###playButton", ImVec2(playButtonWidth, 0)))
+			{
+				playMode = !playMode;
+			}*/
+			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+            if (ImGui::Selectable(playMode ? "Stop###playButton" : "Play###playButton", playMode,
+                ImGuiSelectableFlags_None, ImVec2(playButtonWidth, 0)))
+            {
+				playMode = !playMode;
+            }
+			ImGui::PopStyleVar();
+
+			static const ImVec2 resButtonSize = ImVec2(200, 0);
+			static const float resButtonRightOffset = 100.0f;
+			ImGui::SetCursorPosX(menuBarSize.x - resButtonRightOffset - resButtonSize.x);
+            if (ImGui::Button("Open resource folder", resButtonSize))
+            {
+                Utils::openFolder("res");
+            }
+
             std::string fpsText = std::format("{:.1f} FPS", ImGui::GetIO().Framerate);
-            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(fpsText.c_str()).x - 10.0f);
+			float fpsTextWidth = ImGui::CalcTextSize(fpsText.c_str()).x;
+			ImGui::SetCursorPosX(menuBarSize.x - (resButtonRightOffset + fpsTextWidth) / 2.0f);
             ImGui::Text(fpsText.c_str());
             if (ImGui::IsItemHovered())
             {
@@ -149,6 +181,7 @@ namespace Editor
                 ImGui::EndMenuBar();
             }
         }
+
         ImGui::End();
 
         ImGui::Render();
@@ -187,7 +220,7 @@ namespace Editor
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 
-        if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar));
+        if (ImGui::Begin("Scene"));
         {
             /*if (ImGui::BeginMenuBar())
             {
@@ -212,6 +245,7 @@ namespace Editor
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
 
+			
 			if (ImGui::IsWindowHovered() && 
                 (ImGui::IsMouseClicked(ImGuiMouseButton_Right) || ImGui::IsMouseClicked(ImGuiMouseButton_Middle)))
 			{
@@ -219,7 +253,7 @@ namespace Editor
 			}
 
             // TODO: fix (doesn't work with imguizmo)
-            if (ImGui::IsWindowFocused() && ImGui::IsAnyItemActive())
+            if (ImGui::IsWindowFocused() && ImGuizmo::IsUsingAny() || ImGuizmo::IsUsingViewManipulate())
             {
 				wrapCursor(pos, size);
             }
@@ -246,47 +280,52 @@ namespace Editor
 
 			bool disableGizmo = false;
 
+            glm::vec3 cameraFocus = camera.Position + camera.Front * camDistance;
+
             if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
 				cameraControls();
                 wrapCursor(pos, size);
 				disableGizmo = true;
+                ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
             }
             else if (ImGui::IsWindowHovered() && !Utils::isActiveInAnotherWindow())
             {
-                glm::vec3 cameraFocus = camera.Position + camera.Front * camDistance;
                 if (scrollYOffset != 0.0f)
                 {
                     camDistance -= scrollYOffset * std::clamp(camDistance * 0.05f, 0.01f, 2.0f);
                     camDistance = glm::max(camDistance, 0.1f);
                     camera.Position = cameraFocus - camera.Front * camDistance;
                 }
-                if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f))
+                if (ImGui::IsWindowFocused())
                 {
-                    ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.0f);
-					camera.Yaw += mouseDrag.x * 0.15f;
-                    camera.Pitch -= mouseDrag.y * 0.15f;
-					camera.Pitch = glm::clamp(camera.Pitch, -89.0f, 89.0f);
-					spdlog::info("Yaw: {}, Pitch: {}", camera.Yaw, camera.Pitch);
+                    if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f))
+                    {
+                        ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.0f);
+                        camera.Yaw += mouseDrag.x * 0.15f;
+                        camera.Pitch -= mouseDrag.y * 0.15f;
+                        camera.Pitch = glm::clamp(camera.Pitch, -89.0f, 89.0f);
 
-                    camera.updateCameraVectors();
+                        camera.updateCameraVectors();
 
-					camera.Position = cameraFocus - camera.Front * camDistance;
+                        camera.Position = cameraFocus - camera.Front * camDistance;
 
-					disableGizmo = true;
-				}
-                else if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle, 0.0f))
-                {
-                    ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle, 0.0f);
-                    camera.Position += camera.Right * -mouseDrag.x * 0.01f;
-                    camera.Position += camera.Up * mouseDrag.y * 0.01f;
+                        disableGizmo = true;
+                        wrapCursor(pos, size);
+                        ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
+                    }
+                    else if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle, 0.0f))
+                    {
+                        ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle, 0.0f);
+                        camera.Position += camera.Right * -mouseDrag.x * 0.01f;
+                        camera.Position += camera.Up * mouseDrag.y * 0.01f;
 
-					disableGizmo = true;
+                        disableGizmo = true;
+                        wrapCursor(pos, size);
+                        ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
+                    }
                 }
             }
-            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
-            ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
-			ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
 
 
             ImGuizmo::SetOrthographic(false);
@@ -304,11 +343,25 @@ namespace Editor
 
             glm::mat4 cameraView = camera.getViewMatrix();
             const ImVec2 viewManipSize = ImVec2(150, 150);
+            ImVec2 viewManipPos = ImVec2(pos.x + size.x - viewManipSize.x, pos.y);
+
+			ImVec2 dragDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 1.0f);
+			if (ImGuizmo::IsUsingViewManipulate() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)
+				&& dragDelta.x * dragDelta.x + dragDelta.y * dragDelta.y > 1.0f)
+            {
+                ImVec2 viewManipCenter = ImVec2(viewManipPos.x + viewManipSize.x / 2.0f, viewManipPos.y + viewManipSize.y / 2.0f);
+                ImGui::TeleportMousePos(viewManipCenter);
+            }
+
             ImGuizmo::ViewManipulate(glm::value_ptr(cameraView), camDistance,
-                ImVec2(pos.x + size.x - viewManipSize.x, pos.y), viewManipSize, 0x10101010);
+                viewManipPos, viewManipSize, 0x10101010);
 
 			if (ImGuizmo::IsUsingViewManipulate() && !disableGizmo)
 			{
+				if (ImGui::IsMouseDragging(ImGuiMouseButton_Left, 1.0f))
+				{
+                    ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+				}
                 camera.setViewMatrix(cameraView);
 			}
 
@@ -361,19 +414,6 @@ namespace Editor
 
 		camera.processMouseMovement(mouseDelta.x, -mouseDelta.y);
     }
-
-
-
-
-
-
-	namespace Utils
-	{
-		bool isActiveInAnotherWindow()
-		{
-			return ImGui::IsAnyItemActive && !ImGui::IsWindowFocused();
-		}
-	}
 
 }
 

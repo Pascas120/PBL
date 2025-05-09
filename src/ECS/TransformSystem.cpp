@@ -49,9 +49,13 @@ void TransformSystem::updateNode(EntityID id) const {
     auto& transform = scene->getComponent<Transform>(id);
 
     if (transform.isDirty) {
-        if (transform.parent != -1) {
+        if (transform.parent != (EntityID)-1) {
             auto& parentTransform = scene->getComponent<Transform>(transform.parent);
             transform.globalMatrix = parentTransform.globalMatrix;
+        }
+        else
+        {
+			transform.globalMatrix = glm::mat4(1.0f);
         }
         transform.globalMatrix = glm::translate(transform.globalMatrix, transform.translation);
         transform.globalMatrix *= glm::mat4_cast(transform.rotation);

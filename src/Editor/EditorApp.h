@@ -2,6 +2,7 @@
 
 #include "Application.h"
 
+
 // include w headerze nie kompiluje siê (idk czemu)
 namespace ImGuizmo {
 	enum OPERATION : int;
@@ -23,6 +24,8 @@ namespace Editor
 		EntityID selectedObject = (EntityID)-1;
 		float camDistance = 10.0f;
 		float cameraSpeed = 1.0f;
+
+		bool playMode = false;
 
 	protected:
 		void initImGui();
@@ -56,10 +59,5 @@ namespace Editor
 	namespace Payload
 	{
 		static const char* HIERARCHY_NODE = "HIERARCHY_NODE";
-	}
-
-	namespace Utils
-	{
-		bool isActiveInAnotherWindow();
 	}
 }
