@@ -19,11 +19,24 @@ public:
 	virtual ~Application();
 	virtual void run();
 
-protected:
-	bool init();
 	void input();
 	void update();
 	void render(const Framebuffer& framebuffer = DefaultFramebuffer::GetInstance());
+	void render(Camera& camera, const Framebuffer& framebuffer = DefaultFramebuffer::GetInstance());
+
+	std::pair<double, double> getScrollOffset() const
+	{
+		return { scrollXOffset, scrollYOffset };
+	}
+
+	float getDeltaTime() const
+	{
+		return deltaTime;
+	}
+
+protected:
+	bool init();
+	
 	// TODO: different name?
 	void renderToWindow();
 	void endFrame();

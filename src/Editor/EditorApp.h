@@ -2,17 +2,18 @@
 
 #include "Application.h"
 
-
-// include w headerze nie kompiluje siê (idk czemu)
-namespace ImGuizmo {
-	enum OPERATION : int;
-}
+//// include w headerze nie kompiluje siê (idk czemu)
+//namespace ImGuizmo {
+//	enum OPERATION : int;
+//}
 
 namespace Editor
 {
 	class HierarchyWindow;
 	class InspectorWindow;
 	class ShaderWindow;
+	class SceneWindow;
+	class GameWindow;
 
 	class EditorApp : public Application, public std::enable_shared_from_this<EditorApp>
 	{
@@ -22,8 +23,6 @@ namespace Editor
 		void run() override;
 
 		EntityID selectedObject = (EntityID)-1;
-		float camDistance = 10.0f;
-		float cameraSpeed = 1.0f;
 
 		bool playMode = false;
 
@@ -33,17 +32,13 @@ namespace Editor
 		void createImGuiDrawData();
 		void renderImGui();
 
-		std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
-
-		// TODO: scene window class?
-		void imguiScene();
-		void cameraControls();
-
-		ImGuizmo::OPERATION gizmoOperation;
 
 		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
 		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>();
 		std::unique_ptr<ShaderWindow> shaderWindow = std::make_unique<ShaderWindow>();
+
+		std::unique_ptr<SceneWindow> sceneWindow = std::make_unique<SceneWindow>();
+		std::unique_ptr<GameWindow> gameWindow = std::make_unique<GameWindow>();
 	};
 
 

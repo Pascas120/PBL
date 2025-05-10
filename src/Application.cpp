@@ -206,8 +206,13 @@ void Application::update()
 		ts.update();
 }
 
-
 void Application::render(const Framebuffer& framebuffer)
+{
+	render(camera, framebuffer);
+}
+
+
+void Application::render(Camera& camera, const Framebuffer& framebuffer)
 {
 	framebuffer.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

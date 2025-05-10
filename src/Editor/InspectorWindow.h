@@ -1,3 +1,4 @@
+#pragma once
 #include "EditorApp.h"
 
 namespace Editor
