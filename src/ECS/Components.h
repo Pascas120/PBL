@@ -30,9 +30,11 @@ struct Transform {
     glm::vec3 scale = {1.0f, 1.0f, 1.0f};
     glm::mat4 globalMatrix = glm::mat4(1.0f);
 
-    bool isDirty = false;
+    bool isDirty = true;
     std::vector<EntityID> children;
     EntityID parent = (EntityID) -1;
+
+    std::string uuid;
 
 	EntityID id = (EntityID)-1;
 };

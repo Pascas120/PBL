@@ -1,5 +1,8 @@
 #include "BoundingVolumes.h"
 
+// temporary
+#include "glm_serialization.h"
+
 
 bool BoundingVolume::isOnFrustum(const Frustum& camFrustum) const
 {
@@ -33,6 +36,16 @@ bool SphereBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform
             globalSphere.isOnOrForwardPlane(camFrustum.nearFace) &&
             globalSphere.isOnOrForwardPlane(camFrustum.topFace) &&
             globalSphere.isOnOrForwardPlane(camFrustum.bottomFace));
+}
+
+
+nlohmann::json SphereBV::serialize() const
+{
+	nlohmann::json j;
+	j["type"] = "SPHERE";
+	j["center"] = center;
+	j["radius"] = radius;
+	return j;
 }
 
 // AABB implementation
@@ -91,4 +104,13 @@ bool AABBBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform) 
             globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
             globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
             globalAABB.isOnOrForwardPlane(camFrustum.farFace));
+}
+
+nlohmann::json AABBBV::serialize() const
+{
+	nlohmann::json j;
+	j["type"] = "AABB";
+	j["center"] = center;
+	j["extents"] = extents;
+	return j;
 }

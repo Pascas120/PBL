@@ -16,6 +16,7 @@ set(stb_image_SOURCE_DIR ${STB_IMAGE_DIR} CACHE INTERNAL "")
 add_library(stb_image STATIC ${STB_IMAGE_DIR}/stb_image.cpp)
 target_include_directories(stb_image PRIVATE ${STB_IMAGE_DIR})
 
+# TODO: remove (editor)
 # ImGuizmo
 set(ImGuizmo_DIR ${CMAKE_CURRENT_LIST_DIR}/ImGuizmo)
 set(ImGuizmo_SOURCE_DIR ${ImGuizmo_DIR} CACHE INTERNAL "")
@@ -28,9 +29,10 @@ target_include_directories(ImGuizmo PUBLIC ${ImGuizmo_SOURCE_DIR})
 CPMAddPackage("gh:assimp/assimp@5.4.3")
 CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#1.0.1")
-CPMAddPackage("gh:ocornut/imgui@1.91.9b-docking")
+CPMAddPackage("gh:ocornut/imgui@1.91.9b-docking") # TODO: remove (editor)
 CPMAddPackage("gh:gabime/spdlog@1.10.0")
 CPMAddPackage("gh:nlohmann/json@3.12.0")
+CPMAddPackage("gh:btzy/nativefiledialog-extended@1.2.1") # TODO: remove (editor)
 CPMAddPackage(
 		NAME freetype
 		GITHUB_REPOSITORY freetype/freetype
@@ -39,7 +41,7 @@ CPMAddPackage(
 )
 
 
-set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "")
+set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "") # TODO: remove (editor)
 add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
 					     ${imgui_SOURCE_DIR}/imgui_demo.cpp
 					     ${imgui_SOURCE_DIR}/imgui_draw.cpp
@@ -58,7 +60,10 @@ set_target_properties(glad
                       glm
                       imgui
 					  ImGuizmo
-                      spdlog PROPERTIES FOLDER "thirdparty")
+                      spdlog
+					  nlohmann_json
+					  nfd
+					  PROPERTIES FOLDER "thirdparty")
 
 if (TARGET zlibstatic)
     set_target_properties(zlibstatic PROPERTIES FOLDER "thirdparty")

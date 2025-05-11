@@ -12,6 +12,10 @@
 
 #include "ImGuizmo.h"
 
+#include <nfd.h>
+#include <filesystem>
+#include "Serialization.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -28,10 +32,15 @@ namespace Editor
     {
         initImGui();
         spdlog::info("Initialized ImGui.");
+
+        assert(NFD_Init() == NFD_OKAY && "Failed to initialize NFD!");
+        spdlog::info("Initialized NFD");
     }
 
     EditorApp::~EditorApp()
     {
+		NFD_Quit();
+
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -79,7 +88,6 @@ namespace Editor
 
         // ImGuizmo
 
-        //gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
 		ImGuizmo::SetImGuiContext(ImGui::GetCurrentContext());
     }
 
@@ -123,6 +131,49 @@ namespace Editor
                 ImGui::EndMenu();
             }
 
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+				{
+                    nfdu8char_t* outPath;
+					nfdu8filteritem_t filters[] = { {"JSON", "json" } };
+					nfdsavedialogu8args_t args = { 0 };
+					args.filterList = filters;
+					args.filterCount = 1;
+					std::string defaultPath = std::filesystem::absolute("res/scenes").string();
+					args.defaultPath = defaultPath.c_str();
+                    nfdresult_t result = NFD_SaveDialogU8_With(&outPath, &args);
+					if (result == NFD_OKAY)
+					{
+						std::string path = outPath;
+						Serialization::serializeScene(path, *scene);
+						NFD_FreePathU8(outPath);
+					}
+				}
+
+				if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
+				{
+					nfdu8char_t* outPath;
+					nfdu8filteritem_t filters[] = { {"JSON", "json" } };
+                    nfdopendialogu8args_t args = { 0 };
+                    args.filterList = filters;
+                    args.filterCount = 1;
+                    std::string defaultPath = std::filesystem::absolute("res/scenes").string();
+                    args.defaultPath = defaultPath.c_str();
+					nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+					if (result == NFD_OKAY)
+					{
+						selectedObject = (EntityID)-1;
+						scene = std::make_shared<Scene>();
+						std::string path = outPath;
+						Serialization::deserializeScene(path, *scene, { shaders, models });
+						NFD_FreePathU8(outPath);
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+
             constexpr float playButtonWidth = 50;
             float playButtonPos = (menuBarSize.x - playButtonWidth) / 2;
 			ImGui::SetCursorPosX(playButtonPos);
@@ -136,15 +187,6 @@ namespace Editor
                 ImGui::SetWindowFocus(playMode ? "Game" : "Scene");
             }
 			ImGui::PopStyleColor();
-
-			/*ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-            if (ImGui::Selectable(playMode ? "Stop###playButton" : "Play###playButton", playMode,
-                ImGuiSelectableFlags_None, ImVec2(playButtonWidth, 0)))
-            {
-				playMode = !playMode;
-				ImGui::SetWindowFocus(playMode ? "Game" : "Scene");
-            }
-			ImGui::PopStyleVar();*/
 
 
 			static const ImVec2 resButtonSize = ImVec2(200, 0);

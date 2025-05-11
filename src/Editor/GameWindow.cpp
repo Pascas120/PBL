@@ -6,9 +6,23 @@
 namespace Editor
 {
 	static auto renderSizePresets = std::to_array<RenderSizePreset>({
-		{ "16:9 Aspect", RenderSizePresetType::AspectRatio, 16.0f, 9.0f },
-		{ "Full HD (1920x1080)", RenderSizePresetType::FixedResolution, 1920.0f, 1080.0f },
+		{ "16:9 Aspect", RenderSizePresetType::AspectRatio, {16.0f, 9.0f} },
+		{ "Full HD (1920x1080)", RenderSizePresetType::FixedResolution, {1920.0f, 1080.0f} },
 	});
+
+	static ImVec2 fitViewInContentRegion(const ImVec2& contentRegion, const ImVec2& framebufferSize)
+	{
+		float framebufferRatio = framebufferSize.x / framebufferSize.y;
+		float regionRatio = contentRegion.x / contentRegion.y;
+		if (regionRatio > framebufferRatio)
+		{
+			return ImVec2(contentRegion.y * framebufferRatio, contentRegion.y);
+		}
+		else
+		{
+			return ImVec2(contentRegion.x, contentRegion.x / framebufferRatio);
+		}
+	}
 
 	GameWindow::GameWindow()
 	{
@@ -26,6 +40,10 @@ namespace Editor
 		auto& editor = context.editor;
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImVec4 bgColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
+		bgColor.w = 1.0f;
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
+
 		ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Game", NULL, ImGuiWindowFlags_MenuBar))
 		{
@@ -72,37 +90,13 @@ namespace Editor
 			{
 				if (renderSizePreset->type == RenderSizePresetType::AspectRatio)
 				{
-					float framebufferRatio = renderSizePreset->x / renderSizePreset->y;
-					float regionRatio = contentRegion.x / contentRegion.y;
-					if (regionRatio > framebufferRatio)
-					{
-						framebufferSize.x = contentRegion.y * framebufferRatio;
-						framebufferSize.y = contentRegion.y;
-					}
-					else
-					{
-						framebufferSize.x = contentRegion.x;
-						framebufferSize.y = contentRegion.x / framebufferRatio;
-					}
+					framebufferSize = fitViewInContentRegion(contentRegion, renderSizePreset->size);
 					imageSize = framebufferSize;
 				}
 				else
 				{
-					framebufferSize.x = renderSizePreset->x;
-					framebufferSize.y = renderSizePreset->y;
-
-					float regionRatio = contentRegion.x / contentRegion.y;
-					float framebufferRatio = framebufferSize.x / framebufferSize.y;
-					if (regionRatio > framebufferRatio)
-					{
-						imageSize.x = contentRegion.y * framebufferRatio;
-						imageSize.y = contentRegion.y;
-					}
-					else
-					{
-						imageSize.x = contentRegion.x;
-						imageSize.y = contentRegion.x / framebufferRatio;
-					}
+					framebufferSize = renderSizePreset->size;
+					imageSize = fitViewInContentRegion(contentRegion, framebufferSize);
 				}
 			}
 			else
@@ -129,6 +123,7 @@ namespace Editor
 			ImGui::Image(texture, imageSize, ImVec2(0, 1), ImVec2(1, 0));
 		}
 		ImGui::End();
+		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 	}
 }

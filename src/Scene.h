@@ -15,6 +15,8 @@
 #include "ECS/RenderingSystem.h"
 #include "ECS/CollisionSystem.h"
 
+#include "uuid.h"
+
 class Scene {
 private:
     std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
@@ -46,7 +48,9 @@ public:
     Scene() {
         entityManager = EntityManager();
         rootEntity = entityManager.createEntity();
-        addComponent<Transform>(rootEntity, Transform{});
+        auto& t = addComponent<Transform>(rootEntity, Transform{});
+        t.uuid = uuid::generate();
+
         addComponent<ObjectInfoComponent>(rootEntity);
         sceneGraphRoot = rootEntity;
     }
@@ -114,11 +118,12 @@ public:
         addComponent<ObjectInfoComponent>(id);
 
         if (parent < 0 || parent > 5000) parent = sceneGraphRoot;
-        auto& transform = getComponent<Transform>(parent);
-        transform.children.push_back(id);
+        auto& parentTransform = getComponent<Transform>(parent);
+        parentTransform.children.push_back(id);
 
-
-        getComponent<Transform>(id).parent = parent;
+        auto& t = getComponent<Transform>(id);
+        t.parent = parent;
+        t.uuid = uuid::generate();
         return id;
     }
 
@@ -133,6 +138,10 @@ public:
             transformSystem.removeChild(transform.parent, id);
         }
     }
+
+	const std::vector<EntityID>& getEntities() const {
+		return entityManager.getEntities();
+	}
 
 };
 

@@ -1,5 +1,6 @@
 #include "EntityManager.h"
 #include <cassert>
+#include <algorithm>
 
 EntityManager::EntityManager() {
     for (EntityID id = 0; id < MAX_ENTITIES; ++id) {
@@ -13,6 +14,7 @@ EntityID EntityManager::createEntity() {
     EntityID id = availableIDs.front();
     availableIDs.pop();
     aliveEntities.set(id);
+	entities.push_back(id);
     return id;
 }
 
@@ -22,6 +24,7 @@ void EntityManager::destroyEntity(EntityID id) {
 
     aliveEntities.reset(id);
     availableIDs.push(id);
+	std::erase(entities, id);
 }
 
 bool EntityManager::isAlive(EntityID id) const {

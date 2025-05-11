@@ -1,0 +1,554 @@
+{
+    "entities": [
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    -0.009999999776482582,
+                    0.10000000149011612,
+                    0.009999999776482582
+                ],
+                "radius": 0.10000000149011612,
+                "type": "SPHERE"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "radius": 0.10000000149011612,
+                    "type": "SPHERE"
+                },
+                "isStatic": false
+            },
+            "ModelComponent": {
+                "model": "res/models/dee",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Player"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -47.180145263671875,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.4001902937889099,
+                    0.0,
+                    0.9164320230484009
+                ],
+                "scale": [
+                    5.000000953674316,
+                    9.405797004699707,
+                    7.436281681060791
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "uuid": "6419d763-1568-1d63-b946-b1b1c3bbecff"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    7.699999809265137,
+                    0.0
+                ],
+                "extents": [
+                    4.0,
+                    7.699999809265137,
+                    1.777999997138977
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        4.0,
+                        7.699999809265137,
+                        1.777999997138977
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "ModelComponent": {
+                "model": "res/models/nanosuit",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Nanosuit"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -29.914505004882813,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.258098304271698,
+                    0.0,
+                    0.9661186337471008
+                ],
+                "scale": [
+                    0.1953258365392685,
+                    0.06263376027345657,
+                    0.1000000387430191
+                ],
+                "translation": [
+                    2.2202043533325195,
+                    0.0,
+                    -0.2252533882856369
+                ],
+                "uuid": "9c836179-5eb8-67b0-69bb-965701fde23e"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Floor"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    5.0,
+                    0.10000000149011612,
+                    5.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "uuid": "db73c112-536f-a556-1e45-e5ae82eaf95a"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 1"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    5.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    1.0,
+                    6.0
+                ],
+                "uuid": "9c2054f1-f22a-16aa-c30c-ff879b7b0b05"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 2"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    5.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    1.0,
+                    -6.0
+                ],
+                "uuid": "14f0db88-4b20-640c-d203-d334bce0d26f"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 3"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    5.0
+                ],
+                "translation": [
+                    6.0,
+                    1.0,
+                    0.0
+                ],
+                "uuid": "46d9961e-3b4f-9e5c-b2a2-738a28b5d5f3"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    5.0
+                ],
+                "translation": [
+                    -6.0,
+                    1.0,
+                    0.0
+                ],
+                "uuid": "fecaa27d-45dc-efe6-ec0e-5ad1c532a1b6"
+            }
+        },
+        {
+            "BoundingVolumeComponent": {
+                "center": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "extents": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "type": "AABB"
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    30.0,
+                    -180.0
+                ],
+                "parent": "",
+                "rotation": [
+                    -0.258819043636322,
+                    -1.1313333381224311e-08,
+                    0.9659258127212524,
+                    -4.222200544745647e-08
+                ],
+                "scale": [
+                    0.4999978244304657,
+                    1.9999852180480957,
+                    0.5
+                ],
+                "translation": [
+                    1.0,
+                    -0.10936769843101501,
+                    2.0
+                ],
+                "uuid": "9aa47e0d-2011-3f27-1a4c-e66fff5d2956"
+            }
+        },
+        {
+            "ImageComponent": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "height": 0.0,
+                "shader": "HUD",
+                "texturePath": "res/textures/cloud.png",
+                "width": 0.0
+            },
+            "ObjectInfoComponent": {
+                "name": "Cloud"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    250.0,
+                    250.0,
+                    250.0
+                ],
+                "translation": [
+                    1728.0,
+                    108.0,
+                    0.0
+                ],
+                "uuid": "ff5d11c9-7a50-ba07-64b5-33515da886b1"
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "Text"
+            },
+            "TextComponent": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "font": "foo",
+                "shader": "Text",
+                "text": "text"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    192.0,
+                    108.0,
+                    0.0
+                ],
+                "uuid": "da21efc7-da6a-6e21-9186-c1140957bfad"
+            }
+        }
+    ],
+    "sceneRoot": "Root"
+}

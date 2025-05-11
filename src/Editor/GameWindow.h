@@ -13,7 +13,8 @@ namespace Editor
 	{
 		std::string name;
 		RenderSizePresetType type;
-		float x, y;
+		//float x, y;
+		ImVec2 size;
 	};
 
 	class GameWindow

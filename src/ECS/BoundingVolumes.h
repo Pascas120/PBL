@@ -9,6 +9,9 @@
 #include "Camera.h"
 #include "Components.h"
 
+// temporary
+#include "nlohmann/json.hpp"
+
 struct Transform;
 
 class BoundingVolume
@@ -18,6 +21,8 @@ public:
 
     virtual bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const = 0;
     virtual bool isOnOrForwardPlane(const Plane& plane) const = 0;
+
+	virtual nlohmann::json serialize() const = 0;
 
     bool isOnFrustum(const Frustum& camFrustum) const;
 };
@@ -29,6 +34,8 @@ public:
 
     bool isOnOrForwardPlane(const Plane& plane) const override;
     bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
+
+    nlohmann::json serialize() const override;
 
 private:
     glm::vec3 center;
@@ -45,6 +52,8 @@ public:
 
     bool isOnOrForwardPlane(const Plane& plane) const override;
     bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
+
+	nlohmann::json serialize() const override;
 
 private:
     glm::vec3 center;
