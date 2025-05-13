@@ -300,7 +300,6 @@ namespace Serialization
 			EntityID entity = scene.createEntity((EntityID)-1);
 			
 			deserializeExistingComponent(ObjectInfoComponent);
-			spdlog::info("Deserializing entity: {}", scene.getComponent<ObjectInfoComponent>(entity).name);
 			deserializeExistingComponent(Transform);
 			auto& t = scene.getComponent<Transform>(entity);
 			uuidToEntityMap[t.uuid] = entity;

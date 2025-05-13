@@ -1,6 +1,6 @@
 ﻿#include "EditorApp.h"
 
-#include "editor_utils.h"
+#include "Utils/editor_utils.h"
 
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <spdlog/spdlog.h>
@@ -99,11 +99,25 @@ namespace Editor
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
-
         static bool show_demo_window = false;
         static bool show_collisions = false;
 
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
+
+        ImGuiInputFlags shortcutFlags = ImGuiInputFlags_RouteGlobal;
+        if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S, shortcutFlags))
+        {
+			saveScene(scenePath);
+        }
+        else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiMod_Shift | ImGuiKey_S, shortcutFlags))
+		{
+			saveScene();
+		}
+		else if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_L, shortcutFlags))
+		{
+			loadScene();
+		}
+
 
         if (ImGui::BeginMainMenuBar())
         {
@@ -133,42 +147,20 @@ namespace Editor
 
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+				ImGui::BeginDisabled(scenePath.empty());
+                if (ImGui::MenuItem("Save Scene", "Ctrl+S"))
+                {
+					saveScene(scenePath);
+                }
+				ImGui::EndDisabled();
+				if (ImGui::MenuItem("Save Scene As", "Ctrl+Shift+S"))
 				{
-                    nfdu8char_t* outPath;
-					nfdu8filteritem_t filters[] = { {"JSON", "json" } };
-					nfdsavedialogu8args_t args = { 0 };
-					args.filterList = filters;
-					args.filterCount = 1;
-					std::string defaultPath = std::filesystem::absolute("res/scenes").string();
-					args.defaultPath = defaultPath.c_str();
-                    nfdresult_t result = NFD_SaveDialogU8_With(&outPath, &args);
-					if (result == NFD_OKAY)
-					{
-						std::string path = outPath;
-						Serialization::serializeScene(path, *scene);
-						NFD_FreePathU8(outPath);
-					}
+					saveScene();
 				}
 
 				if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 				{
-					nfdu8char_t* outPath;
-					nfdu8filteritem_t filters[] = { {"JSON", "json" } };
-                    nfdopendialogu8args_t args = { 0 };
-                    args.filterList = filters;
-                    args.filterCount = 1;
-                    std::string defaultPath = std::filesystem::absolute("res/scenes").string();
-                    args.defaultPath = defaultPath.c_str();
-					nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
-					if (result == NFD_OKAY)
-					{
-						selectedObject = (EntityID)-1;
-						scene = std::make_shared<Scene>();
-						std::string path = outPath;
-						Serialization::deserializeScene(path, *scene, { shaders, models });
-						NFD_FreePathU8(outPath);
-					}
+					loadScene();
 				}
 
 				ImGui::EndMenu();
@@ -183,8 +175,7 @@ namespace Editor
                 : ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
             if (ImGui::Button(playMode ? "Stop###playButton" : "Play###playButton", ImVec2(playButtonWidth, 0)))
             {
-                playMode = !playMode;
-                ImGui::SetWindowFocus(playMode ? "Game" : "Scene");
+				setPlayMode(!playMode);
             }
 			ImGui::PopStyleColor();
 
@@ -243,6 +234,62 @@ namespace Editor
     {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
+
+    void EditorApp::setPlayMode(bool mode)
+    {
+		playMode = mode;
+        ImGui::SetWindowFocus(playMode ? "Game" : "Scene");
+    }
+
+
+	void EditorApp::saveScene(std::string path)
+	{
+		if (path.empty())
+		{
+            nfdu8char_t* outPath;
+            nfdu8filteritem_t filters[] = { {"Scene JSON", "scene.json" } };
+            nfdsavedialogu8args_t args = { 0 };
+            args.filterList = filters;
+            args.filterCount = 1;
+            std::string defaultPath = std::filesystem::absolute("res/scenes").string();
+            args.defaultPath = defaultPath.c_str();
+            nfdresult_t result = NFD_SaveDialogU8_With(&outPath, &args);
+            if (result == NFD_OKAY)
+            {
+                path = outPath;
+				NFD_FreePathU8(outPath);
+            }
+            else
+            {
+                return;
+            }
+		}
+		Serialization::serializeScene(path, *scene);
+		scenePath = path;
+	}
+
+	void EditorApp::loadScene()
+	{
+        nfdu8char_t* outPath;
+        nfdu8filteritem_t filters[] = { {"Scene JSON", "scene.json" } };
+        nfdopendialogu8args_t args = { 0 };
+        args.filterList = filters;
+        args.filterCount = 1;
+        std::string defaultPath = std::filesystem::absolute("res/scenes").string();
+        args.defaultPath = defaultPath.c_str();
+        nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+        if (result == NFD_OKAY)
+        {
+            selectedObject = (EntityID)-1;
+			setPlayMode(false);
+
+            scene = std::make_shared<Scene>();
+            std::string path = outPath;
+            Serialization::deserializeScene(path, *scene, { shaders, models });
+			scenePath = path;
+            NFD_FreePathU8(outPath);
+        }
+	}
 
 }
 

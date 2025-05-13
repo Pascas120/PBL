@@ -25,12 +25,17 @@ namespace Editor
 		EntityID selectedObject = (EntityID)-1;
 
 		bool playMode = false;
+		void setPlayMode(bool mode);
 
 	protected:
 		void initImGui();
 
 		void createImGuiDrawData();
 		void renderImGui();
+
+		std::string scenePath = "";
+		void saveScene(std::string path = "");
+		void loadScene();
 
 
 		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
