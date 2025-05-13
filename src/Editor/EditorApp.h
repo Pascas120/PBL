@@ -15,6 +15,13 @@ namespace Editor
 	class SceneWindow;
 	class GameWindow;
 
+	enum class PlayMode
+	{
+		PLAY,
+		PAUSE,
+		STOP
+	};
+
 	class EditorApp : public Application, public std::enable_shared_from_this<EditorApp>
 	{
 	public:
@@ -24,8 +31,8 @@ namespace Editor
 
 		EntityID selectedObject = (EntityID)-1;
 
-		bool playMode = false;
-		void setPlayMode(bool mode);
+		PlayMode playMode = PlayMode::STOP;
+		void setPlayMode(PlayMode mode);
 
 	protected:
 		void initImGui();
@@ -37,6 +44,7 @@ namespace Editor
 		void saveScene(std::string path = "");
 		void loadScene();
 
+		std::shared_ptr<Scene> sceneBackup = nullptr;
 
 		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
 		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>();

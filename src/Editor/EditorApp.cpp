@@ -56,7 +56,7 @@ namespace Editor
             lastFrame = currentFrame;
 
             createImGuiDrawData();
-			if (playMode)
+			if (playMode == PlayMode::PLAY)
 			{
                 update();
 			}
@@ -166,18 +166,32 @@ namespace Editor
 				ImGui::EndMenu();
 			}
 
-            constexpr float playButtonWidth = 50;
-            float playButtonPos = (menuBarSize.x - playButtonWidth) / 2;
+            constexpr float playButtonWidth = 70;
+            float playButtonPos = (menuBarSize.x - playButtonWidth * 2) / 2;
 			ImGui::SetCursorPosX(playButtonPos);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, 
-				playMode ? ImGui::GetStyleColorVec4(ImGuiCol_Button) 
+				playMode != PlayMode::STOP ? ImGui::GetStyleColorVec4(ImGuiCol_Button) 
                 : ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
-            if (ImGui::Button(playMode ? "Stop###playButton" : "Play###playButton", ImVec2(playButtonWidth, 0)))
+            if (ImGui::Button(playMode != PlayMode::STOP ? "Stop###playButton" : "Play###playButton",
+                ImVec2(playButtonWidth, 0)))
             {
-				setPlayMode(!playMode);
+				setPlayMode(playMode == PlayMode::STOP ? PlayMode::PLAY : PlayMode::STOP);
             }
 			ImGui::PopStyleColor();
+
+			ImGui::SetCursorPosX(playButtonPos + playButtonWidth);
+            ImGui::PushStyleColor(ImGuiCol_Button,
+                playMode == PlayMode::PAUSE ? ImGui::GetStyleColorVec4(ImGuiCol_Button)
+                : ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
+			ImGui::BeginDisabled(playMode == PlayMode::STOP);
+            if (ImGui::Button(playMode == PlayMode::PAUSE ? "Resume###pauseButton" : "Pause###pauseButton",
+                    ImVec2(playButtonWidth, 0)))
+            {
+				setPlayMode(playMode == PlayMode::PAUSE ? PlayMode::PLAY : PlayMode::PAUSE);
+            }
+			ImGui::EndDisabled();
+            ImGui::PopStyleColor();
 
 
 			static const ImVec2 resButtonSize = ImVec2(200, 0);
@@ -235,10 +249,35 @@ namespace Editor
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 
-    void EditorApp::setPlayMode(bool mode)
+    void EditorApp::setPlayMode(PlayMode mode)
     {
-		playMode = mode;
-        ImGui::SetWindowFocus(playMode ? "Game" : "Scene");
+		if (playMode == mode)
+			return;
+
+		if (mode == PlayMode::PLAY && playMode == PlayMode::STOP)
+        {
+            sceneBackup = std::make_shared<Scene>(*scene);
+			ImGui::SetWindowFocus("Game");
+        }
+		else if (mode == PlayMode::STOP)
+		{
+			if (sceneBackup)
+            {
+                if (selectedObject != (EntityID)-1)
+                {
+                    std::string& selectedObjectUuid = scene->getComponent<Transform>(selectedObject).uuid;
+                    if (!sceneBackup->hasEntity(selectedObject) || sceneBackup->getComponent<Transform>(selectedObject).uuid != selectedObjectUuid)
+                    {
+                        selectedObject = (EntityID)-1;
+                    }
+                }
+
+                scene = std::make_shared<Scene>(*sceneBackup);
+                sceneBackup = nullptr;
+            }
+			ImGui::SetWindowFocus("Scene");
+		}
+        playMode = mode;
     }
 
 
@@ -281,7 +320,7 @@ namespace Editor
         if (result == NFD_OKAY)
         {
             selectedObject = (EntityID)-1;
-			setPlayMode(false);
+			setPlayMode(PlayMode::STOP);
 
             scene = std::make_shared<Scene>();
             std::string path = outPath;

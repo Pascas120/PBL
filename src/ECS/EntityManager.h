@@ -12,6 +12,7 @@ using EntityID = std::uint16_t;
 class EntityManager {
 public:
     EntityManager();
+	EntityManager(const EntityManager&);
 
     EntityID createEntity();
     void destroyEntity(EntityID id);

@@ -142,6 +142,10 @@ namespace Editor
         if (deleteObject)
         {
             scene->destroyEntity(id);
+			if (editor->selectedObject == id)
+			{
+				editor->selectedObject = (EntityID)-1;
+			}
         }
 
     }

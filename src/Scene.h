@@ -55,6 +55,13 @@ public:
         sceneGraphRoot = rootEntity;
     }
 
+	Scene(const Scene& other) : entityManager(other.entityManager) 
+    {
+		for (const auto& [type, storage] : other.storages) {
+            storages[type] = std::unique_ptr<IComponentStorage>(storage->clone());
+		}
+    }
+
     EntityID getSceneRootEntity() const { return sceneGraphRoot; }
 
     TransformSystem& getTransformSystem() {
@@ -136,8 +143,17 @@ public:
             }
 
             transformSystem.removeChild(transform.parent, id);
+            for (auto& component : storages) {
+				if (component.second->has(id)) {
+					component.second->remove(id);
+				}
+            }
         }
     }
+
+	bool hasEntity(EntityID id) const {
+		return entityManager.isAlive(id);
+	}
 
 	const std::vector<EntityID>& getEntities() const {
 		return entityManager.getEntities();

@@ -78,7 +78,7 @@ namespace Editor
 				ImGui::SetWindowFocus();
 			}
 
-			if (ImGui::IsWindowFocused() && editor->playMode)
+			if (ImGui::IsWindowFocused() && editor->playMode == PlayMode::PLAY)
 			{
 				editor->input();
 			}

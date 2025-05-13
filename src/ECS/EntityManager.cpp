@@ -8,6 +8,11 @@ EntityManager::EntityManager() {
     }
 }
 
+EntityManager::EntityManager(const EntityManager& other) 
+    : aliveEntities(other.aliveEntities), 
+    availableIDs(other.availableIDs), 
+    entities(other.entities) {}
+
 EntityID EntityManager::createEntity() {
     assert(!availableIDs.empty() && "Maximum number of entities reached!");
 

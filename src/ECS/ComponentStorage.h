@@ -11,6 +11,11 @@
 
 struct IComponentStorage {
     virtual ~IComponentStorage() = default;
+
+	virtual IComponentStorage* clone() const = 0;
+
+	virtual bool has(EntityID id) const = 0;
+    virtual void remove(EntityID id) = 0;
 };
 
 template<typename T>
@@ -19,8 +24,6 @@ private:
     uint16_t quantity = 0;
 
 public:
-    using EntityID = std::uint16_t;
-
     T components[MAX_OBJECTS];
     int entityToIndex[MAX_OBJECTS];
 
@@ -29,6 +32,19 @@ public:
             entityToIndex[i] = -1;
         }
     }
+
+	ComponentStorage(const ComponentStorage& other) : quantity(other.quantity) {
+		for (int i = 0; i < quantity; i++) {
+			components[i] = other.components[i];
+		}
+		for (int i = 0; i < MAX_OBJECTS; i++) {
+			entityToIndex[i] = other.entityToIndex[i];
+		}
+	}
+
+	virtual IComponentStorage* clone() const override {
+		return new ComponentStorage<T>(*this);
+	}
 
     bool has(EntityID id) const {
         return entityToIndex[id] != -1;
