@@ -49,9 +49,10 @@ public:
         entityManager = EntityManager();
         rootEntity = entityManager.createEntity();
         auto& t = addComponent<Transform>(rootEntity, Transform{});
-        t.uuid = uuid::generate();
 
-        addComponent<ObjectInfoComponent>(rootEntity);
+        auto& info = addComponent<ObjectInfoComponent>(rootEntity);
+		info.uuid = uuid::generate();
+
         sceneGraphRoot = rootEntity;
     }
 
@@ -121,16 +122,15 @@ public:
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
     EntityID createEntity(EntityID parent = -1) {
         EntityID id = entityManager.createEntity();
-        addComponent<Transform>(id, Transform{});
-        addComponent<ObjectInfoComponent>(id);
+        auto& t = addComponent<Transform>(id, Transform{});
+        auto& info = addComponent<ObjectInfoComponent>(id);
 
         if (parent < 0 || parent > 5000) parent = sceneGraphRoot;
         auto& parentTransform = getComponent<Transform>(parent);
         parentTransform.children.push_back(id);
 
-        auto& t = getComponent<Transform>(id);
         t.parent = parent;
-        t.uuid = uuid::generate();
+        info.uuid = uuid::generate();
         return id;
     }
 

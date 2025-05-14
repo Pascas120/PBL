@@ -19,6 +19,7 @@
 
 struct ObjectInfoComponent {
     std::string name;
+    std::string uuid;
 
 	EntityID id;
 };

@@ -176,8 +176,6 @@ bool TransformSystem::addChild(EntityID parent, EntityID child) const {
     parentTransform.children.push_back(child);
     childTransform.parent = parent;
 
-    setGlobalMatrix(child, childTransform.globalMatrix);
-
 	return true;
 }
 

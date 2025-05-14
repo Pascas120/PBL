@@ -265,8 +265,8 @@ namespace Editor
             {
                 if (selectedObject != (EntityID)-1)
                 {
-                    std::string& selectedObjectUuid = scene->getComponent<Transform>(selectedObject).uuid;
-                    if (!sceneBackup->hasEntity(selectedObject) || sceneBackup->getComponent<Transform>(selectedObject).uuid != selectedObjectUuid)
+                    std::string& selectedObjectUuid = scene->getComponent<ObjectInfoComponent>(selectedObject).uuid;
+                    if (!sceneBackup->hasEntity(selectedObject) || sceneBackup->getComponent<ObjectInfoComponent>(selectedObject).uuid != selectedObjectUuid)
                     {
                         selectedObject = (EntityID)-1;
                     }

@@ -72,11 +72,13 @@ namespace Serialization
 	static void to_json(nlohmann::json & j, const ObjectInfoComponent& c)
 	{
 		j["name"] = c.name;
+		j["uuid"] = c.uuid;
 	}
 
 	static void from_json(const nlohmann::json& j, ObjectInfoComponent& c, const DeserializationContext& context)
 	{
 		j.at("name").get_to(c.name);
+		j.at("uuid").get_to(c.uuid);
 	}
 
 	static void to_json(nlohmann::json& j, const Transform& c)
@@ -85,7 +87,6 @@ namespace Serialization
 		j["rotation"] = c.rotation;
 		j["eulerRotation"] = c.eulerRotation;
 		j["scale"] = c.scale;
-		j["uuid"] = c.uuid;
 	}
 
 	static void from_json(const nlohmann::json& j, Transform& c, const DeserializationContext& context)
@@ -94,7 +95,6 @@ namespace Serialization
 		j.at("rotation").get_to(c.rotation);
 		j.at("eulerRotation").get_to(c.eulerRotation);
 		j.at("scale").get_to(c.scale);
-		j.at("uuid").get_to(c.uuid);
 	}
 
 	static void to_json(nlohmann::json& j, const ModelComponent& c)
@@ -245,12 +245,12 @@ namespace Serialization
 			if (t.parent == sceneRoot)
 				entityJson["Transform"]["parent"] = "";
 			else
-				entityJson["Transform"]["parent"] = scene.getComponent<Transform>(t.parent).uuid;
+				entityJson["Transform"]["parent"] = scene.getComponent<ObjectInfoComponent>(t.parent).uuid;
 
 			entityJson["Transform"]["children"] = json::array();
 			for (auto& child : t.children)
 			{
-				entityJson["Transform"]["children"].push_back(scene.getComponent<Transform>(child).uuid);
+				entityJson["Transform"]["children"].push_back(scene.getComponent<ObjectInfoComponent>(child).uuid);
 			}
 
 
@@ -300,9 +300,10 @@ namespace Serialization
 			EntityID entity = scene.createEntity((EntityID)-1);
 			
 			deserializeExistingComponent(ObjectInfoComponent);
+			auto& info = scene.getComponent<ObjectInfoComponent>(entity);
+			uuidToEntityMap[info.uuid] = entity;
+
 			deserializeExistingComponent(Transform);
-			auto& t = scene.getComponent<Transform>(entity);
-			uuidToEntityMap[t.uuid] = entity;
 
 			deserializeComponent(ModelComponent);
 			deserializeComponent(ImageComponent);
@@ -311,15 +312,17 @@ namespace Serialization
 			deserializeComponent(BoundingVolumeComponent);
 		}
 
+		auto& ts = scene.getTransformSystem();
+
 		for (auto& entityJson : sceneJson["entities"])
 		{
-			EntityID entity = uuidToEntityMap[entityJson["Transform"]["uuid"].get<std::string>()];
+			EntityID entity = uuidToEntityMap[entityJson["ObjectInfoComponent"]["uuid"].get<std::string>()];
 			auto& t = scene.getComponent<Transform>(entity);
 			t.parent = uuidToEntityMap[entityJson["Transform"]["parent"].get<std::string>()];
 
 			for (auto& childUuid : entityJson["Transform"]["children"])
 			{
-				t.children.push_back(uuidToEntityMap[childUuid.get<std::string>()]);
+				ts.addChild(entity, uuidToEntityMap[childUuid.get<std::string>()]);
 			}
 		}
 	}
