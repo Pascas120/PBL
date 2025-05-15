@@ -22,7 +22,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Player"
+                "name": "Player",
+                "uuid": "64115868-87d4-1966-c72d-414b605dd63b"
             },
             "Transform": {
                 "children": [],
@@ -47,8 +48,7 @@
                     0.0,
                     0.0,
                     0.0
-                ],
-                "uuid": "b3e42359-58f3-8cd9-41ed-7f26e0563ed6"
+                ]
             }
         },
         {
@@ -81,7 +81,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Nanosuit"
+                "name": "Nanosuit",
+                "uuid": "21479770-6853-d6c6-ada7-cf974c06c1d7"
             },
             "Transform": {
                 "children": [],
@@ -106,8 +107,7 @@
                     2.5,
                     0.0,
                     0.0
-                ],
-                "uuid": "c211eb35-d945-cb4e-958c-f4d43f165528"
+                ]
             }
         },
         {
@@ -140,7 +140,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Floor"
+                "name": "Floor",
+                "uuid": "e6359b8f-9cb2-936a-4c9d-2361cb8dac03"
             },
             "Transform": {
                 "children": [],
@@ -165,8 +166,7 @@
                     0.0,
                     0.0,
                     0.0
-                ],
-                "uuid": "e2c0606d-0d59-3022-32eb-dfd42d1033f2"
+                ]
             }
         },
         {
@@ -199,7 +199,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Wall 1"
+                "name": "Wall 1",
+                "uuid": "1be9f4be-6c2c-0f6c-e6bc-bf68ebc8a096"
             },
             "Transform": {
                 "children": [],
@@ -224,8 +225,7 @@
                     0.0,
                     1.0,
                     6.0
-                ],
-                "uuid": "6b77a8c1-ac7a-c757-e197-cdf7bc9a7939"
+                ]
             }
         },
         {
@@ -258,7 +258,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Wall 2"
+                "name": "Wall 2",
+                "uuid": "bcd06c15-c5dd-a389-8510-b9eb82b10035"
             },
             "Transform": {
                 "children": [],
@@ -283,8 +284,7 @@
                     0.0,
                     1.0,
                     -6.0
-                ],
-                "uuid": "1fecb773-b1f3-caae-0fd9-e9317279ea71"
+                ]
             }
         },
         {
@@ -317,7 +317,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Wall 3"
+                "name": "Wall 3",
+                "uuid": "defadb62-8364-45cd-1f82-175ea389483e"
             },
             "Transform": {
                 "children": [],
@@ -342,8 +343,7 @@
                     6.0,
                     1.0,
                     0.0
-                ],
-                "uuid": "90a3d5d9-3963-ea25-debe-2921aec2a0bd"
+                ]
             }
         },
         {
@@ -376,7 +376,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Wall 4"
+                "name": "Wall 4",
+                "uuid": "9479f05e-f793-d369-1243-175b3894946e"
             },
             "Transform": {
                 "children": [],
@@ -401,8 +402,7 @@
                     -6.0,
                     1.0,
                     0.0
-                ],
-                "uuid": "ed8936da-954f-ae7b-4c95-b68f6bac7ee5"
+                ]
             }
         },
         {
@@ -435,7 +435,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Wall 5"
+                "name": "Wall 5",
+                "uuid": "51a5c569-b0c3-12e7-7a1d-0117b40cc99e"
             },
             "Transform": {
                 "children": [],
@@ -460,8 +461,7 @@
                     1.0,
                     1.0,
                     2.0
-                ],
-                "uuid": "09ab9dd9-5e70-26c1-7410-85df2a05d034"
+                ]
             }
         },
         {
@@ -478,7 +478,8 @@
                 "width": 0.0
             },
             "ObjectInfoComponent": {
-                "name": "Cloud"
+                "name": "Cloud",
+                "uuid": "5590f906-7091-efc1-2c8f-b286be973fca"
             },
             "Transform": {
                 "children": [],
@@ -503,13 +504,13 @@
                     1728.0,
                     108.0,
                     0.0
-                ],
-                "uuid": "3ab84b66-ea20-f383-f72a-a9edcebc2e1a"
+                ]
             }
         },
         {
             "ObjectInfoComponent": {
-                "name": "Text"
+                "name": "Text",
+                "uuid": "5a3c29a8-cd8c-7483-d17d-29eb34013829"
             },
             "TextComponent": {
                 "color": [
@@ -545,8 +546,7 @@
                     192.0,
                     108.0,
                     0.0
-                ],
-                "uuid": "f27dd6d3-8ff5-ff36-e75b-9c18dab9b6c3"
+                ]
             }
         }
     ],

@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Application.h"
+#include "nlohmann/json.hpp"
 
-//// include w headerze nie kompiluje siê (idk czemu)
-//namespace ImGuizmo {
-//	enum OPERATION : int;
-//}
+using json = nlohmann::json;
 
 namespace Editor
 {
@@ -22,6 +20,11 @@ namespace Editor
 		STOP
 	};
 
+	struct EditorClipboard
+	{
+		json objectJson;
+	};
+
 	class EditorApp : public Application, public std::enable_shared_from_this<EditorApp>
 	{
 	public:
@@ -33,6 +36,8 @@ namespace Editor
 
 		PlayMode playMode = PlayMode::STOP;
 		void setPlayMode(PlayMode mode);
+
+		EditorClipboard clipboard;
 
 	protected:
 		void initImGui();

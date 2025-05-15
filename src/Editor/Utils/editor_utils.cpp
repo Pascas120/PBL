@@ -8,6 +8,8 @@
 #include <Shlwapi.h>
 #endif
 
+#include "Scene.h"
+
 namespace Editor::Utils
 {
 
@@ -34,6 +36,81 @@ namespace Editor::Utils
 	bool isActiveInAnotherWindow()
 	{
 		return ImGui::IsAnyItemActive() && !ImGui::IsWindowFocused();
+	}
+
+	void setUniqueName(int id, Scene& scene, std::string name)
+	{
+		std::string* objName;
+
+		bool newName = !name.empty();
+		if (newName)
+			objName = &name;
+		else
+			objName = &scene.getComponent<ObjectInfoComponent>(id).name;
+
+
+
+		std::string baseName = *objName;
+		auto leftParenthesisPos = baseName.rfind(" (");
+		auto rightParenthesisPos = baseName.rfind(')');
+		if (leftParenthesisPos != std::string::npos && rightParenthesisPos != std::string::npos)
+		{
+			std::string indexStr = baseName.substr(leftParenthesisPos + 2, rightParenthesisPos - leftParenthesisPos - 2);
+
+			if (std::all_of(indexStr.begin(), indexStr.end(), ::isdigit))
+			{
+				baseName = baseName.substr(0, leftParenthesisPos);
+			}
+		}
+
+		std::unordered_set<int> indices;
+
+		auto& parentTransform = scene.getComponent<Transform>(scene.getComponent<Transform>(id).parent);
+		for (auto& child : parentTransform.children)
+		{
+			if (child == id) continue;
+
+			auto& childName = scene.getComponent<ObjectInfoComponent>(child).name;
+			if (childName.find(baseName) == 0)
+			{
+				if (childName.length() == baseName.length())
+				{
+					indices.insert(0);
+				}
+				else if (childName.find(baseName + " (") == 0)
+				{
+					auto leftParenthesisPos = childName.rfind(" (");
+					auto rightParenthesisPos = childName.rfind(')');
+					if (leftParenthesisPos == baseName.length() && rightParenthesisPos != std::string::npos) {
+						std::string indexStr = childName.substr(leftParenthesisPos + 2, rightParenthesisPos - leftParenthesisPos - 2);
+						if (std::all_of(indexStr.begin(), indexStr.end(), ::isdigit))
+						{
+							indices.insert(std::stoi(indexStr));
+						}
+					}
+				}
+			}
+		}
+
+		int lowestAvailableIndex = 0;
+		while (indices.find(lowestAvailableIndex) != indices.end())
+		{
+			lowestAvailableIndex++;
+		}
+
+		if (lowestAvailableIndex > 0)
+		{
+			*objName = baseName + " (" + std::to_string(lowestAvailableIndex) + ")";
+		}
+		else
+		{
+			*objName = baseName;
+		}
+
+		if (newName)
+		{
+			scene.getComponent<ObjectInfoComponent>(id).name = *objName;
+		}
 	}
 
 	void openFolder(const std::string& path) {

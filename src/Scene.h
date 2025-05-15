@@ -125,7 +125,7 @@ public:
         auto& t = addComponent<Transform>(id, Transform{});
         auto& info = addComponent<ObjectInfoComponent>(id);
 
-        if (parent < 0 || parent > 5000) parent = sceneGraphRoot;
+        if (parent < 0 || parent > MAX_ENTITIES) parent = sceneGraphRoot;
         auto& parentTransform = getComponent<Transform>(parent);
         parentTransform.children.push_back(id);
 

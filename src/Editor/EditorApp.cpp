@@ -303,7 +303,7 @@ namespace Editor
                 return;
             }
 		}
-		Serialization::serializeScene(path, *scene);
+		Serialization::saveScene(path, *scene);
 		scenePath = path;
 	}
 
@@ -324,7 +324,7 @@ namespace Editor
 
             scene = std::make_shared<Scene>();
             std::string path = outPath;
-            Serialization::deserializeScene(path, *scene, { shaders, models });
+			Serialization::loadScene(path, *scene, { shaders, models, true });
 			scenePath = path;
             NFD_FreePathU8(outPath);
         }

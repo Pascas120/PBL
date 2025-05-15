@@ -1,8 +1,9 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
+#include <vector>
+#include "Scene.h"
 
-class Scene;
 class Shader;
 class Model;
 
@@ -11,8 +12,16 @@ namespace Serialization
 	struct DeserializationContext {
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
+		bool deserializeUuid;
 	};
 
-	void serializeScene(const std::string& filePath, Scene& scene);
-	void deserializeScene(const std::string& filePath, Scene& scene, const DeserializationContext& context);
+	void saveScene(const std::string& filePath, Scene& scene);
+	void loadScene(const std::string& filePath, Scene& scene, const DeserializationContext& context);
+
+	nlohmann::json serializeScene(Scene& scene);
+	void deserializeScene(nlohmann::json sceneJson, Scene& scene, const DeserializationContext& context);
+
+	nlohmann::json serializeObjects(const std::vector<EntityID>& objects, Scene& scene);
+	std::vector<EntityID> deserializeObjects(nlohmann::json objectsJson, Scene& scene, EntityID rootParent, const DeserializationContext& context);
+
 }

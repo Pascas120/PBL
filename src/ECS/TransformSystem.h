@@ -31,7 +31,8 @@ public:
     bool addChild(EntityID parent, EntityID child) const;
 	void addChildKeepTransform(EntityID parent, EntityID child) const;
     void removeChild(EntityID parent, EntityID child) const;
-	void setChildIndex(EntityID parent, EntityID child, int index) const;
+	void setChildIndex(EntityID child, int index) const;
+	int getChildIndex(EntityID child) const;
 };
 
 #endif //PBL_TRANSFORMSYSTEM_H

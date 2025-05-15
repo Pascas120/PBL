@@ -196,12 +196,9 @@ void TransformSystem::removeChild(EntityID parent, EntityID child) const {
     childTransform.parent = (EntityID) -1;
 }
 
-void TransformSystem::setChildIndex(EntityID parent, EntityID child, int index) const {
-	auto& parentTransform = scene->getComponent<Transform>(parent);
+void TransformSystem::setChildIndex(EntityID child, int index) const {
 	auto& childTransform = scene->getComponent<Transform>(child);
-
-	if (childTransform.parent != parent)
-		return;
+	auto& parentTransform = scene->getComponent<Transform>(childTransform.parent);
 
 	int currentIndex = std::find(parentTransform.children.begin(), parentTransform.children.end(), child) - parentTransform.children.begin();
 	if (currentIndex == index)
@@ -213,4 +210,11 @@ void TransformSystem::setChildIndex(EntityID parent, EntityID child, int index) 
 
 	std::erase(parentTransform.children, child);
 	parentTransform.children.insert(parentTransform.children.begin() + index, child);
+}
+
+int TransformSystem::getChildIndex(EntityID child) const {
+    auto& childTransform = scene->getComponent<Transform>(child);
+    auto& parentTransform = scene->getComponent<Transform>(childTransform.parent);
+
+	return std::find(parentTransform.children.begin(), parentTransform.children.end(), child) - parentTransform.children.begin();
 }
