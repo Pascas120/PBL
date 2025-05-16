@@ -202,15 +202,22 @@ bool init()
 				{ GL_VERTEX_SHADER, "res/shaders/text.vert" },
 				{ GL_FRAGMENT_SHADER, "res/shaders/text.frag" }
 			}));
+    shaders.emplace_back(
+    new Shader("Anim", {
+            { GL_VERTEX_SHADER, "res/shaders/anim.vert" },
+            { GL_FRAGMENT_SHADER, "res/shaders/basic.frag" }
+        }));
 
     models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
     models.emplace_back(new Model("res/models/dee/waddledee.obj"));
     models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/untitled.fbx"));
+    models.emplace_back(new Model("res/models/wardrobe1.fbx"));
 
     Model& ourModel = *models[0];
     Model& model2 = *models[1];
     Model& model3 = *models[2];
+    Model& model4 = *models[4];
 
     EntityID ent;
 	ImageComponent* imageComponent;
@@ -251,7 +258,8 @@ bool init()
     boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
     boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, boxCollider->halfSize.x, boxCollider->halfSize.y, boxCollider->halfSize.z)));
+    AABBBV boundingBox = ourModel.calculateBoundingBox();
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
 
 
     for (int x = 0; x < 100; ++x) {
@@ -265,9 +273,17 @@ bool init()
             scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
 
 
-            scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, 4.0f, 7.7f, 1.778f)));
+            scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
         }
     }
+
+    // ent = player = scene.createEntity();
+    // scene.getComponent<ObjectInfoComponent>(ent).name = "Wardrobe";
+    // //ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+    //
+    // scene.addComponent<ModelComponent>(ent, { shaders[0], &model4 });
+    //
+    // scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model4.calculateBoundingBox())));
 
 	ent = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -275,6 +291,8 @@ bool init()
 	ts.scaleEntity(ent, glm::vec3(5.0, 0.1f, 5.0f));
 
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+    boundingBox = model3.calculateBoundingBox();
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
 
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
@@ -294,6 +312,7 @@ bool init()
 		ts.translateEntity(ent, wallScalesAndTranslations[i].second);
 
 		scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
 		colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 	}
 
@@ -306,6 +325,7 @@ bool init()
 	ts.scaleEntity(ent, glm::vec3(0.5f, 2.0f, 0.5f));
 
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 
