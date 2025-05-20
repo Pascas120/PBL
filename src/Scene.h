@@ -24,11 +24,11 @@ private:
     TransformSystem transformSystem = TransformSystem(this);
     RenderingSystem renderingSystem = RenderingSystem(this);
     CollisionSystem collisionSystem = CollisionSystem(this);
+    EventSystem eventSystem = EventSystem();
 
 
 
     EntityID sceneGraphRoot = 0;
-    EntityID rootEntity = 0;
 
     template<typename T>
     ComponentStorage<T>* getOrCreateStorage() {
@@ -43,17 +43,14 @@ private:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 public:
-	using EntityID = uint16_t;
 
     Scene() {
         entityManager = EntityManager();
-        rootEntity = entityManager.createEntity();
-        auto& t = addComponent<Transform>(rootEntity, Transform{});
+        sceneGraphRoot = entityManager.createEntity();
+        auto& t = addComponent<Transform>(sceneGraphRoot, Transform{});
 
-        auto& info = addComponent<ObjectInfoComponent>(rootEntity);
+        auto& info = addComponent<ObjectInfoComponent>(sceneGraphRoot);
 		info.uuid = uuid::generate();
-
-        sceneGraphRoot = rootEntity;
     }
 
 	Scene(const Scene& other) : entityManager(other.entityManager) 
@@ -62,6 +59,10 @@ public:
             storages[type] = std::unique_ptr<IComponentStorage>(storage->clone());
 		}
     }
+
+    Scene& operator=(const Scene&) = delete; // Wyłączenie przypisania
+    Scene(Scene&&) = default; // Przenoszenie dozwolone
+    Scene& operator=(Scene&&) = default;
 
     EntityID getSceneRootEntity() const { return sceneGraphRoot; }
 
@@ -77,6 +78,9 @@ public:
 		return collisionSystem;
 	}
 
+    EventSystem& getEventSystem() {
+        return eventSystem;
+    }
 
     template<typename T>
     T& addComponent(EntityID id, const T& value = T{}) {
@@ -134,14 +138,14 @@ public:
         return id;
     }
 
+
     void destroyEntity(EntityID id) {
         if (hasComponent<Transform>(id)) {
             auto& transform = getComponent<Transform>(id);
 
-            for (auto& child : transform.children) {
+            for (const auto& child : transform.children) {
                 destroyEntity(child);
             }
-
             transformSystem.removeChild(transform.parent, id);
             for (auto& component : storages) {
 				if (component.second->has(id)) {

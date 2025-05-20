@@ -7,8 +7,7 @@
 #include "stb_image.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Scene.h"
-
-//TODO Nie możemy tworzyć tekstur w każdej klatce, trzeba zrobić manager zasobów
+#include "spdlog/spdlog.h"
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
@@ -18,14 +17,15 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     auto transforms = scene->getStorage<Transform>();
 
     uint16_t renderingQueueSize = 0;
-    //TODO chyba lepiej przechowywać komponenty zamiast ID
+    //TODO Docelowo jednak indeksy są lepsze bo łatwiej je sortować
     ModelComponent renderingQueue[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSizePair();
 	if (width == 0 || height == 0) {
 		return;
 	}
-    camera.createFrustum((float)width / (float)height);
+    float aspectRatio = (float)width / (float)height;
+    camera.createFrustum(aspectRatio);
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
         if(!boundingVolumes->has(modelComponent.id)) {
@@ -42,7 +42,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     glm::mat4 view = camera.getViewMatrix();
 
 	framebuffer.Bind();
-
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = renderingQueue[i];
 

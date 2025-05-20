@@ -16,6 +16,7 @@
 
 #include "ECS/BoundingVolumes.h"
 
+class Model;
 
 struct ObjectInfoComponent {
     std::string name;
