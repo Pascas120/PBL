@@ -41,6 +41,17 @@ public:
         listeners[std::type_index(typeid(EventType))].push_back(std::move(listener));
     }
 
+	template<typename EventType>
+	void unregisterListener(EventListener listener) {
+		auto it = listeners.find(std::type_index(typeid(EventType)));
+		if (it != listeners.end()) {
+			auto& vec = it->second;
+			vec.erase(std::remove_if(vec.begin(), vec.end(),
+				[&listener](const EventListener& l) { return l.target<void(const Event&)>() == listener.target<void(const Event&)>(); }),
+				vec.end());
+		}
+	}
+
     template<typename EventType>
     void triggerEvent(const EventType& event) {
         auto it = listeners.find(std::type_index(typeid(EventType)));

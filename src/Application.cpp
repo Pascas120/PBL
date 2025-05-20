@@ -167,7 +167,7 @@ void Application::update()
 
 	bool updateScene = false;
 
-	for (const CollisionInfo& collision : collisions)
+	for (const CollisionEvent& collision : collisions)
 	{
 		auto& transformA = scene->getComponent<Transform>(collision.objectA);
 		auto& transformB = scene->getComponent<Transform>(collision.objectB);
@@ -204,6 +204,9 @@ void Application::update()
 
 	if (updateScene)
 		ts.update();
+
+	EventSystem& eventSystem = scene->getEventSystem();
+	eventSystem.processEvents();
 }
 
 void Application::render(const Framebuffer& framebuffer)
@@ -428,4 +431,14 @@ void Application::setupScene()
 	//    h2->setTexture("../../res/textures/cloud.png");
 	//    hud.setRoot(h1);
 	//    h1->addChild(h2);
+
+	EventSystem& eventSystem = scene->getEventSystem();
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (event.isColliding)
+		{
+			spdlog::info("Collision detected between {} and {}", event.objectA, event.objectB);
+		}
+		});
+
 }

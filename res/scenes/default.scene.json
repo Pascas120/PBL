@@ -12,6 +12,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        -0.009999999776482582,
+                        0.10000000149011612,
+                        0.009999999776482582
+                    ],
                     "radius": 0.10000000149011612,
                     "type": "SPHERE"
                 },
@@ -23,7 +28,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Player",
-                "uuid": "64115868-87d4-1966-c72d-414b605dd63b"
+                "uuid": "4d955cc2-ab5b-b857-cf0f-92af3f6df718"
             },
             "Transform": {
                 "children": [],
@@ -67,6 +72,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        7.699999809265137,
+                        0.0
+                    ],
                     "halfSize": [
                         4.0,
                         7.699999809265137,
@@ -82,7 +92,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Nanosuit",
-                "uuid": "21479770-6853-d6c6-ada7-cf974c06c1d7"
+                "uuid": "eec6869e-5942-b485-674d-65d04ff4b4a4"
             },
             "Transform": {
                 "children": [],
@@ -126,6 +136,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -141,7 +156,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Floor",
-                "uuid": "e6359b8f-9cb2-936a-4c9d-2361cb8dac03"
+                "uuid": "d5ea3b50-a8b1-f5cb-8f82-f2c631a9f83d"
             },
             "Transform": {
                 "children": [],
@@ -185,6 +200,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -200,7 +220,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 1",
-                "uuid": "1be9f4be-6c2c-0f6c-e6bc-bf68ebc8a096"
+                "uuid": "543c4afd-8d94-e705-2c5d-690848e23b11"
             },
             "Transform": {
                 "children": [],
@@ -244,6 +264,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -259,7 +284,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 2",
-                "uuid": "bcd06c15-c5dd-a389-8510-b9eb82b10035"
+                "uuid": "f22021ee-1b5a-3cce-d396-3909e6b4bdeb"
             },
             "Transform": {
                 "children": [],
@@ -303,6 +328,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -318,7 +348,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 3",
-                "uuid": "defadb62-8364-45cd-1f82-175ea389483e"
+                "uuid": "199ac7c5-c692-8672-1311-ff7a743a3773"
             },
             "Transform": {
                 "children": [],
@@ -362,6 +392,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -377,7 +412,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 4",
-                "uuid": "9479f05e-f793-d369-1243-175b3894946e"
+                "uuid": "3241071b-3757-e23e-3b83-e93e694c5f93"
             },
             "Transform": {
                 "children": [],
@@ -421,6 +456,11 @@
             },
             "ColliderComponent": {
                 "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "halfSize": [
                         1.0,
                         1.0,
@@ -436,7 +476,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 5",
-                "uuid": "51a5c569-b0c3-12e7-7a1d-0117b40cc99e"
+                "uuid": "6f942dd8-fa54-a235-3bd8-be9d4e6cf2c1"
             },
             "Transform": {
                 "children": [],
@@ -479,7 +519,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Cloud",
-                "uuid": "5590f906-7091-efc1-2c8f-b286be973fca"
+                "uuid": "3c2d1462-f96b-88c9-63d1-b7db067c2304"
             },
             "Transform": {
                 "children": [],
@@ -510,7 +550,7 @@
         {
             "ObjectInfoComponent": {
                 "name": "Text",
-                "uuid": "5a3c29a8-cd8c-7483-d17d-29eb34013829"
+                "uuid": "c2ad2c34-1ef1-21cd-7304-184070e7022d"
             },
             "TextComponent": {
                 "color": [

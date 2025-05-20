@@ -164,6 +164,7 @@ namespace Serialization
 				shapeJson["type"] = "SPHERE";
 				shapeJson["radius"] = sphere->radius;
 			}
+			shapeJson["center"] = shape->center;
 			j["colliderShape"] = shapeJson;
 		}
 		j["isStatic"] = c.isStatic;
@@ -188,11 +189,13 @@ namespace Serialization
 				{
 					auto box = static_cast<BoxCollider*>(c.GetColliderShape());
 					shapeJson.at("halfSize").get_to(box->halfSize);
+					shapeJson.at("center").get_to(box->center);
 				}
 				else if (it->second == ColliderType::SPHERE)
 				{
 					auto sphere = static_cast<SphereCollider*>(c.GetColliderShape());
 					shapeJson.at("radius").get_to(sphere->radius);
+					shapeJson.at("center").get_to(sphere->center);
 				}
 
 				c.isStatic = j.at("isStatic").get<bool>();

@@ -1,6 +1,7 @@
 #include "HierarchyWindow.h"
 #include "EditorApp.h"
 #include "Utils/editor_utils.h"
+#include "Utils/editor_events.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -15,7 +16,6 @@ namespace Editor
 
 	void HierarchyWindow::drawWindow(const EditorContext& context)
 	{
-        auto& editor = context.editor;
         auto& scene = context.scene;
 
         constexpr float rightMargin = 40.0f;
@@ -53,7 +53,6 @@ namespace Editor
 
     void HierarchyWindow::drawNode(const EditorContext& context, EntityID id)
     {
-        auto& editor = context.editor;
         auto& scene = context.scene;
 
         ImGui::PushID(id);
@@ -64,8 +63,8 @@ namespace Editor
 		auto& ts = scene->getTransformSystem();
 
 
-        ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick
-            | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+        ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth 
+            | ImGuiTreeNodeFlags_FramePadding;
 
         nodeFlags |= (transform.children.size() == 0) ? ImGuiTreeNodeFlags_Leaf : ImGuiTreeNodeFlags_DefaultOpen;
         if (id == editor->selectedObject)
@@ -81,10 +80,13 @@ namespace Editor
         }
 		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
 		{
-			auto& camera = context.camera;
-			glm::vec3& pos = transform.translation;
+			//auto& camera = context.camera;
+			//glm::vec3& pos = transform.translation;
 
 			//camera.Position = pos - camera.Front * editor->camDistance;
+            Events::CameraFocus event;
+			event.position = transform.globalMatrix[3];
+			editor->getEventSystem().triggerEvent(event);
 		}
 
         // Context Menu
@@ -217,7 +219,6 @@ namespace Editor
 
     void HierarchyWindow::drawRearrangeTarget(const EditorContext& context, EntityID id, int targetIndex)
     {
-        auto& editor = context.editor;
         auto& scene = context.scene;
 
         const ImGuiPayload* payload = ImGui::GetDragDropPayload();

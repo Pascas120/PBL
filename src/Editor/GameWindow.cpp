@@ -24,7 +24,7 @@ namespace Editor
 		}
 	}
 
-	GameWindow::GameWindow()
+	GameWindow::GameWindow(EditorApp* editor) : editor(editor)
 	{
 		gameFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ 0, 0 });
 		renderSizePreset = &renderSizePresets[0];
@@ -37,8 +37,6 @@ namespace Editor
 
 	void GameWindow::drawWindow(const EditorContext& context)
 	{
-		auto& editor = context.editor;
-
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImVec4 bgColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
 		bgColor.w = 1.0f;

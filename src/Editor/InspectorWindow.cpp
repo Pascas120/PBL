@@ -13,7 +13,6 @@ namespace Editor
 
 	void InspectorWindow::drawWindow(const EditorContext& context)
 	{
-        auto& editor = context.editor;
         auto& scene = context.scene;
         ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
         if (ImGui::Begin("Inspector"))
@@ -49,7 +48,6 @@ namespace Editor
 
 	void InspectorWindow::drawTransform(const EditorContext& context, EntityID id)
 	{
-        auto& editor = context.editor;
         auto& scene = context.scene;
         if (!scene->hasComponent<Transform>(id))
             return;
@@ -85,7 +83,6 @@ namespace Editor
 
 	void InspectorWindow::drawCollider(const EditorContext& context, EntityID id)
 	{
-        auto& editor = context.editor;
         auto& scene = context.scene;
         if (!scene->hasComponent<ColliderComponent>(id))
             return;
@@ -139,7 +136,6 @@ namespace Editor
 
 	void InspectorWindow::drawModel(const EditorContext& context, EntityID id)
 	{
-		auto& editor = context.editor;
 		auto& scene = context.scene;
 		auto& shaders = context.shaders;
 

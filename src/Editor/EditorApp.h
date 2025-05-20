@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "nlohmann/json.hpp"
+#include "ECS/EventSystem.h"
 
 using json = nlohmann::json;
 
@@ -39,6 +40,8 @@ namespace Editor
 
 		EditorClipboard clipboard;
 
+		EventSystem& getEventSystem() { return editorEventSystem; }
+
 	protected:
 		void initImGui();
 
@@ -51,18 +54,20 @@ namespace Editor
 
 		std::shared_ptr<Scene> sceneBackup = nullptr;
 
-		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>();
-		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>();
-		std::unique_ptr<ShaderWindow> shaderWindow = std::make_unique<ShaderWindow>();
+		EventSystem editorEventSystem;
 
-		std::unique_ptr<SceneWindow> sceneWindow = std::make_unique<SceneWindow>();
-		std::unique_ptr<GameWindow> gameWindow = std::make_unique<GameWindow>();
+		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>(this);
+		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>(this);
+		std::unique_ptr<ShaderWindow> shaderWindow = std::make_unique<ShaderWindow>(this);
+
+		std::unique_ptr<SceneWindow> sceneWindow = std::make_unique<SceneWindow>(this);
+		std::unique_ptr<GameWindow> gameWindow = std::make_unique<GameWindow>(this);
+
 	};
 
 
 	struct EditorContext
 	{
-		EditorApp* editor;
 		std::shared_ptr<Scene> scene;
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;

@@ -1,5 +1,5 @@
 #include "SceneWindow.h" 
-#include "editor_utils.h"
+#include "Utils/editor_utils.h"
 
 #include <spdlog/spdlog.h>
 
@@ -15,12 +15,19 @@
  
 namespace Editor
 {
-	SceneWindow::SceneWindow()
+	SceneWindow::SceneWindow(EditorApp* editor) : editor(editor)
 	{
 		sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ 0, 0 });
 		editorCamera.Position = glm::vec3(0.0f, 0.0f, camDistance);
 		gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
+
+		editor->getEventSystem().registerListener<Events::CameraFocus>(focusCamera);
 	}
+
+    SceneWindow::~SceneWindow()
+    {
+		editor->getEventSystem().unregisterListener<Events::CameraFocus>(focusCamera);
+    }
 
     void SceneWindow::draw(const EditorContext& context)
     {
@@ -30,7 +37,6 @@ namespace Editor
 
     void SceneWindow::drawWindow(const EditorContext& context)
     {
-		auto& editor = context.editor;
 		auto& scene = context.scene;
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));

@@ -20,13 +20,15 @@ namespace Editor
 	class GameWindow
 	{
 	public:
-		GameWindow();
+		GameWindow(EditorApp* editor);
 
 		void draw(const EditorContext& context);
 
 
 	private:
 		void drawWindow(const EditorContext& context);
+
+		EditorApp* editor = nullptr;
 
 		std::unique_ptr<CustomFramebuffer> gameFramebuffer;
 		RenderSizePreset* renderSizePreset = nullptr;
