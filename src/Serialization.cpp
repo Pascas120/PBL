@@ -388,4 +388,49 @@ namespace Serialization
 
 		return deserializedEntities;
 	}
+
+	static const std::unordered_map<std::string, GLenum> shaderTypeMap = {
+		{"VERTEX", GL_VERTEX_SHADER},
+		{"FRAGMENT", GL_FRAGMENT_SHADER},
+		{"GEOMETRY", GL_GEOMETRY_SHADER},
+		{"TESS_CONTROL", GL_TESS_CONTROL_SHADER},
+		{"TESS_EVALUATION", GL_TESS_EVALUATION_SHADER},
+		{"COMPUTE", GL_COMPUTE_SHADER}
+	};
+
+	std::vector<Shader*> Serialization::loadShaderList(const std::string& filePath, std::vector<Shader*>& shaders)
+	{
+		std::vector<Shader*> newShaders;
+
+		std::ifstream file(filePath);
+		if (file.is_open())
+		{
+			json shaderListJson;
+			file >> shaderListJson;
+			file.close();
+			for (const auto& shaderJson : shaderListJson["shaders"])
+			{
+				std::unordered_map<GLenum, std::string> shaderPaths;
+				for (const auto& source : shaderJson["sources"].items())
+				{
+					std::string type = source.key();
+					std::string path = source.value();
+					auto it = shaderTypeMap.find(type);
+					if (it != shaderTypeMap.end())
+					{
+						shaderPaths[it->second] = path;
+					}
+				}
+
+				Shader* shader = new Shader(shaderJson["name"].get<std::string>(), shaderPaths);
+				shaders.push_back(shader);
+				newShaders.push_back(shader);
+			}
+		}
+		else
+		{
+			spdlog::error("Failed to open file for reading: {}", filePath);
+		}
+		return newShaders;
+	}
 }

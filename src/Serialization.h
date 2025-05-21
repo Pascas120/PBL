@@ -24,4 +24,5 @@ namespace Serialization
 	nlohmann::json serializeObjects(const std::vector<EntityID>& objects, Scene& scene);
 	std::vector<EntityID> deserializeObjects(nlohmann::json objectsJson, Scene& scene, EntityID rootParent, const DeserializationContext& context);
 
+	std::vector<Shader*> loadShaderList(const std::string& filePath, std::vector<Shader*>& shaders);
 }

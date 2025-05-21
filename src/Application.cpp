@@ -2,6 +2,8 @@
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <spdlog/spdlog.h>
 
+#include "Serialization.h"
+
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 static void glfw_error_callback(int error, const char* description)
@@ -261,31 +263,8 @@ void Application::setupScene()
 	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	shaders.emplace_back(
-		new Shader("Basic", {
-				{ GL_VERTEX_SHADER, "res/shaders/basic.vert" },
-				{ GL_FRAGMENT_SHADER, "res/shaders/basic.frag" }
-			}));
-	shaders.emplace_back(
-		new Shader("Flat", {
-				{ GL_VERTEX_SHADER, "res/shaders/flat.vert" },
-				{ GL_FRAGMENT_SHADER, "res/shaders/flat.frag" }
-			}));
-	shaders.emplace_back(
-		new Shader("GUITest", {
-				{ GL_VERTEX_SHADER, "res/shaders/guitest.vert" },
-				{ GL_FRAGMENT_SHADER, "res/shaders/guitest.frag" }
-			}));
-	shaders.emplace_back(
-		new Shader("HUD", {
-				{ GL_VERTEX_SHADER, "res/shaders/HUD.vert" },
-				{ GL_FRAGMENT_SHADER, "res/shaders/HUD.frag" }
-			}));
-	shaders.emplace_back(
-		new Shader("Text", {
-				{ GL_VERTEX_SHADER, "res/shaders/text.vert" },
-				{ GL_FRAGMENT_SHADER, "res/shaders/text.frag" }
-			}));
+	Serialization::loadShaderList("res/shaderList.json", shaders);
+
 
 	models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
 	models.emplace_back(new Model("res/models/dee/waddledee.obj"));

@@ -1,0 +1,44 @@
+{
+    "shaders" : [
+        {
+            "name": "Basic",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/basic.vert",
+                "FRAGMENT": "res/shaders/basic.frag"
+            }
+        },
+        {
+            "name": "Flat",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/flat.vert",
+                "FRAGMENT": "res/shaders/flat.frag"
+            }
+        },
+        {
+            "name": "GUITest",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/guitest.vert",
+                "FRAGMENT": "res/shaders/guitest.frag"
+            }            
+        },
+        {
+            "name": "HUD",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/HUD.vert",
+                "FRAGMENT": "res/shaders/HUD.frag"
+            }            
+        },
+        {
+            "name": "Text",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/text.vert",
+                "FRAGMENT": "res/shaders/text.frag"
+            }            
+        }
+    ]
+}

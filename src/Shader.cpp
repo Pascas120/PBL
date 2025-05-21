@@ -11,7 +11,7 @@ static void checkCompileErrors(GLuint shader, GLenum type);
 
 //TODO asercje zamiast exceptions, printf zamiast cout, nie korzystać z stringstreama
 
-static GLuint loadShader(const char* path, GLenum type)
+static GLuint loadShader(const std::string path, GLenum type)
 {
     spdlog::info("Loading shader from file: {}", path);
     std::string code;
@@ -42,7 +42,7 @@ static GLuint loadShader(const char* path, GLenum type)
 }
 
 
-Shader::Shader(const std::string& name, const std::unordered_map<GLenum, const char*>& shaders) : name{ name }
+Shader::Shader(const std::string& name, const std::unordered_map<GLenum, std::string>& shaders) : name{ name }
 {
     ID = glCreateProgram();
     std::vector<GLuint> shaderIDs;

@@ -22,7 +22,7 @@ public:
     unsigned int ID;
 
     // Constructor
-    Shader(const std::string& name, const std::unordered_map<GLenum, const char*>& shaders);
+    Shader(const std::string& name, const std::unordered_map<GLenum, std::string>& shaders);
     ~Shader();
 
     // Activate the shader
