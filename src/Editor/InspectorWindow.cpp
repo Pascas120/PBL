@@ -6,6 +6,25 @@
 
 namespace Editor
 {
+    template<typename T>
+    static bool componentContextMenu(const EditorContext& context, EntityID id)
+    {
+        if (ImGui::BeginPopupContextItem("Component Context Menu"))
+        {
+            if (ImGui::MenuItem("Delete"))
+            {
+                context.scene->removeComponent<T>(id);
+                ImGui::EndPopup();
+                ImGui::PopID();
+                return true;
+            }
+            ImGui::EndPopup();
+        }
+
+        return false;
+    }
+
+
     void InspectorWindow::draw(const EditorContext& context)
     {
         drawWindow(context);
@@ -40,6 +59,39 @@ namespace Editor
                 drawTransform(context, editor->selectedObject);
                 drawCollider(context, editor->selectedObject);
                 drawModel(context, editor->selectedObject);
+            }
+
+			/*float width = ImGui::GetContentRegionAvail().x;
+			constexpr float buttonWidth = 100.0f;*/
+
+            if (ImGui::BeginCombo("##AddComponentCombo", "Add Component",
+                ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_HeightLarge))
+            {
+                bool hasComponent;
+
+				hasComponent = scene->hasComponent<ModelComponent>(editor->selectedObject);
+				ImGui::BeginDisabled(hasComponent);
+                if (ImGui::Selectable("Model"))
+				{
+                    scene->addComponent<ModelComponent>(editor->selectedObject, {
+						.shader = context.shaders[0],
+						.model = context.models[0]
+						});
+				}
+				ImGui::EndDisabled();
+
+				hasComponent = scene->hasComponent<ColliderComponent>(editor->selectedObject);
+				ImGui::BeginDisabled(hasComponent);
+				if (ImGui::Selectable("Box Collider"))
+				{
+					scene->addComponent<ColliderComponent>(editor->selectedObject, ColliderComponent(ColliderType::BOX));
+				}
+				if (ImGui::Selectable("Sphere Collider"))
+				{
+					scene->addComponent<ColliderComponent>(editor->selectedObject, ColliderComponent(ColliderType::SPHERE));
+				}
+				ImGui::EndDisabled();
+				ImGui::EndCombo();
             }
         }
         ImGui::End();
@@ -107,7 +159,11 @@ namespace Editor
             break;
         }
 
-        if (ImGui::CollapsingHeader(tabName.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+        bool open = ImGui::CollapsingHeader(tabName.c_str(), ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ColliderComponent>(context, id)) return;
+
+
+		if (open)
         {
             glm::vec3 center = shape->center;
             if (ImGui::DragFloat3("Center", &center[0], 0.1f))
@@ -145,8 +201,25 @@ namespace Editor
         auto& modelComponent = scene->getComponent<ModelComponent>(id);
         ImGui::PushID(&modelComponent);
 
-        if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
+        bool open = ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ModelComponent>(context, id)) return;
+
+        if (open)
         {
+			Model* model = modelComponent.model;
+			if (ImGui::BeginCombo("Model##Combo", model->directory.c_str()))
+			{
+				for (int i = 0; i < context.models.size(); i++)
+				{
+					if (ImGui::Selectable(context.models[i]->directory.c_str(), model == context.models[i]))
+					{
+						model = context.models[i];
+						modelComponent.model = model;
+					}
+				}
+				ImGui::EndCombo();
+			}
+
             Shader* modelShader = modelComponent.shader;
             if (ImGui::BeginCombo("Shader##Combo", modelShader->getName().c_str()))
             {

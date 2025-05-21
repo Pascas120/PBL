@@ -92,7 +92,7 @@ public:
     void removeComponent(EntityID id) {
         auto storage = getStorage<T>();
         if (storage) {
-            storage->Remove(id);
+            storage->remove(id);
         }
     }
 
