@@ -13,12 +13,11 @@ RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) {
     auto models = scene->getStorage<ModelComponent>();
-    auto boundingVolumes = scene->getStorage<BoundingVolumeComponent>();
     auto transforms = scene->getStorage<Transform>();
 
     uint16_t renderingQueueSize = 0;
-    //TODO Docelowo jednak indeksy są lepsze bo łatwiej je sortować
-    ModelComponent renderingQueue[MAX_ENTITIES];
+
+    ModelComponent* renderingQueue = new ModelComponent[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSizePair();
 	if (width == 0 || height == 0) {
@@ -28,13 +27,10 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     camera.createFrustum(aspectRatio);
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
-        if(!boundingVolumes->has(modelComponent.id)) {
-            continue;
-        }
-        auto& bvComponent = boundingVolumes->get(modelComponent.id);
-        if (bvComponent.GetBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
+        AABBBV& boundingBox = modelComponent.model->boundingBox;
+
+        if (boundingBox.isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
             renderingQueue[renderingQueueSize++] = modelComponent;
-            boundingVolumes->get(modelComponent.id).onFrustum;
         }
     }
 
@@ -58,6 +54,8 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
         modelComponent.model->draw(modelComponent.shader);
     }
+
+	delete[] renderingQueue;
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {

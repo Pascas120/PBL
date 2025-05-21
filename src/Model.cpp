@@ -18,7 +18,7 @@ void Model::draw(Shader *shader)
         meshes[i].draw(shader);
 }
 
-AABBBV Model::calculateBoundingBox() const
+static AABBBV calculateBoundingBox(const std::vector<Mesh>& meshes)
 {
     glm::vec3 min = glm::vec3(FLT_MAX);
     glm::vec3 max = glm::vec3(-FLT_MAX);
@@ -47,6 +47,8 @@ void Model::loadModel(std::string const &path)
     }
     directory = path.substr(0, path.find_last_of('/'));
     processNode(scene->mRootNode, scene);
+
+    boundingBox = calculateBoundingBox(meshes);
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene)

@@ -1,4 +1,6 @@
 #include "BoundingVolumes.h"
+#include "Camera.h"
+#include "Components.h"
 
 // temporary
 #include "glm_serialization.h"

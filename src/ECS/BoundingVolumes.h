@@ -6,8 +6,12 @@
 #define BOUNDINGVOLUMES_H
 
 #include "glm/glm.hpp"
-#include "Camera.h"
-#include "Components.h"
+//#include "Camera.h"
+//#include "Components.h"
+
+class Frustum;
+class Plane;
+class Transform;
 
 // temporary
 #include "nlohmann/json.hpp"
@@ -30,6 +34,7 @@ public:
 class SphereBV : public BoundingVolume
 {
 public:
+    SphereBV() = default;
     SphereBV(const glm::vec3& inCenter, float inRadius);
 
     bool isOnOrForwardPlane(const Plane& plane) const override;
@@ -45,6 +50,7 @@ private:
 class AABBBV : public BoundingVolume
 {
 public:
+    AABBBV() = default;
     AABBBV(const glm::vec3& min, const glm::vec3& max);
     AABBBV(const glm::vec3& inCenter, float iI, float iJ, float iK);
 

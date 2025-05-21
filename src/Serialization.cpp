@@ -203,32 +203,6 @@ namespace Serialization
 		}
 	}
 
-	static void to_json(nlohmann::json& j, const BoundingVolumeComponent& c)
-	{
-		// temporary
-		j = c.GetBoundingVolume()->serialize();
-	}
-
-	static void from_json(const nlohmann::json& j, BoundingVolumeComponent& c, const DeserializationContext& context)
-	{
-		std::string type = j.at("type").get<std::string>();
-		if (type == "SPHERE")
-		{
-			glm::vec3 center;
-			float radius;
-			j.at("center").get_to(center);
-			j.at("radius").get_to(radius);
-			c = BoundingVolumeComponent(std::make_unique<SphereBV>(center, radius));
-		}
-		else if (type == "AABB")
-		{
-			glm::vec3 center, extents;
-			j.at("center").get_to(center);
-			j.at("extents").get_to(extents);
-			c = BoundingVolumeComponent(std::make_unique<AABBBV>(center, extents.x, extents.y, extents.z));
-		}
-	}
-
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);
@@ -271,37 +245,6 @@ namespace Serialization
 
 		sceneJson["sceneRoot"] = scene.getComponent<ObjectInfoComponent>(sceneRoot).name;
 
-		/*for (auto& entity : entities)
-		{
-			if (entity == sceneRoot)
-				continue;
-
-			json entityJson;
-			serializeComponent(ObjectInfoComponent);
-			serializeComponent(Transform);
-			auto& t = scene.getComponent<Transform>(entity);
-			if (t.parent == sceneRoot)
-				entityJson["Transform"]["parent"] = "";
-			else
-				entityJson["Transform"]["parent"] = scene.getComponent<ObjectInfoComponent>(t.parent).uuid;
-
-			entityJson["Transform"]["children"] = json::array();
-			for (auto& child : t.children)
-			{
-				entityJson["Transform"]["children"].push_back(scene.getComponent<ObjectInfoComponent>(child).uuid);
-			}
-
-
-			serializeComponent(ModelComponent);
-			serializeComponent(ImageComponent);
-			serializeComponent(TextComponent);
-			serializeComponent(ColliderComponent);
-			serializeComponent(BoundingVolumeComponent);
-
-
-
-			sceneJson["entities"].push_back(entityJson);
-		}*/
 		sceneJson["entities"] = serializeObjects({ sceneRoot }, scene)["entities"];
 
 		return sceneJson;
@@ -314,37 +257,6 @@ namespace Serialization
 		scene.getComponent<ObjectInfoComponent>(sceneRoot).name = sceneJson["sceneRoot"].get<std::string>();
 
 		deserializeObjects(sceneJson, scene, sceneRoot, context);
-
-		/*std::unordered_map<std::string, EntityID> uuidToEntityMap = { {"", sceneRoot} };
-		for (const auto& entityJson : sceneJson["entities"])
-		{
-			EntityID entity = scene.createEntity((EntityID)-1);
-			uuidToEntityMap[entityJson["ObjectInfoComponent"]["uuid"].get<std::string>()] = entity;
-
-			
-			deserializeExistingComponent(ObjectInfoComponent);
-			deserializeExistingComponent(Transform);
-
-			deserializeComponent(ModelComponent);
-			deserializeComponent(ImageComponent);
-			deserializeComponent(TextComponent);
-			deserializeComponent(ColliderComponent);
-			deserializeComponent(BoundingVolumeComponent);
-		}
-
-		auto& ts = scene.getTransformSystem();
-
-		for (auto& entityJson : sceneJson["entities"])
-		{
-			EntityID entity = uuidToEntityMap[entityJson["ObjectInfoComponent"]["uuid"].get<std::string>()];
-			auto& t = scene.getComponent<Transform>(entity);
-			t.parent = uuidToEntityMap[entityJson["Transform"]["parent"].get<std::string>()];
-
-			for (auto& childUuid : entityJson["Transform"]["children"])
-			{
-				ts.addChild(entity, uuidToEntityMap[childUuid.get<std::string>()]);
-			}
-		}*/
 	}
 
 	struct FullEntitySelection
@@ -429,7 +341,6 @@ namespace Serialization
 			serializeComponent(ImageComponent);
 			serializeComponent(TextComponent);
 			serializeComponent(ColliderComponent);
-			serializeComponent(BoundingVolumeComponent);
 
 
 
@@ -457,7 +368,6 @@ namespace Serialization
 			deserializeComponent(ImageComponent);
 			deserializeComponent(TextComponent);
 			deserializeComponent(ColliderComponent);
-			deserializeComponent(BoundingVolumeComponent);
 		}
 
 		auto& ts = scene.getTransformSystem();
@@ -466,7 +376,7 @@ namespace Serialization
 		{
 			EntityID entity = uuidToEntityMap[entityJson["ObjectInfoComponent"]["uuid"].get<std::string>()];
 			auto& t = scene.getComponent<Transform>(entity);
-			//t.parent = uuidToEntityMap[entityJson["Transform"]["parent"].get<std::string>()];
+
 			ts.addChild(uuidToEntityMap[entityJson["Transform"]["parent"].get<std::string>()],
 				entity);
 

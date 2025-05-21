@@ -321,8 +321,6 @@ void Application::setupScene()
 	sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
 	sphereCollider->radius = 0.1f;
 
-	scene->addComponent(ent, BoundingVolumeComponent(std::make_unique<SphereBV>(sphereCollider->center, sphereCollider->radius)));
-
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
@@ -337,23 +335,6 @@ void Application::setupScene()
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-	scene->addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, boxCollider->halfSize.x, boxCollider->halfSize.y, boxCollider->halfSize.z)));
-
-
-	/*for (int x = 0; x < 100; ++x) {
-		for (int z = 0; z < 10; ++z) {
-			EntityID ent = scene->createEntity();
-			scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
-
-			ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
-			ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
-
-			scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
-
-
-			scene->addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boxCollider->center, 4.0f, 7.7f, 1.778f)));
-		}
-	}*/
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -363,8 +344,6 @@ void Application::setupScene()
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-	scene->addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
-		std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 
 
 	std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
@@ -383,9 +362,6 @@ void Application::setupScene()
 
 		scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 		colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-
-		scene->addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
-			std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 	}
 
 
@@ -398,9 +374,6 @@ void Application::setupScene()
 
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-
-	scene->addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(
-		std::make_unique<AABBBV>(glm::vec3(0.0f), 1.0f, 1.0f, 1.0f)));
 
 
 	ent = scene->createEntity();
@@ -416,21 +389,6 @@ void Application::setupScene()
 	scene->addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
 	ts.translateEntity(ent, glm::vec3(1 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 
-
-	//    scene->addChild(obj1);
-	//    obj1->addChild(obj2);
-	//    obj1->components.AddComponent<Transform>();
-	//    obj1->components.AddComponent<ModelComponent>(&ourModel);
-	//    obj2->components.AddComponent<Transform>();
-	//    obj2->components.AddComponent<ModelComponent>(&ourModel);
-	//
-	//    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
-	//    h1->setColor(glm::vec4(1,0,0,1));
-	//
-	//    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
-	//    h2->setTexture("../../res/textures/cloud.png");
-	//    hud.setRoot(h1);
-	//    h1->addChild(h2);
 
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
