@@ -7,6 +7,8 @@
 #include "imgui_internal.h"
 #include "Serialization.h"
 
+#include "spdlog/spdlog.h"
+
 namespace Editor
 {
     void HierarchyWindow::draw(const EditorContext& context)
@@ -103,70 +105,77 @@ namespace Editor
 				editor->selectedObject = newObject;
             }
 
-			if (ImGui::MenuItem("Copy"))
-			{
-				json objectJson = Serialization::serializeObjects({ id }, *scene);
-				editor->clipboard.objectJson = objectJson;
-			}
-
-            if (ImGui::BeginMenu("Paste", !editor->clipboard.objectJson.empty()))
+            if (id != scene->getSceneRootEntity())
             {
-				if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-				{
-					if (!editor->clipboard.objectJson.empty())
-					{
-						json objectJson = editor->clipboard.objectJson;
-						auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-							transform.parent, { context.shaders, context.models, false });
-
-						int index = ts.getChildIndex(id);
-						for (auto& entity : pastedEntities)
-						{
-							ts.setChildIndex(entity, index + 1);
-							Utils::setUniqueName(entity, *scene);
-						}
-						editor->selectedObject = pastedEntities[0];
-					}
-					ImGui::CloseCurrentPopup();
-				}
-                if (ImGui::MenuItem("As Child"))
+                if (ImGui::MenuItem("Copy"))
                 {
-                    if (!editor->clipboard.objectJson.empty())
-                    {
-                        json objectJson = editor->clipboard.objectJson;
-                        auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-                            id, { context.shaders, context.models, false });
+                    json objectJson = Serialization::serializeObjects({ id }, *scene);
+                    editor->clipboard.objectJson = objectJson;
+                }
 
-                        for (auto& entity : pastedEntities)
+                if (ImGui::BeginMenu("Paste", !editor->clipboard.objectJson.empty()))
+                {
+                    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+                    {
+                        if (!editor->clipboard.objectJson.empty())
                         {
+                            json objectJson = editor->clipboard.objectJson;
+                            auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
+                                transform.parent, { context.shaders, context.models, false });
+
+                            int index = ts.getChildIndex(id);
+                            for (auto& entity : pastedEntities)
+                            {
+                                if (scene->getComponent<Transform>(entity).parent == transform.parent)
+                                {
+                                    ts.setChildIndex(entity, index + 1);
+                                    Utils::setUniqueName(entity, *scene);
+                                }
+                            }
+                            editor->selectedObject = pastedEntities[0];
+                        }
+                        ImGui::CloseCurrentPopup();
+                    }
+                    if (ImGui::MenuItem("As Child"))
+                    {
+                        if (!editor->clipboard.objectJson.empty())
+                        {
+                            json objectJson = editor->clipboard.objectJson;
+                            auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
+                                id, { context.shaders, context.models, false });
+
+                            for (auto& entity : pastedEntities)
+                            {
+                                Utils::setUniqueName(entity, *scene);
+                            }
+                            editor->selectedObject = pastedEntities[0];
+                        }
+                    }
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::MenuItem("Duplicate"))
+                {
+                    json objectJson = Serialization::serializeObjects({ id }, *scene);
+                    auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
+                        transform.parent, { context.shaders, context.models, false });
+
+                    for (auto& entity : pastedEntities)
+                    {
+                        if (scene->getComponent<Transform>(entity).parent == transform.parent)
+                        {
+                            ts.setChildIndex(entity, ts.getChildIndex(id) + 1);
                             Utils::setUniqueName(entity, *scene);
                         }
-                        editor->selectedObject = pastedEntities[0];
                     }
+                    editor->selectedObject = pastedEntities[0];
                 }
-				ImGui::EndMenu();
-            }
 
-            if (ImGui::MenuItem("Duplicate"))
-            {
-				json objectJson = Serialization::serializeObjects({ id }, *scene);
-                auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-                    transform.parent, { context.shaders, context.models, false });
-
-                for (auto& entity : pastedEntities)
+                if (ImGui::MenuItem("Delete"))
                 {
-					ts.setChildIndex(entity, ts.getChildIndex(id) + 1);
-                    Utils::setUniqueName(entity, *scene);
+                    deleteObject = true;
                 }
-                editor->selectedObject = pastedEntities[0];
             }
-
-            if (disabled = id == scene->getSceneRootEntity()) ImGui::BeginDisabled();
-            if (ImGui::MenuItem("Delete"))
-            {
-                deleteObject = true;
-            }
-            if (disabled) ImGui::EndDisabled();
 
             ImGui::EndPopup();
         }
@@ -208,7 +217,7 @@ namespace Editor
         if (deleteObject)
         {
             scene->destroyEntity(id);
-			if (editor->selectedObject == id)
+			if (!scene->hasEntity(editor->selectedObject))
 			{
 				editor->selectedObject = (EntityID)-1;
 			}

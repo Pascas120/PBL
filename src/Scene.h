@@ -153,6 +153,7 @@ public:
 				}
             }
         }
+        entityManager.destroyEntity(id);
     }
 
 	bool hasEntity(EntityID id) const {
