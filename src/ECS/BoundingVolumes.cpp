@@ -36,6 +36,9 @@ bool SphereBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform
 }
 
 // AABB implementation
+AABBBV::AABBBV()
+    : center(0.f), extents(0.f) {}
+
 AABBBV::AABBBV(const glm::vec3& min, const glm::vec3& max)
     : center((max + min) * 0.5f), extents(max.x - center.x, max.y - center.y, max.z - center.z) {}
 

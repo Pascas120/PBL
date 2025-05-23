@@ -183,6 +183,11 @@ bool init()
                 { GL_FRAGMENT_SHADER, "res/shaders/basic.frag" }
             }));
     shaders.emplace_back(
+            new Shader("Material", {
+                    { GL_VERTEX_SHADER, "res/shaders/basic.vert" },
+                    { GL_FRAGMENT_SHADER, "res/shaders/material.frag" }
+            }));
+    shaders.emplace_back(
         new Shader("Flat", {
                 { GL_VERTEX_SHADER, "res/shaders/flat.vert" },
                 { GL_FRAGMENT_SHADER, "res/shaders/flat.frag" }
@@ -212,7 +217,7 @@ bool init()
     models.emplace_back(new Model("res/models/dee/waddledee.obj"));
     models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/untitled.fbx"));
-    models.emplace_back(new Model("res/models/wardrobe1.fbx"));
+    models.emplace_back(new Model("res/models/maslpo.fbx"));
 
     Model& ourModel = *models[0];
     Model& model2 = *models[1];
@@ -230,7 +235,6 @@ bool init()
     ent = scene.getSceneRootEntity();
 	scene.getComponent<ObjectInfoComponent>(ent).name = "Root";
 
-
 	ent = player = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Player";
     ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
@@ -242,7 +246,7 @@ bool init()
     sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
     sphereCollider->radius = 0.1f;
 
-    scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<SphereBV>(sphereCollider->center, sphereCollider->radius)));
+    scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model2.calculateBoundingBox())));
 
 
 	ent = scene.createEntity();
@@ -277,13 +281,14 @@ bool init()
         }
     }
 
-    // ent = player = scene.createEntity();
-    // scene.getComponent<ObjectInfoComponent>(ent).name = "Wardrobe";
-    // //ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
-    //
-    // scene.addComponent<ModelComponent>(ent, { shaders[0], &model4 });
-    //
-    // scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model4.calculateBoundingBox())));
+     ent = player = scene.createEntity();
+     scene.getComponent<ObjectInfoComponent>(ent).name = "Wardrobe";
+     //ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+
+     scene.addComponent<ModelComponent>(ent, { shaders[1], &model4 });
+
+     scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model4.calculateBoundingBox())));
+     scene.getTransformSystem().scaleEntity(ent,glm::vec3(0.001f));
 
 	ent = scene.createEntity();
     scene.getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -350,20 +355,20 @@ bool init()
             spdlog::info("Collision detected between {} and {}", event.objectA, event.objectB);
         }
     });
-//    scene.addChild(obj1);
-//    obj1->addChild(obj2);
-//    obj1->components.AddComponent<Transform>();
-//    obj1->components.AddComponent<ModelComponent>(&ourModel);
-//    obj2->components.AddComponent<Transform>();
-//    obj2->components.AddComponent<ModelComponent>(&ourModel);
-//
-//    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
-//    h1->setColor(glm::vec4(1,0,0,1));
-//
-//    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
-//    h2->setTexture("../../res/textures/cloud.png");
-//    hud.setRoot(h1);
-//    h1->addChild(h2);
+////    scene.addChild(obj1);
+////    obj1->addChild(obj2);
+////    obj1->components.AddComponent<Transform>();
+////    obj1->components.AddComponent<ModelComponent>(&ourModel);
+////    obj2->components.AddComponent<Transform>();
+////    obj2->components.AddComponent<ModelComponent>(&ourModel);
+////
+////    h1 = new HudElement(0.01 * WINDOW_WIDTH, 0.01 * WINDOW_HEIGHT, 0.3 * WINDOW_WIDTH, 0.05 * WINDOW_HEIGHT);
+////    h1->setColor(glm::vec4(1,0,0,1));
+////
+////    h2 = new HudElement(0.8 * WINDOW_WIDTH, 0.0 * WINDOW_HEIGHT, 0.2 * WINDOW_WIDTH, 0.2 * WINDOW_HEIGHT);
+////    h2->setTexture("../../res/textures/cloud.png");
+////    hud.setRoot(h1);
+////    h1->addChild(h2);
 
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         scrollXOffset += xoffset;
@@ -626,7 +631,7 @@ void imgui_render()
             ImGui::EndMenu();
         }
 
-        std::string fpsText = std::format("{:.1f} FPS", ImGui::GetIO().Framerate);
+        std::string fpsText = fmt::format("{:.1f} FPS", ImGui::GetIO().Framerate);
         ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(fpsText.c_str()).x - 10.0f);
         ImGui::Text(fpsText.c_str());
         if (ImGui::IsItemHovered())

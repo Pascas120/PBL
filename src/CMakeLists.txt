@@ -42,6 +42,8 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		AssimpGLMHelpers.h
 		Animator.cpp
 		Animator.h
+		KDTree.cpp
+		KDTree.h
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)

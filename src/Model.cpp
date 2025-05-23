@@ -54,7 +54,8 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        glm::mat4 transform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
+        meshes.push_back(processMesh(mesh, scene, transform));
     }
     for(unsigned int i = 0; i < node->mNumChildren; i++)
     {
@@ -62,7 +63,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     }
 }
 
-Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
+Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transform)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -78,8 +79,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
-        vertex.Position = vector;
-
+        vertex.Position = glm::vec3(transform * glm::vec4(vector,1.0f));
         if (mesh->HasNormals())
         {
             vector.x = mesh->mNormals[i].x;
@@ -116,7 +116,27 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-    return Mesh(vertices, indices, textures);
+    Mesh meshResult(vertices, indices, textures);
+
+    aiColor3D color(0.f, 0.f, 0.f);
+    if (AI_SUCCESS == material->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+        meshResult.material.diffuse = glm::vec3(color.r, color.g, color.b);
+
+    if (AI_SUCCESS == material->Get(AI_MATKEY_COLOR_AMBIENT, color))
+        meshResult.material.ambient = glm::vec3(color.r, color.g, color.b);
+
+    if (AI_SUCCESS == material->Get(AI_MATKEY_COLOR_SPECULAR, color))
+        meshResult.material.specular = glm::vec3(color.r, color.g, color.b);
+
+    if (AI_SUCCESS == material->Get(AI_MATKEY_COLOR_EMISSIVE, color))
+        meshResult.material.emissive = glm::vec3(color.r, color.g, color.b);
+
+    float shininess = 0.0f;
+    if (AI_SUCCESS == material->Get(AI_MATKEY_SHININESS, shininess))
+        meshResult.material.shininess = shininess;
+
+    return meshResult;
+
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)

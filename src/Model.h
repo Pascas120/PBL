@@ -38,7 +38,7 @@ public:
 private:
     void loadModel(std::string const &path);
     void processNode(aiNode *node, const aiScene *scene);
-    Mesh processMesh(aiMesh *mesh, const aiScene *scene);
+    Mesh processMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transform);
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
     std::map<std::string, BoneInfo> boneInfoMap; //
     int boneCount = 0;

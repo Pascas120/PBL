@@ -52,6 +52,9 @@ void CollisionSystem::CheckCollisions()
 	collisions.clear();
 
 	auto colliderStorage = scene->getStorage<ColliderComponent>();
+    if(colliderStorage == nullptr) {
+        return;
+    }
 	auto transformStorage = scene->getStorage<Transform>();
 
 	std::vector<ColliderObjectInfo> colliderObjects;

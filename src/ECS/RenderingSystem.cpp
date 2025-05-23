@@ -8,6 +8,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Scene.h"
 #include "spdlog/spdlog.h"
+#include "KDTree.h"
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
@@ -17,13 +18,13 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     auto transforms = scene->getStorage<Transform>();
 
     uint16_t renderingQueueSize = 0;
-    //TODO Docelowo jednak indeksy są lepsze bo łatwiej je sortować
-    ModelComponent renderingQueue[MAX_ENTITIES];
+
+    EntityID renderingQueue[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSize();
-	if (width == 0 || height == 0) {
-		return;
-	}
+    if (width == 0 || height == 0) {
+        return;
+    }
     float aspectRatio = (float)width / (float)height;
     camera.createFrustum(aspectRatio);
     for (int i = 0; i < models->getQuantity(); i++) {
@@ -33,7 +34,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         }
         auto& bvComponent = boundingVolumes->get(modelComponent.id);
         if (bvComponent.GetBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
-            renderingQueue[renderingQueueSize++] = modelComponent;
+            renderingQueue[renderingQueueSize++] = modelComponent.id;
             boundingVolumes->get(modelComponent.id).onFrustum;
         }
     }
@@ -41,11 +42,11 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
     glm::mat4 view = camera.getViewMatrix();
 
-	framebuffer.Bind();
+    framebuffer.Bind();
     spdlog::info("All objects: {}", models->getQuantity());
     spdlog::info("Objects rendered: {}", renderingQueueSize);
     for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = renderingQueue[i];
+        auto& modelComponent = models->get(renderingQueue[i]);
 
         EntityID entityID = modelComponent.id;
 
@@ -134,7 +135,7 @@ GLuint RenderingSystem::getTexture(std::string path) {
         glBindTexture(GL_TEXTURE_2D, textureID);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        //glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(data);
 

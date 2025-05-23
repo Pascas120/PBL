@@ -33,7 +33,7 @@ public:
         return entityToIndex[id] != -1;
     }
 
-    T& get(EntityID id) {
+    T& get(EntityID id)  {
         assert(has(id) && "ComponentStorage: trying to get a non-existing component");
         return components[entityToIndex[id]];
     }
