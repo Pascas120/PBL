@@ -10,6 +10,8 @@
 
 #include "Scene.h"
 
+#include <filesystem>
+
 namespace Editor::Utils
 {
 
@@ -123,5 +125,49 @@ namespace Editor::Utils
 			std::string cmd = "xdg-open \"" + path + "\"";
 			system(cmd.c_str());
 		#endif
+	}
+
+	std::optional<std::string> openSaveDialog(const std::vector<nfdu8filteritem_t>& filters,
+		const std::string& defaultPath)
+	{
+		nfdu8char_t* outPath;
+		nfdsavedialogu8args_t args = { 0 };
+		args.filterList = filters.data();
+		args.filterCount = filters.size();
+		std::string absoluteDefaultPath = std::filesystem::absolute(defaultPath).string();
+		args.defaultPath = absoluteDefaultPath.c_str();
+		nfdresult_t result = NFD_SaveDialogU8_With(&outPath, &args);
+		if (result == NFD_OKAY)
+		{
+			std::string path = outPath;
+			NFD_FreePathU8(outPath);
+			return path;
+		}
+		else
+		{
+			return std::nullopt;
+		}
+	}
+
+	std::optional<std::string> openLoadDialog(const std::vector<nfdu8filteritem_t>& filters,
+		const std::string& defaultPath)
+	{
+		nfdu8char_t* outPath;
+		nfdopendialogu8args_t args = { 0 };
+		args.filterList = filters.data();
+		args.filterCount = filters.size();
+		std::string absoluteDefaultPath = std::filesystem::absolute(defaultPath).string();
+		args.defaultPath = absoluteDefaultPath.c_str();
+		nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+		if (result == NFD_OKAY)
+		{
+			std::string path = outPath;
+			NFD_FreePathU8(outPath);
+			return path;
+		}
+		else
+		{
+			return std::nullopt;
+		}
 	}
 }

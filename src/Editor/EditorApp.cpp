@@ -285,23 +285,12 @@ namespace Editor
 	{
 		if (path.empty())
 		{
-            nfdu8char_t* outPath;
-            nfdu8filteritem_t filters[] = { {"Scene JSON", "scene.json" } };
-            nfdsavedialogu8args_t args = { 0 };
-            args.filterList = filters;
-            args.filterCount = 1;
-            std::string defaultPath = std::filesystem::absolute("res/scenes").string();
-            args.defaultPath = defaultPath.c_str();
-            nfdresult_t result = NFD_SaveDialogU8_With(&outPath, &args);
-            if (result == NFD_OKAY)
-            {
-                path = outPath;
-				NFD_FreePathU8(outPath);
-            }
-            else
-            {
-                return;
-            }
+			auto pathResult = Utils::openSaveDialog({ {"Scene JSON", "scene.json"} }, "res/scenes");
+			if (!pathResult)
+			{
+				return;
+			}
+			path = *pathResult;
 		}
 		Serialization::saveScene(path, *scene);
 		scenePath = path;
@@ -309,25 +298,18 @@ namespace Editor
 
 	void EditorApp::loadScene()
 	{
-        nfdu8char_t* outPath;
-        nfdu8filteritem_t filters[] = { {"Scene JSON", "scene.json" } };
-        nfdopendialogu8args_t args = { 0 };
-        args.filterList = filters;
-        args.filterCount = 1;
-        std::string defaultPath = std::filesystem::absolute("res/scenes").string();
-        args.defaultPath = defaultPath.c_str();
-        nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
-        if (result == NFD_OKAY)
-        {
-            selectedObject = (EntityID)-1;
-			setPlayMode(PlayMode::STOP);
+		auto pathResult = Utils::openLoadDialog({ {"Scene JSON", "scene.json"} }, "res/scenes");
+		if (!pathResult)
+		{
+			return;
+		}
+		selectedObject = (EntityID)-1;
+		setPlayMode(PlayMode::STOP);
 
-            scene = std::make_shared<Scene>();
-            std::string path = outPath;
-			Serialization::loadScene(path, *scene, { shaders, models, true });
-			scenePath = path;
-            NFD_FreePathU8(outPath);
-        }
+		scene = std::make_shared<Scene>();
+		std::string path = *pathResult;
+		Serialization::loadScene(path, *scene, { shaders, models, true });
+		scenePath = path;
 	}
 
 }

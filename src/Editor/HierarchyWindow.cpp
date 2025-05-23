@@ -82,10 +82,6 @@ namespace Editor
         }
 		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
 		{
-			//auto& camera = context.camera;
-			//glm::vec3& pos = transform.translation;
-
-			//camera.Position = pos - camera.Front * editor->camDistance;
             Events::CameraFocus event;
 			event.position = transform.globalMatrix[3];
 			editor->getEventSystem().triggerEvent(event);
@@ -100,7 +96,7 @@ namespace Editor
             if (ImGui::MenuItem("Add Child"))
             {
                 EntityID newObject = scene->createEntity(id);
-                //scene->getComponent<ObjectInfoComponent>(newObject).name = "New Object";
+
 				Utils::setUniqueName(newObject, *scene, "New Object");
 				editor->selectedObject = newObject;
             }
