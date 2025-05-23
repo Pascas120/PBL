@@ -18,23 +18,6 @@ void Model::draw(Shader *shader)
         meshes[i].draw(shader);
 }
 
-static AABBBV calculateBoundingBox(const std::vector<Mesh>& meshes)
-{
-    glm::vec3 min = glm::vec3(FLT_MAX);
-    glm::vec3 max = glm::vec3(-FLT_MAX);
-
-    for (const auto& mesh : meshes)
-    {
-        for (const auto& vertex : mesh.vertices)
-        {
-            min = glm::min(min, vertex.Position);
-            max = glm::max(max, vertex.Position);
-        }
-    }
-
-    return AABBBV(min, max);
-}
-
 void Model::loadModel(std::string const &path)
 {
     Assimp::Importer importer;
@@ -48,7 +31,7 @@ void Model::loadModel(std::string const &path)
     directory = path.substr(0, path.find_last_of('/'));
     processNode(scene->mRootNode, scene);
 
-    boundingBox = calculateBoundingBox(meshes);
+    boundingBox = AABBBV::calculateBoundingBox(meshes);
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene)

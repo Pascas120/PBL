@@ -9,6 +9,44 @@
 #include "Scene.h"
 #include "spdlog/spdlog.h"
 
+static bool isOnOrForwardPlane(const AABBBV& aabb, const Plane& plane)
+{
+    const float r = aabb.extents.x * std::abs(plane.normal.x) + aabb.extents.y * std::abs(plane.normal.y) +
+        aabb.extents.z * std::abs(plane.normal.z);
+
+    return -r <= plane.getSignedDistanceToPlane(aabb.center);
+}
+
+bool isOnFrustum(const AABBBV& aabb, const Frustum& camFrustum, const Transform& transform)
+{
+    const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(aabb.center, 1.f) };
+    const glm::vec3 right = transform.globalMatrix[0] * aabb.extents.x;
+    const glm::vec3 up = transform.globalMatrix[1] * aabb.extents.y;
+    const glm::vec3 forward = -transform.globalMatrix[2] * aabb.extents.z;
+
+    const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
+        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
+        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
+
+    const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
+        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
+        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
+
+    const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
+        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
+        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
+
+    const AABBBV globalAABB(globalCenter, newIi, newIj, newIk);
+
+    return (isOnOrForwardPlane(globalAABB, camFrustum.leftFace) &&
+        isOnOrForwardPlane(globalAABB, camFrustum.rightFace) &&
+        isOnOrForwardPlane(globalAABB, camFrustum.topFace) &&
+        isOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
+        isOnOrForwardPlane(globalAABB, camFrustum.nearFace) &&
+        isOnOrForwardPlane(globalAABB, camFrustum.farFace));
+}
+
+
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) {
@@ -29,7 +67,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         auto& modelComponent = models->components[i];
         AABBBV& boundingBox = modelComponent.model->boundingBox;
 
-        if (boundingBox.isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
+        if (isOnFrustum(boundingBox, camera.frustum, transforms->get(modelComponent.id))) {
             renderingQueue[renderingQueueSize++] = modelComponent;
         }
     }

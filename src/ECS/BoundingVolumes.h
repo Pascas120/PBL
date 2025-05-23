@@ -12,6 +12,7 @@
 class Frustum;
 class Plane;
 class Transform;
+class Mesh;
 
 // temporary
 #include "nlohmann/json.hpp"
@@ -23,12 +24,7 @@ class BoundingVolume
 public:
     virtual ~BoundingVolume() = default;
 
-    virtual bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const = 0;
-    virtual bool isOnOrForwardPlane(const Plane& plane) const = 0;
-
 	virtual nlohmann::json serialize() const = 0;
-
-    bool isOnFrustum(const Frustum& camFrustum) const;
 };
 
 class SphereBV : public BoundingVolume
@@ -37,12 +33,10 @@ public:
     SphereBV() = default;
     SphereBV(const glm::vec3& inCenter, float inRadius);
 
-    bool isOnOrForwardPlane(const Plane& plane) const override;
-    bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
+    static SphereBV calculateBoundingSphere(const std::vector<Mesh>& meshes);
 
     nlohmann::json serialize() const override;
 
-private:
     glm::vec3 center;
     float radius;
 };
@@ -54,14 +48,12 @@ public:
     AABBBV(const glm::vec3& min, const glm::vec3& max);
     AABBBV(const glm::vec3& inCenter, float iI, float iJ, float iK);
 
-    std::array<glm::vec3, 8> getVertices() const;
+	static AABBBV calculateBoundingBox(const std::vector<Mesh>& meshes);
 
-    bool isOnOrForwardPlane(const Plane& plane) const override;
-    bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const override;
+    std::array<glm::vec3, 8> getVertices() const;
 
 	nlohmann::json serialize() const override;
 
-private:
     glm::vec3 center;
     glm::vec3 extents;
 };
