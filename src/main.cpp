@@ -370,6 +370,7 @@ bool init()
 ////    hud.setRoot(h1);
 ////    h1->addChild(h2);
 
+    scene.getRenderingSystem().buildTree();
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         scrollXOffset += xoffset;
         scrollYOffset += yoffset;

@@ -106,7 +106,7 @@ struct BoundingVolumeComponent {
     BoundingVolumeComponent() = default;
 
 
-    std::shared_ptr<BoundingBox> GetBoundingVolume() const {
+    std::shared_ptr<BoundingBox> getBoundingVolume() const {
         return boundingVolume;
     }
 

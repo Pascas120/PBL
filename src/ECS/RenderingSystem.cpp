@@ -27,15 +27,24 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
     }
     float aspectRatio = (float)width / (float)height;
     camera.createFrustum(aspectRatio);
-    for (int i = 0; i < models->getQuantity(); i++) {
-        auto& modelComponent = models->components[i];
-        if(!boundingVolumes->has(modelComponent.id)) {
-            continue;
-        }
-        auto& bvComponent = boundingVolumes->get(modelComponent.id);
-        if (bvComponent.GetBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(modelComponent.id))) {
-            renderingQueue[renderingQueueSize++] = modelComponent.id;
-            boundingVolumes->get(modelComponent.id).onFrustum;
+    //buildTree();
+    std::vector<EntityID> visibleEntities;
+    visibleEntities.reserve(boundingVolumes->getQuantity());
+    if (rootNode) {
+        traverseBVHFrustum(rootNode.get(), camera.frustum, visibleEntities);
+    } else {
+        spdlog::warn("BVH root node is null, skipping frustum culling.");
+    }
+    for(int i = 0; i < visibleEntities.size(); i++) {
+        EntityID entityID = visibleEntities[i];
+        if (models->has(entityID) && boundingVolumes->has(entityID)) {
+            auto& bvComponent = boundingVolumes->get(entityID);
+            if (bvComponent.getBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(entityID))) {
+                renderingQueue[renderingQueueSize++] = entityID;
+                bvComponent.onFrustum = true;
+            } else {
+                bvComponent.onFrustum = false;
+            }
         }
     }
 
@@ -188,7 +197,14 @@ void RenderingSystem::initHud() {
     initializedHud = true;
 }
 
-// void RenderingSystem::buildTree() {
-//
-//     rootNode = buildBVH(scene->getStorage<BoundingVolumeComponent>()->components, *scene->getStorage<Transform>());
-// }
+ void RenderingSystem::buildTree() {
+     std::vector<BoundingVolumeComponent*> objects;
+    for (int i = 0; i < scene->getStorage<BoundingVolumeComponent>()->getQuantity(); i++) {
+            auto& bvComponent = scene->getStorage<BoundingVolumeComponent>()->components[i];
+            bvComponent.transform = &scene->getStorage<Transform>()->get(bvComponent.id);
+            if (bvComponent.getBoundingVolume() != nullptr) {
+                objects.push_back(&bvComponent);
+            }
+    }
+     rootNode = buildBVH(objects);
+ }

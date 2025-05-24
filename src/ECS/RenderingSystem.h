@@ -32,13 +32,13 @@ private:
     bool initializedHud = false;
     void initHud();
     TextRenderer t1;
-    void buildTree();
-    BVHNode rootNode;
+    std::unique_ptr<BVHNode> rootNode;
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
     void drawScene(const Framebuffer& framebuffer, Camera& camera);
     void drawHud(const Framebuffer& framebuffer);
+    void buildTree();
 };
 
 

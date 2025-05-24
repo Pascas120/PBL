@@ -76,3 +76,12 @@ bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transf
             globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
             globalAABB.isOnOrForwardPlane(camFrustum.farFace));
 }
+
+BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {
+    glm::vec3 globalCenter = transform.globalMatrix * glm::vec4(center, 1.f);
+    glm::vec3 right = transform.globalMatrix[0] * extents.x;
+    glm::vec3 up = transform.globalMatrix[1] * extents.y;
+    glm::vec3 forward = -transform.globalMatrix[2] * extents.z;
+
+    return BoundingBox(globalCenter - right - up - forward, globalCenter + right + up + forward);
+}

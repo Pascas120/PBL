@@ -25,6 +25,7 @@ public:
 
     bool isOnOrForwardPlane(const Plane& plane) const;
     bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const;
+    BoundingBox getGlobalBox(const Transform& transform) const;
 
 private:
     glm::vec3 center;
