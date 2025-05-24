@@ -29,13 +29,16 @@ namespace Editor
 		EventListener focusCamera = [this](const Event& event)
 			{
 				const Events::CameraFocus& cameraFocusEvent = static_cast<const Events::CameraFocus&>(event);
-				editorCamera.Position = cameraFocusEvent.position - editorCamera.Front * camDistance;
+
+				auto camVecAng = editorCamera.getVectorsAndAngles();
+				glm::vec3 newPos = cameraFocusEvent.position - camVecAng.forward * camDistance;
+				editorCamera.setViewMatrix(glm::lookAt(newPos, cameraFocusEvent.position, camVecAng.up));
 			};
 
 		std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 		ImVec2 lastSize = ImVec2(0, 0);
 
 		ImGuizmo::OPERATION gizmoOperation;
-		Camera editorCamera{ glm::vec3(0.0f, 0.0f, 3.0f) };
+		Camera editorCamera;
 	};
 }

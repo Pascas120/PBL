@@ -4,115 +4,38 @@
 
 #include "Camera.h"
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
-        : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-{
-    Position = position;
-    WorldUp = up;
-    Yaw = yaw;
-    Pitch = pitch;
-    updateCameraVectors();
-}
 
-Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
-        : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-{
-    Position = glm::vec3(posX, posY, posZ);
-    WorldUp = glm::vec3(upX, upY, upZ);
-    Yaw = yaw;
-    Pitch = pitch;
-    updateCameraVectors();
-}
 
-glm::mat4 Camera::getViewMatrix() const
+
+Camera::Camera(glm::mat4 viewMatrix)
 {
-    return glm::lookAt(Position, Position + Front, Up);
+	setViewMatrix(viewMatrix);
 }
 
 void Camera::setViewMatrix(const glm::mat4& view)
 {
-    glm::mat4 invView = glm::inverse(view);
-	glm::vec3 up = glm::vec3(invView[1]);
-
-
-    Position = glm::vec3(invView[3]);
-
-
-    Right = glm::vec3(invView[0]);
-    Up = glm::vec3(invView[1]);
-    Front = -glm::vec3(invView[2]);
-
-
-    Yaw = glm::degrees(atan2(Front.z, Front.x));
-    Pitch = glm::degrees(asin(Front.y));
-
-    updateCameraVectors();
+	viewMatrix = view;
+	invViewMatrix = glm::inverse(view);
 }
 
-void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::setInvViewMatrix(const glm::mat4& invView)
 {
-    float velocity = MovementSpeed * deltaTime;
-    switch (direction)
-    {
-    case FORWARD:
-        Position += Front * velocity;
-        break;
-    case BACKWARD:
-        Position -= Front * velocity;
-        break;
-    case LEFT:
-        Position -= Right * velocity;
-        break;
-    case RIGHT:
-        Position += Right * velocity;
-        break;
-    case UP:
-        Position += Up * velocity;
-        break;
-    case DOWN:
-        Position -= Up * velocity;
-        break;
-    default:
-        break;
-    }
+    invViewMatrix = invView;
+    viewMatrix = glm::inverse(invView);
 }
 
-void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+CamVectorsAngles Camera::getVectorsAndAngles() const
 {
-    xoffset *= MouseSensitivity;
-    yoffset *= MouseSensitivity;
+    CamVectorsAngles vectorsAngles;
+    vectorsAngles.position = glm::vec3(invViewMatrix[3]);
+    vectorsAngles.forward = -glm::vec3(invViewMatrix[2]);
+    vectorsAngles.up = glm::vec3(invViewMatrix[1]);
+    vectorsAngles.right = glm::vec3(invViewMatrix[0]);
 
-    Yaw   += xoffset;
-    Pitch += yoffset;
+    vectorsAngles.yawDeg = atan2(vectorsAngles.forward.z, vectorsAngles.forward.x);
+	vectorsAngles.yawDeg = glm::degrees(vectorsAngles.yawDeg);
+    vectorsAngles.pitchDeg = asin(vectorsAngles.forward.y);
+	vectorsAngles.pitchDeg = glm::degrees(vectorsAngles.pitchDeg);
 
-    if (constrainPitch)
-    {
-        if (Pitch > 89.0f)
-            Pitch = 89.0f;
-        if (Pitch < -89.0f)
-            Pitch = -89.0f;
-    }
-
-    updateCameraVectors();
-}
-
-void Camera::processMouseScroll(float yoffset)
-{
-    Zoom -= (float)yoffset;
-    if (Zoom < 1.0f)
-        Zoom = 1.0f;
-    if (Zoom > 45.0f)
-        Zoom = 45.0f;
-}
-
-void Camera::updateCameraVectors()
-{
-    glm::vec3 front;
-    front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    front.y = sin(glm::radians(Pitch));
-    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    Front = glm::normalize(front);
-
-    Right = glm::normalize(glm::cross(Front, WorldUp));
-    Up    = glm::normalize(glm::cross(Right, Front));
+	return vectorsAngles;
 }

@@ -57,7 +57,7 @@ protected:
 	float lastFrame = 0.0f;
 
 	// TODO: move to camera component
-	Camera camera{ glm::vec3(0.0f, 0.0f, 3.0f) };
+	Camera camera;
 
 	// TODO: move to resource manager(s?)
 	std::vector<Shader*> shaders;

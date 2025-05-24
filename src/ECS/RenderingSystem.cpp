@@ -17,7 +17,7 @@ static bool isOnOrForwardPlane(const AABBBV& aabb, const Plane& plane)
     return -r <= plane.getSignedDistanceToPlane(aabb.center);
 }
 
-bool isOnFrustum(const AABBBV& aabb, const Frustum& camFrustum, const Transform& transform)
+bool isOnFrustum(const AABBBV& aabb, const FrustumPlanes& camFrustum, const Transform& transform)
 {
     const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(aabb.center, 1.f) };
     const glm::vec3 right = transform.globalMatrix[0] * aabb.extents.x;
@@ -61,19 +61,27 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 	if (width == 0 || height == 0) {
 		return;
 	}
+
+    glm::mat4 view = camera.getViewMatrix();
+
     float aspectRatio = (float)width / (float)height;
-    camera.createFrustum(aspectRatio);
+
+	auto& frustum = camera.getFrustum();
+
+    FrustumPlanes globalPlanes = frustum.getPlanes();
+	globalPlanes.applyTransform(camera.getInvViewMatrix());
+
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
         AABBBV& boundingBox = modelComponent.model->boundingBox;
 
-        if (isOnFrustum(boundingBox, camera.frustum, transforms->get(modelComponent.id))) {
+
+        if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
             renderingQueue[renderingQueueSize++] = modelComponent;
         }
     }
 
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-    glm::mat4 view = camera.getViewMatrix();
+	//spdlog::info("Rendering {} models", renderingQueueSize);
 
 	framebuffer.Bind();
     for (int i = 0; i < renderingQueueSize; i++) {
@@ -85,7 +93,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         modelComponent.shader->use();
 
         // TODO: uniform blocks
-        modelComponent.shader->setMat4("projection", projection);
+        modelComponent.shader->setMat4("projection", frustum.getProjectionMatrix());
         modelComponent.shader->setMat4("view", view);
 
 

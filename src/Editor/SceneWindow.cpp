@@ -18,8 +18,14 @@ namespace Editor
 	SceneWindow::SceneWindow(EditorApp* editor) : editor(editor)
 	{
 		sceneFramebuffer = std::make_unique<CustomFramebuffer>(FramebufferConfig{ 0, 0 });
-		editorCamera.Position = glm::vec3(0.0f, 0.0f, camDistance);
+        editorCamera.setViewMatrix(glm::lookAt(
+            glm::vec3(0.0f, 0.0f, camDistance),
+            glm::vec3(0.0f, 0.0f, 1.0f),
+            glm::vec3(0.0f, 1.0f, 0.0f)));
 		gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
+
+		editorCamera.getFrustum().setProjectionMatrix(
+			glm::perspective(glm::radians(45.0f), 650.0f / 400.0f, 0.1f, 100.0f));
 
 		editor->getEventSystem().registerListener<Events::CameraFocus>(focusCamera);
 	}
@@ -44,26 +50,6 @@ namespace Editor
 
         if (ImGui::Begin("Scene"));
         {
-            /*if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::RadioButton("Translate", gizmoOperation == ImGuizmo::TRANSLATE))
-                    gizmoOperation = ImGuizmo::TRANSLATE;
-                ImGui::SameLine();
-
-                if (ImGui::RadioButton("Rotate", gizmoOperation == ImGuizmo::ROTATE))
-                    gizmoOperation = ImGuizmo::ROTATE;
-                ImGui::SameLine();
-
-                if (ImGui::RadioButton("Scale", gizmoOperation == ImGuizmo::SCALE))
-                    gizmoOperation = ImGuizmo::SCALE;
-                ImGui::SameLine();
-
-                if (ImGui::RadioButton("Universal", gizmoOperation == ImGuizmo::UNIVERSAL))
-                    gizmoOperation = ImGuizmo::UNIVERSAL;
-
-                ImGui::EndMenuBar();
-            }*/
-
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
 
@@ -75,14 +61,17 @@ namespace Editor
             }
 
             // TODO: fix (doesn't work with imguizmo)
-            if (ImGui::IsWindowFocused() && (ImGuizmo::IsUsingAny() || ImGuizmo::IsUsingViewManipulate()))
+            /*if (ImGui::IsWindowFocused() && (ImGuizmo::IsUsingAny() || ImGuizmo::IsUsingViewManipulate()))
             {
                 Utils::wrapCursor(pos, size);
-            }
+            }*/
 
             if (size.x != lastSize.x || size.y != lastSize.y)
             {
                 sceneFramebuffer->Resize(size.x, size.y);
+
+				editorCamera.getFrustum().setProjectionMatrix(
+					glm::perspective(glm::radians(45.0f), size.x / size.y, 0.1f, 100.0f));
                 lastSize = size;
             }
 
@@ -93,14 +82,15 @@ namespace Editor
 
 
             bool disableGizmo = false;
+			auto camVecAng = editorCamera.getVectorsAndAngles();
 
-            glm::vec3 cameraFocus = editorCamera.Position + editorCamera.Front * camDistance;
+            glm::vec3 cameraFocus = camVecAng.position + camVecAng.forward * camDistance;
             double scrollYOffset = editor->getScrollOffset().second;
 
-            if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
 				cameraControls(scrollYOffset, editor->getDeltaTime());
-                Utils::wrapCursor(pos, size);
+                //Utils::wrapCursor(pos, size);
                 disableGizmo = true;
                 ImGui::ResetMouseDragDelta(ImGuiMouseButton_Right);
             }
@@ -110,33 +100,38 @@ namespace Editor
                 {
                     camDistance -= scrollYOffset * std::clamp(camDistance * 0.05f, 0.01f, 2.0f);
                     camDistance = glm::max(camDistance, 0.1f);
-                    editorCamera.Position = cameraFocus - editorCamera.Front * camDistance;
+                    camVecAng.position = cameraFocus - camVecAng.forward * camDistance;
+					editorCamera.setViewMatrix(camVecAng.toMatrix());
+					disableGizmo = true;
                 }
                 if (ImGui::IsWindowFocused())
                 {
                     if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f))
                     {
                         ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Left, 0.0f);
-                        editorCamera.Yaw += mouseDrag.x * 0.15f;
-                        editorCamera.Pitch -= mouseDrag.y * 0.15f;
-                        editorCamera.Pitch = glm::clamp(editorCamera.Pitch, -89.0f, 89.0f);
+                        camVecAng.yawDeg += mouseDrag.x * 0.15f;
+                        camVecAng.pitchDeg -= mouseDrag.y * 0.15f;
+                        camVecAng.pitchDeg = glm::clamp(camVecAng.pitchDeg, -89.0f, 89.0f);
 
-                        editorCamera.updateCameraVectors();
+						camVecAng.updateVectors();
 
-                        editorCamera.Position = cameraFocus - editorCamera.Front * camDistance;
+						camVecAng.position = cameraFocus - camVecAng.forward * camDistance;
+                        editorCamera.setViewMatrix(camVecAng.toMatrix());
 
                         disableGizmo = true;
-                        Utils::wrapCursor(pos, size);
+                        //Utils::wrapCursor(pos, size);
                         ImGui::ResetMouseDragDelta(ImGuiMouseButton_Left);
                     }
                     else if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle, 0.0f))
                     {
                         ImVec2 mouseDrag = ImGui::GetMouseDragDelta(ImGuiMouseButton_Middle, 0.0f);
-                        editorCamera.Position += editorCamera.Right * -mouseDrag.x * 0.01f;
-                        editorCamera.Position += editorCamera.Up * mouseDrag.y * 0.01f;
+
+						camVecAng.position += camVecAng.right * -mouseDrag.x * 0.01f;
+						camVecAng.position += camVecAng.up * mouseDrag.y * 0.01f;
+                        editorCamera.setViewMatrix(camVecAng.toMatrix());
 
                         disableGizmo = true;
-                        Utils::wrapCursor(pos, size);
+                        //Utils::wrapCursor(pos, size);
                         ImGui::ResetMouseDragDelta(ImGuiMouseButton_Middle);
                     }
                 }
@@ -183,12 +178,11 @@ namespace Editor
             if (editor->selectedObject != (EntityID)-1 && editor->selectedObject != scene->getSceneRootEntity())
             {
                 auto [width, height] = sceneFramebuffer->GetSizePair();
-                glm::mat4 projection = glm::perspective(glm::radians(editorCamera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
-
+            
                 auto entityMatrix = scene->getComponent<Transform>(editor->selectedObject).globalMatrix;
                 auto& ts = scene->getTransformSystem();
 
-                if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(projection),
+				if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(editorCamera.getFrustum().getProjectionMatrix()),
                     gizmoOperation, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
                 {
                     ts.setGlobalMatrix(editor->selectedObject, entityMatrix);
@@ -204,7 +198,6 @@ namespace Editor
 
     void SceneWindow::cameraControls(double scrollYOffset, float deltaTime)
     {
-        bool firstMouse = ImGui::IsMouseClicked(ImGuiMouseButton_Right);
         if (scrollYOffset != 0.0f)
         {
             cameraSpeed += scrollYOffset * 0.1f;
@@ -212,21 +205,29 @@ namespace Editor
         }
         float scaledCamSpeed = cameraSpeed * deltaTime;
 
+		auto camVecAng = editorCamera.getVectorsAndAngles();
+
         if (ImGui::IsKeyDown(ImGuiKey_W))
-            editorCamera.processKeyboard(FORWARD, scaledCamSpeed);
+			camVecAng.position += camVecAng.forward * scaledCamSpeed;
         if (ImGui::IsKeyDown(ImGuiKey_S))
-            editorCamera.processKeyboard(BACKWARD, scaledCamSpeed);
+			camVecAng.position -= camVecAng.forward * scaledCamSpeed;
         if (ImGui::IsKeyDown(ImGuiKey_A))
-            editorCamera.processKeyboard(LEFT, scaledCamSpeed);
+			camVecAng.position -= camVecAng.right * scaledCamSpeed;
         if (ImGui::IsKeyDown(ImGuiKey_D))
-            editorCamera.processKeyboard(RIGHT, scaledCamSpeed);
+			camVecAng.position += camVecAng.right * scaledCamSpeed;
         if (ImGui::IsKeyDown(ImGuiKey_Q))
-            editorCamera.processKeyboard(DOWN, scaledCamSpeed);
+			camVecAng.position -= camVecAng.up * scaledCamSpeed;
         if (ImGui::IsKeyDown(ImGuiKey_E))
-            editorCamera.processKeyboard(UP, scaledCamSpeed);
+			camVecAng.position += camVecAng.up * scaledCamSpeed;
 
         ImVec2 mouseDelta = ImGui::GetMouseDragDelta(ImGuiMouseButton_Right, 0.0f);
 
-        editorCamera.processMouseMovement(mouseDelta.x, -mouseDelta.y);
+		camVecAng.yawDeg += mouseDelta.x * 0.1f;
+		camVecAng.pitchDeg -= mouseDelta.y * 0.1f;
+
+		camVecAng.pitchDeg = glm::clamp(camVecAng.pitchDeg, -89.0f, 89.0f);
+
+		camVecAng.updateVectors();
+        editorCamera.setViewMatrix(camVecAng.toMatrix());
     }
 }
