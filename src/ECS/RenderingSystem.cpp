@@ -187,3 +187,8 @@ void RenderingSystem::initHud() {
 
     initializedHud = true;
 }
+
+// void RenderingSystem::buildTree() {
+//
+//     rootNode = buildBVH(scene->getStorage<BoundingVolumeComponent>()->components, *scene->getStorage<Transform>());
+// }

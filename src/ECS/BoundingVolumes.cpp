@@ -1,51 +1,26 @@
 #include "BoundingVolumes.h"
 
 
-bool BoundingVolume::isOnFrustum(const Frustum& camFrustum) const
-{
-    return (isOnOrForwardPlane(camFrustum.leftFace) &&
-            isOnOrForwardPlane(camFrustum.rightFace) &&
-            isOnOrForwardPlane(camFrustum.topFace) &&
-            isOnOrForwardPlane(camFrustum.bottomFace) &&
-            isOnOrForwardPlane(camFrustum.nearFace) &&
-            isOnOrForwardPlane(camFrustum.farFace));
-}
+// bool BoundingBox::isOnFrustum(const Frustum& camFrustum) const
+// {
+//     return (isOnOrForwardPlane(camFrustum.leftFace) &&
+//             isOnOrForwardPlane(camFrustum.rightFace) &&
+//             isOnOrForwardPlane(camFrustum.topFace) &&
+//             isOnOrForwardPlane(camFrustum.bottomFace) &&
+//             isOnOrForwardPlane(camFrustum.nearFace) &&
+//             isOnOrForwardPlane(camFrustum.farFace));
+// }
 
-// Sphere implementation
-SphereBV::SphereBV(const glm::vec3& inCenter, float inRadius)
-    : center(inCenter), radius(inRadius) {}
-
-bool SphereBV::isOnOrForwardPlane(const Plane& plane) const
-{
-    return plane.getSignedDistanceToPlane(center) > -radius;
-}
-
-bool SphereBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
-{
-    const glm::vec3 globalScale = {glm::length(transform.globalMatrix[0]), glm::length(transform.globalMatrix[1]), glm::length(transform.globalMatrix[2])};
-    const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(center, 1.f) };
-    const float maxScale = std::max({globalScale.x, globalScale.y, globalScale.z});
-    SphereBV globalSphere(globalCenter, radius * (maxScale * 0.5f));
-
-    return (globalSphere.isOnOrForwardPlane(camFrustum.leftFace) &&
-            globalSphere.isOnOrForwardPlane(camFrustum.rightFace) &&
-            globalSphere.isOnOrForwardPlane(camFrustum.farFace) &&
-            globalSphere.isOnOrForwardPlane(camFrustum.nearFace) &&
-            globalSphere.isOnOrForwardPlane(camFrustum.topFace) &&
-            globalSphere.isOnOrForwardPlane(camFrustum.bottomFace));
-}
-
-// AABB implementation
-AABBBV::AABBBV()
+BoundingBox::BoundingBox()
     : center(0.f), extents(0.f) {}
 
-AABBBV::AABBBV(const glm::vec3& min, const glm::vec3& max)
+BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max)
     : center((max + min) * 0.5f), extents(max.x - center.x, max.y - center.y, max.z - center.z) {}
 
-AABBBV::AABBBV(const glm::vec3& inCenter, float iI, float iJ, float iK)
+BoundingBox::BoundingBox(const glm::vec3& inCenter, float iI, float iJ, float iK)
     : center(inCenter), extents(iI, iJ, iK) {}
 
-std::array<glm::vec3, 8> AABBBV::getVertices() const
+std::array<glm::vec3, 8> BoundingBox::getVertices() const
 {
     std::array<glm::vec3, 8> vertices;
     vertices[0] = { center.x - extents.x, center.y - extents.y, center.z - extents.z };
@@ -59,7 +34,13 @@ std::array<glm::vec3, 8> AABBBV::getVertices() const
     return vertices;
 }
 
-bool AABBBV::isOnOrForwardPlane(const Plane& plane) const
+BoundingBox BoundingBox::merge(BoundingBox other) {
+    glm::vec3 newMin = glm::min(center - extents, other.center - other.extents);
+    glm::vec3 newMax = glm::max(center + extents, other.center + other.extents);
+    return BoundingBox(newMin, newMax);
+}
+
+bool BoundingBox::isOnOrForwardPlane(const Plane& plane) const
 {
     const float r = extents.x * std::abs(plane.normal.x) + extents.y * std::abs(plane.normal.y) +
                     extents.z * std::abs(plane.normal.z);
@@ -67,7 +48,7 @@ bool AABBBV::isOnOrForwardPlane(const Plane& plane) const
     return -r <= plane.getSignedDistanceToPlane(center);
 }
 
-bool AABBBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
+bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
 {
     const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(center, 1.f) };
     const glm::vec3 right = transform.globalMatrix[0] * extents.x;
@@ -86,7 +67,7 @@ bool AABBBV::isOnFrustum(const Frustum& camFrustum, const Transform& transform) 
                         std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
                         std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
 
-    const AABBBV globalAABB(globalCenter, newIi, newIj, newIk);
+    const BoundingBox globalAABB(globalCenter, newIi, newIj, newIk);
 
     return (globalAABB.isOnOrForwardPlane(camFrustum.leftFace) &&
             globalAABB.isOnOrForwardPlane(camFrustum.rightFace) &&

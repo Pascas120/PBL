@@ -18,7 +18,7 @@ void Model::draw(Shader *shader)
         meshes[i].draw(shader);
 }
 
-AABBBV Model::calculateBoundingBox() const
+BoundingBox Model::calculateBoundingBox() const
 {
     glm::vec3 min = glm::vec3(FLT_MAX);
     glm::vec3 max = glm::vec3(-FLT_MAX);
@@ -32,7 +32,7 @@ AABBBV Model::calculateBoundingBox() const
         }
     }
 
-    return AABBBV(min, max);
+    return BoundingBox(min, max);
 }
 
 void Model::loadModel(std::string const &path)

@@ -19,7 +19,7 @@
 
 #include "ECS/BoundingVolumes.h"
 
-class AABBBV;
+class BoundingBox;
 
 class Model
 {
@@ -31,7 +31,7 @@ public:
     Model();
     Model(std::string const &path, bool gamma = false);
     void draw(Shader *shader);
-    AABBBV calculateBoundingBox() const;
+    BoundingBox calculateBoundingBox() const;
     std::map<std::string, BoneInfo>& getBoneInfoMap();
     int& getBoneCount();
 

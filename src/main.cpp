@@ -246,7 +246,7 @@ bool init()
     sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
     sphereCollider->radius = 0.1f;
 
-    scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model2.calculateBoundingBox())));
+    scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(model2.calculateBoundingBox())));
 
 
 	ent = scene.createEntity();
@@ -262,8 +262,8 @@ bool init()
     boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
     boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-    AABBBV boundingBox = ourModel.calculateBoundingBox();
-    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
+    BoundingBox boundingBox = ourModel.calculateBoundingBox();
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
 
 
     for (int x = 0; x < 100; ++x) {
@@ -277,7 +277,7 @@ bool init()
             scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
 
 
-            scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
+            scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
         }
     }
 
@@ -287,7 +287,7 @@ bool init()
 
      scene.addComponent<ModelComponent>(ent, { shaders[1], &model4 });
 
-     scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(model4.calculateBoundingBox())));
+     scene.addComponent(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(model4.calculateBoundingBox())));
      scene.getTransformSystem().scaleEntity(ent,glm::vec3(0.001f));
 
 	ent = scene.createEntity();
@@ -297,7 +297,7 @@ bool init()
 
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
     boundingBox = model3.calculateBoundingBox();
-    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
 
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
@@ -317,7 +317,7 @@ bool init()
 		ts.translateEntity(ent, wallScalesAndTranslations[i].second);
 
 		scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
-	    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
+	    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
 		colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 	}
 
@@ -330,7 +330,7 @@ bool init()
 	ts.scaleEntity(ent, glm::vec3(0.5f, 2.0f, 0.5f));
 
 	scene.addComponent<ModelComponent>(ent, { shaders[0], &model3 });
-    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<AABBBV>(boundingBox)));
+    scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
 	colliderComponent = &scene.addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 

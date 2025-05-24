@@ -97,24 +97,24 @@ private:
     std::shared_ptr<ColliderShape> colliderShape = nullptr;
 };
 
-class BoundingVolume;
+class BoundingBox;
 
 struct BoundingVolumeComponent {
-    BoundingVolumeComponent(std::unique_ptr<BoundingVolume> volume)
-        : boundingVolume(std::move(volume)) {}
+    BoundingVolumeComponent(std::unique_ptr<BoundingBox> volume)
+        : boundingVolume(std::move(volume)){}
 
     BoundingVolumeComponent() = default;
 
 
-    std::shared_ptr<BoundingVolume> GetBoundingVolume() const {
+    std::shared_ptr<BoundingBox> GetBoundingVolume() const {
         return boundingVolume;
     }
 
     bool onFrustum = false;
 
     EntityID id = (EntityID)-1;
-
+    Transform* transform = nullptr; // pointer to the transform component for frustum checks
 private:
-    std::shared_ptr<BoundingVolume> boundingVolume = nullptr;
+    std::shared_ptr<BoundingBox> boundingVolume = nullptr;
 };
 #endif //PBL_COMPONENTS_H

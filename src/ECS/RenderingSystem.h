@@ -10,6 +10,7 @@
 
 #include "ComponentStorage.h"
 #include "Components.h"
+#include "KDTree.h"
 
 class Scene;
 #include "Camera.h"
@@ -31,7 +32,8 @@ private:
     bool initializedHud = false;
     void initHud();
     TextRenderer t1;
-
+    void buildTree();
+    BVHNode rootNode;
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
