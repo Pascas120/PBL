@@ -213,7 +213,27 @@ void Application::update()
 
 void Application::render(const Framebuffer& framebuffer)
 {
-	render(camera, framebuffer);
+	framebuffer.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	auto& ts = scene->getTransformSystem();
+	ts.update();
+
+	auto transforms = scene->getStorage<Transform>();
+	auto cameras = scene->getStorage<CameraComponent>();
+
+	for (int i = 0; i < cameras->getQuantity(); i++)
+	{
+		auto& cameraComponent = cameras->components[i];
+		auto& transform = transforms->get(cameraComponent.id);
+		if (cameraComponent.camera.getInvViewMatrix() != transform.globalMatrix)
+		{
+			cameraComponent.camera.setInvViewMatrix(transform.globalMatrix);
+		}
+
+		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera);
+	}
 }
 
 
@@ -299,6 +319,14 @@ void Application::setupScene()
 	SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
 	sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
 	sphereCollider->radius = 0.1f;
+
+	ent = scene->createEntity(player);
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Player Camera";
+	auto& playerCam = scene->addComponent<CameraComponent>(ent, {});
+	playerCam.camera.getFrustum().setProjectionMatrix(
+		glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f));
+	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
+	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
 
 
 	ent = scene->createEntity();

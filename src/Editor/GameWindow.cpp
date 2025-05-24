@@ -107,7 +107,7 @@ namespace Editor
 				gameFramebuffer->Resize(framebufferSize.x, framebufferSize.y);
 				lastSize = framebufferSize;
 			}
-			editor->render(context.camera, *gameFramebuffer);
+			editor->render(*gameFramebuffer);
 			GLuint texture = gameFramebuffer->GetColorTexture();
 
 			if (renderSizePreset)

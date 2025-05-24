@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "ECS/BoundingVolumes.h"
+#include "Camera.h"
 
 class Model;
 
@@ -98,6 +99,11 @@ struct ColliderComponent {
 
 private:
     std::shared_ptr<ColliderShape> colliderShape = nullptr;
+};
+
+struct CameraComponent {
+	Camera camera;
+	EntityID id = (EntityID)-1;
 };
 
 

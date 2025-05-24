@@ -41,7 +41,7 @@ void Frustum::setProjectionMatrix(const glm::mat4& proj)
 
 			Plane& plane = *planePtrs[i * 2 + j];
 			plane.normal = glm::normalize(normal);
-			plane.distance = -combined.w / length;
+			plane.distance = sign * combined.w / length;
 		}
 	}
 

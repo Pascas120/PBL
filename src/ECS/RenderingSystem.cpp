@@ -55,7 +55,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
     uint16_t renderingQueueSize = 0;
 
-    ModelComponent* renderingQueue = new ModelComponent[MAX_ENTITIES];
+    ModelComponent** renderingQueue = new ModelComponent*[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSizePair();
 	if (width == 0 || height == 0) {
@@ -77,7 +77,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
 
         if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
-            renderingQueue[renderingQueueSize++] = modelComponent;
+            renderingQueue[renderingQueueSize++] = &modelComponent;
         }
     }
 
@@ -85,7 +85,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
 	framebuffer.Bind();
     for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = renderingQueue[i];
+        auto& modelComponent = *renderingQueue[i];
 
         EntityID entityID = modelComponent.id;
 
