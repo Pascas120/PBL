@@ -38,11 +38,12 @@ inline std::unique_ptr<BVHNode> buildBVH(std::vector<BoundingVolumeComponent*>& 
     // }
     if (objects.size() == 1) {
         node->object = objects[0];
+        node->box = objects[0]->getBoundingVolume()->getGlobalBox(*objects[0]->transform);
         return node;
     }
 
     // Wybór osi (X/Y/Z)
-    int axis = depth % 3;
+    int axis = depth % 2;
     std::sort(objects.begin(), objects.end(), [axis](BoundingVolumeComponent* a, BoundingVolumeComponent* b) {
         auto ca = a->getBoundingVolume()->getGlobalCenter(*a->transform);
         auto cb = b->getBoundingVolume()->getGlobalCenter(*b->transform);

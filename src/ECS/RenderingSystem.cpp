@@ -39,12 +39,8 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         EntityID entityID = visibleEntities[i];
         if (models->has(entityID) && boundingVolumes->has(entityID)) {
             auto& bvComponent = boundingVolumes->get(entityID);
-            if (bvComponent.getBoundingVolume()->isOnFrustum(camera.frustum, transforms->get(entityID))) {
                 renderingQueue[renderingQueueSize++] = entityID;
                 bvComponent.onFrustum = true;
-            } else {
-                bvComponent.onFrustum = false;
-            }
         }
     }
 

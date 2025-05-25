@@ -266,20 +266,20 @@ bool init()
     scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
 
 
-    // for (int x = 0; x < 100; ++x) {
-    //     for (int z = 0; z < 10; ++z) {
-    //         EntityID ent = scene.createEntity();
-    //         scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
-    //
-    //         ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
-    //         ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
-    //
-    //         scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
-    //
-    //
-    //         scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
-    //     }
-    // }
+     for (int x = 0; x < 100; ++x) {
+         for (int z = 0; z < 10; ++z) {
+             EntityID ent = scene.createEntity();
+             scene.getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
+
+             ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
+             ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
+
+             scene.addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+
+
+             scene.addComponent<BoundingVolumeComponent>(ent, BoundingVolumeComponent(std::make_unique<BoundingBox>(boundingBox)));
+         }
+     }
 
      ent = player = scene.createEntity();
      scene.getComponent<ObjectInfoComponent>(ent).name = "Wardrobe";
@@ -370,6 +370,7 @@ bool init()
 ////    hud.setRoot(h1);
 ////    h1->addChild(h2);
 
+    scene.getTransformSystem().update();
     scene.getRenderingSystem().buildTree();
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         scrollXOffset += xoffset;
