@@ -398,7 +398,7 @@ namespace Serialization
 		{"COMPUTE", GL_COMPUTE_SHADER}
 	};
 
-	std::vector<Shader*> Serialization::loadShaderList(const std::string& filePath, std::vector<Shader*>& shaders)
+	std::vector<Shader*> loadShaderList(const std::string& filePath, std::vector<Shader*>& shaders)
 	{
 		std::vector<Shader*> newShaders;
 

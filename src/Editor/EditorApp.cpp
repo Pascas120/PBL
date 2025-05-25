@@ -35,6 +35,13 @@ namespace Editor
 
         assert(NFD_Init() == NFD_OKAY && "Failed to initialize NFD!");
         spdlog::info("Initialized NFD");
+
+    	hierarchyWindow = std::make_unique<HierarchyWindow>(this);
+    	inspectorWindow = std::make_unique<InspectorWindow>(this);
+    	shaderWindow = std::make_unique<ShaderWindow>(this);
+
+    	sceneWindow = std::make_unique<SceneWindow>(this);
+    	gameWindow = std::make_unique<GameWindow>(this);
     }
 
     EditorApp::~EditorApp()

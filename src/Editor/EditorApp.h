@@ -56,12 +56,12 @@ namespace Editor
 
 		EventSystem editorEventSystem;
 
-		std::unique_ptr<HierarchyWindow> hierarchyWindow = std::make_unique<HierarchyWindow>(this);
-		std::unique_ptr<InspectorWindow> inspectorWindow = std::make_unique<InspectorWindow>(this);
-		std::unique_ptr<ShaderWindow> shaderWindow = std::make_unique<ShaderWindow>(this);
+		std::unique_ptr<HierarchyWindow> hierarchyWindow;
+		std::unique_ptr<InspectorWindow> inspectorWindow;
+		std::unique_ptr<ShaderWindow> shaderWindow;
 
-		std::unique_ptr<SceneWindow> sceneWindow = std::make_unique<SceneWindow>(this);
-		std::unique_ptr<GameWindow> gameWindow = std::make_unique<GameWindow>(this);
+		std::unique_ptr<SceneWindow> sceneWindow;
+		std::unique_ptr<GameWindow> gameWindow;
 
 	};
 
