@@ -3,6 +3,7 @@
 //
 
 #include "Mesh.h"
+#include "spdlog/spdlog.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 {
@@ -18,6 +19,10 @@ void Mesh::draw(Shader *shader)
     unsigned int specularNr = 1;
     unsigned int normalNr   = 1;
     unsigned int heightNr   = 1;
+
+    shader->use();
+    shader->setVec3("diffuse", material.diffuse);
+    shader->setVec3("ambient", material.ambient);
     for(unsigned int i = 0; i < textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
@@ -40,6 +45,7 @@ void Mesh::draw(Shader *shader)
     glDrawElements(drawMode, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Mesh::setupMesh()

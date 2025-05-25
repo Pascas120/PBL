@@ -19,39 +19,24 @@ class Mesh;
 
 struct Transform;
 
-class BoundingVolume
+class BoundingBox
 {
 public:
-    virtual ~BoundingVolume() = default;
-
-	virtual nlohmann::json serialize() const = 0;
-};
-
-class SphereBV : public BoundingVolume
-{
-public:
-    SphereBV() = default;
-    SphereBV(const glm::vec3& inCenter, float inRadius);
-
-    static SphereBV calculateBoundingSphere(const std::vector<Mesh>& meshes);
-
-    nlohmann::json serialize() const override;
-
-    glm::vec3 center;
-    float radius;
-};
-
-class AABBBV : public BoundingVolume
-{
-public:
-    AABBBV() = default;
-    AABBBV(const glm::vec3& min, const glm::vec3& max);
-    AABBBV(const glm::vec3& inCenter, float iI, float iJ, float iK);
+    BoundingBox(const glm::vec3& min, const glm::vec3& max);
+    BoundingBox(const glm::vec3& inCenter, float iI, float iJ, float iK);
+    BoundingBox();
 
 	static AABBBV calculateBoundingBox(const std::vector<Mesh>& meshes);
 
     std::array<glm::vec3, 8> getVertices() const;
+    glm::vec3 getCenter() const { return center;}
+    glm::vec3 getExtents() const { return extents;}
+    BoundingBox merge(BoundingBox other);
 
+    bool isOnOrForwardPlane(const Plane& plane) const;
+    bool isOnFrustum(const Frustum& camFrustum, const Transform& transform) const;
+    BoundingBox getGlobalBox(const Transform& transform) const;
+    glm::vec3 getGlobalCenter(const Transform& transform) const;
 	nlohmann::json serialize() const override;
 
     glm::vec3 center;

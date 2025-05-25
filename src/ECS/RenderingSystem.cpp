@@ -55,29 +55,28 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
     uint16_t renderingQueueSize = 0;
 
-    ModelComponent** renderingQueue = new ModelComponent*[MAX_ENTITIES];
+    EntityID renderingQueue[MAX_ENTITIES];
 
-    auto [width, height] = framebuffer.GetSizePair();
-	if (width == 0 || height == 0) {
-		return;
-	}
-
-    glm::mat4 view = camera.getViewMatrix();
-
+    auto [width, height] = framebuffer.GetSize();
+    if (width == 0 || height == 0) {
+        return;
+    }
     float aspectRatio = (float)width / (float)height;
-
-	auto& frustum = camera.getFrustum();
-
-    FrustumPlanes globalPlanes = frustum.getPlanes();
-	globalPlanes.applyTransform(camera.getInvViewMatrix());
-
-    for (int i = 0; i < models->getQuantity(); i++) {
-        auto& modelComponent = models->components[i];
-        AABBBV& boundingBox = modelComponent.model->boundingBox;
-
-
-        if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
-            renderingQueue[renderingQueueSize++] = &modelComponent;
+    camera.createFrustum(aspectRatio);
+    //buildTree();
+    std::vector<EntityID> visibleEntities;
+    visibleEntities.reserve(boundingVolumes->getQuantity());
+    if (rootNode) {
+        traverseBVHFrustum(rootNode.get(), camera.frustum, visibleEntities);
+    } else {
+        spdlog::warn("BVH root node is null, skipping frustum culling.");
+    }
+    for(int i = 0; i < visibleEntities.size(); i++) {
+        EntityID entityID = visibleEntities[i];
+        if (models->has(entityID) && boundingVolumes->has(entityID)) {
+            auto& bvComponent = boundingVolumes->get(entityID);
+                renderingQueue[renderingQueueSize++] = entityID;
+                bvComponent.onFrustum = true;
         }
     }
 
@@ -85,7 +84,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
 	framebuffer.Bind();
     for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = *renderingQueue[i];
+        auto& modelComponent = models->get(renderingQueue[i]);
 
         EntityID entityID = modelComponent.id;
 
@@ -100,8 +99,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
         modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
         modelComponent.model->draw(modelComponent.shader);
     }
-
-	delete[] renderingQueue;
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {

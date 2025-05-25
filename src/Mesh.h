@@ -32,11 +32,20 @@ struct Texture {
     std::string path;
 };
 
+struct Material {
+    glm::vec3 diffuse;
+    glm::vec3 ambient;
+    glm::vec3 specular;
+    glm::vec3 emissive;
+    float shininess;
+};
+
 class Mesh {
 public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
+    Material material;
     unsigned int VAO;
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);

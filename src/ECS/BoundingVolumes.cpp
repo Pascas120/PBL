@@ -5,78 +5,26 @@
 // temporary
 #include "glm_serialization.h"
 
+// bool BoundingBox::isOnFrustum(const Frustum& camFrustum) const
+// {
+//     return (isOnOrForwardPlane(camFrustum.leftFace) &&
+//             isOnOrForwardPlane(camFrustum.rightFace) &&
+//             isOnOrForwardPlane(camFrustum.topFace) &&
+//             isOnOrForwardPlane(camFrustum.bottomFace) &&
+//             isOnOrForwardPlane(camFrustum.nearFace) &&
+//             isOnOrForwardPlane(camFrustum.farFace));
+// }
 
-// Sphere implementation
-SphereBV::SphereBV(const glm::vec3& inCenter, float inRadius)
-    : center(inCenter), radius(inRadius) {}
+BoundingBox::BoundingBox()
+    : center(0.f), extents(0.f) {}
 
-
-SphereBV SphereBV::calculateBoundingSphere(const std::vector<Mesh>& meshes)
-{
-	std::vector<Vertex> vertices;
-	for (const auto& mesh : meshes)
-	{
-		vertices.insert(vertices.end(), mesh.vertices.begin(), mesh.vertices.end());
-	}
-    int index1 = -1, index2 = -1;
-	float maxDistance2 = 0.0f;
-
-	for (int i = 0; i < vertices.size(); ++i)
-	{
-		for (int j = i + 1; j < vertices.size(); ++j)
-		{
-			float distance2 = glm::distance2(vertices[i].Position, vertices[j].Position);
-			if (distance2 > maxDistance2)
-			{
-				maxDistance2 = distance2;
-				index1 = i;
-				index2 = j;
-			}
-		}
-	}
-	glm::vec3 center = (vertices[index1].Position + vertices[index2].Position) * 0.5f;
-	float sqRadius = maxDistance2 * 0.25f;
-	float radius = std::sqrt(sqRadius);
-
-	for (auto& vertex : vertices)
-	{
-        glm::vec3 point = vertex.Position;
-
-		glm::vec3 offset = point - center;
-		float distance2 = glm::dot(offset, offset);
-
-		if (distance2 > sqRadius)
-		{
-			float distance = std::sqrt(distance2);
-			float radiusDiff = (distance - radius) / 2.0f;
-
-			glm::vec3 newCenter = center + offset * radiusDiff;
-
-			radius += radiusDiff;
-			sqRadius = radius * radius;
-		}
-	}
-
-	return SphereBV(center, radius);
-}
-
-
-nlohmann::json SphereBV::serialize() const
-{
-	nlohmann::json j;
-	j["type"] = "SPHERE";
-	j["center"] = center;
-	j["radius"] = radius;
-	return j;
-}
-
-// AABB implementation
-AABBBV::AABBBV(const glm::vec3& min, const glm::vec3& max)
+BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max)
     : center((max + min) * 0.5f), extents(max.x - center.x, max.y - center.y, max.z - center.z) {}
 
-AABBBV::AABBBV(const glm::vec3& inCenter, float iI, float iJ, float iK)
+BoundingBox::BoundingBox(const glm::vec3& inCenter, float iI, float iJ, float iK)
     : center(inCenter), extents(iI, iJ, iK) {}
 
+std::array<glm::vec3, 8> BoundingBox::getVertices() const
 AABBBV AABBBV::calculateBoundingBox(const std::vector<Mesh>& meshes)
 {
     glm::vec3 min = glm::vec3(FLT_MAX);
@@ -109,10 +57,59 @@ std::array<glm::vec3, 8> AABBBV::getVertices() const
 }
 
 nlohmann::json AABBBV::serialize() const
+BoundingBox BoundingBox::merge(BoundingBox other) {
+    glm::vec3 newMin = glm::min(center - extents, other.center - other.extents);
+    glm::vec3 newMax = glm::max(center + extents, other.center + other.extents);
+    return BoundingBox(newMin, newMax);
+}
+
+bool BoundingBox::isOnOrForwardPlane(const Plane& plane) const
 {
 	nlohmann::json j;
 	j["type"] = "AABB";
 	j["center"] = center;
 	j["extents"] = extents;
 	return j;
+    const float r = extents.x * std::abs(plane.normal.x) + extents.y * std::abs(plane.normal.y) +
+                    extents.z * std::abs(plane.normal.z);
+
+    return -r <= plane.getSignedDistanceToPlane(center);
+}
+
+bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
+{
+
+    const BoundingBox globalAABB = getGlobalBox(transform);
+
+    return (globalAABB.isOnOrForwardPlane(camFrustum.leftFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.rightFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.topFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.farFace));
+}
+
+BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {
+    const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(center, 1.f) };
+    const glm::vec3 right = transform.globalMatrix[0] * extents.x;
+    const glm::vec3 up = transform.globalMatrix[1] * extents.y;
+    const glm::vec3 forward = -transform.globalMatrix[2] * extents.z;
+
+    const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
+                        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
+                        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
+
+    const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
+                        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
+                        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
+
+    const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
+                        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
+                        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
+
+    return BoundingBox (globalCenter, newIi, newIj, newIk);
+}
+
+glm::vec3 BoundingBox::getGlobalCenter(const Transform &transform) const {
+    return transform.globalMatrix * glm::vec4(center, 1.f);
 }

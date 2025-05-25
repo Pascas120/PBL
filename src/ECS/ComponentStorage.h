@@ -7,7 +7,7 @@
 #include <assert.h>
 
 #include "EntityManager.h"
-#define MAX_OBJECTS 15000
+#define MAX_OBJECTS 1500
 
 struct IComponentStorage {
     virtual ~IComponentStorage() = default;
@@ -50,7 +50,7 @@ public:
         return entityToIndex[id] != -1;
     }
 
-    T& get(EntityID id) {
+    T& get(EntityID id)  {
         assert(has(id) && "ComponentStorage: trying to get a non-existing component");
         return components[entityToIndex[id]];
     }
