@@ -30,11 +30,12 @@ inline std::unique_ptr<BVHNode> buildBVH(std::vector<BoundingVolumeComponent*>& 
 
     auto node = std::make_unique<BVHNode>();
 
-    // Początkowe AABB to pierwszy obiekt
-    node->box = objects[0]->getBoundingVolume()->getGlobalBox(*objects[0]->transform);
-    for (size_t i = 1; i < objects.size(); ++i)
-        node->box = node->box.merge(objects[i]->getBoundingVolume()->getGlobalBox(*objects[i]->transform));
-
+    // // Początkowe AABB to pierwszy obiekt
+    // node->box = objects[0]->getBoundingVolume()->getGlobalBox(*objects[0]->transform);
+    // for (size_t i = 1; i < objects.size(); ++i) {
+    //     auto globalBox = objects[i]->getBoundingVolume()->getGlobalBox(*objects[i]->transform);
+    //     node->box = node->box.merge(globalBox);
+    // }
     if (objects.size() == 1) {
         node->object = objects[0];
         return node;
@@ -43,8 +44,8 @@ inline std::unique_ptr<BVHNode> buildBVH(std::vector<BoundingVolumeComponent*>& 
     // Wybór osi (X/Y/Z)
     int axis = depth % 3;
     std::sort(objects.begin(), objects.end(), [axis](BoundingVolumeComponent* a, BoundingVolumeComponent* b) {
-        auto ca = a->getBoundingVolume()->getCenter();
-        auto cb = b->getBoundingVolume()->getCenter();
+        auto ca = a->getBoundingVolume()->getGlobalCenter(*a->transform);
+        auto cb = b->getBoundingVolume()->getGlobalCenter(*b->transform);
         return (axis == 0) ? ca.x < cb.x :
                (axis == 1) ? ca.y < cb.y : ca.z < cb.z;
     });
@@ -56,6 +57,14 @@ inline std::unique_ptr<BVHNode> buildBVH(std::vector<BoundingVolumeComponent*>& 
     node->left = buildBVH(left, depth + 1);
     node->right = buildBVH(right, depth + 1);
 
+    if(node->left && node->right) {
+
+        node->box = node->left->box.merge(node->right->box);
+    } else if (node->left) {
+        node->box = node->left->box;
+    } else if (node->right) {
+        node->box = node->right->box;
+    }
     return node;
 }
 

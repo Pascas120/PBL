@@ -50,6 +50,18 @@ bool BoundingBox::isOnOrForwardPlane(const Plane& plane) const
 
 bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
 {
+
+    const BoundingBox globalAABB = getGlobalBox(transform);
+
+    return (globalAABB.isOnOrForwardPlane(camFrustum.leftFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.rightFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.topFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
+            globalAABB.isOnOrForwardPlane(camFrustum.farFace));
+}
+
+BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {
     const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(center, 1.f) };
     const glm::vec3 right = transform.globalMatrix[0] * extents.x;
     const glm::vec3 up = transform.globalMatrix[1] * extents.y;
@@ -67,21 +79,9 @@ bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transf
                         std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
                         std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
 
-    const BoundingBox globalAABB(globalCenter, newIi, newIj, newIk);
-
-    return (globalAABB.isOnOrForwardPlane(camFrustum.leftFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.rightFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.topFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.farFace));
+    return BoundingBox (globalCenter, newIi, newIj, newIk);
 }
 
-BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {
-    glm::vec3 globalCenter = transform.globalMatrix * glm::vec4(center, 1.f);
-    glm::vec3 right = transform.globalMatrix[0] * extents.x;
-    glm::vec3 up = transform.globalMatrix[1] * extents.y;
-    glm::vec3 forward = -transform.globalMatrix[2] * extents.z;
-
-    return BoundingBox(globalCenter - right - up - forward, globalCenter + right + up + forward);
+glm::vec3 BoundingBox::getGlobalCenter(const Transform &transform) const {
+    return transform.globalMatrix * glm::vec4(center, 1.f);
 }

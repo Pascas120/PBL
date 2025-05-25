@@ -198,7 +198,7 @@ void RenderingSystem::initHud() {
 }
 
  void RenderingSystem::buildTree() {
-     std::vector<BoundingVolumeComponent*> objects;
+    std::vector<BoundingVolumeComponent*> objects;
     for (int i = 0; i < scene->getStorage<BoundingVolumeComponent>()->getQuantity(); i++) {
             auto& bvComponent = scene->getStorage<BoundingVolumeComponent>()->components[i];
             bvComponent.transform = &scene->getStorage<Transform>()->get(bvComponent.id);
