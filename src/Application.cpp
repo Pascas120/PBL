@@ -223,6 +223,9 @@ void Application::render(const Framebuffer& framebuffer)
 	auto transforms = scene->getStorage<Transform>();
 	auto cameras = scene->getStorage<CameraComponent>();
 
+	auto [fboWidth, fboHeight] = framebuffer.GetSizePair();
+	float aspectRatio = static_cast<float>(fboWidth) / static_cast<float>(fboHeight);
+
 	for (int i = 0; i < cameras->getQuantity(); i++)
 	{
 		auto& cameraComponent = cameras->components[i];
@@ -230,6 +233,16 @@ void Application::render(const Framebuffer& framebuffer)
 		if (cameraComponent.camera.getInvViewMatrix() != transform.globalMatrix)
 		{
 			cameraComponent.camera.setInvViewMatrix(transform.globalMatrix);
+		}
+		if (cameraComponent.aspectRatio != aspectRatio)
+		{
+			cameraComponent.aspectRatio = aspectRatio;
+			cameraComponent.dirty = true;
+		}
+
+		if (cameraComponent.dirty)
+		{
+			cameraComponent.updateProjectionMatrix();
 		}
 
 		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera);

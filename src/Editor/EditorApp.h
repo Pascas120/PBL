@@ -71,7 +71,6 @@ namespace Editor
 		std::shared_ptr<Scene> scene;
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
-		Camera& camera;
 	};
 
 	namespace Payload

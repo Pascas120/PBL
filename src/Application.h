@@ -56,8 +56,6 @@ protected:
 	float deltaTime = 0.0f;
 	float lastFrame = 0.0f;
 
-	// TODO: move to camera component
-	Camera camera;
 
 	// TODO: move to resource manager(s?)
 	std::vector<Shader*> shaders;

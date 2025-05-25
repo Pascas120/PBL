@@ -221,7 +221,7 @@ namespace Editor
 
 
         //imguiScene();
-		EditorContext context{ scene, shaders, models, camera };
+		EditorContext context{ scene, shaders, models };
 
 		hierarchyWindow->draw(context);
 		inspectorWindow->draw(context);

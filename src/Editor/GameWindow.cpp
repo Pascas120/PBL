@@ -118,7 +118,9 @@ namespace Editor
 				pos.y += offset.y;
 				ImGui::SetCursorPos(pos);
 			}
+			ImVec2 cursorPos = ImGui::GetCursorPos();
 			ImGui::Image(texture, imageSize, ImVec2(0, 1), ImVec2(1, 0));
+			ImGui::SetCursorPos(cursorPos);
 		}
 		ImGui::End();
 		ImGui::PopStyleColor();
