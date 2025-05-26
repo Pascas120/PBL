@@ -49,7 +49,7 @@ bool isOnFrustum(const AABBBV& aabb, const FrustumPlanes& camFrustum, const Tran
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
-void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) {
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage) {
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
 
@@ -83,6 +83,24 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
 	//spdlog::info("Rendering {} models", renderingQueueSize);
 
+	auto& cameraBlock = uniformBlockStorage.cameraBlock;
+	glm::mat4 viewMatrix = camera.getViewMatrix();
+	glm::mat4 invViewMatrix = camera.getInvViewMatrix();
+	glm::vec3 cameraPosition = invViewMatrix[3];
+	glm::mat4 projectionMatrix = frustum.getProjectionMatrix();
+	glm::mat4 invProjectionMatrix = glm::inverse(projectionMatrix);
+	glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+	glm::mat4 invViewProjectionMatrix = glm::inverse(viewProjectionMatrix);
+
+	cameraBlock.setData("viewPos", &cameraPosition);
+	cameraBlock.setData("view", &viewMatrix);
+	cameraBlock.setData("invView", &invViewMatrix);
+	cameraBlock.setData("projection", &projectionMatrix);
+	cameraBlock.setData("invProjection", &invProjectionMatrix);
+	cameraBlock.setData("viewProjection", &viewProjectionMatrix);
+	cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
+
+
 	framebuffer.Bind();
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = *renderingQueue[i];
@@ -91,11 +109,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
 
         modelComponent.shader->use();
-
-        // TODO: uniform blocks
-        modelComponent.shader->setMat4("projection", frustum.getProjectionMatrix());
-        modelComponent.shader->setMat4("view", view);
-
 
         modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
         modelComponent.model->draw(modelComponent.shader);

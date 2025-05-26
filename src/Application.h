@@ -5,12 +5,15 @@
 #include <GLFW/glfw3.h> // Include glfw3.h after our OpenGL definitions
 #include <glm/glm.hpp>
 #include <memory>
+#include <unordered_map>
 
 #include "Framebuffer.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "Model.h"
 #include "Scene.h"
+
+#include "UniformBuffer.h"
 
 class Application
 {
@@ -59,6 +62,14 @@ protected:
 
 	// TODO: move to resource manager(s?)
 	std::vector<Shader*> shaders;
+
+	UniformBlockStorage uniformBlockStorage;
+
+	std::unordered_map<std::string, UniformBlock*> uniformBlockMap {
+		{ "Camera", &uniformBlockStorage.cameraBlock },
+		{ "Lights", &uniformBlockStorage.lightBlock }
+	};
+
 	std::vector<Model*> models;
 
 	std::shared_ptr<Scene> scene;

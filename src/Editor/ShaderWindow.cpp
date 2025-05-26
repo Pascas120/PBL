@@ -112,9 +112,6 @@ namespace Editor
 
     void ShaderWindow::drawUniformLeaf(const UniformInfo& uniform, const std::string& fullName, int index)
     {
-        if (uniform.name == "projection" || uniform.name == "view" || uniform.name == "model")
-            return;
-
         ImGui::PushID(fullName.c_str());
 
         GLuint location = glGetUniformLocation(selectedShader->ID, fullName.c_str());

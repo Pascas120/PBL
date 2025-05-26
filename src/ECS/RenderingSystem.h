@@ -17,6 +17,8 @@ class Scene;
 #include "TextRenderer.h"
 #include "Framebuffer.h"
 
+#include "UniformBuffer.h"
+
 class RenderingSystem {
 private:
     Scene* scene;
@@ -35,7 +37,7 @@ private:
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
-    void drawScene(const Framebuffer& framebuffer, Camera& camera);
+	void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage);
     void drawHud(const Framebuffer& framebuffer);
 };
 
