@@ -47,6 +47,7 @@ struct Transform {
 struct ModelComponent {
     Shader* shader;
     Model* model;
+    Transform* transform;
 
     EntityID id = (EntityID)-1;
 };

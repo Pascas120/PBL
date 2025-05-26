@@ -9,44 +9,6 @@
 #include "Scene.h"
 #include "spdlog/spdlog.h"
 
-static bool isOnOrForwardPlane(const AABBBV& aabb, const Plane& plane)
-{
-    const float r = aabb.extents.x * std::abs(plane.normal.x) + aabb.extents.y * std::abs(plane.normal.y) +
-        aabb.extents.z * std::abs(plane.normal.z);
-
-    return -r <= plane.getSignedDistanceToPlane(aabb.center);
-}
-
-bool isOnFrustum(const AABBBV& aabb, const FrustumPlanes& camFrustum, const Transform& transform)
-{
-    const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(aabb.center, 1.f) };
-    const glm::vec3 right = transform.globalMatrix[0] * aabb.extents.x;
-    const glm::vec3 up = transform.globalMatrix[1] * aabb.extents.y;
-    const glm::vec3 forward = -transform.globalMatrix[2] * aabb.extents.z;
-
-    const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
-
-    const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
-
-    const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
-
-    const AABBBV globalAABB(globalCenter, newIi, newIj, newIk);
-
-    return (isOnOrForwardPlane(globalAABB, camFrustum.leftFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.rightFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.topFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.nearFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.farFace));
-}
-
-
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) {
@@ -57,30 +19,37 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera) 
 
     EntityID renderingQueue[MAX_ENTITIES];
 
-    auto [width, height] = framebuffer.GetSize();
+    auto [width, height] = framebuffer.GetSizePair();
     if (width == 0 || height == 0) {
         return;
     }
+
+    glm::mat4 view = camera.getViewMatrix();
+
     float aspectRatio = (float)width / (float)height;
-    camera.createFrustum(aspectRatio);
+    auto& frustum = camera.getFrustum();
+
+    FrustumPlanes globalPlanes = frustum.getPlanes();
+    globalPlanes.applyTransform(camera.getInvViewMatrix());
+
     //buildTree();
     std::vector<EntityID> visibleEntities;
-    visibleEntities.reserve(boundingVolumes->getQuantity());
+    visibleEntities.reserve(models->getQuantity());
     if (rootNode) {
-        traverseBVHFrustum(rootNode.get(), camera.frustum, visibleEntities);
+        spdlog::info("planes: {}, {}, {}",
+                     frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
+        traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
     } else {
         spdlog::warn("BVH root node is null, skipping frustum culling.");
     }
     for(int i = 0; i < visibleEntities.size(); i++) {
         EntityID entityID = visibleEntities[i];
-        if (models->has(entityID) && boundingVolumes->has(entityID)) {
-            auto& bvComponent = boundingVolumes->get(entityID);
+        if (models->has(entityID)) {
                 renderingQueue[renderingQueueSize++] = entityID;
-                bvComponent.onFrustum = true;
         }
     }
 
-	//spdlog::info("Rendering {} models", renderingQueueSize);
+	spdlog::info("Rendering {} models", renderingQueueSize);
 
 	framebuffer.Bind();
     for (int i = 0; i < renderingQueueSize; i++) {
@@ -224,4 +193,17 @@ void RenderingSystem::initHud() {
     t1.init("../../res/fonts/sixtyfour.ttf");
 
     initializedHud = true;
+}
+
+void RenderingSystem::buildTree() {
+    auto models = scene->getStorage<ModelComponent>();
+    std::vector<ModelComponent*> modelComponents;
+    modelComponents.reserve(models->getQuantity());
+
+    for (int i = 0; i < models->getQuantity(); i++) {
+        models->components[i].transform = &scene->getComponent<Transform>(models->components[i].id);
+        modelComponents.push_back(&models->components[i]);
+    }
+
+    rootNode = buildBVH(modelComponents);
 }

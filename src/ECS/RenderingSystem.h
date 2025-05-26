@@ -18,6 +18,8 @@ class Scene;
 #include "TextRenderer.h"
 #include "Framebuffer.h"
 
+bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum, const Transform& transform);
+
 class RenderingSystem {
 private:
     Scene* scene;

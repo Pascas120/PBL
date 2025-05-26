@@ -1,19 +1,11 @@
 #include "BoundingVolumes.h"
 #include "Camera.h"
-#include "Components.h"
+#include "ECS/Components.h"
 
 // temporary
 #include "glm_serialization.h"
 
-// bool BoundingBox::isOnFrustum(const Frustum& camFrustum) const
-// {
-//     return (isOnOrForwardPlane(camFrustum.leftFace) &&
-//             isOnOrForwardPlane(camFrustum.rightFace) &&
-//             isOnOrForwardPlane(camFrustum.topFace) &&
-//             isOnOrForwardPlane(camFrustum.bottomFace) &&
-//             isOnOrForwardPlane(camFrustum.nearFace) &&
-//             isOnOrForwardPlane(camFrustum.farFace));
-// }
+
 
 BoundingBox::BoundingBox()
     : center(0.f), extents(0.f) {}
@@ -24,8 +16,7 @@ BoundingBox::BoundingBox(const glm::vec3& min, const glm::vec3& max)
 BoundingBox::BoundingBox(const glm::vec3& inCenter, float iI, float iJ, float iK)
     : center(inCenter), extents(iI, iJ, iK) {}
 
-std::array<glm::vec3, 8> BoundingBox::getVertices() const
-AABBBV AABBBV::calculateBoundingBox(const std::vector<Mesh>& meshes)
+BoundingBox BoundingBox::calculateBoundingBox(const std::vector<Mesh>& meshes)
 {
     glm::vec3 min = glm::vec3(FLT_MAX);
     glm::vec3 max = glm::vec3(-FLT_MAX);
@@ -39,10 +30,10 @@ AABBBV AABBBV::calculateBoundingBox(const std::vector<Mesh>& meshes)
         }
     }
 
-    return AABBBV(min, max);
+    return BoundingBox(min, max);
 }
 
-std::array<glm::vec3, 8> AABBBV::getVertices() const
+std::array<glm::vec3, 8> BoundingBox::getVertices() const
 {
     std::array<glm::vec3, 8> vertices;
     vertices[0] = { center.x - extents.x, center.y - extents.y, center.z - extents.z };
@@ -56,37 +47,10 @@ std::array<glm::vec3, 8> AABBBV::getVertices() const
     return vertices;
 }
 
-nlohmann::json AABBBV::serialize() const
 BoundingBox BoundingBox::merge(BoundingBox other) {
     glm::vec3 newMin = glm::min(center - extents, other.center - other.extents);
     glm::vec3 newMax = glm::max(center + extents, other.center + other.extents);
     return BoundingBox(newMin, newMax);
-}
-
-bool BoundingBox::isOnOrForwardPlane(const Plane& plane) const
-{
-	nlohmann::json j;
-	j["type"] = "AABB";
-	j["center"] = center;
-	j["extents"] = extents;
-	return j;
-    const float r = extents.x * std::abs(plane.normal.x) + extents.y * std::abs(plane.normal.y) +
-                    extents.z * std::abs(plane.normal.z);
-
-    return -r <= plane.getSignedDistanceToPlane(center);
-}
-
-bool BoundingBox::isOnFrustum(const Frustum& camFrustum, const Transform& transform) const
-{
-
-    const BoundingBox globalAABB = getGlobalBox(transform);
-
-    return (globalAABB.isOnOrForwardPlane(camFrustum.leftFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.rightFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.topFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.bottomFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.nearFace) &&
-            globalAABB.isOnOrForwardPlane(camFrustum.farFace));
 }
 
 BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {

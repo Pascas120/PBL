@@ -31,7 +31,7 @@ void Model::loadModel(std::string const &path)
     directory = path.substr(0, path.find_last_of('/'));
     processNode(scene->mRootNode, scene);
 
-    boundingBox = AABBBV::calculateBoundingBox(meshes);
+    boundingBox = BoundingBox::calculateBoundingBox(meshes);
 }
 
 void Model::processNode(aiNode *node, const aiScene *scene)

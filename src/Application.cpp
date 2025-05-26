@@ -14,7 +14,7 @@ static void glfw_error_callback(int error, const char* description)
 
 Application::Application()
 {
-	assert(init() && "Failed to initialize application!"); // mo¿e byæ assert?
+	assert(init() && "Failed to initialize application!"); // moï¿½e byï¿½ assert?
 	spdlog::info("Initialized project.");
 }
 
@@ -419,4 +419,7 @@ void Application::setupScene()
 		}
 		});
 
+
+	scene->getTransformSystem().update();
+	scene->getRenderingSystem().buildTree();
 }

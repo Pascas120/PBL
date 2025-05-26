@@ -19,6 +19,8 @@
 
 #include "ECS/BoundingVolumes.h"
 
+class BoundingBox;
+
 class Model
 {
 public:
@@ -32,7 +34,7 @@ public:
     std::map<std::string, BoneInfo>& getBoneInfoMap();
     int& getBoneCount();
 
-    AABBBV boundingBox;
+    BoundingBox boundingBox;
 
 private:
     void loadModel(std::string const &path);
