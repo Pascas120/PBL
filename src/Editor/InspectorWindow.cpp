@@ -126,6 +126,8 @@ namespace Editor
             glm::vec3 rotation = transform.eulerRotation;
             glm::vec3 scale = transform.scale;
 
+			ImGui::Checkbox("Static", &transform.isStatic);
+
             if (ImGui::DragFloat3("Position", &translation[0], 0.1f))
             {
                 ts.translateEntity(id, translation);

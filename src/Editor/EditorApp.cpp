@@ -265,6 +265,7 @@ namespace Editor
         {
             sceneBackup = std::make_shared<Scene>(*scene);
 			ImGui::SetWindowFocus("Game");
+			scene->getRenderingSystem().buildTree();
         }
 		else if (mode == PlayMode::STOP)
 		{

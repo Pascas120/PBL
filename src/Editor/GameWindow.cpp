@@ -107,6 +107,9 @@ namespace Editor
 				gameFramebuffer->Resize(framebufferSize.x, framebufferSize.y);
 				lastSize = framebufferSize;
 			}
+
+
+			context.scene->getRenderingSystem().useTree = editor->playMode == PlayMode::PLAY;
 			editor->render(*gameFramebuffer);
 			GLuint texture = gameFramebuffer->GetColorTexture();
 

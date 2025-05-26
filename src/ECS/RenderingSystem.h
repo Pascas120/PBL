@@ -42,6 +42,8 @@ public:
     void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage);
     void drawHud(const Framebuffer& framebuffer);
     void buildTree();
+
+	bool useTree = true;
 };
 
 

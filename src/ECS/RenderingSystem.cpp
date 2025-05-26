@@ -34,15 +34,31 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     //buildTree();
     std::vector<EntityID> visibleEntities;
+
     visibleEntities.reserve(models->getQuantity());
-    if (rootNode) {
+    if (useTree && rootNode) {
         /*spdlog::info("planes: {}, {}, {}",
                      frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
         */
         traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
-    } else {
+		spdlog::info("Tree: {} entities visible", visibleEntities.size());
+    } else if (!rootNode) {
         spdlog::warn("BVH root node is null, skipping frustum culling.");
     }
+
+    for (int i = 0; i < models->getQuantity(); i++) {
+		if (!useTree || !transforms->get(models->components[i].id).isStatic)
+        {
+            auto& modelComponent = models->components[i];
+            auto& boundingBox = modelComponent.model->boundingBox;
+
+
+            if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
+                renderingQueue[renderingQueueSize++] = modelComponent.id;
+            }
+        }
+    }
+
     for(int i = 0; i < visibleEntities.size(); i++) {
         EntityID entityID = visibleEntities[i];
         if (models->has(entityID)) {
@@ -50,7 +66,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         }
     }
 
-	//spdlog::info("Rendering {} models", renderingQueueSize);
+	spdlog::info("Rendering {} models", renderingQueueSize);
 
     auto& cameraBlock = uniformBlockStorage.cameraBlock;
     glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -219,7 +235,8 @@ void RenderingSystem::buildTree() {
 
     for (int i = 0; i < models->getQuantity(); i++) {
         models->components[i].transform = &scene->getComponent<Transform>(models->components[i].id);
-        modelComponents.push_back(&models->components[i]);
+        if (models->components[i].transform->isStatic)
+            modelComponents.push_back(&models->components[i]);
     }
 
     rootNode = buildBVH(modelComponents);

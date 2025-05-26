@@ -29,6 +29,8 @@ struct ObjectInfoComponent {
 };
 
 struct Transform {
+    bool isStatic = true;
+
     glm::vec3 translation = {0.0f, 0.0f, 0.0f};
     glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
     glm::vec3 eulerRotation = glm::vec3(0.0f);

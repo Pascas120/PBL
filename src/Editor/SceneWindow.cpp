@@ -75,6 +75,7 @@ namespace Editor
                 lastSize = size;
             }
 
+            scene->getRenderingSystem().useTree = false;
             editor->render(editorCamera, *sceneFramebuffer);
 
             GLuint texture = sceneFramebuffer->GetColorTexture();

@@ -89,7 +89,7 @@ bool Application::init()
 	glfwMakeContextCurrent(window);
 	glfwSetWindowUserPointer(window, this);
 
-	glfwSwapInterval(1); // Enable vsync
+	glfwSwapInterval(0); // Enable vsync
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -321,6 +321,8 @@ void Application::render(const Framebuffer& framebuffer)
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
+	scene->getRenderingSystem().buildTree();
+
 	lightSystem(*scene, uniformBlockStorage);
 
 	auto transforms = scene->getStorage<Transform>();
@@ -360,6 +362,8 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
+
+	scene->getRenderingSystem().buildTree();
 
 	lightSystem(*scene, uniformBlockStorage);
 
@@ -422,6 +426,7 @@ void Application::setupScene()
 	ent = player = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Player";
 	ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+	scene->getComponent<Transform>(ent).isStatic = false;
 
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &model2 });
 
@@ -444,6 +449,7 @@ void Application::setupScene()
 
 	ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	scene->getComponent<Transform>(ent).isStatic = false;
 
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
 
@@ -507,6 +513,20 @@ void Application::setupScene()
 	ts.translateEntity(ent, glm::vec3(1 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 
 
+	/*for (int x = 0; x < 100; ++x) {
+		for (int z = 0; z < 10; ++z) {
+			ent = scene->createEntity();
+			scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit_" + std::to_string(x) + "_" + std::to_string(z);
+
+			ts.translateEntity(ent, glm::vec3(x * 2.0f, 0.0f, z * 2.0f));
+			ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
+
+			scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+
+		}
+	}*/
+
+
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
@@ -518,5 +538,5 @@ void Application::setupScene()
 
 
 	scene->getTransformSystem().update();
-	scene->getRenderingSystem().buildTree();
+	//scene->getRenderingSystem().buildTree();
 }
