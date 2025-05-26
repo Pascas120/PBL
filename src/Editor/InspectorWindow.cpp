@@ -37,8 +37,8 @@ namespace Editor
         drawWindow(context);
     }
 
-	void InspectorWindow::drawWindow(const EditorContext& context)
-	{
+    void InspectorWindow::drawWindow(const EditorContext& context)
+    {
         auto& scene = context.scene;
         ImGui::SetNextWindowSize(ImVec2(500, 550), ImGuiCond_FirstUseEver);
         if (ImGui::Begin("Inspector"))
@@ -67,8 +67,10 @@ namespace Editor
                 drawCollider(context, editor->selectedObject);
                 drawModel(context, editor->selectedObject);
                 drawCamera(context, editor->selectedObject);
+                drawPointLight(context, editor->selectedObject);
+                drawDirectionalLight(context, editor->selectedObject);
 
-				ImGui::Dummy(ImVec2(0, 10));
+                ImGui::Dummy(ImVec2(0, 10));
 
                 if (ImGui::BeginCombo("##AddComponentCombo", "Add Component",
                     ImGuiComboFlags_NoArrowButton | ImGuiComboFlags_HeightLarge))
@@ -95,6 +97,8 @@ namespace Editor
                     ImGui::EndDisabled();
 
                     ADD_COMPONENT(CameraComponent, "Camera");
+                    ADD_COMPONENT(PointLightComponent, "Point Light");
+                    ADD_COMPONENT(DirectionalLightComponent, "Directional Light");
 
 
                     ImGui::EndCombo();
@@ -102,11 +106,11 @@ namespace Editor
             }
         }
         ImGui::End();
-	}
+    }
 
 
-	void InspectorWindow::drawTransform(const EditorContext& context, EntityID id)
-	{
+    void InspectorWindow::drawTransform(const EditorContext& context, EntityID id)
+    {
         auto& scene = context.scene;
         if (!scene->hasComponent<Transform>(id))
             return;
@@ -137,11 +141,11 @@ namespace Editor
         }
 
         ImGui::PopID();
-	}
+    }
 
 
-	void InspectorWindow::drawCollider(const EditorContext& context, EntityID id)
-	{
+    void InspectorWindow::drawCollider(const EditorContext& context, EntityID id)
+    {
         auto& scene = context.scene;
         if (!scene->hasComponent<ColliderComponent>(id))
             return;
@@ -170,7 +174,7 @@ namespace Editor
         if (componentContextMenu<ColliderComponent>(context, id)) return;
 
 
-		if (open)
+        if (open)
         {
             glm::vec3 center = shape->center;
             if (ImGui::DragFloat3("Center", &center[0], 0.1f))
@@ -193,14 +197,14 @@ namespace Editor
 
 
         ImGui::PopID();
-	}
+    }
 
 
 
-	void InspectorWindow::drawModel(const EditorContext& context, EntityID id)
-	{
-		auto& scene = context.scene;
-		auto& shaders = context.shaders;
+    void InspectorWindow::drawModel(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        auto& shaders = context.shaders;
 
         if (!scene->hasComponent<ModelComponent>(id))
             return;
@@ -213,19 +217,19 @@ namespace Editor
 
         if (open)
         {
-			Model* model = modelComponent.model;
-			if (ImGui::BeginCombo("Model##Combo", model->directory.c_str()))
-			{
-				for (int i = 0; i < context.models.size(); i++)
-				{
-					if (ImGui::Selectable(context.models[i]->directory.c_str(), model == context.models[i]))
-					{
-						model = context.models[i];
-						modelComponent.model = model;
-					}
-				}
-				ImGui::EndCombo();
-			}
+            Model* model = modelComponent.model;
+            if (ImGui::BeginCombo("Model##Combo", model->directory.c_str()))
+            {
+                for (int i = 0; i < context.models.size(); i++)
+                {
+                    if (ImGui::Selectable(context.models[i]->directory.c_str(), model == context.models[i]))
+                    {
+                        model = context.models[i];
+                        modelComponent.model = model;
+                    }
+                }
+                ImGui::EndCombo();
+            }
 
             Shader* modelShader = modelComponent.shader;
             if (ImGui::BeginCombo("Shader##Combo", modelShader->getName().c_str()))
@@ -245,7 +249,7 @@ namespace Editor
 
 
         ImGui::PopID();
-	}
+    }
 
     void InspectorWindow::drawCamera(const EditorContext& context, EntityID id)
     {
@@ -253,12 +257,12 @@ namespace Editor
         if (!scene->hasComponent<CameraComponent>(id))
             return;
 
-		auto& cameraComponent = scene->getComponent<CameraComponent>(id);
+        auto& cameraComponent = scene->getComponent<CameraComponent>(id);
 
-		ImGui::PushID(&cameraComponent);
+        ImGui::PushID(&cameraComponent);
 
-		bool open = ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen);
-		if (componentContextMenu<CameraComponent>(context, id)) return;
+        bool open = ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<CameraComponent>(context, id)) return;
         if (open)
         {
             auto& camera = cameraComponent.camera;
@@ -266,46 +270,46 @@ namespace Editor
 
             constexpr ImGuiComboFlags comboFlags = 0;// ImGuiComboFlags_WidthFitPreview;
 
-			if (ImGui::BeginCombo("Projection", 
+            if (ImGui::BeginCombo("Projection",
                 cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE ? "Perspective" : "Orthographic",
                 comboFlags))
-			{
-				if (ImGui::Selectable("Perspective",
-					cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE))
-				{
-					cameraComponent.projectionType = CameraComponent::ProjectionType::PERSPECTIVE;
-					cameraComponent.dirty = true;
-				}
-				if (ImGui::Selectable("Orthographic",
-					cameraComponent.projectionType == CameraComponent::ProjectionType::ORTHOGRAPHIC))
-				{
-					cameraComponent.projectionType = CameraComponent::ProjectionType::ORTHOGRAPHIC;
-					cameraComponent.dirty = true;
-				}
-				ImGui::EndCombo();
-			}
+            {
+                if (ImGui::Selectable("Perspective",
+                    cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE))
+                {
+                    cameraComponent.projectionType = CameraComponent::ProjectionType::PERSPECTIVE;
+                    cameraComponent.dirty = true;
+                }
+                if (ImGui::Selectable("Orthographic",
+                    cameraComponent.projectionType == CameraComponent::ProjectionType::ORTHOGRAPHIC))
+                {
+                    cameraComponent.projectionType = CameraComponent::ProjectionType::ORTHOGRAPHIC;
+                    cameraComponent.dirty = true;
+                }
+                ImGui::EndCombo();
+            }
 
-			ImGui::Indent();
-			std::string fovSizeAxisName = 
-				cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE ?
-				"Field of View Axis" : "Size Axis";
+            ImGui::Indent();
+            std::string fovSizeAxisName =
+                cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE ?
+                "Field of View Axis" : "Size Axis";
             if (ImGui::BeginCombo(fovSizeAxisName.c_str(),
                 cameraComponent.fovSizeAxis == CameraComponent::FovSizeAxis::VERTICAL ? "Vertical" : "Horizontal",
                 comboFlags))
             {
-				if (ImGui::Selectable("Vertical",
-					cameraComponent.fovSizeAxis == CameraComponent::FovSizeAxis::VERTICAL))
-				{
-					cameraComponent.fovSizeAxis = CameraComponent::FovSizeAxis::VERTICAL;
-					cameraComponent.dirty = true;
-				}
-				if (ImGui::Selectable("Horizontal",
-					cameraComponent.fovSizeAxis == CameraComponent::FovSizeAxis::HORIZONTAL))
-				{
-					cameraComponent.fovSizeAxis = CameraComponent::FovSizeAxis::HORIZONTAL;
-					cameraComponent.dirty = true;
-				}
-				ImGui::EndCombo();
+                if (ImGui::Selectable("Vertical",
+                    cameraComponent.fovSizeAxis == CameraComponent::FovSizeAxis::VERTICAL))
+                {
+                    cameraComponent.fovSizeAxis = CameraComponent::FovSizeAxis::VERTICAL;
+                    cameraComponent.dirty = true;
+                }
+                if (ImGui::Selectable("Horizontal",
+                    cameraComponent.fovSizeAxis == CameraComponent::FovSizeAxis::HORIZONTAL))
+                {
+                    cameraComponent.fovSizeAxis = CameraComponent::FovSizeAxis::HORIZONTAL;
+                    cameraComponent.dirty = true;
+                }
+                ImGui::EndCombo();
             }
 
             if (cameraComponent.projectionType == CameraComponent::ProjectionType::PERSPECTIVE)
@@ -314,7 +318,7 @@ namespace Editor
                 if (ImGui::SliderFloat("Field of View", &fovDeg, 1e-05f, 179.9f, "%.2f"))
                 {
                     cameraComponent.perspective.fov = glm::radians(fovDeg);
-					cameraComponent.dirty = true;
+                    cameraComponent.dirty = true;
                 }
             }
             else
@@ -325,15 +329,59 @@ namespace Editor
             cameraComponent.dirty |= ImGui::DragFloat2("Screen Offset", &cameraComponent.screenOffset[0],
                 0.01f, -1.0f, 1.0f);
 
-			ImGui::SeparatorText("Clipping Planes");
-			cameraComponent.dirty |= ImGui::DragFloat("Near", &cameraComponent.nearPlane, 
+            ImGui::SeparatorText("Clipping Planes");
+            cameraComponent.dirty |= ImGui::DragFloat("Near", &cameraComponent.nearPlane,
                 0.01f, 0.01f, cameraComponent.farPlane - 0.01f);
-			cameraComponent.dirty |= ImGui::DragFloat("Far", &cameraComponent.farPlane,
-				0.01f, cameraComponent.nearPlane + 0.01f, 10000.0f);
+            cameraComponent.dirty |= ImGui::DragFloat("Far", &cameraComponent.farPlane,
+                0.01f, cameraComponent.nearPlane + 0.01f, 10000.0f);
 
-			ImGui::Unindent();
+            ImGui::Unindent();
         }
 
-		ImGui::PopID();
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawPointLight(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<PointLightComponent>(id))
+            return;
+
+        auto& light = scene->getComponent<PointLightComponent>(id);
+
+        ImGui::PushID(&light);
+
+        bool open = ImGui::CollapsingHeader("Point Light", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<PointLightComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::ColorEdit3("Color", &light.color[0]);
+            ImGui::DragFloat("Intensity", &light.intensity, 0.01f, 0.0f, 100.0f);
+            ImGui::Spacing();
+            ImGui::DragFloat("Constant", &light.constant, 0.01f, 0.0f);
+            ImGui::DragFloat("Linear", &light.linear, 0.01f, 0.0f);
+            ImGui::DragFloat("Quadratic", &light.quadratic, 0.01f, 0.0f);
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawDirectionalLight(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<DirectionalLightComponent>(id))
+            return;
+
+        auto& light = scene->getComponent<DirectionalLightComponent>(id);
+
+        ImGui::PushID(&light);
+
+        bool open = ImGui::CollapsingHeader("Directional Light", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<DirectionalLightComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::ColorEdit3("Color", &light.color[0]);
+            ImGui::DragFloat("Intensity", &light.intensity, 0.01f, 0.0f, 100.0f);
+        }
+        ImGui::PopID();
     }
 }

@@ -17,6 +17,7 @@ class Scene;
 #include "Shader.h"
 #include "TextRenderer.h"
 #include "Framebuffer.h"
+#include "UniformBuffer.h"
 
 bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum, const Transform& transform);
 
@@ -38,7 +39,7 @@ private:
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
-    void drawScene(const Framebuffer& framebuffer, Camera& camera);
+    void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage);
     void drawHud(const Framebuffer& framebuffer);
     void buildTree();
 };

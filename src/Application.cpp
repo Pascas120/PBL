@@ -103,6 +103,39 @@ bool Application::init()
 		app->scrollYOffset += yoffset;
 		});
 
+	Serialization::loadShaderList("res/shaderList.json", shaders);
+
+	for (Shader* shader : shaders)
+	{
+		GLint numUniformBlocks;
+		glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+		spdlog::info("Shader '{}' has {} uniform blocks.", shader->getName(), numUniformBlocks);
+		for (int i = 0; i < numUniformBlocks; ++i)
+		{
+			GLchar blockName[256];
+			glGetActiveUniformBlockName(shader->ID, i, sizeof(blockName), nullptr, blockName);
+			auto it = uniformBlockMap.find(blockName);
+			if (it != uniformBlockMap.end())
+			{
+				shader->use();
+				if (!it->second->isInitialized())
+				{
+					it->second->init(shader->ID);
+				}
+				else
+				{
+					it->second->bindToShader(shader->ID);
+				}
+			}
+
+		}
+	}
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	setupScene();
 
 	return true;
@@ -211,6 +244,74 @@ void Application::update()
 	eventSystem.processEvents();
 }
 
+
+
+
+// temporary
+static void lightSystem(const Scene& scene, UniformBlockStorage& uniformBlockStorage)
+{
+	auto& lightBlock = uniformBlockStorage.lightBlock;
+	auto transforms = scene.getStorage<Transform>();
+
+	glm::vec4 ambientColor = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f); // Temporary ambient color
+	lightBlock.setData("ambientColor", &ambientColor);
+
+
+	// point lights
+	int pointLightCount = 0;
+
+	auto pointLights = scene.getStorage<PointLightComponent>();
+	if (pointLights == nullptr)
+	{
+		lightBlock.setData("pointLightCount", &pointLightCount);
+	}
+	else
+	{
+		pointLightCount = pointLights->getQuantity();
+		lightBlock.setData("pointLightCount", &pointLightCount);
+
+
+		for (int i = 0; i < pointLightCount; i++)
+		{
+			auto& light = pointLights->components[i];
+			std::string prefix = "pointLights[" + std::to_string(i) + "].";
+			glm::vec3 position = transforms->get(light.id).globalMatrix[3];
+			lightBlock.setData(prefix + "position", &position);
+			lightBlock.setData(prefix + "color", &light.color);
+			lightBlock.setData(prefix + "intensity", &light.intensity);
+			lightBlock.setData(prefix + "constant", &light.constant);
+			lightBlock.setData(prefix + "linear", &light.linear);
+			lightBlock.setData(prefix + "quadratic", &light.quadratic);
+		}
+	}
+
+	// directional lights
+	int directionalLightCount = 0;
+
+	auto directionalLights = scene.getStorage<DirectionalLightComponent>();
+	if (directionalLights == nullptr)
+	{
+		lightBlock.setData("directionalLightCount", &directionalLightCount);
+	}
+	else
+	{
+		directionalLightCount = directionalLights->getQuantity();
+		lightBlock.setData("directionalLightCount", &directionalLightCount);
+
+		for (int i = 0; i < directionalLightCount; i++)
+		{
+			auto& light = directionalLights->components[i];
+			std::string prefix = "directionalLights[" + std::to_string(i) + "].";
+			glm::vec3 direction = transforms->get(light.id).globalMatrix[2];
+			lightBlock.setData(prefix + "direction", &direction);
+			lightBlock.setData(prefix + "color", &light.color);
+			lightBlock.setData(prefix + "intensity", &light.intensity);
+		}
+	}
+
+}
+
+
 void Application::render(const Framebuffer& framebuffer)
 {
 	framebuffer.Bind();
@@ -219,6 +320,8 @@ void Application::render(const Framebuffer& framebuffer)
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
+
+	lightSystem(*scene, uniformBlockStorage);
 
 	auto transforms = scene->getStorage<Transform>();
 	auto cameras = scene->getStorage<CameraComponent>();
@@ -245,7 +348,7 @@ void Application::render(const Framebuffer& framebuffer)
 			cameraComponent.updateProjectionMatrix();
 		}
 
-		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera);
+		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage);
 	}
 }
 
@@ -258,7 +361,9 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-	scene->getRenderingSystem().drawScene(framebuffer, camera);
+	lightSystem(*scene, uniformBlockStorage);
+
+	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage);
 	scene->getRenderingSystem().drawHud(framebuffer);
 }
 
@@ -291,14 +396,6 @@ void Application::endFrame()
 
 void Application::setupScene()
 {
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	Serialization::loadShaderList("res/shaderList.json", shaders);
-
-
 	models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
 	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
