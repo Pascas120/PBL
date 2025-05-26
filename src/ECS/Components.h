@@ -124,4 +124,26 @@ struct DirectionalLightComponent {
     EntityID id = (EntityID)-1;
 };
 
+struct FlyAIComponent {
+	EntityID idButter = (EntityID)-1;
+    EntityID idBread = (EntityID)-1;
+    float patrolHeightOffset = 3.f;
+    float patrolSpeed = 3.f;
+    float diveSpeed = 6.f;
+    float detectionRadius = 8.f;
+    float diveEndHeight = 1.f;
+    float returnSpeed = 3.5f;
+    float patrolRange = 10.f;
+    float patrolPointReachedThreshold = 0.5f;
+    float diveCooldownTime = 2.f;
+    float diveCooldownTimer = 0.f;
+	float groundY = 0.f;
+    enum FlyState { Patrolling, Diving, Returning }
+    state = FlyState::Patrolling;
+    glm::vec3 patrolTarget;
+
+    EntityID id = (EntityID)-1;
+
+
+};
 #endif //PBL_COMPONENTS_H
