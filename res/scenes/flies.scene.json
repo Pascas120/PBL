@@ -139,7 +139,7 @@
             },
             "ModelComponent": {
                 "model": "res/models",
-                "shader": "Basic"
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Nanosuit",
@@ -212,7 +212,7 @@
             },
             "ModelComponent": {
                 "model": "res/models",
-                "shader": "Basic"
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Nanosuit (1)",
@@ -285,7 +285,7 @@
             },
             "ModelComponent": {
                 "model": "res/models",
-                "shader": "Basic"
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Nanosuit (2)",
