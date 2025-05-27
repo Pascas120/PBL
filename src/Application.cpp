@@ -403,7 +403,7 @@ void Application::endFrame()
 
 void Application::setupScene()
 {
-	models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
+	models.emplace_back(new Model("res/models/mucha.fbx"));
 	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/untitled.fbx"));
@@ -448,10 +448,10 @@ void Application::setupScene()
 
 
 	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Fly";
 
-	ts.scaleEntity(ent, glm::vec3(0.1f, 0.04f, 0.1f));
-	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	ts.scaleEntity(ent, glm::vec3(0.01f, 0.004f, 0.01f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 3.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
 	FlyAIComponent flySpec;
