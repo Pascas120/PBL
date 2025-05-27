@@ -17,6 +17,14 @@
             }
         },
         {
+            "name": "CelShading",
+            "sources":
+            {
+                "VERTEX": "res/shaders/basic.vert",
+                "FRAGMENT": "res/shaders/material.frag"
+            }
+        },
+        {
             "name": "GUITest",
             "sources": 
             {

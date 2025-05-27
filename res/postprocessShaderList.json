@@ -1,0 +1,12 @@
+{
+    "shaders" : [
+        {
+            "name": "Sobel",
+            "sources": 
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/sobel.frag"
+            }
+        }
+    ]
+}

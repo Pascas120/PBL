@@ -9,6 +9,8 @@
 #include "Scene.h"
 #include "spdlog/spdlog.h"
 
+
+
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage) {
@@ -24,6 +26,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         return;
     }
 
+    CustomFramebuffer customFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     glm::mat4 view = camera.getViewMatrix();
 
     float aspectRatio = (float)width / (float)height;
@@ -88,7 +91,8 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
 
 
-	framebuffer.Bind();
+	customFramebuffer.Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
 
@@ -101,6 +105,8 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
         modelComponent.model->draw(modelComponent.shader);
     }
+
+    sobelFilter(customFramebuffer, framebuffer);
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
@@ -191,10 +197,10 @@ void RenderingSystem::initHud() {
     if (initializedHud) return;
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, 0.0f,
-         0.5f, -0.5f, 1.0f, 0.0f,
-         0.5f,  0.5f, 1.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f, 1.0f
+        -1.0f, -1.0f, 0.0f, 0.0f,
+         1.0f, -1.0f, 1.0f, 0.0f,
+         1.0f,  1.0f, 1.0f, 1.0f,
+        -1.0f,  1.0f, 0.0f, 1.0f
     };
 
     unsigned int indices[] = {
@@ -240,4 +246,24 @@ void RenderingSystem::buildTree() {
     }
 
     rootNode = buildBVH(modelComponents);
+}
+
+void RenderingSystem::addPostShader(const std::string &name, const Shader* shader) {
+    postShaders[name] = shader;
+}
+
+void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer &out) {
+    out.Bind();
+    const Shader* shader = postShaders["Sobel"];
+    shader->use();
+    auto [width, height] = in.GetSizePair();
+    shader->setInt("width", width);
+    shader->setInt("height", height);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+    shader->setInt("textureSampler", 0);
+
+    glBindVertexArray(hudVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
