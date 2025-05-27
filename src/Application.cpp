@@ -89,7 +89,7 @@ bool Application::init()
 	glfwMakeContextCurrent(window);
 	glfwSetWindowUserPointer(window, this);
 
-	glfwSwapInterval(0); // Enable vsync
+	glfwSwapInterval(1); // Enable vsync
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -130,7 +130,6 @@ bool Application::init()
 
 		}
 	}
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -305,7 +304,7 @@ static void lightSystem(const Scene& scene, UniformBlockStorage& uniformBlockSto
 		{
 			auto& light = directionalLights->components[i];
 			std::string prefix = "directionalLights[" + std::to_string(i) + "].";
-			glm::vec3 direction = transforms->get(light.id).globalMatrix[2];
+			glm::vec3 direction = -transforms->get(light.id).globalMatrix[2];
 			lightBlock.setData(prefix + "direction", &direction);
 			lightBlock.setData(prefix + "color", &light.color);
 			lightBlock.setData(prefix + "intensity", &light.intensity);
@@ -324,7 +323,7 @@ void Application::render(const Framebuffer& framebuffer)
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-	scene->getRenderingSystem().buildTree();
+	//scene->getRenderingSystem().buildTree();
 
 	lightSystem(*scene, uniformBlockStorage);
 
@@ -406,11 +405,12 @@ void Application::setupScene()
 	models.emplace_back(new Model("res/models/mucha.fbx"));
 	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
-	models.emplace_back(new Model("res/models/untitled.fbx"));
+	models.emplace_back(new Model("res/models/maslpo.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];
 	Model& model3 = *models[2];
+	Model& model4 = *models[3];
 
 	scene = std::make_shared<Scene>();
 
@@ -470,6 +470,14 @@ void Application::setupScene()
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
 	scene->addComponent<FlyAIComponent>(ent, flySpec);
+
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
+
+	ts.scaleEntity(ent, glm::vec3(0.01f, 0.01f, 0.01f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	scene->getComponent<Transform>(ent).isStatic = false;
+	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -551,4 +559,9 @@ void Application::setupScene()
 
 	scene->getTransformSystem().update();
 	//scene->getRenderingSystem().buildTree();
+	std::vector<Shader*> postShaders;
+	Serialization::loadShaderList("res/postprocessShaderList.json", postShaders);
+	for (Shader* shader : postShaders) {
+		scene->getRenderingSystem().addPostShader(shader->getName(), shader);
+	}
 }

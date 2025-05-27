@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <glad/glad.h>
 #include <stdint.h>
 #include <utility>
@@ -11,6 +12,8 @@ public:
 
 	virtual void Bind() const = 0;
 	virtual void GetSize(uint32_t& width, uint32_t& height) const = 0;
+	virtual GLuint GetColorTexture() const = 0;
+	virtual GLuint GetDepthTexture() const = 0;
 	std::pair<uint32_t, uint32_t> GetSizePair() const
 	{
 		uint32_t width, height;
@@ -32,6 +35,8 @@ public:
 
 	void Bind() const;
 	void GetSize(uint32_t& width, uint32_t& height) const;
+	GLuint GetColorTexture() const override {assert(false && "Default framebuffer does not have a color texture."); return 0; };
+	GLuint GetDepthTexture() const override {assert(false && "Default framebuffer does not have a color texture."); return 0; };
 
 	static DefaultFramebuffer& GetInstance()
 	{
@@ -67,8 +72,8 @@ public:
 	void Bind() const;
 
 	void Resize(uint32_t width, uint32_t height);
-	GLuint GetColorTexture() const { return colorTexture; }
-	GLuint GetDepthTexture() const { return depthTexture; }
+	GLuint GetColorTexture() const override { return colorTexture; }
+	GLuint GetDepthTexture() const override { return depthTexture; }
 
 	const FramebufferConfig& GetConfig() const { return config; }
 	void GetSize(uint32_t& width, uint32_t& height) const
