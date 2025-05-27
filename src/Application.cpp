@@ -415,12 +415,12 @@ void Application::setupScene()
 	enum class FlyVariant { GREEN, RED, GOLD, PURPLE, COUNT };
 	Model* flyModels[static_cast<size_t>(FlyVariant::COUNT)] =
 	{
-		&ourModel,	//GREEN = 0,
-		&ourModel,	//RED = 1,
-		&ourModel,	//BLUE = 2,
-		&model4,	//GOLD = 3,
+		&ourModel,	//GREEN 
+		&ourModel,	//RED 
+		&ourModel,	//GOLD
+		&model4,	//PURPLE
 	};
-	constexpr FlyVariant SELECTED_FLY = FlyVariant::PURPLE;
+	constexpr FlyVariant SELECTED_FLY = FlyVariant::GOLD;
 
 	scene = std::make_shared<Scene>();
 
