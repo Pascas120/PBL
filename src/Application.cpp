@@ -238,7 +238,10 @@ void Application::update()
 
 	if (updateScene)
 		ts.update();
-
+	auto& aiSystem = scene->getFlyAISystem();
+	aiSystem.deltaTime = deltaTime;
+	aiSystem.update();
+	ts.update();
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
@@ -458,6 +461,9 @@ void Application::setupScene()
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
+	scene->addComponent<FlyAIComponent>(ent, FlyAIComponent{
+		.idButter = player,
+		});
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
