@@ -13,7 +13,8 @@
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
-void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage) {
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
+    const std::unordered_map<std::string, Shader*>& postShaders) {
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
     auto lights = scene->getStorage<DirectionalLightComponent>();
@@ -34,7 +35,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     CustomFramebuffer customFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     //##################SHADOW MAP##################
-    Shader* shadowShader = postShaders["ShadowMap"];
+	Shader* shadowShader = postShaders.at("ShadowMap");
     CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     if(useShadows) {
         glm::vec3 lightPos = transforms->get(mainLight.id).translation;
@@ -79,7 +80,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
 		    if(useShadows) {
 		        shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
-		        modelComponent.model->draw(postShaders["ShadowMap"]);
+                modelComponent.model->draw(postShaders.at("ShadowMap"));
 		    }
             if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
                 renderingQueue[renderingQueueSize++] = modelComponent.id;
@@ -137,7 +138,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         modelComponent.model->draw(modelComponent.shader);
     }
 
-    sobelFilter(customFramebuffer, framebuffer);
+    sobelFilter(postShaders.at("Sobel"), customFramebuffer, framebuffer);
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
@@ -279,20 +280,15 @@ void RenderingSystem::buildTree() {
     rootNode = buildBVH(modelComponents);
 }
 
-void RenderingSystem::addPostShader(const std::string &name, Shader* shader) {
-    postShaders[name] = shader;
-}
-
-void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer &out) {
+void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, const Framebuffer &out) {
     out.Bind();
-    Shader* shader = postShaders["Sobel"];
-    shader->use();
+    sobel->use();
     auto [width, height] = in.GetSizePair();
-    shader->setInt("width", width);
-    shader->setInt("height", height);
+    sobel->setInt("width", width);
+    sobel->setInt("height", height);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
-    shader->setInt("textureSampler", 0);
+    sobel->setInt("textureSampler", 0);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

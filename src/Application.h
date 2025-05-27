@@ -62,6 +62,7 @@ protected:
 
 	// TODO: move to resource manager(s?)
 	std::vector<Shader*> shaders;
+	std::unordered_map<std::string, Shader*> postShaders;
 
 	UniformBlockStorage uniformBlockStorage;
 

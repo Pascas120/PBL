@@ -352,7 +352,7 @@ void Application::render(const Framebuffer& framebuffer)
 			cameraComponent.updateProjectionMatrix();
 		}
 
-		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage);
+		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage, postShaders);
 	}
 }
 
@@ -369,7 +369,7 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 
 	lightSystem(*scene, uniformBlockStorage);
 
-	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage);
+	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage, postShaders);
 	scene->getRenderingSystem().drawHud(framebuffer);
 }
 
@@ -559,9 +559,9 @@ void Application::setupScene()
 
 	scene->getTransformSystem().update();
 	//scene->getRenderingSystem().buildTree();
-	std::vector<Shader*> postShaders;
-	Serialization::loadShaderList("res/postprocessShaderList.json", postShaders);
-	for (Shader* shader : postShaders) {
-		scene->getRenderingSystem().addPostShader(shader->getName(), shader);
+	std::vector<Shader*> postShaderVec;
+	Serialization::loadShaderList("res/postprocessShaderList.json", postShaderVec);
+	for (Shader* shader : postShaderVec) {
+		postShaders[shader->getName()] = shader;
 	}
 }
