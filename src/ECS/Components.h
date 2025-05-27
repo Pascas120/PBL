@@ -19,6 +19,14 @@
 
 #include "components/CameraComponent.h"
 
+enum class FlyVariant : uint8_t {
+    GREEN = 0,
+    RED = 1,
+    GOLD = 2,
+    PURPLE = 3,
+    COUNT
+};
+
 class Model;
 
 struct ObjectInfoComponent {
@@ -126,6 +134,7 @@ struct DirectionalLightComponent {
 
 struct FlyAIComponent {
 	EntityID idButter = (EntityID)-1;
+    FlyVariant variant = FlyVariant::GREEN;
     EntityID idBread = (EntityID)-1;
     float patrolHeightOffset = 3.f;
     float patrolSpeed = 3.f;

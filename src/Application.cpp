@@ -412,6 +412,16 @@ void Application::setupScene()
 	Model& model3 = *models[2];
 	Model& model4 = *models[3];
 
+	enum class FlyVariant { GREEN, RED, GOLD, PURPLE, COUNT };
+	Model* flyModels[static_cast<size_t>(FlyVariant::COUNT)] =
+	{
+		&ourModel,	//GREEN = 0,
+		&ourModel,	//RED = 1,
+		&ourModel,	//BLUE = 2,
+		&model4,	//GOLD = 3,
+	};
+	constexpr FlyVariant SELECTED_FLY = FlyVariant::PURPLE;
+
 	scene = std::make_shared<Scene>();
 
 	EntityID ent;
@@ -446,7 +456,7 @@ void Application::setupScene()
 	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
 	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
 
-
+	//mucha
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Fly";
 
@@ -462,7 +472,11 @@ void Application::setupScene()
 	flySpec.patrolRange = 4.0f;
 	flySpec.patrolSpeed = 1.5f;
 
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+	scene->addComponent<ModelComponent>(
+		ent,
+		{ shaders[0],
+		  flyModels[static_cast<size_t>(SELECTED_FLY)] });  
+
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
 	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
@@ -470,6 +484,9 @@ void Application::setupScene()
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
 	scene->addComponent<FlyAIComponent>(ent, flySpec);
+	//
+
+
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
@@ -550,9 +567,19 @@ void Application::setupScene()
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
-		if (event.isColliding)
+		if (!event.isColliding) return;
+
+		bool aIsPlayer = (event.objectA == player);
+		bool bIsPlayer = (event.objectB == player);
+
+		bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
+		bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
+
+
+
+		if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
 		{
-			spdlog::info("Collision detected between {} and {}", event.objectA, event.objectB);
+			spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
 		}
 		});
 
