@@ -7,6 +7,14 @@
                 "VERTEX": "res/shaders/postprocess/postprocess.vert",
                 "FRAGMENT": "res/shaders/postprocess/sobel.frag"
             }
+        },
+        {
+            "name": "ShadowMap",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/shadowMap.vert",
+                "FRAGMENT": "res/shaders/postprocess/shadowMap.frag"
+            }
         }
     ]
 }

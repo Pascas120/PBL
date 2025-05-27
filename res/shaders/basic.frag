@@ -5,10 +5,12 @@ in vec2 texCoords;
 in vec3 fragPos;
 in vec3 normal;
 in vec3 anormal;
+in vec4 fragPosLightSpace;
 
 uniform vec3 diffuse;
 
 uniform sampler2D texture_diffuse1;
+uniform sampler2D shadowMap;
 
 layout(std140) uniform Camera
 {
@@ -19,6 +21,8 @@ layout(std140) uniform Camera
     mat4 invProjection;
     mat4 viewProjection;
     mat4 invViewProjection;
+    mat4 lightProjection;
+    mat4 lightView;
 };
 
 #define MAX_POINT_LIGHTS 100
@@ -50,6 +54,8 @@ layout(std140) uniform Lights
 
 vec3 CalculatePointLight(PointLight light, vec3 norm, vec3 viewDir);
 vec3 CalculateDirectionalLight(DirectionalLight light, vec3 norm, vec3 viewDir);
+float ShadowCalculation(vec4 fragPosLightSpace);
+float packColor(vec3 color);
 
 void main()
 {
@@ -69,10 +75,12 @@ void main()
 
 
     vec4 texColor = texture(texture_diffuse1, texCoords);
-    vec4 finalColor = texColor * (vec4(lighting, 1.0) + ambientColor);
+    vec4 debugColor = texture(shadowMap, texCoords);
+    float shadow = ShadowCalculation(vec4(fragPosLightSpace));
+    vec4 finalColor = texColor * (vec4(lighting, 1.0) * (1.0 - shadow) + ambientColor);
 
     FragColor = finalColor;
-    //FragColor = vec4(normal, 1.0);
+    //FragColor = vec4(vec3(shadow), 1.0); // For debugging shadow
 }
 
 ////////////////////////////////////////
@@ -108,3 +116,20 @@ vec3 CalculateDirectionalLight(DirectionalLight light, vec3 norm, vec3 viewDir) 
 
     return (diffuse + specular) * light.intensity;
 }
+float ShadowCalculation(vec4 fragPosLightSpace) {
+    if( fragPosLightSpace.w <= 0.0) {
+        return 1.0;
+    }
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
+
+float packColor(vec3 color) {   return (color.r + (color.g*256.) + (color.b*256.*256.)) / (256.*256.*256.); }

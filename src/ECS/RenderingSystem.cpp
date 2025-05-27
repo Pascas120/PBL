@@ -16,7 +16,13 @@ RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage) {
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
-
+    auto lights = scene->getStorage<DirectionalLightComponent>();
+    DirectionalLightComponent mainLight;
+    bool useShadows = false;
+    if(lights!= nullptr) {
+        mainLight = lights->components[0];
+        useShadows = true;
+    }
     uint16_t renderingQueueSize = 0;
 
     EntityID renderingQueue[MAX_ENTITIES];
@@ -27,8 +33,24 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     }
 
     CustomFramebuffer customFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
-    glm::mat4 view = camera.getViewMatrix();
+    //##################SHADOW MAP##################
+    Shader* shadowShader = postShaders["ShadowMap"];
+    CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
+    if(useShadows) {
+        glm::vec3 lightPos = transforms->get(mainLight.id).translation;
+        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
+        glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
+        shadowFramebuffer.Bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shadowShader->use();
+        shadowShader->setMat4("lightProjection", lightProjection);
+        uniformBlockStorage.cameraBlock.setData("lightProjection", &lightProjection);
+        shadowShader->setMat4("lightView", lightView);
+        uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
+        shadowShader->setVec3("lightPos", lightPos);
 
+    }
+    //##############################################
     float aspectRatio = (float)width / (float)height;
     auto& frustum = camera.getFrustum();
 
@@ -55,7 +77,10 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
             auto& modelComponent = models->components[i];
             auto& boundingBox = modelComponent.model->boundingBox;
 
-
+		    if(useShadows) {
+		        shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
+		        modelComponent.model->draw(postShaders["ShadowMap"]);
+		    }
             if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
                 renderingQueue[renderingQueueSize++] = modelComponent.id;
             }
@@ -88,11 +113,17 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     cameraBlock.setData("viewProjection", &viewProjectionMatrix);
     cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
 
-
-
-
-	customFramebuffer.Bind();
+    customFramebuffer.Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if(useShadows) {
+        models->get(renderingQueue[0]).shader->use();
+        //shadowFramebuffer.Bind();
+        glActiveTexture(GL_TEXTURE0+1);
+        glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
+        models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
+    }
+
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
 
@@ -248,13 +279,13 @@ void RenderingSystem::buildTree() {
     rootNode = buildBVH(modelComponents);
 }
 
-void RenderingSystem::addPostShader(const std::string &name, const Shader* shader) {
+void RenderingSystem::addPostShader(const std::string &name, Shader* shader) {
     postShaders[name] = shader;
 }
 
 void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer &out) {
     out.Bind();
-    const Shader* shader = postShaders["Sobel"];
+    Shader* shader = postShaders["Sobel"];
     shader->use();
     auto [width, height] = in.GetSizePair();
     shader->setInt("width", width);

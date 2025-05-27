@@ -7,6 +7,7 @@ out vec2 texCoords;
 out vec3 normal;
 out vec3 fragPos;
 out vec3 anormal;
+out vec4 fragPosLightSpace;
 
 layout(std140) uniform Camera
 {
@@ -17,11 +18,11 @@ layout(std140) uniform Camera
     mat4 invProjection;
     mat4 viewProjection;
     mat4 invViewProjection;
+    mat4 lightProjection;
+    mat4 lightView;
 };
 
 uniform mat4 model;
-
-
 
 void main()
 {
@@ -29,5 +30,6 @@ void main()
     normal = mat3(transpose(inverse(model))) * aNormal;
     anormal = aNormal;
     texCoords = aTexCoords;
+    fragPosLightSpace = lightProjection * lightView * vec4(fragPos, 1.0);
     gl_Position = viewProjection * model * vec4(aPos, 1.0);
 }

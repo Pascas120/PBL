@@ -36,7 +36,7 @@ private:
     void initHud();
     TextRenderer t1;
     std::unique_ptr<BVHNode> rootNode;
-    std::unordered_map<std::string, const Shader*> postShaders;
+    std::unordered_map<std::string, Shader*> postShaders;
 
     void sobelFilter(const CustomFramebuffer &in, const Framebuffer &out);
 public:
@@ -45,7 +45,7 @@ public:
     void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage);
     void drawHud(const Framebuffer& framebuffer);
     void buildTree();
-    void addPostShader(const std::string& name, const Shader* shader);
+    void addPostShader(const std::string& name, Shader* shader);
 
 	bool useTree = true;
 };

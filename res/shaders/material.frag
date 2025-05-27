@@ -17,6 +17,8 @@ layout(std140) uniform Camera
     mat4 invProjection;
     mat4 viewProjection;
     mat4 invViewProjection;
+    mat4 lightProjection;
+    mat4 lightView;
 };
 
 #define MAX_POINT_LIGHTS 100

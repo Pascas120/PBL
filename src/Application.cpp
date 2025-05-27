@@ -301,7 +301,7 @@ static void lightSystem(const Scene& scene, UniformBlockStorage& uniformBlockSto
 		{
 			auto& light = directionalLights->components[i];
 			std::string prefix = "directionalLights[" + std::to_string(i) + "].";
-			glm::vec3 direction = transforms->get(light.id).globalMatrix[2];
+			glm::vec3 direction = -transforms->get(light.id).globalMatrix[2];
 			lightBlock.setData(prefix + "direction", &direction);
 			lightBlock.setData(prefix + "color", &light.color);
 			lightBlock.setData(prefix + "intensity", &light.intensity);
