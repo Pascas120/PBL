@@ -89,7 +89,7 @@ bool Application::init()
 	glfwMakeContextCurrent(window);
 	glfwSetWindowUserPointer(window, this);
 
-	glfwSwapInterval(0); // Enable vsync
+	glfwSwapInterval(1); // Enable vsync
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{

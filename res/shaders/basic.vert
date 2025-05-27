@@ -6,6 +6,7 @@ layout (location = 2) in vec2 aTexCoords;
 out vec2 texCoords;
 out vec3 normal;
 out vec3 fragPos;
+out vec3 anormal;
 
 layout(std140) uniform Camera
 {
@@ -26,6 +27,7 @@ void main()
 {
     fragPos = vec3(model * vec4(aPos, 1.0));
     normal = mat3(transpose(inverse(model))) * aNormal;
+    anormal = aNormal;
     texCoords = aTexCoords;
     gl_Position = viewProjection * model * vec4(aPos, 1.0);
 }

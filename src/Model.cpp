@@ -1,6 +1,7 @@
 #include "Model.h"
 
 #include "AssimpGLMHelpers.h"
+#include "spdlog/spdlog.h"
 constexpr int MAX_BONE_WEIGHTS = 4;
 
 static std::vector<Texture> textures_loaded;
@@ -21,7 +22,8 @@ void Model::draw(Shader *shader)
 void Model::loadModel(std::string const &path)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+        aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -29,6 +31,7 @@ void Model::loadModel(std::string const &path)
         return;
     }
     directory = path.substr(0, path.find_last_of('/'));
+    spdlog::info("Loading model: {}", directory);
     processNode(scene->mRootNode, scene);
 
     boundingBox = BoundingBox::calculateBoundingBox(meshes);
@@ -54,6 +57,8 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transform)
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
+    glm::vec3 testVert = { 0.9, -0.9, 1.0};
+    glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(transform)));
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
@@ -65,12 +70,17 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transform)
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
         vertex.Position = glm::vec3(transform * glm::vec4(vector,1.0f));
+        //spdlog::info("Pos: {}, {}, {}", vector.x, vector.y, vector.z);
+
         if (mesh->HasNormals())
         {
             vector.x = mesh->mNormals[i].x;
             vector.y = mesh->mNormals[i].y;
             vector.z = mesh->mNormals[i].z;
-            vertex.Normal = vector;
+            vertex.Normal = normalMatrix * vector;
+            if (glm::distance(testVert, vertex.Position) < 0.001) {
+                //spdlog::info("Normal: {}, {}, {}", vector.x, vector.y, vector.z);
+            }
         }
 
         if(mesh->mTextureCoords[0])

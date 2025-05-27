@@ -125,7 +125,7 @@ void UniformBlock::init(GLuint shaderProgram) {
 		GLsizeiptr sizeInBytes = getGLTypeSize(types[i]) * arraySizes[i];
 
 		uniformOffsets[name] = { offsets[i], sizeInBytes, (GLuint)arraySizes[i], (GLuint)strides[i] };
-		spdlog::info("Uniform '{}' in block '{}' at offset {} with size {} bytes.", name, blockName, offsets[i], sizeInBytes);
+
 	}
 }
 

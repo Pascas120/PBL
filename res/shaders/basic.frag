@@ -4,6 +4,7 @@ out vec4 FragColor;
 in vec2 texCoords;
 in vec3 fragPos;
 in vec3 normal;
+in vec3 anormal;
 
 uniform vec3 diffuse;
 
@@ -71,6 +72,7 @@ void main()
     vec4 finalColor = texColor * (vec4(lighting, 1.0) + ambientColor);
 
     FragColor = finalColor;
+    //FragColor = vec4(normal, 1.0);
 }
 
 ////////////////////////////////////////
