@@ -1,5 +1,6 @@
 #include "InspectorWindow.h"
 #include "EditorApp.h"
+#include "Utils/editor_utils.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -69,6 +70,7 @@ namespace Editor
                 drawCamera(context, editor->selectedObject);
                 drawPointLight(context, editor->selectedObject);
                 drawDirectionalLight(context, editor->selectedObject);
+				drawFlyAi(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -99,6 +101,7 @@ namespace Editor
                     ADD_COMPONENT(CameraComponent, "Camera");
                     ADD_COMPONENT(PointLightComponent, "Point Light");
                     ADD_COMPONENT(DirectionalLightComponent, "Directional Light");
+					ADD_COMPONENT(FlyAIComponent, "Fly AI");
 
 
                     ImGui::EndCombo();
@@ -386,4 +389,55 @@ namespace Editor
         }
         ImGui::PopID();
     }
+
+	void InspectorWindow::drawFlyAi(const EditorContext& context, EntityID id)
+	{
+		static const std::string stateNames[] = {
+			"Patrolling",
+			"Diving",
+			"Returning"
+		};
+
+		auto& scene = context.scene;
+		if (!scene->hasComponent<FlyAIComponent>(id))
+			return;
+		auto& flyAI = scene->getComponent<FlyAIComponent>(id);
+		ImGui::PushID(&flyAI);
+		bool open = ImGui::CollapsingHeader("Fly AI", ImGuiTreeNodeFlags_DefaultOpen);
+		if (componentContextMenu<FlyAIComponent>(context, id)) return;
+		if (open)
+		{
+			Utils::entityRefField("Butter Entity", flyAI.idButter, *scene);
+			Utils::entityRefField("Bread Entity", flyAI.idBread, *scene);
+
+            ImGui::DragFloat("Patrol Height Offset", &flyAI.patrolHeightOffset, 0.1f, -100.0f, 100.0f);
+			ImGui::DragFloat("Patrol Speed", &flyAI.patrolSpeed, 0.1f, 0.0f);
+            ImGui::DragFloat("Patrol Range", &flyAI.patrolRange, 0.1f, 1e-05f);
+            ImGui::DragFloat("Patrol Point Reached Threshold", &flyAI.patrolPointReachedThreshold, 0.1f, 0.01f);
+
+            ImGui::Separator();
+			ImGui::DragFloat("Dive Speed", &flyAI.diveSpeed, 0.1f, 0.0f);
+            ImGui::DragFloat("Detection Radius", &flyAI.detectionRadius, 0.1f, 0.0f);
+            ImGui::DragFloat("Dive End Height", &flyAI.diveEndHeight, 0.1f, -100.0f, 100.0f);
+            ImGui::DragFloat("Dive Cooldown", &flyAI.diveCooldownTime, 0.1f, 0.0f);
+
+            ImGui::Separator();
+			ImGui::DragFloat("Return Speed", &flyAI.returnSpeed, 0.1f, 0.0f);
+			ImGui::DragFloat("Ground Y", &flyAI.groundY, 0.1f, -100.0f, 100.0f);
+            if (ImGui::BeginCombo("State", stateNames[flyAI.state].c_str()))
+            {
+				for (int i = 0; i < 3; i++)
+				{
+					if (ImGui::Selectable(stateNames[i].c_str(), flyAI.state == i))
+					{
+						flyAI.state = (FlyAIComponent::FlyState)i;
+					}
+				}
+				ImGui::EndCombo();
+            }
+			ImGui::DragFloat3("Patrol Target", &flyAI.patrolTarget[0], 0.1f, -100.0f, 100.0f);
+
+		}
+		ImGui::PopID();
+	}
 }

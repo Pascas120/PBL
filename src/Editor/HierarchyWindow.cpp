@@ -76,9 +76,17 @@ namespace Editor
         // tree node start
         bool opened = ImGui::TreeNodeEx(displayName.c_str(), nodeFlags);
 
-        if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen())
+        {
+            clickedItem = id;
+        }
+        if (ImGui::IsItemHovered() &&
+            ImGui::IsMouseReleased(ImGuiMouseButton_Left) &&
+            clickedItem == id &&
+            !ImGui::IsItemToggledOpen())
         {
             editor->selectedObject = id;
+			clickedItem = (EntityID)-1;
         }
 		if (ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered())
 		{

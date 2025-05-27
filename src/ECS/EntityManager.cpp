@@ -33,6 +33,8 @@ void EntityManager::destroyEntity(EntityID id) {
 }
 
 bool EntityManager::isAlive(EntityID id) const {
-    assert(id < MAX_ENTITIES && "Entity ID is out of range!");
+	if (id >= MAX_ENTITIES) {
+		return false;
+	}
     return aliveEntities.test(id);
 }

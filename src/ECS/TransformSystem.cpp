@@ -160,7 +160,7 @@ bool TransformSystem::addChild(EntityID parent, EntityID child) const {
         return false;
 
     EntityID ancestor = parentTransform.id;
-	while (ancestor != scene->getSceneRootEntity()) {
+	while (ancestor != scene->getSceneRootEntity() && ancestor != (EntityID)-1) {
         if (ancestor == child) {
             return false;
         }

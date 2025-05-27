@@ -1,0 +1,786 @@
+{
+    "entities": [
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        -0.009999999776482582,
+                        0.10000000149011612,
+                        0.009999999776482582
+                    ],
+                    "radius": 0.10000000149011612,
+                    "type": "SPHERE"
+                },
+                "isStatic": false
+            },
+            "ModelComponent": {
+                "model": "res/models/dee",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Player",
+                "uuid": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c"
+            },
+            "Transform": {
+                "children": [
+                    "ae32b01b-8bf2-278d-b92b-0073a1f022fa"
+                ],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    5.0,
+                    5.0,
+                    5.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CameraComponent": {
+                "aspectRatio": 1.7829457521438599,
+                "farPlane": 1000.0,
+                "fovSizeAxis": "VERTICAL",
+                "nearPlane": 0.10000000149011612,
+                "orthographic": {
+                    "size": 5.0
+                },
+                "perspective": {
+                    "fov": 0.7853981852531433
+                },
+                "projectionType": "PERSPECTIVE",
+                "screenOffset": [
+                    0.0,
+                    0.0
+                ]
+            },
+            "ObjectInfoComponent": {
+                "name": "Player Camera",
+                "uuid": "ae32b01b-8bf2-278d-b92b-0073a1f022fa"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -20.0,
+                    180.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
+                "rotation": [
+                    7.59040297282354e-09,
+                    0.9848077297210693,
+                    0.1736481785774231,
+                    -4.304731149318286e-08
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.30000001192092896,
+                    -0.699999988079071
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        7.699999809265137,
+                        0.0
+                    ],
+                    "halfSize": [
+                        4.0,
+                        7.699999809265137,
+                        1.777999997138977
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "FlyAIComponent": {
+                "detectionRadius": 5.599999904632568,
+                "diveCooldownTime": 3.0,
+                "diveCooldownTimer": 0.0,
+                "diveEndHeight": 1.0,
+                "diveSpeed": 3.0,
+                "groundY": 0.0,
+                "idBread": "",
+                "idButter": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
+                "patrolHeightOffset": 3.0,
+                "patrolPointReachedThreshold": 0.5,
+                "patrolRange": 4.0,
+                "patrolSpeed": 0.4000000059604645,
+                "patrolTarget": [
+                    -107374176.0,
+                    -107374176.0,
+                    -107374176.0
+                ],
+                "returnSpeed": 3.5,
+                "state": "Patrolling"
+            },
+            "ModelComponent": {
+                "model": "res/models/nanosuit",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Nanosuit",
+                "uuid": "1f013ddf-587e-5786-28fb-71afcef5a5ed"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.10000000149011612,
+                    0.03999999910593033,
+                    0.10000000149011612
+                ],
+                "translation": [
+                    2.5,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        7.699999809265137,
+                        0.0
+                    ],
+                    "halfSize": [
+                        4.0,
+                        7.699999809265137,
+                        1.777999997138977
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "FlyAIComponent": {
+                "detectionRadius": 5.599999904632568,
+                "diveCooldownTime": 3.0,
+                "diveCooldownTimer": 0.0,
+                "diveEndHeight": 1.0,
+                "diveSpeed": 3.0,
+                "groundY": 0.0,
+                "idBread": "",
+                "idButter": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
+                "patrolHeightOffset": 3.0,
+                "patrolPointReachedThreshold": 0.5,
+                "patrolRange": 4.0,
+                "patrolSpeed": 0.4000000059604645,
+                "patrolTarget": [
+                    -107374176.0,
+                    -107374176.0,
+                    -107374176.0
+                ],
+                "returnSpeed": 3.5,
+                "state": "Patrolling"
+            },
+            "ModelComponent": {
+                "model": "res/models/nanosuit",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Nanosuit (1)",
+                "uuid": "89067f21-184b-2242-3c61-6e864d8224c1"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.10000000149011612,
+                    0.03999999910593033,
+                    0.10000000149011612
+                ],
+                "translation": [
+                    -6.9101433753967285,
+                    1.208730936050415,
+                    -1.7217459678649902
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        7.699999809265137,
+                        0.0
+                    ],
+                    "halfSize": [
+                        4.0,
+                        7.699999809265137,
+                        1.777999997138977
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "FlyAIComponent": {
+                "detectionRadius": 5.599999904632568,
+                "diveCooldownTime": 3.0,
+                "diveCooldownTimer": 0.0,
+                "diveEndHeight": 1.0,
+                "diveSpeed": 3.0,
+                "groundY": 0.0,
+                "idBread": "",
+                "idButter": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
+                "patrolHeightOffset": 3.0,
+                "patrolPointReachedThreshold": 0.5,
+                "patrolRange": 4.0,
+                "patrolSpeed": 0.4000000059604645,
+                "patrolTarget": [
+                    -107374176.0,
+                    -107374176.0,
+                    -107374176.0
+                ],
+                "returnSpeed": 3.5,
+                "state": "Patrolling"
+            },
+            "ModelComponent": {
+                "model": "res/models/nanosuit",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Nanosuit (2)",
+                "uuid": "fc6a4fc4-2876-1327-5792-4fdc717abc49"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.10000000149011612,
+                    0.03999999910593033,
+                    0.10000000149011612
+                ],
+                "translation": [
+                    -4.755832672119141,
+                    1.208730936050415,
+                    6.45581579208374
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Floor",
+                "uuid": "5eb688e1-3092-6fa1-f344-a53b2b726489"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    30.0,
+                    0.10000000149011612,
+                    30.0
+                ],
+                "translation": [
+                    6.114396095275879,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 4",
+                "uuid": "0e1494d8-87c6-87cc-b6bf-bfcc4ae346de"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    5.0
+                ],
+                "translation": [
+                    -12.031026840209961,
+                    1.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Wall 5",
+                "uuid": "9fd21625-0915-a883-f2e8-4ea292b12005"
+            },
+            "Transform": {
+                "children": [
+                    "0e8d055f-4794-8804-6ca3-108796a025ad"
+                ],
+                "eulerRotation": [
+                    0.0,
+                    30.0,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.258819043636322,
+                    -1.1313315617655917e-08,
+                    0.9659258127212524,
+                    -4.222210847615315e-08
+                ],
+                "scale": [
+                    0.4999728202819824,
+                    1.9998157024383545,
+                    0.5
+                ],
+                "translation": [
+                    5.327475070953369,
+                    1.0,
+                    4.498469829559326
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Floor (1)",
+                "uuid": "0e8d055f-4794-8804-6ca3-108796a025ad"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1.52587890625e-05,
+                    30.0,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "9fd21625-0915-a883-f2e8-4ea292b12005",
+                "rotation": [
+                    -0.258819043636322,
+                    -4.525337260474771e-08,
+                    0.9659258127212524,
+                    8.404885676327467e-08
+                ],
+                "scale": [
+                    10.000000953674316,
+                    0.049996405839920044,
+                    10.0
+                ],
+                "translation": [
+                    3.7323601245880127,
+                    1.7028343677520752,
+                    -2.463923215866089
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "Light",
+                "uuid": "c6744722-e0cc-3935-ab13-ff2de97e9533"
+            },
+            "PointLightComponent": {
+                "color": [
+                    1.0,
+                    0.34117648005485535,
+                    0.250980406999588
+                ],
+                "constant": 0.8799999952316284,
+                "intensity": 3.690000057220459,
+                "linear": 0.09000000357627869,
+                "quadratic": 0.13199999928474426
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    -360.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -4.666672026587548e-08,
+                    2.980232594040899e-08,
+                    -1.536728575501911e-07,
+                    1.0
+                ],
+                "scale": [
+                    0.9999998807907104,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    -2.8187451362609863,
+                    4.240262985229492,
+                    3.614779233932495
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "Light (1)",
+                "uuid": "ee863ec9-44d4-c185-83d4-79f8665f677a"
+            },
+            "PointLightComponent": {
+                "color": [
+                    0.1921568661928177,
+                    0.18431372940540314,
+                    1.0
+                ],
+                "constant": 0.8799999952316284,
+                "intensity": 3.690000057220459,
+                "linear": 0.09000000357627869,
+                "quadratic": 0.13199999928474426
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    -360.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -4.666672026587548e-08,
+                    2.980232594040899e-08,
+                    -1.536728575501911e-07,
+                    1.0
+                ],
+                "scale": [
+                    0.9999998807907104,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    2.484755516052246,
+                    4.908818244934082,
+                    -0.6880137324333191
+                ]
+            }
+        },
+        {
+            "DirectionalLightComponent": {
+                "color": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "intensity": 0.25
+            },
+            "ObjectInfoComponent": {
+                "name": "New Object",
+                "uuid": "79887de8-4850-d1a6-f326-f8cab7d2ed05"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    82.98390197753906,
+                    -20.619171142578125,
+                    -70.73539733886719
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.4539344012737274,
+                    -0.4866022765636444,
+                    -0.32987886667251587,
+                    0.669583261013031
+                ],
+                "scale": [
+                    1.0000014305114746,
+                    1.000001072883606,
+                    1.0000007152557373
+                ],
+                "translation": [
+                    0.0,
+                    2.253911256790161,
+                    -6.964047431945801
+                ]
+            }
+        },
+        {
+            "DirectionalLightComponent": {
+                "color": [
+                    0.615686297416687,
+                    0.0,
+                    0.0
+                ],
+                "intensity": 0.5799999833106995
+            },
+            "ObjectInfoComponent": {
+                "name": "New Object (1)",
+                "uuid": "86380caa-41df-2c01-32db-8a41d3c3d2d3"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    102.76885986328125,
+                    9.55670166015625,
+                    -231.5220184326172
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.29158809781074524,
+                    0.7238452434539795,
+                    0.5318247079849243,
+                    0.32891780138015747
+                ],
+                "scale": [
+                    1.0000087022781372,
+                    1.0000051259994507,
+                    1.0000066757202148
+                ],
+                "translation": [
+                    0.19380073249340057,
+                    1.92476224899292,
+                    -6.888161659240723
+                ]
+            }
+        },
+        {
+            "ImageComponent": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "height": 0.0,
+                "shader": "HUD",
+                "texturePath": "res/textures/cloud.png",
+                "width": 0.0
+            },
+            "ObjectInfoComponent": {
+                "name": "Cloud",
+                "uuid": "880b22e5-4744-04e1-5a74-321d7aa5132e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    250.0,
+                    250.0,
+                    250.0
+                ],
+                "translation": [
+                    1728.0,
+                    108.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "Text",
+                "uuid": "5a2b293b-f806-174c-a1b6-b4f4c7da27e5"
+            },
+            "TextComponent": {
+                "color": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "font": "foo",
+                "shader": "Text",
+                "text": "text"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    192.0,
+                    108.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "sceneRoot": "Root"
+}

@@ -450,9 +450,17 @@ void Application::setupScene()
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
 
-	ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
+	ts.scaleEntity(ent, glm::vec3(0.1f, 0.04f, 0.1f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
+
+	FlyAIComponent flySpec;
+	flySpec.idButter = player;
+	flySpec.diveSpeed = 3.0f;
+	flySpec.diveCooldownTime = 3.0f;
+	flySpec.detectionRadius = 4.0f;
+	flySpec.patrolRange = 4.0f;
+	flySpec.patrolSpeed = 1.5f;
 
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
 
@@ -461,9 +469,7 @@ void Application::setupScene()
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-	scene->addComponent<FlyAIComponent>(ent, FlyAIComponent{
-		.idButter = player,
-		});
+	scene->addComponent<FlyAIComponent>(ent, flySpec);
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Floor";

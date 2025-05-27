@@ -19,6 +19,8 @@ void FlyAISystem::update() {
             flyAI.diveCooldownTimer -= deltaTime;
 
 		float butterDistance = glm::distance(transform.globalMatrix[3], transforms->get(flyAI.idButter).globalMatrix[3]);
+        if (glm::length(butterDistance) < 0.01f)
+            flyAI.state = FlyAIComponent::Returning;
         float patrolHeight = flyAI.groundY + flyAI.patrolHeightOffset;
 
         switch (flyAI.state)
@@ -50,12 +52,17 @@ void FlyAISystem::update() {
 void FlyAISystem::patrol(const FlyAIAndTransform& flyComp, float patrolHeight) {
     auto& transform = flyComp.transform;
     auto& flyAI = flyComp.flyAI;
+	auto& ts = scene->getTransformSystem();
     glm::vec3 direction = flyAI.patrolTarget - glm::vec3(transform.globalMatrix[3]);
     direction.y = 0.f;
 	direction = glm::normalize(direction);
 
     glm::vec3 position = transform.globalMatrix[3];
+	position += direction * flyAI.patrolSpeed * deltaTime;
     position.y = patrolHeight;
+
+	ts.translateEntity(flyAI.id, position);
+
     
 
     lookAt2D(flyComp, flyAI.patrolTarget);
@@ -72,9 +79,10 @@ void FlyAISystem::lookAt2D(const FlyAIAndTransform& flyComp, glm::vec3 target)
     auto& ts = scene->getTransformSystem();
 	glm::vec3 dir = target - glm::vec3(transform.globalMatrix[3]);
     dir.y = 0;
+	dir = glm::normalize(dir);
     if (dir != glm::vec3(0))
     {
-        glm::quat rot = glm::quatLookAt(dir, glm::vec3(0,1,0));
+        glm::quat rot = glm::quatLookAt(-dir, glm::vec3(0,1,0));
         ts.rotateEntity(flyAI.id, glm::slerp(transform.rotation, rot, deltaTime * 5.f));
     }
 }

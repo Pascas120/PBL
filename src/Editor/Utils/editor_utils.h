@@ -5,6 +5,7 @@
 #include <nfd.h>
 #include "imgui.h"
 
+#include "ECS/EntityManager.h"
 class Scene;
 
 namespace Editor::Utils
@@ -20,4 +21,6 @@ namespace Editor::Utils
 
 	std::optional<std::string> openLoadDialog(const std::vector<nfdu8filteritem_t>& filters,
 		const std::string& defaultPath = "");
+
+	bool entityRefField(const std::string& label, EntityID& entityId, Scene& scene);
 }
