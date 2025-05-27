@@ -413,14 +413,37 @@ void Application::setupScene()
 	Model& model4 = *models[3];
 
 	enum class FlyVariant { GREEN, RED, GOLD, PURPLE, COUNT };
-	Model* flyModels[static_cast<size_t>(FlyVariant::COUNT)] =
-	{
-		&ourModel,	//GREEN 
-		&ourModel,	//RED 
-		&ourModel,	//GOLD
-		&model4,	//PURPLE
+	Model* flyBodyModels[static_cast<size_t>(FlyVariant::COUNT)] = {
+		&ourModel,   // GREEN
+		&ourModel,   // RED
+		&model2,     // GOLD 
+		&model4      // PURPLE
 	};
-	constexpr FlyVariant SELECTED_FLY = FlyVariant::GOLD;
+
+	Model* flyWingModels[static_cast<size_t>(FlyVariant::COUNT)] = {
+		&ourModel, 
+		&ourModel, 
+		&ourModel, 
+		&ourModel   
+	};
+
+	Model* flyLegModels[static_cast<size_t>(FlyVariant::COUNT)] = {
+		&ourModel, 
+		&ourModel, 
+		&ourModel, 
+		&ourModel
+	};
+
+	Model* flyHeadModels[static_cast<size_t>(FlyVariant::COUNT)] = {
+		&ourModel,
+		&ourModel, 
+		&ourModel, 
+		&ourModel
+	};
+	constexpr FlyVariant SELECTED_BODY = FlyVariant::GOLD;
+	constexpr FlyVariant SELECTED_WINGS = FlyVariant::RED;
+	constexpr FlyVariant SELECTED_LEGS = FlyVariant::GREEN;
+	constexpr FlyVariant SELECTED_HEAD = FlyVariant::PURPLE;
 
 	scene = std::make_shared<Scene>();
 
@@ -456,13 +479,8 @@ void Application::setupScene()
 	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
 	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
 
-	//mucha
-	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Fly";
 
-	ts.scaleEntity(ent, glm::vec3(0.01f, 0.004f, 0.01f));
-	ts.translateEntity(ent, glm::vec3(2.5f, 3.0f, 0.0f));
-	scene->getComponent<Transform>(ent).isStatic = false;
+
 
 	FlyAIComponent flySpec;
 	flySpec.idButter = player;
@@ -472,18 +490,48 @@ void Application::setupScene()
 	flySpec.patrolRange = 4.0f;
 	flySpec.patrolSpeed = 1.5f;
 
-	scene->addComponent<ModelComponent>(
-		ent,
-		{ shaders[0],
-		  flyModels[static_cast<size_t>(SELECTED_FLY)] });  
+	//mucha
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Fly";
 
+	EntityID flyRoot = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(flyRoot).name = "Fly";
 
-	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	ts.scaleEntity(flyRoot, glm::vec3(0.01f, 0.004f, 0.01f));
+	ts.translateEntity(flyRoot, glm::vec3(2.5f, 3.0f, 0.0f));
+	scene->getComponent<Transform>(flyRoot).isStatic = false;
+
+	// AI + collider dla CAŁEJ muchy
+	scene->addComponent<FlyAIComponent>(flyRoot, flySpec);
+
+	 colliderComponent =
+		&scene->addComponent<ColliderComponent>(flyRoot, ColliderComponent(ColliderType::BOX));
 	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-	scene->addComponent<FlyAIComponent>(ent, flySpec);
+	
+	auto addPart = [&](const char* partName,
+		FlyVariant variant,
+		Model* modelPtr)
+		{
+			EntityID part = scene->createEntity(flyRoot);           
+			scene->getComponent<ObjectInfoComponent>(part).name = partName;
+			scene->addComponent<ModelComponent>(part, { shaders[0], modelPtr });
+		};
+
+	
+	addPart("FlyBody", SELECTED_BODY,
+		flyBodyModels[static_cast<size_t>(SELECTED_BODY)]);
+
+	addPart("FlyWings", SELECTED_WINGS,
+		flyWingModels[static_cast<size_t>(SELECTED_WINGS)]);
+
+	addPart("FlyLegs", SELECTED_LEGS,
+		flyLegModels[static_cast<size_t>(SELECTED_LEGS)]);
+
+	addPart("FlyHead", SELECTED_HEAD,
+		flyHeadModels[static_cast<size_t>(SELECTED_HEAD)]);
 	//
 
 

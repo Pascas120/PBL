@@ -134,7 +134,6 @@ struct DirectionalLightComponent {
 
 struct FlyAIComponent {
 	EntityID idButter = (EntityID)-1;
-    FlyVariant variant = FlyVariant::GREEN;
     EntityID idBread = (EntityID)-1;
     float patrolHeightOffset = 3.f;
     float patrolSpeed = 3.f;
