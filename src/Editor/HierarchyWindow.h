@@ -11,6 +11,7 @@ namespace Editor
 
 	private:
 		EditorApp* editor = nullptr;
+		EntityID clickedItem = (EntityID)-1;
 
 		void drawWindow(const EditorContext& context);
 		void drawNode(const EditorContext& context, EntityID id);

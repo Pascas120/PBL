@@ -14,7 +14,8 @@
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
-void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage) {
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
+    const std::unordered_map<std::string, Shader*>& postShaders) {
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
     auto lights = scene->getStorage<DirectionalLightComponent>();
@@ -318,21 +319,17 @@ void RenderingSystem::buildTree() {
     rootNode = buildBVH(modelComponents);
 }
 
-void RenderingSystem::addPostShader(const std::string &name, Shader* shader) {
-    postShaders[name] = shader;
-}
-
-void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer &out) {
+void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, const Framebuffer &out) {
     out.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Shader* shader = postShaders["Sobel"];
     shader->use();
     auto [width, height] = in.GetSizePair();
-    shader->setInt("width", width);
-    shader->setInt("height", height);
+    sobel->setInt("width", width);
+    sobel->setInt("height", height);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
-    shader->setInt("textureSampler", 0);
+    sobel->setInt("textureSampler", 0);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

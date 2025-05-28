@@ -19,6 +19,14 @@
 
 #include "components/CameraComponent.h"
 
+enum class FlyVariant : uint8_t {
+    GREEN = 0,
+    RED = 1,
+    GOLD = 2,
+    PURPLE = 3,
+    COUNT
+};
+
 class Model;
 
 struct ObjectInfoComponent {
@@ -133,7 +141,7 @@ struct FlyAIComponent {
     float patrolSpeed = 3.f;
     float diveSpeed = 6.f;
     float detectionRadius = 8.f;
-    float diveEndHeight = 1.f;
+    float diveEndHeight = 0.4f;
     float returnSpeed = 3.5f;
     float patrolRange = 10.f;
     float patrolPointReachedThreshold = 0.5f;

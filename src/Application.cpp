@@ -353,7 +353,7 @@ void Application::render(const Framebuffer& framebuffer)
 			cameraComponent.updateProjectionMatrix();
 		}
 
-		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage);
+		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage, postShaders);
 	}
 }
 
@@ -370,7 +370,7 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 
 	lightSystem(*scene, uniformBlockStorage);
 
-	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage);
+	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage, postShaders);
 	scene->getRenderingSystem().drawHud(framebuffer);
 }
 
@@ -403,7 +403,7 @@ void Application::endFrame()
 
 void Application::setupScene()
 {
-	models.emplace_back(new Model("res/models/nanosuit/nanosuit.obj"));
+	models.emplace_back(new Model("res/models/mucha.fbx"));
 	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/maslpo.fbx"));
@@ -412,6 +412,16 @@ void Application::setupScene()
 	Model& model2 = *models[1];
 	Model& model3 = *models[2];
 	Model& model4 = *models[3];
+
+	enum class FlyVariant { GREEN, RED, GOLD, PURPLE, COUNT };
+	Model* flyModels[static_cast<size_t>(FlyVariant::COUNT)] =
+	{
+		&ourModel,	//GREEN 
+		&ourModel,	//RED 
+		&ourModel,	//GOLD
+		&model4,	//PURPLE
+	};
+	constexpr FlyVariant SELECTED_FLY = FlyVariant::GOLD;
 
 	scene = std::make_shared<Scene>();
 
@@ -447,24 +457,37 @@ void Application::setupScene()
 	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
 	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
 
-
+	//mucha
 	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Nanosuit";
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Fly";
 
-	ts.scaleEntity(ent, glm::vec3(0.1f, 0.1f, 0.1f));
-	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	ts.scaleEntity(ent, glm::vec3(0.01f, 0.004f, 0.01f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 3.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &ourModel });
+	FlyAIComponent flySpec;
+	flySpec.idButter = player;
+	flySpec.diveSpeed = 3.0f;
+	flySpec.diveCooldownTime = 3.0f;
+	flySpec.detectionRadius = 4.0f;
+	flySpec.patrolRange = 4.0f;
+	flySpec.patrolSpeed = 1.5f;
+
+	scene->addComponent<ModelComponent>(
+		ent,
+		{ shaders[0],
+		  flyModels[static_cast<size_t>(SELECTED_FLY)] });  
+
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
 	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
-	scene->addComponent<FlyAIComponent>(ent, FlyAIComponent{
-		.idButter = player,
-		});
+	scene->addComponent<FlyAIComponent>(ent, flySpec);
+	//
+
+
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
@@ -542,21 +565,11 @@ void Application::setupScene()
 	}*/
 
 
-	EventSystem& eventSystem = scene->getEventSystem();
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-		const auto& event = static_cast<const CollisionEvent&>(e);
-		if (event.isColliding)
-		{
-			spdlog::info("Collision detected between {} and {}", event.objectA, event.objectB);
-		}
-		});
-
-
 	scene->getTransformSystem().update();
 	//scene->getRenderingSystem().buildTree();
-	std::vector<Shader*> postShaders;
-	Serialization::loadShaderList("res/postprocessShaderList.json", postShaders);
-	for (Shader* shader : postShaders) {
-		scene->getRenderingSystem().addPostShader(shader->getName(), shader);
+	std::vector<Shader*> postShaderVec;
+	Serialization::loadShaderList("res/postprocessShaderList.json", postShaderVec);
+	for (Shader* shader : postShaderVec) {
+		postShaders[shader->getName()] = shader;
 	}
 }

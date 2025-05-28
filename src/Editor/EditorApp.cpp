@@ -318,6 +318,28 @@ namespace Editor
 		std::string path = *pathResult;
 		Serialization::loadScene(path, *scene, { shaders, models, true });
 		scenePath = path;
+
+
+        EventSystem& eventSystem = scene->getEventSystem();
+        eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+            const auto& event = static_cast<const CollisionEvent&>(e);
+            if (!event.isColliding) return;
+
+            bool aIsPlayer = (event.objectA == player);
+            bool bIsPlayer = (event.objectB == player);
+
+            bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
+            bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
+
+
+            if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
+            {
+                spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
+                FlyAIComponent& fly = scene->getComponent<FlyAIComponent>(aIsFly ? event.objectA : event.objectB);
+                fly.diveCooldownTimer = fly.diveCooldownTime;
+                fly.state = fly.Returning;
+            }
+            });
 	}
 
 }

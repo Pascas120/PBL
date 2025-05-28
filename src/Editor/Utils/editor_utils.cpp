@@ -9,6 +9,7 @@
 #endif
 
 #include "Scene.h"
+#include "Editor/EditorApp.h"
 
 #include <filesystem>
 
@@ -170,4 +171,41 @@ namespace Editor::Utils
 			return std::nullopt;
 		}
 	}
+
+
+	bool entityRefField(const std::string& label, EntityID& entityId, Scene& scene)
+	{
+		std::string name;
+		if (scene.hasEntity(entityId))
+		{
+			name = scene.getComponent<ObjectInfoComponent>(entityId).name;
+		}
+		else
+		{
+			name = "None";
+			if (entityId != (EntityID)-1)
+			{
+				entityId = (EntityID)-1;
+			}
+		}
+		char* buffer = new char[name.length() + 1];
+		std::strcpy(buffer, name.c_str());
+		ImGui::InputText(label.c_str(), buffer, name.length() + 1, ImGuiInputTextFlags_ReadOnly);
+
+		bool changed = false;
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(Payload::HIERARCHY_NODE))
+			{
+				EntityID draggedObj = *(EntityID*)payload->Data;
+				entityId = draggedObj;
+				changed = true;
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		return changed;
+	}
+
 }

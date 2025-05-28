@@ -36,7 +36,7 @@ private:
     void initHud();
     TextRenderer t1;
     std::unique_ptr<BVHNode> rootNode;
-    std::unordered_map<std::string, Shader*> postShaders;
+    
 
     void sobelFilter(const CustomFramebuffer &in, const Framebuffer &out);
     void motionBlurFilter(const CustomFramebuffer& in, const CustomFramebuffer& inVel, const Framebuffer& out);
@@ -48,10 +48,10 @@ private:
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
-    void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage);
+    void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
+        const std::unordered_map<std::string, Shader*>& postShaders);
     void drawHud(const Framebuffer& framebuffer);
     void buildTree();
-    void addPostShader(const std::string& name, Shader* shader);
 
     void updatePreviousModelMatrices();
 
