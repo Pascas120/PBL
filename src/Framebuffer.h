@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <stdint.h>
 #include <utility>
+#include <vector>
 
 class Framebuffer
 {
@@ -46,11 +47,18 @@ public:
 };
 
 
+enum class AttachmentType
+{
+	COLOR,
+	DEPTH,
+	VELOCITY
+};
 
 struct FramebufferConfig
 {
 	uint32_t width;
 	uint32_t height;
+	std::vector<AttachmentType> attachments { AttachmentType::COLOR, AttachmentType::DEPTH };
 };
 
 class CustomFramebuffer : public Framebuffer
@@ -59,6 +67,8 @@ private:
 	GLuint fbo = 0;
 	GLuint colorTexture = 0;
 	GLuint depthTexture = 0;
+	GLuint velocityTexture = 0;
+
 
 	FramebufferConfig config;
 
@@ -74,6 +84,7 @@ public:
 	void Resize(uint32_t width, uint32_t height);
 	GLuint GetColorTexture() const override { return colorTexture; }
 	GLuint GetDepthTexture() const override { return depthTexture; }
+	GLuint GetVelocityTexture() const { return velocityTexture; }
 
 	const FramebufferConfig& GetConfig() const { return config; }
 	void GetSize(uint32_t& width, uint32_t& height) const

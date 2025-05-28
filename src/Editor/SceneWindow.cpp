@@ -48,7 +48,7 @@ namespace Editor
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 
-        if (ImGui::Begin("Scene"));
+        if (ImGui::Begin("Scene"))
         {
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
@@ -76,6 +76,7 @@ namespace Editor
             }
 
             scene->getRenderingSystem().useTree = false;
+			scene->getRenderingSystem().showMotionBlur = false;
             editor->render(editorCamera, *sceneFramebuffer);
 
             GLuint texture = sceneFramebuffer->GetColorTexture();

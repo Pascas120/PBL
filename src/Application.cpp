@@ -191,6 +191,7 @@ void Application::input()
 
 void Application::update()
 {
+	scene->getRenderingSystem().updatePreviousModelMatrices();
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 

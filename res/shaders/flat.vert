@@ -10,6 +10,7 @@ layout(std140) uniform Camera
     mat4 invProjection;
     mat4 viewProjection;
     mat4 invViewProjection;
+    mat4 prevViewProjection;
 };
 
 uniform mat4 model;

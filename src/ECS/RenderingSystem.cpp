@@ -8,6 +8,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Scene.h"
 #include "spdlog/spdlog.h"
+#include "glm/gtc/type_ptr.hpp"
 
 
 
@@ -19,7 +20,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     auto lights = scene->getStorage<DirectionalLightComponent>();
     DirectionalLightComponent mainLight;
     bool useShadows = false;
-    if(lights!= nullptr) {
+	if (lights != nullptr && lights->getQuantity() > 0) {
         mainLight = lights->components[0];
         useShadows = true;
     }
@@ -32,11 +33,27 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         return;
     }
 
-    CustomFramebuffer customFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
+	std::vector<AttachmentType> attachments = { AttachmentType::COLOR, AttachmentType::DEPTH };
+	if (showMotionBlur) {
+		attachments.push_back(AttachmentType::VELOCITY);
+	}
+    CustomFramebuffer* customFramebufferPtr;
+	if (showMotionBlur) {
+		customFramebufferPtr = &velFramebuffer;
+	}
+	else {
+		customFramebufferPtr = &normalFramebuffer;
+	}
+	CustomFramebuffer& customFramebuffer = *customFramebufferPtr;
+	auto [fboWidth, fboHeight] = customFramebuffer.GetSizePair();
+	if (fboWidth != width || fboHeight != height) {
+		customFramebuffer.Resize(width, height);
+		postProcessingFramebuffer.Resize(width, height);
+	}
     //##################SHADOW MAP##################
     Shader* shadowShader = postShaders["ShadowMap"];
-    CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
-    if(useShadows) {
+    //CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
+    /*if(useShadows) {
         glm::vec3 lightPos = transforms->get(mainLight.id).translation;
         glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
         glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
@@ -49,7 +66,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
         shadowShader->setVec3("lightPos", lightPos);
 
-    }
+    }*/
     //##############################################
     float aspectRatio = (float)width / (float)height;
     auto& frustum = camera.getFrustum();
@@ -77,10 +94,10 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
             auto& modelComponent = models->components[i];
             auto& boundingBox = modelComponent.model->boundingBox;
 
-		    if(useShadows) {
+		    /*if(useShadows) {
 		        shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
 		        modelComponent.model->draw(postShaders["ShadowMap"]);
-		    }
+		    }*/
             if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
                 renderingQueue[renderingQueueSize++] = modelComponent.id;
             }
@@ -114,30 +131,52 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
 
     customFramebuffer.Bind();
+    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    glDrawBuffers(2, drawBuffers);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if(useShadows) {
+
+    /*if(useShadows) {
         models->get(renderingQueue[0]).shader->use();
-        //shadowFramebuffer.Bind();
+        shadowFramebuffer.Bind();
         glActiveTexture(GL_TEXTURE0+1);
         glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
         models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
-    }
+    }*/
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
 
         EntityID entityID = modelComponent.id;
 
-
+		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
         modelComponent.shader->use();
+		if (showMotionBlur)
+		{
+			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);
+		}
+		else
+		{
+			modelComponent.shader->setMat4("prevModel", modelMatrix);
+		}
 
-
-        modelComponent.shader->setMat4("model", transforms->get(entityID).globalMatrix);
+        modelComponent.shader->setMat4("model", modelMatrix);
         modelComponent.model->draw(modelComponent.shader);
     }
 
-    sobelFilter(customFramebuffer, framebuffer);
+
+    if (showMotionBlur)
+    {
+        sobelFilter(customFramebuffer, postProcessingFramebuffer);
+
+		cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
+		motionBlurFilter(postProcessingFramebuffer, customFramebuffer, framebuffer);
+    }
+    else
+    {
+		sobelFilter(customFramebuffer, framebuffer);
+    }
+
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
@@ -285,6 +324,7 @@ void RenderingSystem::addPostShader(const std::string &name, Shader* shader) {
 
 void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer &out) {
     out.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Shader* shader = postShaders["Sobel"];
     shader->use();
     auto [width, height] = in.GetSizePair();
@@ -297,4 +337,34 @@ void RenderingSystem::sobelFilter(const CustomFramebuffer &in, const Framebuffer
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void RenderingSystem::motionBlurFilter(const CustomFramebuffer& in, const CustomFramebuffer& inVel, const Framebuffer& out) {
+    out.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	Shader* shader = postShaders["MotionBlur"];
+    shader->use();
+    auto [width, height] = in.GetSizePair();
+    shader->setInt("width", width);
+    shader->setInt("height", height);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, inVel.GetVelocityTexture());
+    shader->setInt("textureSampler", 0);
+	shader->setInt("velTextureSampler", 1);
+
+    glBindVertexArray(hudVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void RenderingSystem::updatePreviousModelMatrices() {
+    auto models = scene->getStorage<ModelComponent>();
+    for (int i = 0; i < models->getQuantity(); i++) {
+        auto& modelComponent = models->components[i];
+		auto& transform = scene->getComponent<Transform>(modelComponent.id);
+        modelComponent.prevModelMatrix = transform.globalMatrix;
+    }
 }

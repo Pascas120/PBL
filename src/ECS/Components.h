@@ -51,6 +51,8 @@ struct ModelComponent {
     Model* model;
     Transform* transform;
 
+	glm::mat4 prevModelMatrix = glm::mat4(1.0f);
+
     EntityID id = (EntityID)-1;
 };
 

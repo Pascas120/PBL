@@ -1,10 +1,13 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec2 Velocity;
 
 in vec2 texCoords;
 in vec3 fragPos;
 in vec3 normal;
-in vec3 anormal;
+
+in vec4 currClipPos;
+in vec4 prevClipPos;
 
 uniform vec3 diffuse;
 
@@ -19,6 +22,7 @@ layout(std140) uniform Camera
     mat4 invViewProjection;
     mat4 lightProjection;
     mat4 lightView;
+    mat4 prevViewProjection;
 };
 
 #define MAX_POINT_LIGHTS 100
@@ -81,7 +85,12 @@ void main()
     vec4 finalColor = vec4(diffuse * lighting, 1.0);
 
     FragColor = finalColor;
-//    FragColor = vec4(normal, 1.0);
+
+
+    vec2 currNDC = currClipPos.xy / currClipPos.w;
+    vec2 prevNDC = prevClipPos.xy / prevClipPos.w;
+
+    Velocity = currNDC - prevNDC;
 }
 
 ////////////////////////////////////////

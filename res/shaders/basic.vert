@@ -6,8 +6,10 @@ layout (location = 2) in vec2 aTexCoords;
 out vec2 texCoords;
 out vec3 normal;
 out vec3 fragPos;
-out vec3 anormal;
 out vec4 fragPosLightSpace;
+
+out vec4 currClipPos;
+out vec4 prevClipPos;
 
 layout(std140) uniform Camera
 {
@@ -20,16 +22,21 @@ layout(std140) uniform Camera
     mat4 invViewProjection;
     mat4 lightProjection;
     mat4 lightView;
+    mat4 prevViewProjection;
 };
 
 uniform mat4 model;
+uniform mat4 prevModel;
 
 void main()
 {
     fragPos = vec3(model * vec4(aPos, 1.0));
     normal = mat3(transpose(inverse(model))) * aNormal;
-    anormal = aNormal;
     texCoords = aTexCoords;
     fragPosLightSpace = lightProjection * lightView * vec4(fragPos, 1.0);
-    gl_Position = viewProjection * model * vec4(aPos, 1.0);
+
+    currClipPos = viewProjection * model * vec4(aPos, 1.0);
+    prevClipPos = prevViewProjection * prevModel * vec4(aPos, 1.0);
+
+    gl_Position = currClipPos;
 }

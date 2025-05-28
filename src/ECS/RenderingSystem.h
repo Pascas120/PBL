@@ -39,6 +39,12 @@ private:
     std::unordered_map<std::string, Shader*> postShaders;
 
     void sobelFilter(const CustomFramebuffer &in, const Framebuffer &out);
+    void motionBlurFilter(const CustomFramebuffer& in, const CustomFramebuffer& inVel, const Framebuffer& out);
+
+	CustomFramebuffer normalFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } }};
+	CustomFramebuffer velFramebuffer{ FramebufferConfig{ 1920, 1080, 
+        { AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::VELOCITY } } };
+	CustomFramebuffer postProcessingFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
@@ -47,7 +53,10 @@ public:
     void buildTree();
     void addPostShader(const std::string& name, Shader* shader);
 
+    void updatePreviousModelMatrices();
+
 	bool useTree = true;
+    bool showMotionBlur = true;
 };
 
 

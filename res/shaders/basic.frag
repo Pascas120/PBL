@@ -1,5 +1,7 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec2 Velocity;
+
 
 in vec2 texCoords;
 in vec3 fragPos;
@@ -23,6 +25,7 @@ layout(std140) uniform Camera
     mat4 invViewProjection;
     mat4 lightProjection;
     mat4 lightView;
+    mat4 prevViewProjection;
 };
 
 #define MAX_POINT_LIGHTS 100
@@ -81,6 +84,7 @@ void main()
 
     FragColor = finalColor;
     //FragColor = vec4(vec3(shadow), 1.0); // For debugging shadow
+    Velocity = vec2(0.0);
 }
 
 ////////////////////////////////////////
