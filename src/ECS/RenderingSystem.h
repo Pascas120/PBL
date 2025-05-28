@@ -41,11 +41,13 @@ private:
     void sobelFilter(Shader* sobel, const CustomFramebuffer& in, const Framebuffer& out);
     void motionBlurFilter(Shader* blur, const CustomFramebuffer& in,
         const CustomFramebuffer& inVel, const Framebuffer& out);
+    void fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const CustomFramebuffer& test, const Framebuffer& out);
 
 	CustomFramebuffer normalFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } }};
 	CustomFramebuffer velFramebuffer{ FramebufferConfig{ 1920, 1080, 
         { AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::VELOCITY } } };
-	CustomFramebuffer postProcessingFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
 	CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{ 1920, 1920, { AttachmentType::DEPTH } });
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);

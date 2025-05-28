@@ -12,6 +12,7 @@
 
 in vec2 texCoord;
 uniform sampler2D textureSampler;
+uniform sampler2D testSampler;
 uniform vec2 resolution;
 
 out vec4 fragColor;
@@ -24,11 +25,11 @@ void main() {
     vec2 posSW = texCoord + vec2(-1.0,  1.0) * inverseRes;
     vec2 posSE = texCoord + vec2( 1.0,  1.0) * inverseRes;
 
-    vec3 rgbNW = texture(textureSampler, posNW).rgb;
-    vec3 rgbNE = texture(textureSampler, posNE).rgb;
-    vec3 rgbSW = texture(textureSampler, posSW).rgb;
-    vec3 rgbSE = texture(textureSampler, posSE).rgb;
-    vec3 rgbM  = texture(textureSampler, texCoord).rgb;
+    vec3 rgbNW = texture(testSampler, posNW).rgb;
+    vec3 rgbNE = texture(testSampler, posNE).rgb;
+    vec3 rgbSW = texture(testSampler, posSW).rgb;
+    vec3 rgbSE = texture(testSampler, posSE).rgb;
+    vec3 rgbM  = texture(testSampler, texCoord).rgb;
 
     vec3 lumaWeights = vec3(0.299, 0.587, 0.114);
     float lumaNW = dot(rgbNW, lumaWeights);

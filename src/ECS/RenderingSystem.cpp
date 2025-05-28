@@ -50,11 +50,13 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 	auto [fboWidth, fboHeight] = customFramebuffer.GetSizePair();
 	if (fboWidth != width || fboHeight != height) {
 		customFramebuffer.Resize(width, height);
-		postProcessingFramebuffer.Resize(width, height);
+		postProcessingFramebuffer1.Resize(width, height);
+		postProcessingFramebuffer2.Resize(width, height);
 	}
 	Shader* shadowShader = postShaders.at("ShadowMap");
 	Shader* sobelShader = postShaders.at("Sobel");
 	Shader* motionBlurShader = postShaders.at("MotionBlur");
+	Shader* FXAAShader = postShaders.at("FXAA");
 
     //##################SHADOW MAP##################
 
@@ -179,14 +181,16 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     if (showMotionBlur)
     {
-        sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer);
+        sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
 
 		cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
-		motionBlurFilter(motionBlurShader, postProcessingFramebuffer, customFramebuffer, framebuffer);
+		fxaaFilter(FXAAShader, postProcessingFramebuffer1, postProcessingFramebuffer1, postProcessingFramebuffer2);
+		motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, framebuffer);
     }
     else
     {
-		sobelFilter(sobelShader, customFramebuffer, framebuffer);
+		sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
+		fxaaFilter(FXAAShader, postProcessingFramebuffer1, postProcessingFramebuffer1, framebuffer);
     }
 
 }
@@ -361,6 +365,24 @@ void RenderingSystem::motionBlurFilter(Shader* blur, const CustomFramebuffer& in
 	glBindTexture(GL_TEXTURE_2D, inVel.GetVelocityTexture());
     blur->setInt("textureSampler", 0);
     blur->setInt("velTextureSampler", 1);
+
+    glBindVertexArray(hudVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void RenderingSystem::fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, 
+    const CustomFramebuffer& test, const Framebuffer& out) {
+    out.Bind();
+    fxaa->use();
+    auto [width, height] = in.GetSizePair();
+    fxaa->setVec2("resolution", (float)width, (float)height);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+    fxaa->setInt("textureSampler", 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, test.GetColorTexture());
+	fxaa->setInt("testSampler", 1);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
