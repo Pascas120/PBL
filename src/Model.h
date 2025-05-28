@@ -26,6 +26,7 @@ class Model
 public:
     std::vector<Mesh> meshes;
     std::string directory;
+    std::string path;
     bool gammaCorrection;
 
     Model();

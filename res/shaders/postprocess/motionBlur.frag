@@ -10,7 +10,7 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 const int NUM_SAMPLES = 8;
-const float STRENGTH = 1.5;
+const float STRENGTH = 2.0;
 
 void main()
 {
@@ -32,4 +32,5 @@ void main()
     }
 
     fragColor = color / weight;
+    //fragColor = vec4(velocity, 0.0, 1.0);
 }

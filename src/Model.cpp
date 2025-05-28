@@ -30,8 +30,9 @@ void Model::loadModel(std::string const &path)
         std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
         return;
     }
+	this->path = path;
     directory = path.substr(0, path.find_last_of('/'));
-    spdlog::info("Loading model: {}", directory);
+    spdlog::info("Loading model: {}", path);
     processNode(scene->mRootNode, scene);
 
     boundingBox = BoundingBox::calculateBoundingBox(meshes);

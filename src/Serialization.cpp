@@ -60,7 +60,7 @@ namespace Serialization
 	{
 		std::string modelPath = j.get<std::string>();
 		auto itModel = std::find_if(context.models.begin(), context.models.end(),
-			[&](Model* model) { return model->directory == modelPath; });
+			[&](Model* model) { return model->path == modelPath; });
 		if (itModel != context.models.end())
 		{
 			mptr = *itModel;
@@ -152,7 +152,7 @@ namespace Serialization
 	static void to_json(nlohmann::json& j, const ModelComponent& c, const SerializationContext& context)
 	{
 		j["shader"] = c.shader->getName();
-		j["model"] = c.model->directory;
+		j["model"] = c.model->path;
 	}
 
 	static void from_json(const nlohmann::json& j, ModelComponent& c, const DeserializationContext& context)

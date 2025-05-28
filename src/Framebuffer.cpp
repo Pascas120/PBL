@@ -64,7 +64,6 @@ void CustomFramebuffer::Setup()
 	// Velocity
 	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::VELOCITY) != config.attachments.end())
 	{
-		spdlog::info("Creating velocity texture with size {}x{}", config.width, config.height);
 		glGenTextures(1, &velocityTexture);
 		glBindTexture(GL_TEXTURE_2D, velocityTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, config.width, config.height, 0, GL_RG, GL_HALF_FLOAT, NULL);

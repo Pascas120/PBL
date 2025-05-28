@@ -15,7 +15,8 @@
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
-    const std::unordered_map<std::string, Shader*>& postShaders) {
+    const std::unordered_map<std::string, Shader*>& postShaders) 
+{
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
     auto lights = scene->getStorage<DirectionalLightComponent>();
@@ -51,15 +52,19 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 		customFramebuffer.Resize(width, height);
 		postProcessingFramebuffer.Resize(width, height);
 	}
+	Shader* shadowShader = postShaders.at("ShadowMap");
+	Shader* sobelShader = postShaders.at("Sobel");
+	Shader* motionBlurShader = postShaders.at("MotionBlur");
+
     //##################SHADOW MAP##################
-    Shader* shadowShader = postShaders["ShadowMap"];
+
     //CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
-    /*if(useShadows) {
+    if(useShadows) {
         glm::vec3 lightPos = transforms->get(mainLight.id).translation;
         glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
         glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
         shadowFramebuffer.Bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
         shadowShader->use();
         shadowShader->setMat4("lightProjection", lightProjection);
         uniformBlockStorage.cameraBlock.setData("lightProjection", &lightProjection);
@@ -67,7 +72,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
         shadowShader->setVec3("lightPos", lightPos);
 
-    }*/
+    }
     //##############################################
     float aspectRatio = (float)width / (float)height;
     auto& frustum = camera.getFrustum();
@@ -90,15 +95,17 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     }
 
     for (int i = 0; i < models->getQuantity(); i++) {
+        auto& modelComponent = models->components[i];
+
+        if (useShadows) {
+            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
+            modelComponent.model->draw(shadowShader);
+        }
 		if (!useTree || !transforms->get(models->components[i].id).isStatic)
         {
-            auto& modelComponent = models->components[i];
             auto& boundingBox = modelComponent.model->boundingBox;
 
-		    /*if(useShadows) {
-		        shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
-		        modelComponent.model->draw(postShaders["ShadowMap"]);
-		    }*/
+		    
             if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
                 renderingQueue[renderingQueueSize++] = modelComponent.id;
             }
@@ -112,7 +119,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         }
     }
 
-	spdlog::info("Rendering {} models", renderingQueueSize);
+	//spdlog::info("Rendering {} models", renderingQueueSize);
 
     auto& cameraBlock = uniformBlockStorage.cameraBlock;
     glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -131,19 +138,23 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     cameraBlock.setData("viewProjection", &viewProjectionMatrix);
     cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
 
+    if (useShadows) {
+        models->get(renderingQueue[0]).shader->use();
+        shadowFramebuffer.Bind();
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
+        models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
+    }
+
     customFramebuffer.Bind();
     GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
     glDrawBuffers(2, drawBuffers);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	static const float zeroVelocity[] = { 0, 0 };
+	glClearBufferfv(GL_COLOR, 1, zeroVelocity);
 
 
-    /*if(useShadows) {
-        models->get(renderingQueue[0]).shader->use();
-        shadowFramebuffer.Bind();
-        glActiveTexture(GL_TEXTURE0+1);
-        glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
-        models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
-    }*/
+    
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
@@ -168,14 +179,14 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     if (showMotionBlur)
     {
-        sobelFilter(customFramebuffer, postProcessingFramebuffer);
+        sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer);
 
 		cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
-		motionBlurFilter(postProcessingFramebuffer, customFramebuffer, framebuffer);
+		motionBlurFilter(motionBlurShader, postProcessingFramebuffer, customFramebuffer, framebuffer);
     }
     else
     {
-		sobelFilter(customFramebuffer, framebuffer);
+		sobelFilter(sobelShader, customFramebuffer, framebuffer);
     }
 
 }
@@ -322,8 +333,7 @@ void RenderingSystem::buildTree() {
 void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, const Framebuffer &out) {
     out.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    Shader* shader = postShaders["Sobel"];
-    shader->use();
+    sobel->use();
     auto [width, height] = in.GetSizePair();
     sobel->setInt("width", width);
     sobel->setInt("height", height);
@@ -336,21 +346,21 @@ void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, co
     glBindVertexArray(0);
 }
 
-void RenderingSystem::motionBlurFilter(const CustomFramebuffer& in, const CustomFramebuffer& inVel, const Framebuffer& out) {
+void RenderingSystem::motionBlurFilter(Shader* blur, const CustomFramebuffer& in, 
+    const CustomFramebuffer& inVel, const Framebuffer& out) {
     out.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	Shader* shader = postShaders["MotionBlur"];
-    shader->use();
+    blur->use();
     auto [width, height] = in.GetSizePair();
-    shader->setInt("width", width);
-    shader->setInt("height", height);
+    blur->setInt("width", width);
+    blur->setInt("height", height);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, inVel.GetVelocityTexture());
-    shader->setInt("textureSampler", 0);
-	shader->setInt("velTextureSampler", 1);
+    blur->setInt("textureSampler", 0);
+    blur->setInt("velTextureSampler", 1);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

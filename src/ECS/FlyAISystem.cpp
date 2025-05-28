@@ -11,6 +11,8 @@ FlyAISystem::FlyAISystem(Scene* scene) : scene(scene) {}
 void FlyAISystem::update() {
 	auto transforms = scene->getStorage<Transform>();
 	auto flyAIComponents = scene->getStorage<FlyAIComponent>();
+    if (!flyAIComponents)
+		return;
 	for (int i = 0; i < flyAIComponents->getQuantity(); i++) {
 		auto& flyAI = flyAIComponents->components[i];
 		auto& transform = transforms->get(flyAI.id);

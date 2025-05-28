@@ -23,6 +23,14 @@
                 "VERTEX": "res/shaders/postprocess/postprocess.vert",
                 "FRAGMENT": "res/shaders/postprocess/motionBlur.frag"
             }
+        },
+        {
+            "name": "FXAA",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/fxaa.frag"
+            }
         }
     ]
 }

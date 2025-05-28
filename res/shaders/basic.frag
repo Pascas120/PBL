@@ -6,7 +6,6 @@ layout (location = 1) out vec2 Velocity;
 in vec2 texCoords;
 in vec3 fragPos;
 in vec3 normal;
-in vec3 anormal;
 in vec4 fragPosLightSpace;
 
 uniform vec3 diffuse;
@@ -84,7 +83,7 @@ void main()
 
     FragColor = finalColor;
     //FragColor = vec4(vec3(shadow), 1.0); // For debugging shadow
-    Velocity = vec2(0.0);
+    Velocity = vec2(0.0, 0.0);
 }
 
 ////////////////////////////////////////
