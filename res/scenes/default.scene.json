@@ -1,15 +1,6 @@
 {
     "entities": [
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    -0.009999999776482582,
-                    0.10000000149011612,
-                    0.009999999776482582
-                ],
-                "radius": 0.10000000149011612,
-                "type": "SPHERE"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -28,15 +19,18 @@
             },
             "ObjectInfoComponent": {
                 "name": "Player",
-                "uuid": "4d955cc2-ab5b-b857-cf0f-92af3f6df718"
+                "uuid": "38136147-88fa-7c79-c686-3c7738699748"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "b8a372d7-bab8-0c90-ef77-6adc55e87666"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
                     0.0
                 ],
+                "isStatic": false,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -57,19 +51,55 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
+            "CameraComponent": {
+                "aspectRatio": 1.7845304012298584,
+                "farPlane": 1000.0,
+                "fovSizeAxis": "VERTICAL",
+                "nearPlane": 0.10000000149011612,
+                "orthographic": {
+                    "size": 5.0
+                },
+                "perspective": {
+                    "fov": 0.7853981852531433
+                },
+                "projectionType": "PERSPECTIVE",
+                "screenOffset": [
                     0.0,
-                    7.699999809265137,
+                    0.0
+                ]
+            },
+            "ObjectInfoComponent": {
+                "name": "Player Camera",
+                "uuid": "b8a372d7-bab8-0c90-ef77-6adc55e87666"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -20.0,
+                    180.0,
                     0.0
                 ],
-                "extents": [
-                    4.0,
-                    7.699999809265137,
-                    1.777999997138977
+                "isStatic": true,
+                "parent": "38136147-88fa-7c79-c686-3c7738699748",
+                "rotation": [
+                    7.59040297282354e-09,
+                    0.9848077297210693,
+                    0.1736481785774231,
+                    -4.304731149318286e-08
                 ],
-                "type": "AABB"
-            },
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.30000001192092896,
+                    -0.699999988079071
+                ]
+            }
+        },
+        {
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -86,13 +116,34 @@
                 },
                 "isStatic": false
             },
+            "FlyAIComponent": {
+                "detectionRadius": 4.0,
+                "diveCooldownTime": 3.0,
+                "diveCooldownTimer": 0.0,
+                "diveEndHeight": 1.0,
+                "diveSpeed": 3.0,
+                "groundY": 0.0,
+                "idBread": "",
+                "idButter": "38136147-88fa-7c79-c686-3c7738699748",
+                "patrolHeightOffset": 3.0,
+                "patrolPointReachedThreshold": 0.5,
+                "patrolRange": 4.0,
+                "patrolSpeed": 1.5,
+                "patrolTarget": [
+                    -107374176.0,
+                    -107374176.0,
+                    -107374176.0
+                ],
+                "returnSpeed": 3.5,
+                "state": "Patrolling"
+            },
             "ModelComponent": {
-                "model": "res/models/nanosuit",
-                "shader": "Basic"
+                "model": "res/models",
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
-                "name": "Nanosuit",
-                "uuid": "eec6869e-5942-b485-674d-65d04ff4b4a4"
+                "name": "Fly",
+                "uuid": "d51aa2a2-fbc5-0163-0951-891788abe678"
             },
             "Transform": {
                 "children": [],
@@ -101,6 +152,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": false,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -109,9 +161,45 @@
                     1.0
                 ],
                 "scale": [
-                    0.10000000149011612,
-                    0.10000000149011612,
-                    0.10000000149011612
+                    0.009999999776482582,
+                    0.004000000189989805,
+                    0.009999999776482582
+                ],
+                "translation": [
+                    2.5,
+                    3.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "model": "res/models",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "Maslo",
+                "uuid": "3cd1fa32-08ca-335e-94e6-4a89b912cc9f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
                 ],
                 "translation": [
                     2.5,
@@ -121,19 +209,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -156,7 +231,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Floor",
-                "uuid": "d5ea3b50-a8b1-f5cb-8f82-f2c631a9f83d"
+                "uuid": "989c96a1-9726-1091-a066-1de1ca5d76e9"
             },
             "Transform": {
                 "children": [],
@@ -165,6 +240,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -185,19 +261,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -220,7 +283,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 1",
-                "uuid": "543c4afd-8d94-e705-2c5d-690848e23b11"
+                "uuid": "ad7e517d-5dac-ed7c-0461-8fa71d4ed9b6"
             },
             "Transform": {
                 "children": [],
@@ -229,6 +292,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -249,19 +313,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -284,7 +335,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 2",
-                "uuid": "f22021ee-1b5a-3cce-d396-3909e6b4bdeb"
+                "uuid": "f018d7f1-60a1-1160-26f8-d6dec3025608"
             },
             "Transform": {
                 "children": [],
@@ -293,6 +344,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -313,19 +365,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -348,7 +387,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 3",
-                "uuid": "199ac7c5-c692-8672-1311-ff7a743a3773"
+                "uuid": "3f000c4a-6f2a-0d01-0a77-f922a5d8e902"
             },
             "Transform": {
                 "children": [],
@@ -357,6 +396,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -377,19 +417,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -412,7 +439,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 4",
-                "uuid": "3241071b-3757-e23e-3b83-e93e694c5f93"
+                "uuid": "2fc2e4ee-673a-c187-62f8-b5415f1ef670"
             },
             "Transform": {
                 "children": [],
@@ -421,6 +448,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -441,19 +469,6 @@
             }
         },
         {
-            "BoundingVolumeComponent": {
-                "center": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "extents": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "type": "AABB"
-            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -476,7 +491,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 5",
-                "uuid": "6f942dd8-fa54-a235-3bd8-be9d4e6cf2c1"
+                "uuid": "bd2ff1ea-29df-1d49-5e9a-32ddd6a897bb"
             },
             "Transform": {
                 "children": [],
@@ -485,6 +500,7 @@
                     30.0,
                     180.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     -0.258819043636322,
@@ -513,13 +529,13 @@
                     0.0
                 ],
                 "height": 0.0,
-                "shader": "HUD",
+                "shader": "GUITest",
                 "texturePath": "res/textures/cloud.png",
                 "width": 0.0
             },
             "ObjectInfoComponent": {
                 "name": "Cloud",
-                "uuid": "3c2d1462-f96b-88c9-63d1-b7db067c2304"
+                "uuid": "21a4abdf-49a3-4e82-0c41-6d1553258622"
             },
             "Transform": {
                 "children": [],
@@ -528,6 +544,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
@@ -550,7 +567,7 @@
         {
             "ObjectInfoComponent": {
                 "name": "Text",
-                "uuid": "c2ad2c34-1ef1-21cd-7304-184070e7022d"
+                "uuid": "5dd13c39-9698-a129-5165-8b1f7bb607c7"
             },
             "TextComponent": {
                 "color": [
@@ -560,7 +577,7 @@
                     1.0
                 ],
                 "font": "foo",
-                "shader": "Text",
+                "shader": "HUD",
                 "text": "text"
             },
             "Transform": {
@@ -570,6 +587,7 @@
                     0.0,
                     0.0
                 ],
+                "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,

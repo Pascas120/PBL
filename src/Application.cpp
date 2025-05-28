@@ -564,26 +564,6 @@ void Application::setupScene()
 	}*/
 
 
-	EventSystem& eventSystem = scene->getEventSystem();
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-		const auto& event = static_cast<const CollisionEvent&>(e);
-		if (!event.isColliding) return;
-
-		bool aIsPlayer = (event.objectA == player);
-		bool bIsPlayer = (event.objectB == player);
-
-		bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
-		bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
-
-
-
-		if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
-		{
-			spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
-		}
-		});
-
-
 	scene->getTransformSystem().update();
 	//scene->getRenderingSystem().buildTree();
 	std::vector<Shader*> postShaderVec;

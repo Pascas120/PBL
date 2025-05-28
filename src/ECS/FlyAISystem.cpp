@@ -4,6 +4,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <random>
 #include <cmath>
+#include <spdlog/spdlog.h>
 
 FlyAISystem::FlyAISystem(Scene* scene) : scene(scene) {}
 
@@ -15,7 +16,7 @@ void FlyAISystem::update() {
 		auto& transform = transforms->get(flyAI.id);
 		FlyAIAndTransform flyComp{ flyAI, transform };
 		if (flyAI.idButter == (EntityID)-1) continue;
-        if (flyAI.diveCooldownTimer > 0.0f)
+        if (flyAI.diveCooldownTimer > 0.f)
             flyAI.diveCooldownTimer -= deltaTime;
 
 		float butterDistance = glm::distance(transform.globalMatrix[3], transforms->get(flyAI.idButter).globalMatrix[3]);
@@ -27,14 +28,17 @@ void FlyAISystem::update() {
         {
         case FlyAIComponent::Patrolling:
             patrol(flyComp, patrolHeight);
-            if (butterDistance < flyAI.detectionRadius && flyAI.diveCooldownTimer <= 0.0f)
+            if (butterDistance < flyAI.detectionRadius && flyAI.diveCooldownTimer <= 0.f)
                 flyAI.state = FlyAIComponent::Diving;
             break;
 
         case FlyAIComponent::Diving:
             dive(flyComp);
-            if (butterDistance > flyAI.detectionRadius || transform.globalMatrix[3].y <= flyAI.diveEndHeight)
+            if (butterDistance > flyAI.detectionRadius)
+            {
+                flyAI.diveCooldownTimer = flyAI.diveCooldownTime;
                 flyAI.state = FlyAIComponent::Returning;
+            }
             break;
 
         case FlyAIComponent::Returning:
@@ -110,7 +114,12 @@ void FlyAISystem::dive(const FlyAIAndTransform& flyComp)
     auto& flyAI = flyComp.flyAI;
 	auto& butter = scene->getStorage<Transform>()->get(flyAI.idButter);
     auto& ts = scene->getTransformSystem();
-	glm::vec4 direction = butter.globalMatrix[3] - transform.globalMatrix[3];
+	glm::vec4 butterPos = butter.globalMatrix[3];
+	if (butterPos.y <= flyAI.diveEndHeight)
+	{
+		butterPos.y = flyAI.diveEndHeight;
+	}
+	glm::vec4 direction = butterPos - transform.globalMatrix[3];
     direction.w = 0.0f;
     direction = glm::normalize(direction);
     transform.globalMatrix[3] += direction * flyAI.diveSpeed * deltaTime;

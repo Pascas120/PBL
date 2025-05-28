@@ -44,15 +44,15 @@
                     5.0
                 ],
                 "translation": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -0.0659707561135292,
+                    0.10000000894069672,
+                    -0.31248587369918823
                 ]
             }
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7845304012298584,
+                "aspectRatio": 1.7826087474822998,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -104,13 +104,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        7.699999809265137,
+                        0.0,
                         0.0
                     ],
                     "halfSize": [
-                        4.0,
-                        7.699999809265137,
-                        1.777999997138977
+                        100.0,
+                        100.0,
+                        10.0
                     ],
                     "type": "BOX"
                 },
@@ -119,8 +119,8 @@
             "FlyAIComponent": {
                 "detectionRadius": 5.599999904632568,
                 "diveCooldownTime": 3.0,
-                "diveCooldownTimer": 0.0,
-                "diveEndHeight": 1.0,
+                "diveCooldownTimer": 0.21741867065429688,
+                "diveEndHeight": 0.6000000238418579,
                 "diveSpeed": 3.0,
                 "groundY": 0.0,
                 "idBread": "",
@@ -130,9 +130,9 @@
                 "patrolRange": 4.0,
                 "patrolSpeed": 0.4000000059604645,
                 "patrolTarget": [
-                    -107374176.0,
-                    -107374176.0,
-                    -107374176.0
+                    0.6604369878768921,
+                    2.988673210144043,
+                    -2.984375238418579
                 ],
                 "returnSpeed": 3.5,
                 "state": "Patrolling"
@@ -149,16 +149,16 @@
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    0.0,
+                    168.08908081054688,
                     0.0
                 ],
                 "isStatic": false,
                 "parent": "",
                 "rotation": [
                     0.0,
+                    0.9946028590202332,
                     0.0,
-                    0.0,
-                    1.0
+                    0.10375533252954483
                 ],
                 "scale": [
                     0.009999999776482582,
@@ -166,9 +166,9 @@
                     0.009999999776482582
                 ],
                 "translation": [
-                    2.5,
-                    0.0,
-                    0.0
+                    -5.111515522003174,
+                    3.0,
+                    -1.8960254192352295
                 ]
             }
         },
@@ -177,13 +177,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        7.699999809265137,
+                        0.0,
                         0.0
                     ],
                     "halfSize": [
-                        4.0,
-                        7.699999809265137,
-                        1.777999997138977
+                        100.0,
+                        100.0,
+                        10.0
                     ],
                     "type": "BOX"
                 },
@@ -192,8 +192,8 @@
             "FlyAIComponent": {
                 "detectionRadius": 5.599999904632568,
                 "diveCooldownTime": 3.0,
-                "diveCooldownTimer": 0.0,
-                "diveEndHeight": 1.0,
+                "diveCooldownTimer": 0.21741867065429688,
+                "diveEndHeight": 0.6000000238418579,
                 "diveSpeed": 3.0,
                 "groundY": 0.0,
                 "idBread": "",
@@ -203,82 +203,9 @@
                 "patrolRange": 4.0,
                 "patrolSpeed": 0.4000000059604645,
                 "patrolTarget": [
-                    -107374176.0,
-                    -107374176.0,
-                    -107374176.0
-                ],
-                "returnSpeed": 3.5,
-                "state": "Patrolling"
-            },
-            "ModelComponent": {
-                "model": "res/models",
-                "shader": "CelShading"
-            },
-            "ObjectInfoComponent": {
-                "name": "Nanosuit (1)",
-                "uuid": "89067f21-184b-2242-3c61-6e864d8224c1"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    0.009999999776482582,
-                    0.004000000189989805,
-                    0.009999999776482582
-                ],
-                "translation": [
-                    -6.9101433753967285,
-                    1.208730936050415,
-                    -1.7217459678649902
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        7.699999809265137,
-                        0.0
-                    ],
-                    "halfSize": [
-                        4.0,
-                        7.699999809265137,
-                        1.777999997138977
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": false
-            },
-            "FlyAIComponent": {
-                "detectionRadius": 5.599999904632568,
-                "diveCooldownTime": 3.0,
-                "diveCooldownTimer": 0.0,
-                "diveEndHeight": 1.0,
-                "diveSpeed": 3.0,
-                "groundY": 0.0,
-                "idBread": "",
-                "idButter": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
-                "patrolHeightOffset": 3.0,
-                "patrolPointReachedThreshold": 0.5,
-                "patrolRange": 4.0,
-                "patrolSpeed": 0.4000000059604645,
-                "patrolTarget": [
-                    -107374176.0,
-                    -107374176.0,
-                    -107374176.0
+                    0.6604369878768921,
+                    2.988673210144043,
+                    -2.984375238418579
                 ],
                 "returnSpeed": 3.5,
                 "state": "Patrolling"
@@ -289,22 +216,22 @@
             },
             "ObjectInfoComponent": {
                 "name": "Nanosuit (2)",
-                "uuid": "fc6a4fc4-2876-1327-5792-4fdc717abc49"
+                "uuid": "3d0b793e-a154-ec70-ac69-b1740a18dd3a"
             },
             "Transform": {
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    0.0,
+                    168.08908081054688,
                     0.0
                 ],
                 "isStatic": false,
                 "parent": "",
                 "rotation": [
                     0.0,
+                    0.9946028590202332,
                     0.0,
-                    0.0,
-                    1.0
+                    0.10375533252954483
                 ],
                 "scale": [
                     0.009999999776482582,
@@ -312,9 +239,82 @@
                     0.009999999776482582
                 ],
                 "translation": [
-                    -4.755832672119141,
-                    1.208730936050415,
-                    6.45581579208374
+                    6.191600799560547,
+                    3.0,
+                    0.48816558718681335
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        100.0,
+                        100.0,
+                        10.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "FlyAIComponent": {
+                "detectionRadius": 5.599999904632568,
+                "diveCooldownTime": 3.0,
+                "diveCooldownTimer": 0.21741867065429688,
+                "diveEndHeight": 0.6000000238418579,
+                "diveSpeed": 3.0,
+                "groundY": 0.0,
+                "idBread": "",
+                "idButter": "5f2e88e9-388a-8e1d-b96b-87fc756f5f7c",
+                "patrolHeightOffset": 3.0,
+                "patrolPointReachedThreshold": 0.5,
+                "patrolRange": 4.0,
+                "patrolSpeed": 0.4000000059604645,
+                "patrolTarget": [
+                    0.6604369878768921,
+                    2.988673210144043,
+                    -2.984375238418579
+                ],
+                "returnSpeed": 3.5,
+                "state": "Patrolling"
+            },
+            "ModelComponent": {
+                "model": "res/models",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "Nanosuit (1)",
+                "uuid": "a6e3cbd2-d412-2b1d-f2b9-7548f3f4dfd0"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    168.08905029296875,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.9946029186248779,
+                    0.0,
+                    0.10375551134347916
+                ],
+                "scale": [
+                    0.009999987669289112,
+                    0.004000000189989805,
+                    0.009999987669289112
+                ],
+                "translation": [
+                    0.19479413330554962,
+                    3.0,
+                    -0.7767539024353027
                 ]
             }
         },

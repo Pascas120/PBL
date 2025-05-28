@@ -134,13 +134,12 @@ struct DirectionalLightComponent {
 
 struct FlyAIComponent {
 	EntityID idButter = (EntityID)-1;
-    FlyVariant variant = FlyVariant::GREEN;
     EntityID idBread = (EntityID)-1;
     float patrolHeightOffset = 3.f;
     float patrolSpeed = 3.f;
     float diveSpeed = 6.f;
     float detectionRadius = 8.f;
-    float diveEndHeight = 1.f;
+    float diveEndHeight = 0.4f;
     float returnSpeed = 3.5f;
     float patrolRange = 10.f;
     float patrolPointReachedThreshold = 0.5f;
