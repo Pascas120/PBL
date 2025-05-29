@@ -97,6 +97,14 @@ void TransformSystem::rotateEntity(EntityID id, const glm::vec3& eulerRotation) 
     markDirty(id);
 }
 
+void TransformSystem::rotateEntity(EntityID id, const glm::vec3& target, float delta) const {
+    auto& transform = scene->getComponent<Transform>(id);
+    glm::quat targetRotation = glm::quat(glm::radians(target));
+    transform.rotation = glm::slerp(transform.rotation, targetRotation, delta);
+    continuousQuatToEuler(transform.eulerRotation, transform.rotation);
+    markDirty(id);
+}
+
 void TransformSystem::scaleEntity(EntityID id, const glm::vec3& scale) const {
     auto& transform = scene->getComponent<Transform>(id);
     transform.scale = scale;

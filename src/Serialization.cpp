@@ -309,7 +309,7 @@ namespace Serialization
 			c.fovSizeAxis = CameraComponent::FovSizeAxis::HORIZONTAL;
 	}
 
-	static void to_json(nlohmann::json& j, static PointLightComponent& c, const SerializationContext& context)
+	static void to_json(nlohmann::json& j, PointLightComponent& c, const SerializationContext& context)
 	{
 		j["color"] = c.color;
 		j["intensity"] = c.intensity;
@@ -526,7 +526,7 @@ namespace Serialization
 
 	json serializeObjects(const std::vector<EntityID>& objects, Scene& scene)
 	{
-		// rooty chyba ju¿ nie s¹ potrzebne
+		// rooty chyba juï¿½ nie sï¿½ potrzebne
 		auto [entities, roots] = getSelectedTree(objects, scene);
 		json selectionJson;
 

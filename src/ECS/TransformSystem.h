@@ -25,6 +25,8 @@ public:
     void translateEntity(EntityID id, const glm::vec3& translation) const;
     void rotateEntity(EntityID id, const glm::quat& rotation) const;
     void rotateEntity(EntityID id, const glm::vec3& rotation) const;
+	void rotateEntity(EntityID id, const glm::vec3& eulerRotation, float delta) const;
+
     void scaleEntity(EntityID id, const glm::vec3& scale) const;
     void setGlobalMatrix(EntityID id, const glm::mat4& mat) const;
 
