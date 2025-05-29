@@ -91,7 +91,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
                      frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
         */
         traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
-		spdlog::info("Tree: {} entities visible", visibleEntities.size());
+		//spdlog::info("Tree: {} entities visible", visibleEntities.size());
     } else if (!rootNode) {
         spdlog::warn("BVH root node is null, skipping frustum culling.");
     }

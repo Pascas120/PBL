@@ -76,6 +76,12 @@ namespace Editor
                 drawDirectionalLight(context, editor->selectedObject);
 				drawFlyAi(context, editor->selectedObject);
 				drawVelocity(context, editor->selectedObject);
+                drawHeat(context, editor->selectedObject);
+                drawFreeze(context, editor->selectedObject);
+                drawRegen(context, editor->selectedObject);
+                drawElevator(context, editor->selectedObject);
+                drawButton(context, editor->selectedObject);
+
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -108,7 +114,11 @@ namespace Editor
                     ADD_COMPONENT(DirectionalLightComponent, "Directional Light");
 					ADD_COMPONENT(FlyAIComponent, "Fly AI");
 					ADD_COMPONENT(VelocityComponent, "Velocity");
-
+                    ADD_COMPONENT(HeatComponent, "Heat");
+                    ADD_COMPONENT(FreezeComponent, "Freeze");
+                    ADD_COMPONENT(RegenComponent, "Regen");
+                    ADD_COMPONENT(ElevatorComponent, "Elevator");
+                    ADD_COMPONENT(ButtonComponent, "Button");
 
                     ImGui::EndCombo();
                 }
@@ -229,11 +239,11 @@ namespace Editor
         if (open)
         {
             Model* model = modelComponent.model;
-            if (ImGui::BeginCombo("Model##Combo", model->directory.c_str()))
+            if (ImGui::BeginCombo("Model##Combo", model->path.c_str()))
             {
                 for (int i = 0; i < context.models.size(); i++)
                 {
-                    if (ImGui::Selectable(context.models[i]->directory.c_str(), model == context.models[i]))
+                    if (ImGui::Selectable(context.models[i]->path.c_str(), model == context.models[i]))
                     {
                         model = context.models[i];
                         modelComponent.model = model;
@@ -464,4 +474,107 @@ namespace Editor
 		}
 		ImGui::PopID();
     }
+    void InspectorWindow::drawHeat(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<HeatComponent>(id))
+            return;
+
+        auto& heat = scene->getComponent<HeatComponent>(id);
+        ImGui::PushID(&heat);
+
+        bool open = ImGui::CollapsingHeader("Heat", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<HeatComponent>(context, id))  return;
+
+        if (open)
+        {
+            ImGui::DragFloat("Trigger Radius", &heat.triggerRadius, 0.1f, 0.0f, 100.0f);
+            ImGui::Checkbox("Triggered", &heat.hasTriggered);            
+            char buf[64]; std::strncpy(buf, heat.OnEnterMessage.c_str(), sizeof(buf));
+            if (ImGui::InputText("Message", buf, sizeof(buf)))
+                heat.OnEnterMessage = buf;
+        }
+        ImGui::PopID();
+    }
+    void InspectorWindow::drawFreeze(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<FreezeComponent>(id))
+            return;
+
+        auto& freeze = scene->getComponent<FreezeComponent>(id);
+        ImGui::PushID(&freeze);
+
+        bool open = ImGui::CollapsingHeader("Freeze", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<FreezeComponent>(context, id)) return;
+
+        if (open)
+        {
+            ImGui::DragFloat("Trigger Radius", &freeze.triggerRadius, 0.1f, 0.0f, 100.0f);
+            ImGui::Checkbox("Triggered", &freeze.hasTriggered);             
+            char buf[64]; std::strncpy(buf, freeze.OnEnterMessage.c_str(), sizeof(buf));
+            if (ImGui::InputText("Message", buf, sizeof(buf)))
+                freeze.OnEnterMessage = buf;
+        }
+        ImGui::PopID();
+    }
+    void InspectorWindow::drawRegen(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<RegenComponent>(id))
+            return;
+
+        auto& regen = scene->getComponent<RegenComponent>(id);
+        ImGui::PushID(&regen);
+
+        bool open = ImGui::CollapsingHeader("Regen", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<RegenComponent>(context, id)) return;
+
+        if (open)
+        {
+            ImGui::DragFloat("Trigger Radius", &regen.triggerRadius, 0.1f, 0.0f, 100.0f);
+            ImGui::Checkbox("Triggered", &regen.hasTriggered);            
+            char buf[64]; std::strncpy(buf, regen.OnEnterMessage.c_str(), sizeof(buf));
+            if (ImGui::InputText("Message", buf, sizeof(buf)))
+                regen.OnEnterMessage = buf;
+        }
+        ImGui::PopID();
+    }
+    void InspectorWindow::drawElevator(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<ElevatorComponent>(id)) return;
+        auto& e = scene->getComponent<ElevatorComponent>(id);
+
+        ImGui::PushID(&e);
+        bool open = ImGui::CollapsingHeader("Elevator", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ElevatorComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::DragFloat("Open Height", &e.openHeight, 0.1f);
+            ImGui::DragFloat("Speed", &e.speed, 0.1f);
+            Utils::entityRefField("Button Entity", e.buttonEntity, *scene);
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawButton(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<ButtonComponent>(id)) return;
+        auto& b = scene->getComponent<ButtonComponent>(id);
+
+        ImGui::PushID(&b);
+        bool open = ImGui::CollapsingHeader("Button", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ButtonComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::DragFloat("Press Depth", &b.pressDepth, 0.01f);
+            ImGui::DragFloat("Press Speed", &b.pressSpeed, 0.1f);
+            Utils::entityRefField("Elevator Entity", b.elevatorEntity, *scene);
+        }
+        ImGui::PopID();
+    }
+
+
 }

@@ -1,8 +1,11 @@
 #include "Application.h"
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <spdlog/spdlog.h>
-
+#include <unordered_set>
 #include "Serialization.h"
+#include "ECS/EventSystem.h"
+#include "ECS/CollisionSystem.h"
+
 
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -188,99 +191,113 @@ void Application::input()
 		ts.rotateEntity(player, rotation);
 	}
 }
-
 void Application::update()
 {
+	
 	scene->getRenderingSystem().updatePreviousModelMatrices();
 
 	auto transforms = scene->getStorage<Transform>();
 	auto velocityComponents = scene->getStorage<VelocityComponent>();
-
-	if (velocityComponents != nullptr)
+	if (velocityComponents)
 	{
 		for (int i = 0; i < velocityComponents->getQuantity(); i++)
 		{
-			auto& velocityComponent = velocityComponents->components[i];
-			auto& transform = transforms->get(velocityComponent.id);
-			if (transform.isStatic)
-				continue;
+			auto& vc = velocityComponents->components[i];
+			auto& tr = transforms->get(vc.id);
+			if (tr.isStatic) continue;
 
-			if (velocityComponent.useGravity)
-			{
-				velocityComponent.velocity.y -= 9.81f * deltaTime;
-			}
+			if (vc.useGravity)
+				vc.velocity.y -= 9.81f * deltaTime;
 
-			glm::vec3 newTranslation = transform.translation + velocityComponent.velocity * deltaTime;
-			scene->getTransformSystem().translateEntity(velocityComponent.id, newTranslation);
-			glm::vec3 newRotation = transform.eulerRotation + velocityComponent.angularVelocity * deltaTime;
-			scene->getTransformSystem().rotateEntity(velocityComponent.id, newRotation);
+			glm::vec3 newPos = tr.translation + vc.velocity * deltaTime;
+			scene->getTransformSystem().translateEntity(vc.id, newPos);
+
+			glm::vec3 newRot = tr.eulerRotation + vc.angularVelocity * deltaTime;
+			scene->getTransformSystem().rotateEntity(vc.id, newRot);
 		}
 	}
 
-	auto butterControllers = scene->getStorage<ButterController>();
-	if (butterControllers != nullptr)
+	if (auto butterControllers = scene->getStorage<ButterController>())
 	{
-		for (int i = 0; i < butterControllers->getQuantity(); i++)
-		{
-			auto& butterController = butterControllers->components[i];
-			butterController.update(window, scene.get(), deltaTime);
-		}
+		for (int i = 0; i < butterControllers->getQuantity(); ++i)
+			butterControllers->components[i].update(window, scene.get(), deltaTime);
 	}
 
+	
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
+	
 	auto& cs = scene->getCollisionSystem();
 	cs.CheckCollisions();
-
 	auto& collisions = cs.GetCollisions();
-
 	bool updateScene = false;
-
-	for (const CollisionEvent& collision : collisions)
+	for (auto& col : collisions)
 	{
-		auto& transformA = scene->getComponent<Transform>(collision.objectA);
-		auto& transformB = scene->getComponent<Transform>(collision.objectB);
-
-		auto& colliderA = scene->getComponent<ColliderComponent>(collision.objectA);
-		auto& colliderB = scene->getComponent<ColliderComponent>(collision.objectB);
-
-		if (colliderA.isStatic && colliderB.isStatic)
-		{
-			continue;
-		}
+		auto& trA = scene->getComponent<Transform>(col.objectA);
+		auto& trB = scene->getComponent<Transform>(col.objectB);
+		auto& colA = scene->getComponent<ColliderComponent>(col.objectA);
+		auto& colB = scene->getComponent<ColliderComponent>(col.objectB);
+		if (colA.isStatic && colB.isStatic) continue;
 
 		updateScene = true;
-		glm::vec3 separationVector = collision.separationVector;
-		if (!colliderA.isStatic && !colliderB.isStatic)
-		{
-			separationVector /= 2.0f;
-		}
+		glm::vec3 sep = col.separationVector;
+		if (!colA.isStatic && !colB.isStatic) sep *= 0.5f;
 
-		if (!colliderA.isStatic)
+		if (!colA.isStatic)
 		{
-			glm::mat4 newMatrix = transformA.globalMatrix;
-			newMatrix[3] += glm::vec4(separationVector, 0.0f);
-			ts.setGlobalMatrix(collision.objectA, newMatrix);
+			glm::mat4 m = trA.globalMatrix;
+			m[3] += glm::vec4(sep, 0.0f);
+			ts.setGlobalMatrix(col.objectA, m);
 		}
-
-		if (!colliderB.isStatic)
+		if (!colB.isStatic)
 		{
-			glm::mat4 newMatrix = transformB.globalMatrix;
-			newMatrix[3] -= glm::vec4(separationVector, 0.0f);
-			ts.setGlobalMatrix(collision.objectB, newMatrix);
+			glm::mat4 m = trB.globalMatrix;
+			m[3] -= glm::vec4(sep, 0.0f);
+			ts.setGlobalMatrix(col.objectB, m);
+		}
+	}
+	if (updateScene) ts.update();
+
+	
+	{
+		auto& ai = scene->getFlyAISystem();
+		ai.deltaTime = deltaTime;
+		ai.update();
+	}
+	ts.update();
+
+
+	if (auto bhs = scene->getStorage<ButterHealthComponent>())
+	{
+		for (int i = 0; i < bhs->getQuantity(); ++i)
+		{
+			auto& bh = bhs->components[i];
+			auto& tr = scene->getComponent<Transform>(bh.id);
+
+			if (bh.burning && bh.timeLeft > 0.0f)
+				bh.timeLeft -= deltaTime;
+
+			if (bh.healing && bh.timeLeft < bh.secondsToDie)
+				bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
+
+			bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
+
+			float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
+			float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
+			tr.scale = bh.startScale * scaleRatio;
+
+			bh.burning = bh.healing = false;
 		}
 	}
 
-	if (updateScene)
-		ts.update();
-	auto& aiSystem = scene->getFlyAISystem();
-	aiSystem.deltaTime = deltaTime;
-	aiSystem.update();
-	ts.update();
-	EventSystem& eventSystem = scene->getEventSystem();
-	eventSystem.processEvents();
+
+	scene->getEventSystem().processEvents();
+
+	
 }
+
+
 
 
 
@@ -476,6 +493,7 @@ void Application::setupScene()
 
 	ent = player = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Player";
+	scene->getComponent<ObjectInfoComponent>(ent).tag = "maslo";
 	ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
@@ -487,6 +505,9 @@ void Application::setupScene()
 	sphereCollider->radius = 0.1f;
 
 	scene->addComponent<VelocityComponent>(ent, {});
+	auto& bh = scene->addComponent<ButterHealthComponent>(player, {});
+	bh.startScale = scene->getComponent<Transform>(player).scale;
+
 	scene->addComponent<ButterController>(ent, { 3.0f, 5.0f });
 
 
@@ -578,6 +599,35 @@ void Application::setupScene()
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 
+
+
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Test1";
+
+	ts.rotateEntity(ent, glm::vec3(0.0f, 0.0f, 0.0f));
+	ts.translateEntity(ent, glm::vec3(-2.0f, 1.0f, 0.7f));
+	ts.scaleEntity(ent, glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->getComponent<Transform>(ent).isStatic = true;
+
+	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Test2";
+
+	ts.rotateEntity(ent, glm::vec3(0.0f, 0.0f, 0.0f));
+	ts.translateEntity(ent, glm::vec3(-2.0f, 1.0f, 3.0f));
+	ts.scaleEntity(ent, glm::vec3(1.0f, 1.0f, 1.0f));
+	scene->getComponent<Transform>(ent).isStatic = true;
+
+	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
+
+
+
+
+
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Cloud";
 
@@ -638,6 +688,77 @@ void Application::setupEvents()
 			fly.state = fly.Returning;
 		}
 		});
+	//heat
+eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+{
+    const auto& ev = static_cast<const CollisionEvent&>(e);
+
+    auto isMaslo = [&](EntityID id)
+        { return scene->hasComponent<ObjectInfoComponent>(id) &&
+                 scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
+
+    auto isHeat = [&](EntityID id)
+        { return scene->hasComponent<HeatComponent>(id); };
+
+    bool condition =
+        (isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
+        (isMaslo(ev.objectB) && isHeat(ev.objectA));
+
+    if (!condition) return;
+
+    
+    spdlog::info("cieplo");
+
+    //wlaczam burning
+    ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
+                                    isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
+    bh.burning = true;                 
+});
+
+	//freeze
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+		{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+			bool aIsPlayer = (ev.objectA == player);
+			bool bIsPlayer = (ev.objectB == player);
+
+			bool aIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectA);
+			bool bIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectB);
+
+			if ((aIsPlayer && bIsFreeze) || (bIsPlayer && aIsFreeze))
+			{
+
+				auto& freeze = scene->getComponent<FreezeComponent>(aIsFreeze ? ev.objectA : ev.objectB);
+				spdlog::info("{}", freeze.OnEnterMessage);
+			}
+		});
+
+	//regen
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+		{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+			auto isMaslo = [&](EntityID id) { return scene->hasComponent<ObjectInfoComponent>(id)
+				&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
+			auto isRegen = [&](EntityID id) { return scene->hasComponent<RegenComponent>(id); };
+
+			bool condition = (isMaslo(ev.objectA) && isRegen(ev.objectB)) ||
+				(isMaslo(ev.objectB) && isRegen(ev.objectA));
+			if (!condition) return;
+
+			
+			auto& regen = scene->getComponent<RegenComponent>(
+				isRegen(ev.objectA) ? ev.objectA : ev.objectB);
+			spdlog::info("{}", regen.OnEnterMessage);
+
+			
+			auto& bh = scene->getComponent<ButterHealthComponent>(
+				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
+			bh.healing = true;
+		});
 
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
@@ -661,6 +782,7 @@ void Application::setupEvents()
 		}
 		});
 
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -682,4 +804,8 @@ void Application::setupEvents()
 			}
 		}
 		});
+
+
+
+
 }

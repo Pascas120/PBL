@@ -27,7 +27,7 @@ enum class FlyVariant : uint8_t {
     PURPLE = 3,
     COUNT
 };
-
+enum class ElevatorState { Closed, Opening, Open, Closing };
 class Model;
 
 struct ObjectInfoComponent {
@@ -165,5 +165,53 @@ struct VelocityComponent {
 	bool useGravity = true;
 
 	EntityID id = (EntityID)-1;
+};
+
+struct HeatComponent {
+    float triggerRadius = 1.0f;
+    bool  hasTriggered = false;        
+    std::string OnEnterMessage = "cieplo";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct RegenComponent {
+    float triggerRadius = 1.0f;
+    bool  hasTriggered = false;
+    std::string OnEnterMessage = "regen";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct FreezeComponent {
+    float triggerRadius = 1.0f;
+    bool hasTriggered = false;
+    std::string OnEnterMessage = "zimno";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct ButterHealthComponent
+{
+    float secondsToDie = 5.0f;
+    float secondsToHeal = 5.0f;      
+    float minScale = 0.5f;
+    float timeLeft = secondsToDie;
+    bool  burning = false;
+    bool  healing = false;     
+    glm::vec3 startScale;
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct ElevatorComponent {
+    EntityID id = (EntityID)-1;            
+    float openHeight = 5.0f;
+    float speed = 2.0f;
+    EntityID buttonEntity = (EntityID)-1;  
+    glm::vec3 closedPos;                   
+    glm::vec3 openPos;                     
+    bool movingUp = false;
+    bool movingDown = false;
+};
+
+struct ButtonComponent {
+    EntityID id = (EntityID)-1;           
+    EntityID elevatorEntity = (EntityID)-1;
+    float pressDepth = 0.1f;
+    float pressSpeed = 4.0f;
+    bool isPressed = false;
 };
 #endif //PBL_COMPONENTS_H
