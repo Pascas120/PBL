@@ -35,10 +35,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         return;
     }
 
-	std::vector<AttachmentType> attachments = { AttachmentType::COLOR, AttachmentType::DEPTH };
-	if (showMotionBlur) {
-		attachments.push_back(AttachmentType::VELOCITY);
-	}
     CustomFramebuffer* customFramebufferPtr;
 	if (showMotionBlur) {
 		customFramebufferPtr = &velFramebuffer;
@@ -50,9 +46,13 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 	auto [fboWidth, fboHeight] = customFramebuffer.GetSizePair();
 	if (fboWidth != width || fboHeight != height) {
 		customFramebuffer.Resize(width, height);
+	}
+	auto [pfboWidth, pfboHeight] = postProcessingFramebuffer1.GetSizePair();
+	if (pfboWidth != width || pfboHeight != height) {
 		postProcessingFramebuffer1.Resize(width, height);
 		postProcessingFramebuffer2.Resize(width, height);
 	}
+
 	Shader* shadowShader = postShaders.at("ShadowMap");
 	Shader* sobelShader = postShaders.at("Sobel");
 	Shader* motionBlurShader = postShaders.at("MotionBlur");

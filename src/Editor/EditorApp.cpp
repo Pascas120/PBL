@@ -209,7 +209,7 @@ namespace Editor
                 Utils::openFolder("res");
             }
 
-            std::string fpsText = std::format("{:.1f} FPS", ImGui::GetIO().Framerate);
+            std::string fpsText = fmt::format("{:.1f} FPS", ImGui::GetIO().Framerate);
 			float fpsTextWidth = ImGui::CalcTextSize(fpsText.c_str()).x;
 			ImGui::SetCursorPosX(menuBarSize.x - (resButtonRightOffset + fpsTextWidth) / 2.0f);
             ImGui::Text(fpsText.c_str());

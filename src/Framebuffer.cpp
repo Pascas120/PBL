@@ -28,8 +28,21 @@ CustomFramebuffer::~CustomFramebuffer()
 void CustomFramebuffer::Clear() const
 {
 	glDeleteFramebuffers(1, &fbo);
-	glDeleteTextures(1, &colorTexture);
-	glDeleteTextures(1, &depthTexture);
+	for (auto attachment : config.attachments)
+	{
+		switch (attachment)
+		{
+		case AttachmentType::COLOR:
+			glDeleteTextures(1, &colorTexture);
+			break;
+		case AttachmentType::DEPTH:
+			glDeleteTextures(1, &depthTexture);
+			break;
+		case AttachmentType::VELOCITY:
+			glDeleteTextures(1, &velocityTexture);
+			break;
+		}
+	}
 }
 
 void CustomFramebuffer::Setup()

@@ -10,7 +10,7 @@ in vec2 texCoord;
 out vec4 fragColor;
 
 const int NUM_SAMPLES = 8;
-const float STRENGTH = 2.0;
+const float STRENGTH = 1.0;
 
 void main()
 {

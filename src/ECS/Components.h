@@ -32,6 +32,7 @@ class Model;
 struct ObjectInfoComponent {
     std::string name;
     std::string uuid;
+    std::string tag;
 
 	EntityID id;
 };

@@ -105,6 +105,10 @@ namespace Serialization
 	{
 		j["name"] = c.name;
 		j["uuid"] = c.uuid;
+		if (!c.tag.empty())
+		{
+			j["tag"] = c.tag;
+		}
 	}
 
 	static void from_json(const nlohmann::json& j, ObjectInfoComponent& c, const DeserializationContext& context)
@@ -112,6 +116,15 @@ namespace Serialization
 		j.at("name").get_to(c.name);
 		if (context.deserializeUuid)
 			j.at("uuid").get_to(c.uuid);
+
+		if (j.contains("tag"))
+		{
+			j.at("tag").get_to(c.tag);
+		}
+		else
+		{
+			c.tag.clear();
+		}
 	}
 
 	static void to_json(nlohmann::json& j, const Transform& c, const SerializationContext& context)

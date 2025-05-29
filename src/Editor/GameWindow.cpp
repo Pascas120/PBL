@@ -41,7 +41,6 @@ namespace Editor
 		ImVec4 bgColor = ImGui::GetStyle().Colors[ImGuiCol_WindowBg];
 		bgColor.w = 1.0f;
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
-		static bool showBlur = true;
 		ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Game", NULL, ImGuiWindowFlags_MenuBar))
 		{
@@ -64,7 +63,6 @@ namespace Editor
 					
 					ImGui::EndCombo();
 				}
-				ImGui::Checkbox("Show Blur", &showBlur);
 
 
 				ImGui::EndMenuBar();
@@ -111,7 +109,7 @@ namespace Editor
 
 
 			context.scene->getRenderingSystem().useTree = editor->playMode == PlayMode::PLAY;
-			context.scene->getRenderingSystem().showMotionBlur = showBlur;
+			context.scene->getRenderingSystem().showMotionBlur = editor->playMode != PlayMode::STOP;
 			editor->render(*gameFramebuffer);
 			GLuint texture = gameFramebuffer->GetColorTexture();
 

@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <stdint.h>
 #include <utility>
-#include <vector>
+#include <set>
 
 class Framebuffer
 {
@@ -58,7 +58,7 @@ struct FramebufferConfig
 {
 	uint32_t width;
 	uint32_t height;
-	std::vector<AttachmentType> attachments { AttachmentType::COLOR, AttachmentType::DEPTH };
+	std::set<AttachmentType> attachments { AttachmentType::COLOR, AttachmentType::DEPTH };
 };
 
 class CustomFramebuffer : public Framebuffer

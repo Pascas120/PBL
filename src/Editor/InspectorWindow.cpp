@@ -49,7 +49,6 @@ namespace Editor
                 assert(scene->hasComponent<ObjectInfoComponent>(editor->selectedObject));
                 auto& objectInfo = scene->getComponent<ObjectInfoComponent>(editor->selectedObject);
                 std::string objName = objectInfo.name;
-                std::string displayName = objName + "###objName";
                 const char* name = objName.c_str();
 
                 if (ImGui::InputText("Name", (char*)name, 64))
@@ -61,6 +60,11 @@ namespace Editor
                     ImGui::End();
                     return;
                 }
+				std::string tag = objectInfo.tag;
+				if (ImGui::InputText("Tag", (char*)tag.c_str(), 64))
+				{
+					objectInfo.tag = tag;
+				}
 
                 ImGui::Separator();
 
