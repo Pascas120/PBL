@@ -549,7 +549,7 @@ void Application::setupScene()
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
 	boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
-	boxCollider->halfSize = glm::vec3(163.8f, 109.3f, 87.6f);
+	boxCollider->halfSize = glm::vec3(112.8f, 91.5f, 153.0f);
 
 	scene->addComponent<VelocityComponent>(ent, {});
 	scene->addComponent<BreadController>(ent, { 3.0f, 5.0f });
@@ -635,6 +635,9 @@ void Application::setupScene()
 void Application::setupEvents()
 {
 	EventSystem& eventSystem = scene->getEventSystem();
+
+	// reset stanu much po zaatakowaniu masła
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -654,6 +657,9 @@ void Application::setupEvents()
 			fly.state = fly.Returning;
 		}
 		});
+
+
+	// zerowanie pionowej prędkości po dotknięciu podłoża
 
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
@@ -677,6 +683,10 @@ void Application::setupEvents()
 		}
 		});
 
+
+	// ponowne umożliwienie skakania po dotknięciu podłoża
+	// chleb
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -699,6 +709,8 @@ void Application::setupEvents()
 		}
 		});
 
+	// masło
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -720,4 +732,42 @@ void Application::setupEvents()
 			}
 		}
 		});
+
+
+	// odbijanie się masła od chleba
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		ButterController* butter;
+		BreadController* bread;
+		if (scene->hasComponent<ButterController>(event.objectA) &&
+			scene->hasComponent<BreadController>(event.objectB))
+		{
+			butter = &scene->getComponent<ButterController>(event.objectA);
+			bread = &scene->getComponent<BreadController>(event.objectB);
+		}
+		else if (scene->hasComponent<BreadController>(event.objectA) &&
+			scene->hasComponent<ButterController>(event.objectB))
+		{
+			butter = &scene->getComponent<ButterController>(event.objectB);
+			bread = &scene->getComponent<BreadController>(event.objectA);
+		}
+		else
+		{
+			return;
+		}
+
+		if (bread && butter)
+		{
+			auto& velocityComponent = scene->getComponent<VelocityComponent>(butter->id);
+			if (velocityComponent.velocity.y < 0.1f && butter->isJumping)
+			{
+				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
+			}
+		}
+		});
+
+
 }

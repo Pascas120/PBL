@@ -12,19 +12,19 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		{
-			movement.z += moveSpeed;
+			movement.z -= moveSpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
-			movement.z -= moveSpeed;
+			movement.z += moveSpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		{
-			movement.x += moveSpeed;
+			movement.x -= moveSpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		{
-			movement.x -= moveSpeed;
+			movement.x += moveSpeed;
 		}
 
 		if (glm::length(movement) > 0.0f)
