@@ -449,9 +449,9 @@ void Application::endFrame()
 void Application::setupScene()
 {
 	models.emplace_back(new Model("res/models/mucha.fbx"));
-	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
-	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/maslpo.fbx"));
+	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
+	models.emplace_back(new Model("res/models/chlyb.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];
@@ -485,11 +485,11 @@ void Application::setupScene()
 
 
 	ent = player = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Player";
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
 	ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &model2 });
+	scene->addComponent<ModelComponent>(ent, { shaders[2], &model2 });
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
 	SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
@@ -526,7 +526,7 @@ void Application::setupScene()
 
 	scene->addComponent<ModelComponent>(
 		ent,
-		{ shaders[0],
+		{ shaders[2],
 		  flyModels[static_cast<size_t>(SELECTED_FLY)] });  
 
 
@@ -541,7 +541,7 @@ void Application::setupScene()
 
 
 	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Chleb";
 
 	ts.scaleEntity(ent, glm::vec3(0.004f, 0.004f, 0.004f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 1.0f, 0.0f));

@@ -14,16 +14,16 @@
                 "isStatic": false
             },
             "ModelComponent": {
-                "model": "res/models/dee/waddledee.obj",
-                "shader": "Basic"
+                "model": "res/models/chlyb.fbx",
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Player",
-                "uuid": "962eb5f7-915f-2c83-c6a4-9e5b4efccb37"
+                "uuid": "7dfe4b21-5389-51fc-c2bd-ef436b51b375"
             },
             "Transform": {
                 "children": [
-                    "01f73c3d-0968-cf60-51ed-d1f676ffc8e7"
+                    "6d822361-ae8e-845f-8a91-ea04b75ded2f"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -52,7 +52,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7786259651184082,
+                "aspectRatio": 1.7826087474822998,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -70,7 +70,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Player Camera",
-                "uuid": "01f73c3d-0968-cf60-51ed-d1f676ffc8e7"
+                "uuid": "6d822361-ae8e-845f-8a91-ea04b75ded2f"
             },
             "Transform": {
                 "children": [],
@@ -80,7 +80,7 @@
                     0.0
                 ],
                 "isStatic": true,
-                "parent": "962eb5f7-915f-2c83-c6a4-9e5b4efccb37",
+                "parent": "7dfe4b21-5389-51fc-c2bd-ef436b51b375",
                 "rotation": [
                     7.59040297282354e-09,
                     0.9848077297210693,
@@ -124,7 +124,7 @@
                 "diveSpeed": 3.0,
                 "groundY": 0.0,
                 "idBread": "",
-                "idButter": "962eb5f7-915f-2c83-c6a4-9e5b4efccb37",
+                "idButter": "7dfe4b21-5389-51fc-c2bd-ef436b51b375",
                 "patrolHeightOffset": 3.0,
                 "patrolPointReachedThreshold": 0.5,
                 "patrolRange": 4.0,
@@ -139,11 +139,11 @@
             },
             "ModelComponent": {
                 "model": "res/models/mucha.fbx",
-                "shader": "Basic"
+                "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Fly",
-                "uuid": "8b3acaa4-1b82-e8d6-d51c-6a0ac5d5ccad"
+                "uuid": "eb6b7f9f-1eef-893b-9864-dfa06a7df7d0"
             },
             "Transform": {
                 "children": [],
@@ -173,13 +173,29 @@
             }
         },
         {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        163.8000030517578,
+                        109.30000305175781,
+                        87.5999984741211
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
             "ModelComponent": {
                 "model": "res/models/maslpo.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
-                "uuid": "eee4b24a-a196-778b-3845-f581d0a835ce"
+                "uuid": "07f93d51-100d-7ca1-deaf-79ac1f8d78d3"
             },
             "Transform": {
                 "children": [],
@@ -197,13 +213,13 @@
                     1.0
                 ],
                 "scale": [
-                    0.009999999776482582,
-                    0.009999999776482582,
-                    0.009999999776482582
+                    0.004000000189989805,
+                    0.004000000189989805,
+                    0.004000000189989805
                 ],
                 "translation": [
                     2.5,
-                    0.0,
+                    1.0,
                     0.0
                 ]
             }
@@ -231,7 +247,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Floor",
-                "uuid": "64d1855b-bc63-72a6-6500-3139f54481f9"
+                "uuid": "be960f23-5cb2-ea2d-d503-47bb037411d6"
             },
             "Transform": {
                 "children": [],
@@ -283,7 +299,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 1",
-                "uuid": "175d52f5-4bdf-8af1-2f3e-88b15a5d0b9b"
+                "uuid": "89c3c192-41d4-819f-ae3f-04a9d7388635"
             },
             "Transform": {
                 "children": [],
@@ -335,7 +351,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 2",
-                "uuid": "ee684302-b76d-c46e-4f7e-6c4b5b4cc48d"
+                "uuid": "f0392980-3c1b-c702-1461-8273b5dc5a21"
             },
             "Transform": {
                 "children": [],
@@ -387,7 +403,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 3",
-                "uuid": "87faf848-f19b-b95e-dc42-6c01315ab4c0"
+                "uuid": "2a2f1548-515f-dfe5-676f-9217e2fd4a29"
             },
             "Transform": {
                 "children": [],
@@ -439,7 +455,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 4",
-                "uuid": "3f16c4ca-8985-fe5c-f557-ad1f3c962098"
+                "uuid": "5d8184ca-d66d-1dc6-ccab-8c7ba11cf303"
             },
             "Transform": {
                 "children": [],
@@ -491,7 +507,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Wall 5",
-                "uuid": "35ac5a08-9563-fd9a-f95e-17f9f2c35e23"
+                "uuid": "39cd04d7-4ba2-7c83-8609-9abc86804d6b"
             },
             "Transform": {
                 "children": [],
@@ -535,7 +551,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Cloud",
-                "uuid": "3738722c-afe8-9b88-1292-ac7af077007d"
+                "uuid": "97b94b63-1b6a-ff9f-8e79-13879d582a3d"
             },
             "Transform": {
                 "children": [],
@@ -567,7 +583,7 @@
         {
             "ObjectInfoComponent": {
                 "name": "Text",
-                "uuid": "904f8cbc-2c39-4538-4913-cd86298d5725"
+                "uuid": "544b5325-636d-5622-5871-f8a3fe53418a"
             },
             "TextComponent": {
                 "color": [
