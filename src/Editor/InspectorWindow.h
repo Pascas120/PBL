@@ -23,5 +23,7 @@ namespace Editor
 		void drawDirectionalLight(const EditorContext& context, EntityID id);
 
 		void drawFlyAi(const EditorContext& context, EntityID id);
+
+		void drawVelocity(const EditorContext& context, EntityID id);
 	};
 }

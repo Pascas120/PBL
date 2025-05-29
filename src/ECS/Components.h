@@ -157,4 +157,12 @@ struct FlyAIComponent {
 
 
 };
+
+struct VelocityComponent {
+	glm::vec3 velocity = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 angularVelocity = { 0.0f, 0.0f, 0.0f };
+	bool useGravity = true;
+
+	EntityID id = (EntityID)-1;
+};
 #endif //PBL_COMPONENTS_H

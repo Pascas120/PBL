@@ -340,6 +340,28 @@ namespace Editor
                 fly.state = fly.Returning;
             }
             });
+
+        eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+            const auto& event = static_cast<const CollisionEvent&>(e);
+            if (!event.isColliding) return;
+
+			VelocityComponent* componentA = scene->hasComponent<VelocityComponent>(event.objectA) ?
+				&scene->getComponent<VelocityComponent>(event.objectA) : nullptr;
+			VelocityComponent* componentB = scene->hasComponent<VelocityComponent>(event.objectB) ?
+				&scene->getComponent<VelocityComponent>(event.objectB) : nullptr;
+
+            if (abs(event.separationVector.y) > 0.01f)
+            {
+                if (componentA && componentA->useGravity)
+                {
+                    componentA->velocity.y = 0.0f;
+                }
+                if (componentB && componentB->useGravity)
+                {
+                    componentB->velocity.y = 0.0f;
+                }
+            }
+            });
 	}
 
 }

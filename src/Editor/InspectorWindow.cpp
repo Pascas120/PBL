@@ -75,6 +75,7 @@ namespace Editor
                 drawPointLight(context, editor->selectedObject);
                 drawDirectionalLight(context, editor->selectedObject);
 				drawFlyAi(context, editor->selectedObject);
+				drawVelocity(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -106,6 +107,7 @@ namespace Editor
                     ADD_COMPONENT(PointLightComponent, "Point Light");
                     ADD_COMPONENT(DirectionalLightComponent, "Directional Light");
 					ADD_COMPONENT(FlyAIComponent, "Fly AI");
+					ADD_COMPONENT(VelocityComponent, "Velocity");
 
 
                     ImGui::EndCombo();
@@ -444,4 +446,22 @@ namespace Editor
 		}
 		ImGui::PopID();
 	}
+
+    void InspectorWindow::drawVelocity(const EditorContext& context, EntityID id)
+    {
+		auto& scene = context.scene;
+		if (!scene->hasComponent<VelocityComponent>(id))
+			return;
+		auto& velocity = scene->getComponent<VelocityComponent>(id);
+		ImGui::PushID(&velocity);
+		bool open = ImGui::CollapsingHeader("Velocity", ImGuiTreeNodeFlags_DefaultOpen);
+		if (componentContextMenu<VelocityComponent>(context, id)) return;
+		if (open)
+		{
+			ImGui::DragFloat3("Linear", &velocity.velocity[0], 0.1f, -100.0f, 100.0f);
+			ImGui::DragFloat3("Angular", &velocity.angularVelocity[0], 0.1f, -100.0f, 100.0f);
+			ImGui::Checkbox("Use Gravity", &velocity.useGravity);
+		}
+		ImGui::PopID();
+    }
 }

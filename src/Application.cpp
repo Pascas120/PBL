@@ -192,6 +192,32 @@ void Application::input()
 void Application::update()
 {
 	scene->getRenderingSystem().updatePreviousModelMatrices();
+
+	auto transforms = scene->getStorage<Transform>();
+	auto velocityComponents = scene->getStorage<VelocityComponent>();
+
+	if (velocityComponents != nullptr)
+	{
+		for (int i = 0; i < velocityComponents->getQuantity(); i++)
+		{
+			auto& velocityComponent = velocityComponents->components[i];
+			auto& transform = transforms->get(velocityComponent.id);
+			if (transform.isStatic)
+				continue;
+
+			if (velocityComponent.useGravity)
+			{
+				velocityComponent.velocity.y -= 9.81f * deltaTime;
+			}
+
+			glm::vec3 newTranslation = transform.translation + velocityComponent.velocity * deltaTime;
+			scene->getTransformSystem().translateEntity(velocityComponent.id, newTranslation);
+			glm::vec3 newRotation = transform.eulerRotation + velocityComponent.angularVelocity * deltaTime;
+			scene->getTransformSystem().rotateEntity(velocityComponent.id, newRotation);
+		}
+	}
+
+
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
