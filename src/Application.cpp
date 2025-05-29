@@ -543,10 +543,14 @@ void Application::setupScene()
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
 
-	ts.scaleEntity(ent, glm::vec3(0.01f, 0.01f, 0.01f));
+	ts.scaleEntity(ent, glm::vec3(0.004f, 0.004f, 0.004f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider->halfSize = glm::vec3(163.8f, 109.3f, 87.6f);
+
 	scene->addComponent<VelocityComponent>(ent, {});
 	scene->addComponent<BreadController>(ent, { 3.0f, 5.0f });
 

@@ -29,7 +29,7 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime) 
 		}
 		else
 		{
-			movement.y -= velocity.velocity.y;
+			movement.y = velocity.velocity.y;
 		}
 
 		velocity.velocity = movement;
