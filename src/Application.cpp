@@ -147,7 +147,7 @@ void Application::input()
 		return;
 
 
-	auto& transform = scene->getComponent<Transform>(player);
+	/*auto& transform = scene->getComponent<Transform>(player);
 	glm::vec3 translation = transform.translation;
 	glm::vec3 rotation = transform.eulerRotation;
 
@@ -186,7 +186,7 @@ void Application::input()
 		auto& ts = scene->getTransformSystem();
 		ts.translateEntity(player, translation);
 		ts.rotateEntity(player, rotation);
-	}
+	}*/
 }
 
 void Application::update()
@@ -224,6 +224,16 @@ void Application::update()
 		{
 			auto& butterController = butterControllers->components[i];
 			butterController.update(window, scene.get(), deltaTime);
+		}
+	}
+
+	auto breadControllers = scene->getStorage<BreadController>();
+	if (breadControllers != nullptr)
+	{
+		for (int i = 0; i < breadControllers->getQuantity(); i++)
+		{
+			auto& breadController = breadControllers->components[i];
+			breadController.update(window, scene.get(), deltaTime);
 		}
 	}
 
@@ -534,9 +544,11 @@ void Application::setupScene()
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
 
 	ts.scaleEntity(ent, glm::vec3(0.01f, 0.01f, 0.01f));
-	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
+	scene->addComponent<VelocityComponent>(ent, {});
+	scene->addComponent<BreadController>(ent, { 3.0f, 5.0f });
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -657,6 +669,28 @@ void Application::setupEvents()
 			if (componentB && componentB->useGravity)
 			{
 				componentB->velocity.y = 0.0f;
+			}
+		}
+		});
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		BreadController* componentA = scene->hasComponent<BreadController>(event.objectA) ?
+			&scene->getComponent<BreadController>(event.objectA) : nullptr;
+		BreadController* componentB = scene->hasComponent<BreadController>(event.objectB) ?
+			&scene->getComponent<BreadController>(event.objectB) : nullptr;
+
+		if (abs(event.separationVector.y) > 0.01f)
+		{
+			if (componentA)
+			{
+				componentA->isJumping = false;
+			}
+			if (componentB)
+			{
+				componentB->isJumping = false;
 			}
 		}
 		});

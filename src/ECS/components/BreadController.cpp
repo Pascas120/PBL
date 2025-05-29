@@ -14,10 +14,10 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime) 
 			movement.z -= moveSpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-			movement.x -= moveSpeed;
+			movement.x += moveSpeed;
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-			movement.x += moveSpeed;
+			movement.x -= moveSpeed;
 		}
 		if (glm::length(movement) > 0.0f) {
 			movement = glm::normalize(movement) * moveSpeed;
