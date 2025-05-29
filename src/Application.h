@@ -78,6 +78,8 @@ protected:
 	// TODO: player component
 	EntityID player = (EntityID)-1;
 
+	void setupEvents();
+
 private:
 	// TODO: remove
 	void setupScene();

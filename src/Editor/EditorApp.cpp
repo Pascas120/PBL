@@ -281,6 +281,7 @@ namespace Editor
                 }
 
                 scene = std::make_shared<Scene>(*sceneBackup);
+                setupEvents();
                 sceneBackup = nullptr;
             }
 			ImGui::SetWindowFocus("Scene");
@@ -320,48 +321,7 @@ namespace Editor
 		scenePath = path;
 
 
-        EventSystem& eventSystem = scene->getEventSystem();
-        eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-            const auto& event = static_cast<const CollisionEvent&>(e);
-            if (!event.isColliding) return;
-
-            bool aIsPlayer = (event.objectA == player);
-            bool bIsPlayer = (event.objectB == player);
-
-            bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
-            bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
-
-
-            if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
-            {
-                spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
-                FlyAIComponent& fly = scene->getComponent<FlyAIComponent>(aIsFly ? event.objectA : event.objectB);
-                fly.diveCooldownTimer = fly.diveCooldownTime;
-                fly.state = fly.Returning;
-            }
-            });
-
-        eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-            const auto& event = static_cast<const CollisionEvent&>(e);
-            if (!event.isColliding) return;
-
-			VelocityComponent* componentA = scene->hasComponent<VelocityComponent>(event.objectA) ?
-				&scene->getComponent<VelocityComponent>(event.objectA) : nullptr;
-			VelocityComponent* componentB = scene->hasComponent<VelocityComponent>(event.objectB) ?
-				&scene->getComponent<VelocityComponent>(event.objectB) : nullptr;
-
-            if (abs(event.separationVector.y) > 0.01f)
-            {
-                if (componentA && componentA->useGravity)
-                {
-                    componentA->velocity.y = 0.0f;
-                }
-                if (componentB && componentB->useGravity)
-                {
-                    componentB->velocity.y = 0.0f;
-                }
-            }
-            });
+        setupEvents();
 	}
 
 }

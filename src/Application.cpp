@@ -217,6 +217,15 @@ void Application::update()
 		}
 	}
 
+	auto butterControllers = scene->getStorage<ButterController>();
+	if (butterControllers != nullptr)
+	{
+		for (int i = 0; i < butterControllers->getQuantity(); i++)
+		{
+			auto& butterController = butterControllers->components[i];
+			butterController.update(window, scene.get(), deltaTime);
+		}
+	}
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
@@ -456,6 +465,8 @@ void Application::setupScene()
 	TextComponent* textComponent;
 	ColliderComponent* colliderComponent;
 
+	setupEvents();
+
 	auto& ts = scene->getTransformSystem();
 
 
@@ -474,6 +485,10 @@ void Application::setupScene()
 	SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
 	sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
 	sphereCollider->radius = 0.1f;
+
+	scene->addComponent<VelocityComponent>(ent, {});
+	scene->addComponent<ButterController>(ent, { 3.0f, 5.0f });
+
 
 	ent = scene->createEntity(player);
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Player Camera";
@@ -598,4 +613,73 @@ void Application::setupScene()
 	for (Shader* shader : postShaderVec) {
 		postShaders[shader->getName()] = shader;
 	}
+}
+
+
+void Application::setupEvents()
+{
+	EventSystem& eventSystem = scene->getEventSystem();
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		bool aIsPlayer = (event.objectA == player);
+		bool bIsPlayer = (event.objectB == player);
+
+		bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
+		bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
+
+
+		if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
+		{
+			spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
+			FlyAIComponent& fly = scene->getComponent<FlyAIComponent>(aIsFly ? event.objectA : event.objectB);
+			fly.diveCooldownTimer = fly.diveCooldownTime;
+			fly.state = fly.Returning;
+		}
+		});
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		VelocityComponent* componentA = scene->hasComponent<VelocityComponent>(event.objectA) ?
+			&scene->getComponent<VelocityComponent>(event.objectA) : nullptr;
+		VelocityComponent* componentB = scene->hasComponent<VelocityComponent>(event.objectB) ?
+			&scene->getComponent<VelocityComponent>(event.objectB) : nullptr;
+
+		if (abs(event.separationVector.y) > 0.01f)
+		{
+			if (componentA && componentA->useGravity)
+			{
+				componentA->velocity.y = 0.0f;
+			}
+			if (componentB && componentB->useGravity)
+			{
+				componentB->velocity.y = 0.0f;
+			}
+		}
+		});
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		ButterController* componentA = scene->hasComponent<ButterController>(event.objectA) ?
+			&scene->getComponent<ButterController>(event.objectA) : nullptr;
+		ButterController* componentB = scene->hasComponent<ButterController>(event.objectB) ?
+			&scene->getComponent<ButterController>(event.objectB) : nullptr;
+
+		if (abs(event.separationVector.y) > 0.01f)
+		{
+			if (componentA)
+			{
+				componentA->isJumping = false;
+			}
+			if (componentB)
+			{
+				componentB->isJumping = false;
+			}
+		}
+		});
 }
