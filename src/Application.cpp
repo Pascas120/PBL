@@ -486,27 +486,27 @@ void Application::setupScene()
 
 	ent = player = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
-	ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+	ts.scaleEntity(ent, glm::vec3(0.003f, 0.003f, 0.003f));
+	ts.translateEntity(ent, glm::vec3(0.0f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model2 });
 
-	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
-	SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
-	sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
-	sphereCollider->radius = 0.1f;
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider->halfSize = glm::vec3(163.8f, 109.3f, 87.6f);
 
 	scene->addComponent<VelocityComponent>(ent, {});
 	scene->addComponent<ButterController>(ent, { 3.0f, 5.0f });
 
 
-	ent = scene->createEntity(player);
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Player Camera";
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Camera";
 	auto& playerCam = scene->addComponent<CameraComponent>(ent, {});
 	playerCam.camera.getFrustum().setProjectionMatrix(
 		glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f));
-	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
-	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
+	ts.translateEntity(ent, glm::vec3(0.0f, 5.0f, 11.0f));
+	ts.rotateEntity(ent, glm::vec3(-25.0f, 0.0f, 0.0f));
 
 	//mucha
 	ent = scene->createEntity();
@@ -531,7 +531,7 @@ void Application::setupScene()
 
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
-	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
@@ -543,7 +543,7 @@ void Application::setupScene()
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Chleb";
 
-	ts.scaleEntity(ent, glm::vec3(0.004f, 0.004f, 0.004f));
+	ts.scaleEntity(ent, glm::vec3(0.005f, 0.005f, 0.005f));
 	ts.translateEntity(ent, glm::vec3(2.5f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
@@ -565,13 +565,13 @@ void Application::setupScene()
 
 
 	std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
-		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
+		//{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
 		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, -6.0f) },
 		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(6.0f, 1.0f, 0.0f) },
 		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(-6.0f, 1.0f, 0.0f) },
 	};
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		ent = scene->createEntity();
 		scene->getComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i + 1);
 
