@@ -23,7 +23,11 @@ namespace Editor
 		void drawDirectionalLight(const EditorContext& context, EntityID id);
 
 		void drawFlyAi(const EditorContext& context, EntityID id);
-
+		void drawFreeze(const EditorContext& context, EntityID id);
+		void drawHeat(const EditorContext& context, EntityID id);
 		void drawVelocity(const EditorContext& context, EntityID id);
+		void drawRegen(const EditorContext& context, EntityID id);
+		void drawElevator(const EditorContext& context, EntityID id);
+		void drawButton(const EditorContext& context, EntityID id);
 	};
 }

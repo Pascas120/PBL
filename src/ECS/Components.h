@@ -27,7 +27,7 @@ enum class FlyVariant : uint8_t {
     PURPLE = 3,
     COUNT
 };
-
+enum class ElevatorState { Closed, Opening, Open, Closing };
 class Model;
 
 struct ObjectInfoComponent {
@@ -165,5 +165,63 @@ struct VelocityComponent {
 	bool useGravity = true;
 
 	EntityID id = (EntityID)-1;
+};
+
+struct HeatComponent {
+    float triggerRadius = 1.0f;
+    bool  hasTriggered = false;        
+    std::string OnEnterMessage = "cieplo";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct RegenComponent {
+    float triggerRadius = 1.0f;
+    bool  hasTriggered = false;
+    std::string OnEnterMessage = "regen";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct FreezeComponent {
+    float triggerRadius = 1.0f;
+    bool hasTriggered = false;
+    std::string OnEnterMessage = "zimno";
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct ButterHealthComponent
+{
+    float secondsToDie = 5.0f;
+    float secondsToHeal = 5.0f;      
+    float minScale = 0.5f;
+    float timeLeft = secondsToDie;
+    bool  burning = false;
+    bool  healing = false;     
+    glm::vec3 startScale;
+    EntityID id = static_cast<EntityID>(-1);
+};
+struct ElevatorComponent {
+    EntityID id;
+    float openHeight;
+    float speed;
+    glm::vec3 closedPos = glm::vec3{ 0 };
+    ElevatorState state = ElevatorState::Closed;
+    EntityID buttonEntity;
+    float maxHeight = 5.0f;
+    bool isMoving = false;
+    bool shouldOpen = false;
+    bool hasInitClosedPos = false;
+    float startY = -1.0f; 
+
+    bool isDoor = false;
+    enum class DoorDir { Left, Right };
+    DoorDir doorDir = DoorDir::Left;      
+    bool locked = false;
+};
+
+
+
+struct ButtonComponent {
+    EntityID id;  
+    bool isPressed = false;
+    float pressDepth = 0.1f;
+    float pressSpeed = 4.0f;
+    EntityID elevatorEntity = static_cast<EntityID>(-1);
 };
 #endif //PBL_COMPONENTS_H
