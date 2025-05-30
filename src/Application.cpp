@@ -191,49 +191,29 @@ void Application::input()
 		ts.rotateEntity(player, rotation);
 	}
 }
+
 void Application::update()
 {
-
+	
 	scene->getRenderingSystem().updatePreviousModelMatrices();
 
-	auto transforms = scene->getStorage<Transform>();
-	auto velocityComponents = scene->getStorage<VelocityComponent>();
-	if (velocityComponents)
-	{
-		for (int i = 0; i < velocityComponents->getQuantity(); i++)
-		{
-			auto& vc = velocityComponents->components[i];
-			auto& tr = transforms->get(vc.id);
-			if (tr.isStatic) continue;
-
-			if (vc.useGravity)
-				vc.velocity.y -= 9.81f * deltaTime;
-
-			glm::vec3 newPos = tr.translation + vc.velocity * deltaTime;
-			scene->getTransformSystem().translateEntity(vc.id, newPos);
-
-			glm::vec3 newRot = tr.eulerRotation + vc.angularVelocity * deltaTime;
-			scene->getTransformSystem().rotateEntity(vc.id, newRot);
-		}
+	if (auto velocityComps = scene->getStorage<VelocityComponent>()) {
+		
 	}
+	if (auto butterControllers = scene->getStorage<ButterController>()) {
 
-	if (auto butterControllers = scene->getStorage<ButterController>())
-	{
-		for (int i = 0; i < butterControllers->getQuantity(); ++i)
-			butterControllers->components[i].update(window, scene.get(), deltaTime);
 	}
-
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-
+	
 	auto& cs = scene->getCollisionSystem();
 	cs.CheckCollisions();
 	auto& collisions = cs.GetCollisions();
+
 	bool updateScene = false;
-	for (auto& col : collisions)
-	{
+	for (auto& col : collisions) {
 		auto& trA = scene->getComponent<Transform>(col.objectA);
 		auto& trB = scene->getComponent<Transform>(col.objectB);
 		auto& colA = scene->getComponent<ColliderComponent>(col.objectA);
@@ -244,14 +224,12 @@ void Application::update()
 		glm::vec3 sep = col.separationVector;
 		if (!colA.isStatic && !colB.isStatic) sep *= 0.5f;
 
-		if (!colA.isStatic)
-		{
+		if (!colA.isStatic) {
 			glm::mat4 m = trA.globalMatrix;
 			m[3] += glm::vec4(sep, 0.0f);
 			ts.setGlobalMatrix(col.objectA, m);
 		}
-		if (!colB.isStatic)
-		{
+		if (!colB.isStatic) {
 			glm::mat4 m = trB.globalMatrix;
 			m[3] -= glm::vec4(sep, 0.0f);
 			ts.setGlobalMatrix(col.objectB, m);
@@ -259,7 +237,91 @@ void Application::update()
 	}
 	if (updateScene) ts.update();
 
+	
+	std::unordered_set<EntityID> pressedButtons;
+	auto isMaslo = [&](EntityID id) {
+		return scene->hasComponent<ObjectInfoComponent>(id)
+			&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo";
+		};
+	auto isButton = [&](EntityID id) {
+		return scene->hasComponent<ButtonComponent>(id);
+		};
+	for (auto& col : collisions) {
+		if ((isMaslo(col.objectA) && isButton(col.objectB)) ||
+			(isMaslo(col.objectB) && isButton(col.objectA)))
+		{
+			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
+			pressedButtons.insert(btn);
+		}
+	}
 
+	if (auto buttons = scene->getStorage<ButtonComponent>()) {
+		for (int i = 0; i < buttons->getQuantity(); ++i) {
+			auto& btn = buttons->components[i];
+			if (btn.elevatorEntity == (EntityID)-1) continue;
+			auto& elev = scene->getComponent<ElevatorComponent>(btn.elevatorEntity);
+
+			bool nowPressed = pressedButtons.count(btn.id) > 0;
+			if (nowPressed) {
+				if (elev.state != ElevatorState::Opening && elev.state != ElevatorState::Open) {
+					elev.state = ElevatorState::Opening;
+					elev.isMoving = true;
+					spdlog::info("Elevator w gore");
+				}
+			}
+			else {
+				if (elev.state != ElevatorState::Closing && elev.state != ElevatorState::Closed) {
+					elev.state = ElevatorState::Closing;
+					elev.isMoving = true;
+					spdlog::info("Elevator w dol");
+				}
+			}
+		}
+	}
+
+	
+	if (auto elevs = scene->getStorage<ElevatorComponent>()) {
+		for (int i = 0; i < elevs->getQuantity(); ++i) {
+			auto& elev = elevs->components[i];
+			if (!elev.isMoving) continue;
+
+			auto& tr = scene->getComponent<Transform>(elev.id);
+
+			
+			if (!elev.hasInitClosedPos) {
+				elev.closedPos = tr.translation;
+				elev.hasInitClosedPos = true;
+			}
+
+			float minY = elev.closedPos.y;
+			float maxY = elev.closedPos.y + elev.openHeight;
+			float delta = elev.speed * deltaTime;
+
+			if (elev.state == ElevatorState::Opening) {
+				tr.translation.y += delta;
+				if (tr.translation.y >= maxY) {
+					tr.translation.y = maxY;
+					elev.state = ElevatorState::Open;
+					elev.isMoving = false;
+					spdlog::info("Elevator opened!");
+				}
+			}
+			else if (elev.state == ElevatorState::Closing) {
+				tr.translation.y -= delta;
+				if (tr.translation.y <= minY) {
+					tr.translation.y = minY;
+					elev.state = ElevatorState::Closed;
+					elev.isMoving = false;
+					spdlog::info("Elevator closed!");
+				}
+			}
+
+			
+			scene->getTransformSystem().translateEntity(elev.id, tr.translation);
+		}
+	}
+
+	
 	{
 		auto& ai = scene->getFlyAISystem();
 		ai.deltaTime = deltaTime;
@@ -267,69 +329,13 @@ void Application::update()
 	}
 	ts.update();
 
-
-	if (auto bhs = scene->getStorage<ButterHealthComponent>())
-	{
-		for (int i = 0; i < bhs->getQuantity(); ++i)
-		{
-			auto& bh = bhs->components[i];
-			auto& tr = scene->getComponent<Transform>(bh.id);
-
-			if (bh.burning && bh.timeLeft > 0.0f)
-				bh.timeLeft -= deltaTime;
-
-			if (bh.healing && bh.timeLeft < bh.secondsToDie)
-				bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
-
-			bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
-
-			float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
-			float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
-			tr.scale = bh.startScale * scaleRatio;
-
-			bh.burning = bh.healing = false;
-		}
-	}
-	auto elevators = scene->getStorage<ElevatorComponent>();
-	if (elevators) {
-		for (int i = 0; i < elevators->getQuantity(); ++i) {
-			auto& elevator = elevators->components[i];
-			if (!elevator.isMoving) continue;
-
-			auto& transform = scene->getComponent<Transform>(elevator.id);
-			transform.translation.y += elevator.speed * deltaTime;
-
-			float maxTarget = elevator.closedPos.y + elevator.maxHeight;
-			float targetHeight = elevator.closedPos.y + elevator.openHeight;
-
-			
-			if (targetHeight > maxTarget)
-				targetHeight = maxTarget;
-
-			if (transform.translation.y >= targetHeight)
-			{
-				transform.translation.y = targetHeight;
-				elevator.state = ElevatorState::Open;
-				elevator.isMoving = false;
-				spdlog::info("Elevator opened!");
-			}
-
-
-			scene->getTransformSystem().translateEntity(elevator.id, transform.translation);
-		}
+	if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
+		
 	}
 
-
-
-
-
-
-
+	
 	scene->getEventSystem().processEvents();
-
-
 }
-
 
 
 
