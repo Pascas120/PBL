@@ -1,4 +1,4 @@
-#include "InspectorWindow.h"
+﻿#include "InspectorWindow.h"
 #include "EditorApp.h"
 #include "Utils/editor_utils.h"
 
@@ -554,9 +554,15 @@ namespace Editor
             ImGui::DragFloat("Open Height", &e.openHeight, 0.1f);
             ImGui::DragFloat("Speed", &e.speed, 0.1f);
             Utils::entityRefField("Button Entity", e.buttonEntity, *scene);
+            
+            ImGui::Text("Is Moving: %s", e.isMoving ? "Yes" : "No");
+
         }
         ImGui::PopID();
     }
+
+
+
 
     void InspectorWindow::drawButton(const EditorContext& context, EntityID id)
     {
@@ -571,10 +577,15 @@ namespace Editor
         {
             ImGui::DragFloat("Press Depth", &b.pressDepth, 0.01f);
             ImGui::DragFloat("Press Speed", &b.pressSpeed, 0.1f);
+
+            
             Utils::entityRefField("Elevator Entity", b.elevatorEntity, *scene);
         }
         ImGui::PopID();
     }
+
+
+
 
 
 }

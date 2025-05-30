@@ -193,7 +193,7 @@ void Application::input()
 }
 void Application::update()
 {
-	
+
 	scene->getRenderingSystem().updatePreviousModelMatrices();
 
 	auto transforms = scene->getStorage<Transform>();
@@ -223,11 +223,11 @@ void Application::update()
 			butterControllers->components[i].update(window, scene.get(), deltaTime);
 	}
 
-	
+
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-	
+
 	auto& cs = scene->getCollisionSystem();
 	cs.CheckCollisions();
 	auto& collisions = cs.GetCollisions();
@@ -259,7 +259,7 @@ void Application::update()
 	}
 	if (updateScene) ts.update();
 
-	
+
 	{
 		auto& ai = scene->getFlyAISystem();
 		ai.deltaTime = deltaTime;
@@ -290,11 +290,44 @@ void Application::update()
 			bh.burning = bh.healing = false;
 		}
 	}
+	auto elevators = scene->getStorage<ElevatorComponent>();
+	if (elevators) {
+		for (int i = 0; i < elevators->getQuantity(); ++i) {
+			auto& elevator = elevators->components[i];
+			if (!elevator.isMoving) continue;
+
+			auto& transform = scene->getComponent<Transform>(elevator.id);
+			transform.translation.y += elevator.speed * deltaTime;
+
+			float maxTarget = elevator.closedPos.y + elevator.maxHeight;
+			float targetHeight = elevator.closedPos.y + elevator.openHeight;
+
+			
+			if (targetHeight > maxTarget)
+				targetHeight = maxTarget;
+
+			if (transform.translation.y >= targetHeight)
+			{
+				transform.translation.y = targetHeight;
+				elevator.state = ElevatorState::Open;
+				elevator.isMoving = false;
+				spdlog::info("Elevator opened!");
+			}
+
+
+			scene->getTransformSystem().translateEntity(elevator.id, transform.translation);
+		}
+	}
+
+
+
+
+
 
 
 	scene->getEventSystem().processEvents();
 
-	
+
 }
 
 
@@ -538,7 +571,7 @@ void Application::setupScene()
 	scene->addComponent<ModelComponent>(
 		ent,
 		{ shaders[0],
-		  flyModels[static_cast<size_t>(SELECTED_FLY)] });  
+		  flyModels[static_cast<size_t>(SELECTED_FLY)] });
 
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
@@ -689,31 +722,31 @@ void Application::setupEvents()
 		}
 		});
 	//heat
-eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-{
-    const auto& ev = static_cast<const CollisionEvent&>(e);
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+		{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
 
-    auto isMaslo = [&](EntityID id)
-        { return scene->hasComponent<ObjectInfoComponent>(id) &&
-                 scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
+			auto isMaslo = [&](EntityID id)
+				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
+				scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
 
-    auto isHeat = [&](EntityID id)
-        { return scene->hasComponent<HeatComponent>(id); };
+			auto isHeat = [&](EntityID id)
+				{ return scene->hasComponent<HeatComponent>(id); };
 
-    bool condition =
-        (isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
-        (isMaslo(ev.objectB) && isHeat(ev.objectA));
+			bool condition =
+				(isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
+				(isMaslo(ev.objectB) && isHeat(ev.objectA));
 
-    if (!condition) return;
+			if (!condition) return;
 
-    
-    spdlog::info("cieplo");
 
-    //wlaczam burning
-    ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
-                                    isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
-    bh.burning = true;                 
-});
+			spdlog::info("cieplo");
+
+			//wlaczam burning
+			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
+				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
+			bh.burning = true;
+		});
 
 	//freeze
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
@@ -749,12 +782,12 @@ eventSystem.registerListener<CollisionEvent>([&](const Event& e)
 				(isMaslo(ev.objectB) && isRegen(ev.objectA));
 			if (!condition) return;
 
-			
+
 			auto& regen = scene->getComponent<RegenComponent>(
 				isRegen(ev.objectA) ? ev.objectA : ev.objectB);
 			spdlog::info("{}", regen.OnEnterMessage);
 
-			
+
 			auto& bh = scene->getComponent<ButterHealthComponent>(
 				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
 			bh.healing = true;
@@ -805,7 +838,34 @@ eventSystem.registerListener<CollisionEvent>([&](const Event& e)
 		}
 		});
 
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const CollisionEvent&>(e);
+		if (!ev.isColliding) return;
 
+		auto isMaslo = [&](EntityID id) {
+			return scene->hasComponent<ObjectInfoComponent>(id)
+				&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo";
+			};
+		auto isButton = [&](EntityID id) {
+			return scene->hasComponent<ButtonComponent>(id);
+			};
 
+		if (!((isMaslo(ev.objectA) && isButton(ev.objectB)) || (isMaslo(ev.objectB) && isButton(ev.objectA))))
+			return;
 
+		EntityID buttonId = isButton(ev.objectA) ? ev.objectA : ev.objectB;
+		auto& button = scene->getComponent<ButtonComponent>(buttonId);
+		if (button.elevatorEntity == (EntityID)-1) return;
+
+		auto& elevator = scene->getComponent<ElevatorComponent>(button.elevatorEntity);
+
+		
+		if (!elevator.isMoving) {
+			auto& transform = scene->getComponent<Transform>(elevator.id);
+			elevator.startY = transform.translation.y;
+			elevator.isMoving = true;
+			spdlog::info("Elevator start moving!");
+		}
+		});
 }
+

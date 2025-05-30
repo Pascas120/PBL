@@ -197,21 +197,28 @@ struct ButterHealthComponent
     EntityID id = static_cast<EntityID>(-1);
 };
 struct ElevatorComponent {
-    EntityID id = (EntityID)-1;            
-    float openHeight = 5.0f;
-    float speed = 2.0f;
-    EntityID buttonEntity = (EntityID)-1;  
-    glm::vec3 closedPos;                   
-    glm::vec3 openPos;                     
-    bool movingUp = false;
-    bool movingDown = false;
+    EntityID id;
+    float openHeight;
+    float speed;
+    glm::vec3 closedPos = glm::vec3{ 0 };
+    ElevatorState state = ElevatorState::Closed;
+    EntityID buttonEntity;
+    float maxHeight = 5.0f;
+    bool isMoving = false;
+    bool shouldOpen = false;
+    bool hasInitClosedPos = false;
+    float startY = -1.0f; 
+
+
 };
 
+
+
 struct ButtonComponent {
-    EntityID id = (EntityID)-1;           
-    EntityID elevatorEntity = (EntityID)-1;
+    EntityID id;  
+    bool isPressed = false;
     float pressDepth = 0.1f;
     float pressSpeed = 4.0f;
-    bool isPressed = false;
+    EntityID elevatorEntity = static_cast<EntityID>(-1);
 };
 #endif //PBL_COMPONENTS_H
