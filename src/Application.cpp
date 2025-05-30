@@ -453,6 +453,7 @@ void Application::setupScene()
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
 	models.emplace_back(new Model("res/models/CHLEB.fbx"));
 	models.emplace_back(new Model("res/models/poziomy.fbx"));
+	models.emplace_back(new Model("res/models/wallpaper.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];
