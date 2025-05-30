@@ -555,7 +555,19 @@ namespace Editor
             ImGui::DragFloat("Speed", &e.speed, 0.1f);
             Utils::entityRefField("Button Entity", e.buttonEntity, *scene);
             
+            ImGui::Separator();
+            ImGui::Checkbox("Door", &e.isDoor);
+            if (e.isDoor) {
+                const char* dirs[] = { "L", "R" };
+                int dir = (int)e.doorDir;
+                if (ImGui::Combo("Direction", &dir, dirs, 2))
+                     e.doorDir = ElevatorComponent::DoorDir(dir);
+                ImGui::Checkbox("Lock", &e.locked);
+                
+            }
+
             ImGui::Text("Is Moving: %s", e.isMoving ? "Yes" : "No");
+
 
         }
         ImGui::PopID();

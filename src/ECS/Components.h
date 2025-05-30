@@ -209,7 +209,10 @@ struct ElevatorComponent {
     bool hasInitClosedPos = false;
     float startY = -1.0f; 
 
-
+    bool isDoor = false;
+    enum class DoorDir { Left, Right };
+    DoorDir doorDir = DoorDir::Left;      
+    bool locked = false;
 };
 
 
