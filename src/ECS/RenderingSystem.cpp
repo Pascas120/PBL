@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "spdlog/spdlog.h"
 #include "glm/gtc/type_ptr.hpp"
+#include <unordered_set>
 
 
 
@@ -35,14 +36,14 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         return;
     }
 
-    CustomFramebuffer* customFramebufferPtr;
+    /*CustomFramebuffer* customFramebufferPtr;
 	if (showMotionBlur) {
 		customFramebufferPtr = &velFramebuffer;
 	}
 	else {
 		customFramebufferPtr = &normalFramebuffer;
 	}
-	CustomFramebuffer& customFramebuffer = *customFramebufferPtr;
+	CustomFramebuffer& customFramebuffer = *customFramebufferPtr;*/
 	auto [fboWidth, fboHeight] = customFramebuffer.GetSizePair();
 	if (fboWidth != width || fboHeight != height) {
 		customFramebuffer.Resize(width, height);
@@ -141,22 +142,22 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
 
     if (useShadows) {
-        models->get(renderingQueue[0]).shader->use();
-        shadowFramebuffer.Bind();
+        //models->get(renderingQueue[0]).shader->use();
+        //shadowFramebuffer.Bind();
         glActiveTexture(GL_TEXTURE0 + 1);
         glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
-        models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
+        //models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
     }
 
     customFramebuffer.Bind();
-    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, drawBuffers);
+	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, drawBuffers);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	static const float zeroVelocity[] = { 0, 0 };
 	glClearBufferfv(GL_COLOR, 1, zeroVelocity);
 
 
-    
+	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
@@ -165,6 +166,11 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
 		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
         modelComponent.shader->use();
+		if (useShadows && shadersUpdatedWithShadowMap.find(modelComponent.shader) == shadersUpdatedWithShadowMap.end()) {
+			modelComponent.shader->setInt("shadowMap", 1);
+			shadersUpdatedWithShadowMap.insert(modelComponent.shader);
+		}
+
 		if (showMotionBlur)
 		{
 			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);
@@ -341,6 +347,7 @@ void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, co
     auto [width, height] = in.GetSizePair();
     sobel->setInt("width", width);
     sobel->setInt("height", height);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
     sobel->setInt("textureSampler", 0);

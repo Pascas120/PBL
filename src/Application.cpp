@@ -762,7 +762,7 @@ void Application::setupEvents()
 		if (bread && butter)
 		{
 			auto& velocityComponent = scene->getComponent<VelocityComponent>(butter->id);
-			if (velocityComponent.velocity.y < 0.1f && butter->isJumping)
+			if (velocityComponent.velocity.y < 0.1f)// && butter->isJumping)
 			{
 				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
 			}

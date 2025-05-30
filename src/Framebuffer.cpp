@@ -25,24 +25,14 @@ CustomFramebuffer::~CustomFramebuffer()
 	Clear();
 }
 
-void CustomFramebuffer::Clear() const
+void CustomFramebuffer::Clear()
 {
 	glDeleteFramebuffers(1, &fbo);
-	for (auto attachment : config.attachments)
+	for (const auto& [attachment, texture] : textures)
 	{
-		switch (attachment)
-		{
-		case AttachmentType::COLOR:
-			glDeleteTextures(1, &colorTexture);
-			break;
-		case AttachmentType::DEPTH:
-			glDeleteTextures(1, &depthTexture);
-			break;
-		case AttachmentType::VELOCITY:
-			glDeleteTextures(1, &velocityTexture);
-			break;
-		}
+		glDeleteTextures(1, &texture);
 	}
+	textures.clear();
 }
 
 void CustomFramebuffer::Setup()
@@ -59,10 +49,13 @@ void CustomFramebuffer::Setup()
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	int colorAttachment = GL_COLOR_ATTACHMENT0;
+
 
 	// Color
 	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::COLOR) != config.attachments.end())
 	{
+		GLuint colorTexture;
 		glGenTextures(1, &colorTexture);
 		glBindTexture(GL_TEXTURE_2D, colorTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, config.width, config.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -70,13 +63,34 @@ void CustomFramebuffer::Setup()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachment, GL_TEXTURE_2D, colorTexture, 0);
+		colorAttachment++;
+
+		textures[AttachmentType::COLOR] = colorTexture;
+	}
+
+	// Normal
+	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::NORMAL) != config.attachments.end())
+	{
+		GLuint normalTexture;
+		glGenTextures(1, &normalTexture);
+		glBindTexture(GL_TEXTURE_2D, normalTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, config.width, config.height, 0, GL_RGB, GL_HALF_FLOAT, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachment, GL_TEXTURE_2D, normalTexture, 0);
+		colorAttachment++;
+
+		textures[AttachmentType::NORMAL] = normalTexture;
 	}
 
 
 	// Velocity
 	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::VELOCITY) != config.attachments.end())
 	{
+		GLuint velocityTexture;
 		glGenTextures(1, &velocityTexture);
 		glBindTexture(GL_TEXTURE_2D, velocityTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, config.width, config.height, 0, GL_RG, GL_HALF_FLOAT, NULL);
@@ -84,13 +98,17 @@ void CustomFramebuffer::Setup()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, velocityTexture, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachment, GL_TEXTURE_2D, velocityTexture, 0);
+		colorAttachment++;
+
+		textures[AttachmentType::VELOCITY] = velocityTexture;
 	}
 
 
 	// Depth
 	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::DEPTH) != config.attachments.end())
 	{
+		GLuint depthTexture;
 		glGenTextures(1, &depthTexture);
 		glBindTexture(GL_TEXTURE_2D, depthTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, config.width, config.height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
@@ -99,6 +117,8 @@ void CustomFramebuffer::Setup()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+
+		textures[AttachmentType::DEPTH] = depthTexture;
 	}
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

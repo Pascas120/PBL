@@ -43,12 +43,17 @@ private:
         const CustomFramebuffer& inVel, const Framebuffer& out);
     void fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const CustomFramebuffer& test, const Framebuffer& out);
 
-	CustomFramebuffer normalFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } }};
-	CustomFramebuffer velFramebuffer{ FramebufferConfig{ 1920, 1080, 
-        { AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::VELOCITY } } };
+	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 
+        { AttachmentType::COLOR, AttachmentType::DEPTH,
+        AttachmentType::NORMAL, AttachmentType::VELOCITY } } };
+
 	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
     CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-	CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{ 1920, 1920, { AttachmentType::DEPTH } });
+
+    const uint32_t shadowMapWidth = 1920;
+    const uint32_t shadowMapHeight = 1920;
+    CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{ shadowMapWidth, shadowMapHeight, { AttachmentType::DEPTH } });
+
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
