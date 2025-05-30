@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <utility>
 #include <set>
+#include <map>
 
 class Framebuffer
 {
@@ -51,6 +52,7 @@ enum class AttachmentType
 {
 	COLOR,
 	DEPTH,
+	NORMAL,
 	VELOCITY
 };
 
@@ -65,15 +67,16 @@ class CustomFramebuffer : public Framebuffer
 {
 private:
 	GLuint fbo = 0;
-	GLuint colorTexture = 0;
+	/*GLuint colorTexture = 0;
 	GLuint depthTexture = 0;
-	GLuint velocityTexture = 0;
+	GLuint velocityTexture = 0;*/
+	std::map<AttachmentType, GLuint> textures;
 
 
 	FramebufferConfig config;
 
 	void Setup();
-	void Clear() const;
+	void Clear();
 
 public:
 	CustomFramebuffer(const FramebufferConfig& config);
@@ -82,9 +85,20 @@ public:
 	void Bind() const;
 
 	void Resize(uint32_t width, uint32_t height);
-	GLuint GetColorTexture() const override { return colorTexture; }
-	GLuint GetDepthTexture() const override { return depthTexture; }
-	GLuint GetVelocityTexture() const { return velocityTexture; }
+	GLuint GetColorTexture() const override { return GetTexture(AttachmentType::COLOR); }
+	GLuint GetDepthTexture() const override { return GetTexture(AttachmentType::DEPTH); }
+	GLuint GetVelocityTexture() const { return GetTexture(AttachmentType::VELOCITY); }
+	GLuint GetNormalTexture() const { return GetTexture(AttachmentType::NORMAL); }
+
+	GLuint GetTexture(AttachmentType attachment) const
+	{
+		auto it = textures.find(attachment);
+		if (it != textures.end())
+		{
+			return it->second;
+		}
+		return 0;
+	}
 
 	const FramebufferConfig& GetConfig() const { return config; }
 	void GetSize(uint32_t& width, uint32_t& height) const

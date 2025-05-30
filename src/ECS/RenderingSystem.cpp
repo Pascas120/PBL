@@ -9,6 +9,7 @@
 #include "Scene.h"
 #include "spdlog/spdlog.h"
 #include "glm/gtc/type_ptr.hpp"
+#include <unordered_set>
 
 
 
@@ -35,28 +36,22 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         return;
     }
 
-    CustomFramebuffer* customFramebufferPtr;
+    /*CustomFramebuffer* customFramebufferPtr;
 	if (showMotionBlur) {
 		customFramebufferPtr = &velFramebuffer;
 	}
 	else {
 		customFramebufferPtr = &normalFramebuffer;
 	}
-	CustomFramebuffer& customFramebuffer = *customFramebufferPtr;
+	CustomFramebuffer& customFramebuffer = *customFramebufferPtr;*/
 	auto [fboWidth, fboHeight] = customFramebuffer.GetSizePair();
 	if (fboWidth != width || fboHeight != height) {
 		customFramebuffer.Resize(width, height);
 	}
-	auto [pfboWidth, pfboHeight] = postProcessingFramebuffer1.GetSizePair();
-	if (pfboWidth != width || pfboHeight != height) {
-		postProcessingFramebuffer1.Resize(width, height);
-		postProcessingFramebuffer2.Resize(width, height);
-	}
+	
 
 	Shader* shadowShader = postShaders.at("ShadowMap");
-	Shader* sobelShader = postShaders.at("Sobel");
-	Shader* motionBlurShader = postShaders.at("MotionBlur");
-	Shader* FXAAShader = postShaders.at("FXAA");
+	
 
     //##################SHADOW MAP##################
 
@@ -141,22 +136,27 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
 
     if (useShadows) {
-        models->get(renderingQueue[0]).shader->use();
-        shadowFramebuffer.Bind();
+        Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
+        /*models->get(renderingQueue[0]).shader->use();
+        shadowFramebuffer.Bind();*/
+		//postProcessingFramebuffer1.Resize(shadowMapWidth, shadowMapHeight);
+		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
+
+
         glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
-        models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
+		glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
+		//glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
+        //models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
     }
 
     customFramebuffer.Bind();
-    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, drawBuffers);
+	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, drawBuffers);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	static const float zeroVelocity[] = { 0, 0 };
-	glClearBufferfv(GL_COLOR, 1, zeroVelocity);
+	glClearBufferfv(GL_COLOR, 2, zeroVelocity);
 
-
-    
+	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);
@@ -165,6 +165,11 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
 		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
         modelComponent.shader->use();
+		if (useShadows && shadersUpdatedWithShadowMap.find(modelComponent.shader) == shadersUpdatedWithShadowMap.end()) {
+			modelComponent.shader->setInt("shadowMap", 1);
+			shadersUpdatedWithShadowMap.insert(modelComponent.shader);
+		}
+
 		if (showMotionBlur)
 		{
 			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);
@@ -178,6 +183,18 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         modelComponent.model->draw(modelComponent.shader);
     }
 
+
+    Shader* sobelShader = postShaders.at("Sobel");
+    Shader* motionBlurShader = postShaders.at("MotionBlur");
+    Shader* FXAAShader = postShaders.at("FXAA");
+
+    CustomFramebuffer* postBuffers[2] = { &postProcessingFramebuffer1, &postProcessingFramebuffer2 };
+    for (int i = 0; i < 2; i++) {
+        auto [pfboWidth, pfboHeight] = postBuffers[i]->GetSizePair();
+        if (pfboWidth != width || pfboHeight != height) {
+            postBuffers[i]->Resize(width, height);
+        }
+    }
 
     if (showMotionBlur)
     {
@@ -341,6 +358,7 @@ void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, co
     auto [width, height] = in.GetSizePair();
     sobel->setInt("width", width);
     sobel->setInt("height", height);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
     sobel->setInt("textureSampler", 0);
@@ -383,6 +401,20 @@ void RenderingSystem::fxaaFilter(Shader* fxaa, const CustomFramebuffer& in,
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, test.GetColorTexture());
 	fxaa->setInt("testSampler", 1);
+
+    glBindVertexArray(hudVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+void RenderingSystem::shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const Framebuffer& out) {
+    out.Bind();
+    fxaa->use();
+    auto [width, height] = in.GetSizePair();
+    fxaa->setVec2("resolution", (float)width, (float)height);
+    glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, in.GetDepthTexture());
+    fxaa->setInt("shadowMap", 0);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
