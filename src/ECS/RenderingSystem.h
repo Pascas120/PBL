@@ -42,6 +42,7 @@ private:
     void motionBlurFilter(Shader* blur, const CustomFramebuffer& in,
         const CustomFramebuffer& inVel, const Framebuffer& out);
     void fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const CustomFramebuffer& test, const Framebuffer& out);
+    void shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const Framebuffer& out);
 
 	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 
         { AttachmentType::COLOR, AttachmentType::DEPTH,
@@ -50,9 +51,10 @@ private:
 	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
     CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
 
-    const uint32_t shadowMapWidth = 1920;
-    const uint32_t shadowMapHeight = 1920;
+    const uint32_t shadowMapWidth = 2048;
+    const uint32_t shadowMapHeight = 2048;
     CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{ shadowMapWidth, shadowMapHeight, { AttachmentType::DEPTH } });
+	CustomFramebuffer shadowPostFramebuffer = CustomFramebuffer(FramebufferConfig{ shadowMapWidth, shadowMapHeight, { AttachmentType::COLOR } });
 
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
