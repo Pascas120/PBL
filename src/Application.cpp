@@ -1,11 +1,8 @@
 #include "Application.h"
 #include <glad/glad.h>  // Initialize with gladLoadGL()
 #include <spdlog/spdlog.h>
-#include <unordered_set>
-#include "Serialization.h"
-#include "ECS/EventSystem.h"
-#include "ECS/CollisionSystem.h"
 
+#include "Serialization.h"
 
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -150,7 +147,7 @@ void Application::input()
 		return;
 
 
-	auto& transform = scene->getComponent<Transform>(player);
+	/*auto& transform = scene->getComponent<Transform>(player);
 	glm::vec3 translation = transform.translation;
 	glm::vec3 rotation = transform.eulerRotation;
 
@@ -189,250 +186,111 @@ void Application::input()
 		auto& ts = scene->getTransformSystem();
 		ts.translateEntity(player, translation);
 		ts.rotateEntity(player, rotation);
-	}
+	}*/
 }
 
 void Application::update()
 {
-
 	scene->getRenderingSystem().updatePreviousModelMatrices();
 
-	if (auto velocityComps = scene->getStorage<VelocityComponent>()) {
+	auto transforms = scene->getStorage<Transform>();
+	auto velocityComponents = scene->getStorage<VelocityComponent>();
 
+	if (velocityComponents != nullptr)
+	{
+		for (int i = 0; i < velocityComponents->getQuantity(); i++)
+		{
+			auto& velocityComponent = velocityComponents->components[i];
+			auto& transform = transforms->get(velocityComponent.id);
+			if (transform.isStatic)
+				continue;
+
+			if (velocityComponent.useGravity)
+			{
+				velocityComponent.velocity.y -= 9.81f * deltaTime;
+			}
+
+			glm::vec3 newTranslation = transform.translation + velocityComponent.velocity * deltaTime;
+			scene->getTransformSystem().translateEntity(velocityComponent.id, newTranslation);
+			glm::vec3 newRotation = transform.eulerRotation + velocityComponent.angularVelocity * deltaTime;
+			scene->getTransformSystem().rotateEntity(velocityComponent.id, newRotation);
+		}
 	}
-	if (auto butterControllers = scene->getStorage<ButterController>()) {
 
+	auto butterControllers = scene->getStorage<ButterController>();
+	if (butterControllers != nullptr)
+	{
+		for (int i = 0; i < butterControllers->getQuantity(); i++)
+		{
+			auto& butterController = butterControllers->components[i];
+			butterController.update(window, scene.get(), deltaTime);
+		}
 	}
 
-
+	auto breadControllers = scene->getStorage<BreadController>();
+	if (breadControllers != nullptr)
+	{
+		for (int i = 0; i < breadControllers->getQuantity(); i++)
+		{
+			auto& breadController = breadControllers->components[i];
+			breadController.update(window, scene.get(), deltaTime);
+		}
+	}
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-
 	auto& cs = scene->getCollisionSystem();
 	cs.CheckCollisions();
+
 	auto& collisions = cs.GetCollisions();
 
 	bool updateScene = false;
-	for (auto& col : collisions) {
-		auto& trA = scene->getComponent<Transform>(col.objectA);
-		auto& trB = scene->getComponent<Transform>(col.objectB);
-		auto& colA = scene->getComponent<ColliderComponent>(col.objectA);
-		auto& colB = scene->getComponent<ColliderComponent>(col.objectB);
-		if (colA.isStatic && colB.isStatic) continue;
+
+	for (const CollisionEvent& collision : collisions)
+	{
+		auto& transformA = scene->getComponent<Transform>(collision.objectA);
+		auto& transformB = scene->getComponent<Transform>(collision.objectB);
+
+		auto& colliderA = scene->getComponent<ColliderComponent>(collision.objectA);
+		auto& colliderB = scene->getComponent<ColliderComponent>(collision.objectB);
+
+		if (colliderA.isStatic && colliderB.isStatic)
+		{
+			continue;
+		}
 
 		updateScene = true;
-		glm::vec3 sep = col.separationVector;
-		if (!colA.isStatic && !colB.isStatic) sep *= 0.5f;
-
-		if (!colA.isStatic) {
-			glm::mat4 m = trA.globalMatrix;
-			m[3] += glm::vec4(sep, 0.0f);
-			ts.setGlobalMatrix(col.objectA, m);
-		}
-		if (!colB.isStatic) {
-			glm::mat4 m = trB.globalMatrix;
-			m[3] -= glm::vec4(sep, 0.0f);
-			ts.setGlobalMatrix(col.objectB, m);
-		}
-	}
-	if (updateScene) ts.update();
-
-
-	std::unordered_set<EntityID> pressedButtons;
-	auto isMaslo = [&](EntityID id) {
-		return scene->hasComponent<ObjectInfoComponent>(id)
-			&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo";
-		};
-	auto isButton = [&](EntityID id) {
-		return scene->hasComponent<ButtonComponent>(id);
-		};
-	for (auto& col : collisions) {
-		if ((isMaslo(col.objectA) && isButton(col.objectB)) ||
-			(isMaslo(col.objectB) && isButton(col.objectA)))
+		glm::vec3 separationVector = collision.separationVector;
+		if (!colliderA.isStatic && !colliderB.isStatic)
 		{
-			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
-			pressedButtons.insert(btn);
+			separationVector /= 2.0f;
+		}
+
+		if (!colliderA.isStatic)
+		{
+			glm::mat4 newMatrix = transformA.globalMatrix;
+			newMatrix[3] += glm::vec4(separationVector, 0.0f);
+			ts.setGlobalMatrix(collision.objectA, newMatrix);
+		}
+
+		if (!colliderB.isStatic)
+		{
+			glm::mat4 newMatrix = transformB.globalMatrix;
+			newMatrix[3] -= glm::vec4(separationVector, 0.0f);
+			ts.setGlobalMatrix(collision.objectB, newMatrix);
 		}
 	}
 
-	if (auto buttons = scene->getStorage<ButtonComponent>()) {
-		for (int i = 0; i < buttons->getQuantity(); ++i) {
-			auto& btn = buttons->components[i];
-			if (btn.elevatorEntity == (EntityID)-1) continue;
-			auto& elev = scene->getComponent<ElevatorComponent>(btn.elevatorEntity);
-
-			bool nowPressed = pressedButtons.count(btn.id) > 0;
-			if (auto buttons = scene->getStorage<ButtonComponent>()) {
-				for (int i = 0; i < buttons->getQuantity(); ++i) {
-					auto& btn = buttons->components[i];
-					if (btn.elevatorEntity == (EntityID)-1) continue;
-					auto& e = scene->getComponent<ElevatorComponent>(btn.elevatorEntity);
-
-					bool nowPressed = pressedButtons.count(btn.id) > 0;
-
-					if (e.isDoor) {
-
-						if (e.locked) {
-
-							if (nowPressed && e.state == ElevatorState::Closed) {
-								e.state = ElevatorState::Opening;
-								e.isMoving = true;
-							}
-							else if (nowPressed && e.state == ElevatorState::Open) {
-								e.state = ElevatorState::Closing;
-								e.isMoving = true;
-							}
-						}
-						else {
-
-							if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
-								e.state = ElevatorState::Opening;
-								e.isMoving = true;
-							}
-							else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
-								e.state = ElevatorState::Closing;
-								e.isMoving = true;
-							}
-						}
-					}
-					else {
-
-						if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
-							e.state = ElevatorState::Opening;
-							e.isMoving = true;
-						}
-						else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
-							e.state = ElevatorState::Closing;
-							e.isMoving = true;
-						}
-					}
-				}
-			}
-
-		}
-	}
-
-	if (auto elevs = scene->getStorage<ElevatorComponent>()) {
-		for (int i = 0; i < elevs->getQuantity(); ++i) {
-			auto& e = elevs->components[i];
-			if (!e.isMoving) continue;
-
-			auto& tr = scene->getComponent<Transform>(e.id);
-
-
-			if (!e.hasInitClosedPos) {
-				e.closedPos = tr.translation;
-				e.hasInitClosedPos = true;
-			}
-
-			float delta = e.speed * deltaTime;
-
-			if (e.isDoor) {
-
-				float dir = (e.doorDir == ElevatorComponent::DoorDir::Left ? -1.0f : +1.0f);
-				float minX = e.closedPos.x;
-				float maxX = e.closedPos.x + e.openHeight * dir;
-
-				if (e.state == ElevatorState::Opening) {
-					tr.translation.x += delta * dir;
-					if ((dir > 0 && tr.translation.x >= maxX) ||
-						(dir < 0 && tr.translation.x <= maxX))
-					{
-						tr.translation.x = maxX;
-						e.state = ElevatorState::Open;
-						e.isMoving = false;
-						spdlog::info("Door opened!");
-					}
-				}
-				else if (e.state == ElevatorState::Closing) {
-					tr.translation.x -= delta * dir;
-					if ((dir > 0 && tr.translation.x <= minX) ||
-						(dir < 0 && tr.translation.x >= minX))
-					{
-						tr.translation.x = minX;
-						e.state = ElevatorState::Closed;
-						e.isMoving = false;
-						spdlog::info("Door closed!");
-					}
-				}
-			}
-			else {
-
-				float minY = e.closedPos.y;
-				float maxY = e.closedPos.y + e.openHeight;
-
-				if (e.state == ElevatorState::Opening) {
-					tr.translation.y += delta;
-					if (tr.translation.y >= maxY) {
-						tr.translation.y = maxY;
-						e.state = ElevatorState::Open;
-						e.isMoving = false;
-						spdlog::info("Elevator ruszyla");
-					}
-				}
-				else if (e.state == ElevatorState::Closing) {
-					tr.translation.y -= delta;
-					if (tr.translation.y <= minY) {
-						tr.translation.y = minY;
-						e.state = ElevatorState::Closed;
-						e.isMoving = false;
-						spdlog::info("Elevator zastopowala");
-					}
-				}
-			}
-
-			scene->getTransformSystem().translateEntity(e.id, tr.translation);
-		}
-	}
-
-
-
-
-	{
-		auto& ai = scene->getFlyAISystem();
-		ai.deltaTime = deltaTime;
-		ai.update();
-	}
+	if (updateScene)
+		ts.update();
+	auto& aiSystem = scene->getFlyAISystem();
+	aiSystem.deltaTime = deltaTime;
+	aiSystem.update();
 	ts.update();
-
-	if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
-		if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
-			auto transforms = scene->getStorage<Transform>();
-			for (int i = 0; i < bhs->getQuantity(); ++i) {
-				auto& bh = bhs->components[i];
-				auto& tr = transforms->get(bh.id);
-
-
-				if (bh.burning && bh.timeLeft > 0.0f)
-					bh.timeLeft -= deltaTime;
-
-				if (bh.healing && bh.timeLeft < bh.secondsToDie)
-					bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
-
-
-				bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
-
-
-				float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
-				float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
-				tr.scale = bh.startScale * scaleRatio;
-
-
-				bh.burning = bh.healing = false;
-			}
-
-			scene->getTransformSystem().update();
-		}
-
-
-	}
-
-
-	scene->getEventSystem().processEvents();
+	EventSystem& eventSystem = scene->getEventSystem();
+	eventSystem.processEvents();
 }
-
 
 
 
@@ -590,10 +448,11 @@ void Application::endFrame()
 
 void Application::setupScene()
 {
-	models.emplace_back(new Model("res/models/mucha.fbx"));
-	models.emplace_back(new Model("res/models/dee/waddledee.obj"));
+	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
+	models.emplace_back(new Model("res/models/MASLO.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
-	models.emplace_back(new Model("res/models/maslpo.fbx"));
+	models.emplace_back(new Model("res/models/CHLEB.fbx"));
+	models.emplace_back(new Model("res/models/poziomy.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];
@@ -603,8 +462,8 @@ void Application::setupScene()
 	enum class FlyVariant { GREEN, RED, GOLD, PURPLE, COUNT };
 	Model* flyModels[static_cast<size_t>(FlyVariant::COUNT)] =
 	{
-		&ourModel,	//GREEN 
-		&ourModel,	//RED 
+		&ourModel,	//GREEN
+		&ourModel,	//RED
 		&ourModel,	//GOLD
 		&model4,	//PURPLE
 	};
@@ -627,32 +486,28 @@ void Application::setupScene()
 
 
 	ent = player = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Player";
-	scene->getComponent<ObjectInfoComponent>(ent).tag = "maslo";
-	ts.scaleEntity(ent, glm::vec3(5.0f, 5.0f, 5.0f));
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
+	ts.scaleEntity(ent, glm::vec3(0.003f, 0.003f, 0.003f));
+	ts.translateEntity(ent, glm::vec3(0.0f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &model2 });
+	scene->addComponent<ModelComponent>(ent, { shaders[2], &model2 });
 
-	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::SPHERE));
-	SphereCollider* sphereCollider = static_cast<SphereCollider*>(colliderComponent->GetColliderShape());
-	sphereCollider->center = glm::vec3(-0.01f, 0.1f, 0.01f);
-	sphereCollider->radius = 0.1f;
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider->halfSize = glm::vec3(163.8f, 109.3f, 87.6f);
 
 	scene->addComponent<VelocityComponent>(ent, {});
-	auto& bh = scene->addComponent<ButterHealthComponent>(player, {});
-	bh.startScale = scene->getComponent<Transform>(player).scale;
-
 	scene->addComponent<ButterController>(ent, { 3.0f, 5.0f });
 
 
-	ent = scene->createEntity(player);
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Player Camera";
+	ent = scene->createEntity();
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Camera";
 	auto& playerCam = scene->addComponent<CameraComponent>(ent, {});
 	playerCam.camera.getFrustum().setProjectionMatrix(
 		glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.0f));
-	ts.translateEntity(ent, glm::vec3(0.0f, 0.3f, -0.7f));
-	ts.rotateEntity(ent, glm::vec3(-20.0f, 180.0f, 0.0f));
+	ts.translateEntity(ent, glm::vec3(0.0f, 5.0f, 11.0f));
+	ts.rotateEntity(ent, glm::vec3(-25.0f, 0.0f, 0.0f));
 
 	//mucha
 	ent = scene->createEntity();
@@ -672,12 +527,12 @@ void Application::setupScene()
 
 	scene->addComponent<ModelComponent>(
 		ent,
-		{ shaders[0],
+		{ shaders[2],
 		  flyModels[static_cast<size_t>(SELECTED_FLY)] });
 
 
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
-	BoxCollider* boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
 	boxCollider->center = glm::vec3(0.0f, 7.7f, 0.0f);
 	boxCollider->halfSize = glm::vec3(4.0f, 7.7f, 1.778f);
 
@@ -687,12 +542,18 @@ void Application::setupScene()
 
 
 	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Maslo";
+	scene->getComponent<ObjectInfoComponent>(ent).name = "Chleb";
 
-	ts.scaleEntity(ent, glm::vec3(0.01f, 0.01f, 0.01f));
-	ts.translateEntity(ent, glm::vec3(2.5f, 0.0f, 0.0f));
+	ts.scaleEntity(ent, glm::vec3(0.005f, 0.005f, 0.005f));
+	ts.translateEntity(ent, glm::vec3(2.5f, 1.0f, 0.0f));
 	scene->getComponent<Transform>(ent).isStatic = false;
 	scene->addComponent<ModelComponent>(ent, { shaders[2], &model4 });
+	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX));
+	boxCollider = static_cast<BoxCollider*>(colliderComponent->GetColliderShape());
+	boxCollider->halfSize = glm::vec3(112.8f, 91.5f, 153.0f);
+
+	scene->addComponent<VelocityComponent>(ent, {});
+	scene->addComponent<BreadController>(ent, { 3.0f, 5.0f });
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Floor";
@@ -705,13 +566,13 @@ void Application::setupScene()
 
 
 	std::pair<glm::vec3, glm::vec3> wallScalesAndTranslations[] = {
-		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
+		//{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 6.0f) },
 		{ glm::vec3(5.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, -6.0f) },
 		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(6.0f, 1.0f, 0.0f) },
 		{ glm::vec3(1.0f, 1.0f, 5.0f), glm::vec3(-6.0f, 1.0f, 0.0f) },
 	};
 
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 3; ++i) {
 		ent = scene->createEntity();
 		scene->getComponent<ObjectInfoComponent>(ent).name = "Wall " + std::to_string(i + 1);
 
@@ -732,35 +593,6 @@ void Application::setupScene()
 
 	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-
-
-
-
-	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Test1";
-
-	ts.rotateEntity(ent, glm::vec3(0.0f, 0.0f, 0.0f));
-	ts.translateEntity(ent, glm::vec3(-2.0f, 1.0f, 0.7f));
-	ts.scaleEntity(ent, glm::vec3(1.0f, 1.0f, 1.0f));
-	scene->getComponent<Transform>(ent).isStatic = true;
-
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
-	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-
-
-	ent = scene->createEntity();
-	scene->getComponent<ObjectInfoComponent>(ent).name = "Test2";
-
-	ts.rotateEntity(ent, glm::vec3(0.0f, 0.0f, 0.0f));
-	ts.translateEntity(ent, glm::vec3(-2.0f, 1.0f, 3.0f));
-	ts.scaleEntity(ent, glm::vec3(1.0f, 1.0f, 1.0f));
-	scene->getComponent<Transform>(ent).isStatic = true;
-
-	scene->addComponent<ModelComponent>(ent, { shaders[0], &model3 });
-	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
-
-
-
 
 
 	ent = scene->createEntity();
@@ -804,6 +636,9 @@ void Application::setupScene()
 void Application::setupEvents()
 {
 	EventSystem& eventSystem = scene->getEventSystem();
+
+	// reset stanu much po zaatakowaniu masła
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -823,77 +658,9 @@ void Application::setupEvents()
 			fly.state = fly.Returning;
 		}
 		});
-	//heat
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-		{
-			const auto& ev = static_cast<const CollisionEvent&>(e);
-
-			auto isMaslo = [&](EntityID id)
-				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
-				scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
-
-			auto isHeat = [&](EntityID id)
-				{ return scene->hasComponent<HeatComponent>(id); };
-
-			bool condition =
-				(isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
-				(isMaslo(ev.objectB) && isHeat(ev.objectA));
-
-			if (!condition) return;
 
 
-			spdlog::info("cieplo");
-
-			//wlaczam burning
-			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
-				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
-			bh.burning = true;
-		});
-
-	//freeze
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-		{
-			const auto& ev = static_cast<const CollisionEvent&>(e);
-			if (!ev.isColliding) return;
-
-			bool aIsPlayer = (ev.objectA == player);
-			bool bIsPlayer = (ev.objectB == player);
-
-			bool aIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectA);
-			bool bIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectB);
-
-			if ((aIsPlayer && bIsFreeze) || (bIsPlayer && aIsFreeze))
-			{
-
-				auto& freeze = scene->getComponent<FreezeComponent>(aIsFreeze ? ev.objectA : ev.objectB);
-				spdlog::info("{}", freeze.OnEnterMessage);
-			}
-		});
-
-	//regen
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-		{
-			const auto& ev = static_cast<const CollisionEvent&>(e);
-			if (!ev.isColliding) return;
-
-			auto isMaslo = [&](EntityID id) { return scene->hasComponent<ObjectInfoComponent>(id)
-				&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
-			auto isRegen = [&](EntityID id) { return scene->hasComponent<RegenComponent>(id); };
-
-			bool condition = (isMaslo(ev.objectA) && isRegen(ev.objectB)) ||
-				(isMaslo(ev.objectB) && isRegen(ev.objectA));
-			if (!condition) return;
-
-
-			auto& regen = scene->getComponent<RegenComponent>(
-				isRegen(ev.objectA) ? ev.objectA : ev.objectB);
-			spdlog::info("{}", regen.OnEnterMessage);
-
-
-			auto& bh = scene->getComponent<ButterHealthComponent>(
-				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
-			bh.healing = true;
-		});
+	// zerowanie pionowej prędkości po dotknięciu podłoża
 
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
@@ -918,6 +685,33 @@ void Application::setupEvents()
 		});
 
 
+	// ponowne umożliwienie skakania po dotknięciu podłoża
+	// chleb
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
+
+		BreadController* componentA = scene->hasComponent<BreadController>(event.objectA) ?
+			&scene->getComponent<BreadController>(event.objectA) : nullptr;
+		BreadController* componentB = scene->hasComponent<BreadController>(event.objectB) ?
+			&scene->getComponent<BreadController>(event.objectB) : nullptr;
+
+		if (abs(event.separationVector.y) > 0.01f)
+		{
+			if (componentA)
+			{
+				componentA->isJumping = false;
+			}
+			if (componentB)
+			{
+				componentB->isJumping = false;
+			}
+		}
+		});
+
+	// masło
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
@@ -940,34 +734,39 @@ void Application::setupEvents()
 		}
 		});
 
+
+	// odbijanie się masła od chleba
+
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-		const auto& ev = static_cast<const CollisionEvent&>(e);
-		if (!ev.isColliding) return;
+		const auto& event = static_cast<const CollisionEvent&>(e);
+		if (!event.isColliding) return;
 
-		auto isMaslo = [&](EntityID id) {
-			return scene->hasComponent<ObjectInfoComponent>(id)
-				&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo";
-			};
-		auto isButton = [&](EntityID id) {
-			return scene->hasComponent<ButtonComponent>(id);
-			};
-
-		if (!((isMaslo(ev.objectA) && isButton(ev.objectB)) || (isMaslo(ev.objectB) && isButton(ev.objectA))))
+		ButterController* butter;
+		BreadController* bread;
+		if (scene->hasComponent<ButterController>(event.objectA) &&
+			scene->hasComponent<BreadController>(event.objectB))
+		{
+			butter = &scene->getComponent<ButterController>(event.objectA);
+			bread = &scene->getComponent<BreadController>(event.objectB);
+		}
+		else if (scene->hasComponent<BreadController>(event.objectA) &&
+			scene->hasComponent<ButterController>(event.objectB))
+		{
+			butter = &scene->getComponent<ButterController>(event.objectB);
+			bread = &scene->getComponent<BreadController>(event.objectA);
+		}
+		else
+		{
 			return;
+		}
 
-		EntityID buttonId = isButton(ev.objectA) ? ev.objectA : ev.objectB;
-		auto& button = scene->getComponent<ButtonComponent>(buttonId);
-		if (button.elevatorEntity == (EntityID)-1) return;
-
-		auto& elevator = scene->getComponent<ElevatorComponent>(button.elevatorEntity);
-
-
-		if (!elevator.isMoving) {
-			auto& transform = scene->getComponent<Transform>(elevator.id);
-			elevator.startY = transform.translation.y;
-			elevator.isMoving = true;
-			spdlog::info("Elevator start moving!");
+		if (bread && butter)
+		{
+			auto& velocityComponent = scene->getComponent<VelocityComponent>(butter->id);
+			if (velocityComponent.velocity.y < 0.1f && butter->isJumping)
+			{
+				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
+			}
 		}
 		});
 }
-

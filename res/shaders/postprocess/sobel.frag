@@ -31,6 +31,7 @@ void main()
     vec4 sobel_edge_h = n[2] + vec4(2.0) * n[5] + n[8] - (n[0] + vec4(2.0) * n[3] + n[6]);
     vec4 sobel_edge_v = n[0] + vec4(2.0) * n[1] + n[2] - (n[6] + vec4(2.0) * n[7] + n[8]);
     vec4 sobel = sqrt(sobel_edge_h * sobel_edge_h + sobel_edge_v * sobel_edge_v);
+    float luma = 0.2126 * sobel.r + 0.7152 * sobel.g + 0.0722 * sobel.b;
 
-    fragColor = texture(textureSampler, texCoord) - vec4(sobel.rgb, 0.0f);
+    fragColor = texture(textureSampler, texCoord) - vec4(luma,luma,luma, 0.0f);
 }
