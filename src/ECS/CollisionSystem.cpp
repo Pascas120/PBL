@@ -103,6 +103,13 @@ void CollisionSystem::CheckCollisions()
 
 				collisions.push_back(collisionInfo);
 				scene->getEventSystem().queueEvent(collisionInfo);
+
+				CollisionEvent swappedCollisionInfo = collisionInfo;
+				swappedCollisionInfo.objectA = objectSecond.collider->id;
+				swappedCollisionInfo.objectB = objectFirst.collider->id;
+				swappedCollisionInfo.separationVector = -swappedCollisionInfo.separationVector;
+
+				scene->getEventSystem().queueEvent(swappedCollisionInfo);
 			}
 
 		}

@@ -644,21 +644,15 @@ void Application::setupEvents()
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
 
-		bool aIsPlayer = (event.objectA == player);
-		bool bIsPlayer = (event.objectB == player);
-
-		bool aIsFly = scene->hasComponent<FlyAIComponent>(event.objectA);
-		bool bIsFly = scene->hasComponent<FlyAIComponent>(event.objectB);
-
-
-		if ((aIsPlayer && bIsFly) || (bIsPlayer && aIsFly))
+		if (scene->hasComponent<FlyAIComponent>(event.objectA) &&
+			scene->hasComponent<ButterController>(event.objectB))
 		{
 			spdlog::info("mucha uderzyla!({} vs {})", event.objectA, event.objectB);
-			FlyAIComponent& fly = scene->getComponent<FlyAIComponent>(aIsFly ? event.objectA : event.objectB);
+			FlyAIComponent& fly = scene->getComponent<FlyAIComponent>(event.objectA);
 			fly.diveCooldownTimer = fly.diveCooldownTime;
 			fly.state = fly.Returning;
 		}
-		});
+	});
 
 
 	// zerowanie pionowej prędkości po dotknięciu podłoża
@@ -667,23 +661,17 @@ void Application::setupEvents()
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
 
-		VelocityComponent* componentA = scene->hasComponent<VelocityComponent>(event.objectA) ?
-			&scene->getComponent<VelocityComponent>(event.objectA) : nullptr;
-		VelocityComponent* componentB = scene->hasComponent<VelocityComponent>(event.objectB) ?
-			&scene->getComponent<VelocityComponent>(event.objectB) : nullptr;
+		if (!scene->hasComponent<VelocityComponent>(event.objectA))
+			return;
 
-		if (abs(event.separationVector.y) > 0.01f)
+		VelocityComponent* velocityComponent = &scene->getComponent<VelocityComponent>(event.objectA);
+
+		if (event.separationVector.y > 0.01f && velocityComponent->useGravity
+			&& velocityComponent->velocity.y < 0.1f)
 		{
-			if (componentA && componentA->useGravity)
-			{
-				componentA->velocity.y = 0.0f;
-			}
-			if (componentB && componentB->useGravity)
-			{
-				componentB->velocity.y = 0.0f;
-			}
+			velocityComponent->velocity.y = 0.0f;
 		}
-		});
+	});
 
 
 	// ponowne umożliwienie skakania po dotknięciu podłoża
@@ -693,23 +681,16 @@ void Application::setupEvents()
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
 
-		BreadController* componentA = scene->hasComponent<BreadController>(event.objectA) ?
-			&scene->getComponent<BreadController>(event.objectA) : nullptr;
-		BreadController* componentB = scene->hasComponent<BreadController>(event.objectB) ?
-			&scene->getComponent<BreadController>(event.objectB) : nullptr;
+		if (!scene->hasComponent<BreadController>(event.objectA))
+			return;
 
-		if (abs(event.separationVector.y) > 0.01f)
+		BreadController* breadController = &scene->getComponent<BreadController>(event.objectA);
+
+		if (event.separationVector.y > 0.01f && breadController->isJumping)
 		{
-			if (componentA)
-			{
-				componentA->isJumping = false;
-			}
-			if (componentB)
-			{
-				componentB->isJumping = false;
-			}
+			breadController->isJumping = false;
 		}
-		});
+	});
 
 	// masło
 
@@ -717,23 +698,16 @@ void Application::setupEvents()
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
 
-		ButterController* componentA = scene->hasComponent<ButterController>(event.objectA) ?
-			&scene->getComponent<ButterController>(event.objectA) : nullptr;
-		ButterController* componentB = scene->hasComponent<ButterController>(event.objectB) ?
-			&scene->getComponent<ButterController>(event.objectB) : nullptr;
+		if (!scene->hasComponent<ButterController>(event.objectA))
+			return;
 
-		if (abs(event.separationVector.y) > 0.01f)
+		ButterController* breadController = &scene->getComponent<ButterController>(event.objectA);
+
+		if (event.separationVector.y > 0.01f && breadController->isJumping)
 		{
-			if (componentA)
-			{
-				componentA->isJumping = false;
-			}
-			if (componentB)
-			{
-				componentB->isJumping = false;
-			}
+			breadController->isJumping = false;
 		}
-		});
+	});
 
 
 	// odbijanie się masła od chleba
@@ -742,32 +716,21 @@ void Application::setupEvents()
 		const auto& event = static_cast<const CollisionEvent&>(e);
 		if (!event.isColliding) return;
 
-		ButterController* butter;
-		BreadController* bread;
-		if (scene->hasComponent<ButterController>(event.objectA) &&
-			scene->hasComponent<BreadController>(event.objectB))
-		{
-			butter = &scene->getComponent<ButterController>(event.objectA);
-			bread = &scene->getComponent<BreadController>(event.objectB);
-		}
-		else if (scene->hasComponent<BreadController>(event.objectA) &&
-			scene->hasComponent<ButterController>(event.objectB))
-		{
-			butter = &scene->getComponent<ButterController>(event.objectB);
-			bread = &scene->getComponent<BreadController>(event.objectA);
-		}
-		else
-		{
+		if (!scene->hasComponent<ButterController>(event.objectA) ||
+			!scene->hasComponent<VelocityComponent>(event.objectA) ||
+			!scene->hasComponent<BreadController>(event.objectB))
 			return;
-		}
+
+		ButterController* butter = &scene->getComponent<ButterController>(event.objectA);
+		BreadController* bread = &scene->getComponent<BreadController>(event.objectB);
 
 		if (bread && butter)
 		{
-			auto& velocityComponent = scene->getComponent<VelocityComponent>(butter->id);
-			if (velocityComponent.velocity.y < 0.1f)// && butter->isJumping)
+			auto& velocityComponent = scene->getComponent<VelocityComponent>(event.objectA);
+			if (event.separationVector.y > 0.01f && velocityComponent.velocity.y < 0.1f)
 			{
 				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
 			}
 		}
-		});
+	});
 }
