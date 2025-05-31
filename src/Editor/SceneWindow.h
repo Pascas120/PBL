@@ -38,7 +38,8 @@ namespace Editor
 		std::unique_ptr<CustomFramebuffer> sceneFramebuffer;
 		ImVec2 lastSize = ImVec2(0, 0);
 
-		ImGuizmo::OPERATION gizmoOperation;
+		ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
+		ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 		Camera editorCamera;
 	};
 }

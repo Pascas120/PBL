@@ -22,7 +22,6 @@ namespace Editor
             glm::vec3(0.0f, 0.0f, camDistance),
             glm::vec3(0.0f, 0.0f, 1.0f),
             glm::vec3(0.0f, 1.0f, 0.0f)));
-		gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
 
 		editorCamera.getFrustum().setProjectionMatrix(
 			glm::perspective(glm::radians(45.0f), 650.0f / 400.0f, 0.1f, 100.0f));
@@ -40,6 +39,27 @@ namespace Editor
 		drawWindow(context);
     }
 
+	static std::string getGizmoOperationName(ImGuizmo::OPERATION operation)
+	{
+		switch (operation)
+		{
+		case ImGuizmo::TRANSLATE: return "Translate";
+		case ImGuizmo::ROTATE: return "Rotate";
+		case ImGuizmo::SCALE: return "Scale";
+		case ImGuizmo::UNIVERSAL: return "Universal";
+		default: return "Unknown";
+		}
+	}
+
+	static std::string getGizmoModeName(ImGuizmo::MODE mode)
+	{
+		switch (mode)
+		{
+		case ImGuizmo::LOCAL: return "Local";
+		case ImGuizmo::WORLD: return "World";
+		default: return "Unknown";
+		}
+	}
 
     void SceneWindow::drawWindow(const EditorContext& context)
     {
@@ -48,8 +68,54 @@ namespace Editor
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImVec2(650, 400), ImGuiCond_FirstUseEver);
 
-        if (ImGui::Begin("Scene"))
+        if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar))
         {
+           if (ImGui::BeginMenuBar())
+           {
+			   ImGui::Text("Gizmo");
+
+			   static ImGuizmo::OPERATION gizmoOperations[4] = {
+				   ImGuizmo::TRANSLATE,
+				   ImGuizmo::ROTATE,
+				   ImGuizmo::SCALE,
+				   ImGuizmo::UNIVERSAL
+			   };
+			   ImGui::SetNextItemWidth(100);
+			   if (ImGui::BeginCombo("##gizmoOperation", getGizmoOperationName(gizmoOperation).c_str()))
+			   {
+                   for (auto op : gizmoOperations)
+                   {
+                       bool isSelected = (gizmoOperation == op);
+                       if (ImGui::Selectable(getGizmoOperationName(op).c_str(), isSelected))
+                       {
+                           gizmoOperation = op;
+                       }
+                   }
+				   ImGui::EndCombo();
+			   }
+
+			   static ImGuizmo::MODE gizmoModes[2] = {
+				   ImGuizmo::LOCAL,
+				   ImGuizmo::WORLD
+			   };
+
+               ImGui::SetNextItemWidth(100);
+               if (ImGui::BeginCombo("##gizmoMode", getGizmoModeName(gizmoMode).c_str()))
+			   {
+				   for (auto mode : gizmoModes)
+				   {
+					   bool isSelected = (gizmoMode == mode);
+					   if (ImGui::Selectable(getGizmoModeName(mode).c_str(), isSelected))
+					   {
+						   gizmoMode = mode;
+					   }
+				   }
+				   ImGui::EndCombo();
+			   }
+
+               ImGui::EndMenuBar();
+           }
+
             ImVec2 pos = ImGui::GetCursorScreenPos();
             ImVec2 size = ImGui::GetContentRegionAvail();
 
@@ -185,7 +251,7 @@ namespace Editor
                 auto& ts = scene->getTransformSystem();
 
 				if (ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(editorCamera.getFrustum().getProjectionMatrix()),
-                    gizmoOperation, ImGuizmo::MODE::LOCAL, glm::value_ptr(entityMatrix)))
+                    gizmoOperation, gizmoMode, glm::value_ptr(entityMatrix)))
                 {
                     ts.setGlobalMatrix(editor->selectedObject, entityMatrix);
                 }
