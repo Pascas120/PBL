@@ -15,6 +15,7 @@
 #include "ECS/RenderingSystem.h"
 #include "ECS/CollisionSystem.h"
 #include "ECS/FlyAISystem.h"
+#include "ECS/ButtonSystem.h"
 
 #include "uuid.h"
 
@@ -27,6 +28,7 @@ private:
     CollisionSystem collisionSystem = CollisionSystem(this);
     EventSystem eventSystem = EventSystem();
 	FlyAISystem flyAISystem = FlyAISystem(this);
+    ButtonSystem buttonSystem = ButtonSystem(this);
 
 
     EntityID sceneGraphRoot = 0;
@@ -85,6 +87,9 @@ public:
 	FlyAISystem& getFlyAISystem() {
 		return flyAISystem;
 	}
+    ButtonSystem& getButtonSystem() {
+        return buttonSystem;
+    }
 
     template<typename T>
     T& addComponent(EntityID id, const T& value = T{}) {

@@ -224,4 +224,17 @@ struct ButtonComponent {
     float pressSpeed = 4.0f;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
 };
+
+struct UIButtonComponent {
+    EntityID id;
+    glm::vec2 position;
+    glm::vec2 size;
+    std::function<void()> onClick;
+    bool isHovered = false;
+    bool isPressed = false;
+
+    UIButtonComponent() = default;
+    UIButtonComponent(EntityID id, const glm::vec2& position, const glm::vec2& size, std::function<void()> onClick)
+        : id(id), position(position), size(size), onClick(std::move(onClick)) {}
+};
 #endif //PBL_COMPONENTS_H

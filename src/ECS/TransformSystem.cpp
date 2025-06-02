@@ -3,6 +3,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
 #include "Scene.h"
+#include "../../cmake-build-release/_deps/spdlog-src/include/spdlog/spdlog.h"
 
 static void continuousQuatToEuler(glm::vec3& eulerAngles, const glm::quat& quat)
 {
@@ -47,7 +48,9 @@ TransformSystem::TransformSystem(Scene* scene) : scene(scene) {}
 
 void TransformSystem::updateNode(EntityID id) const {
     auto& transform = scene->getComponent<Transform>(id);
-
+    if(std::isnan(transform.translation.x)) {
+        spdlog::error("TransformSystem::updateNode: Entity {} has NaN translation", id);
+    }
     if (transform.isDirty) {
         if (transform.parent != (EntityID)-1) {
             auto& parentTransform = scene->getComponent<Transform>(transform.parent);
@@ -77,6 +80,9 @@ void TransformSystem::update() const {
 }
 
 void TransformSystem::translateEntity(EntityID id, const glm::vec3& translation) const {
+    if(std::isnan(translation.x)) {
+        spdlog::error("TransformSystem::updateNode: Entity {} has NaN translation", id);
+    }
     auto& transform = scene->getComponent<Transform>(id);
     transform.translation = translation;
     markDirty(id);
@@ -142,6 +148,10 @@ void TransformSystem::setGlobalMatrix(EntityID id, const glm::mat4& mat) const {
 
 
     transform.translation = position;
+    //TODO Błąd w kolizjach powodujący że obiekty dynamiczne dostają NaN w macierzy transformacji
+    if(std::isnan(transform.translation.x)) {
+        spdlog::error("TransformSystem::updateNode: Entity {} has NaN translation", id);
+    }
     //transform.eulerRotation = glm::degrees(glm::eulerAngles(rotation));
 	continuousQuatToEuler(transform.eulerRotation, rotation);
     transform.rotation = rotation;

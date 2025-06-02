@@ -399,6 +399,7 @@ void Application::render(const Framebuffer& framebuffer)
 		}
 
 		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage, postShaders);
+		scene->getRenderingSystem().drawHud(framebuffer);
 	}
 }
 
@@ -596,17 +597,23 @@ void Application::setupScene()
 	colliderComponent = &scene->addComponent<ColliderComponent>(ent, ColliderComponent(ColliderType::BOX, true));
 
 
+	int counter = 0;
+
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Cloud";
 
 	scene->addComponent(ent, ImageComponent{ shaders[3], "res/textures/cloud.png" });
 	ts.translateEntity(ent, glm::vec3(9 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 	ts.scaleEntity(ent, glm::vec3(250.0f));
+	scene->getButtonSystem().makeButton(ent);
+	scene->getButtonSystem().setButtonFunction(ent, [this, counter]() mutable {
+		counter++;
+	});
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Text";
 
-	scene->addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
+	scene->addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), std::to_string(counter) });
 	ts.translateEntity(ent, glm::vec3(1 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 
 
