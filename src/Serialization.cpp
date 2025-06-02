@@ -339,30 +339,6 @@ namespace Serialization
 		j.at("intensity").get_to(c.intensity);
 	}
 
-	/*
-	struct FlyAIComponent {
-	EntityID idButter = (EntityID)-1;
-    EntityID idBread = (EntityID)-1;
-    float patrolHeightOffset = 3.f;
-    float patrolSpeed = 3.f;
-    float diveSpeed = 6.f;
-    float detectionRadius = 8.f;
-    float diveEndHeight = 1.f;
-    float returnSpeed = 3.5f;
-    float patrolRange = 10.f;
-    float patrolPointReachedThreshold = 0.5f;
-    float diveCooldownTime = 2.f;
-    float diveCooldownTimer = 0.f;
-	float groundY = 0.f;
-    enum FlyState { Patrolling, Diving, Returning }
-    state = FlyState::Patrolling;
-    glm::vec3 patrolTarget;
-
-    EntityID id = (EntityID)-1;
-
-
-};
-	*/
 
 	static void to_json(nlohmann::json& j, const FlyAIComponent& c, const SerializationContext& context)
 	{
@@ -412,7 +388,166 @@ namespace Serialization
 		j.at("patrolTarget").get_to(c.patrolTarget);
 	}
 
+	static void to_json(nlohmann::json& j, const VelocityComponent& c, const SerializationContext& context)
+	{
+		j["velocity"] = c.velocity;
+		j["angularVelocity"] = c.angularVelocity;
+		j["useGravity"] = c.useGravity;
+	}
 
+	static void from_json(const nlohmann::json& j, VelocityComponent& c, const DeserializationContext& context)
+	{
+		j.at("velocity").get_to(c.velocity);
+		j.at("angularVelocity").get_to(c.angularVelocity);
+		j.at("useGravity").get_to(c.useGravity);
+	}
+
+
+	static void to_json(nlohmann::json& j, const HeatComponent& c, const SerializationContext& context)
+	{
+		j["triggerRadius"] = c.triggerRadius;
+		j["hasTriggered"] = c.hasTriggered;
+		j["OnEnterMessage"] = c.OnEnterMessage;
+	}
+
+	static void from_json(const nlohmann::json& j, HeatComponent& c, const DeserializationContext& context)
+	{
+		j.at("triggerRadius").get_to(c.triggerRadius);
+		j.at("hasTriggered").get_to(c.hasTriggered);
+		j.at("OnEnterMessage").get_to(c.OnEnterMessage);
+	}
+
+	static void to_json(nlohmann::json& j, const RegenComponent& c, const SerializationContext& context)
+	{
+		j["triggerRadius"] = c.triggerRadius;
+		j["hasTriggered"] = c.hasTriggered;
+		j["OnEnterMessage"] = c.OnEnterMessage;
+	}
+	static void from_json(const nlohmann::json& j, RegenComponent& c, const DeserializationContext& context)
+	{
+		j.at("triggerRadius").get_to(c.triggerRadius);
+		j.at("hasTriggered").get_to(c.hasTriggered);
+		j.at("OnEnterMessage").get_to(c.OnEnterMessage);
+	}
+
+	static void to_json(nlohmann::json& j, const FreezeComponent& c, const SerializationContext& context)
+	{
+		j["triggerRadius"] = c.triggerRadius;
+		j["hasTriggered"] = c.hasTriggered;
+		j["OnEnterMessage"] = c.OnEnterMessage;
+	}
+
+	static void from_json(const nlohmann::json& j, FreezeComponent& c, const DeserializationContext& context)
+	{
+		j.at("triggerRadius").get_to(c.triggerRadius);
+		j.at("hasTriggered").get_to(c.hasTriggered);
+		j.at("OnEnterMessage").get_to(c.OnEnterMessage);
+	}
+
+	static void to_json(nlohmann::json& j, const ButterHealthComponent& c, const SerializationContext& context)
+	{
+		j["secondsToDie"] = c.secondsToDie;
+		j["secondsToHeal"] = c.secondsToHeal;
+		j["minScale"] = c.minScale;
+		j["timeLeft"] = c.timeLeft;
+		j["burning"] = c.burning;
+		j["healing"] = c.healing;
+		j["startScale"] = c.startScale;
+	}
+
+	static void from_json(const nlohmann::json& j, ButterHealthComponent& c, const DeserializationContext& context)
+	{
+		j.at("secondsToDie").get_to(c.secondsToDie);
+		j.at("secondsToHeal").get_to(c.secondsToHeal);
+		j.at("minScale").get_to(c.minScale);
+		j.at("timeLeft").get_to(c.timeLeft);
+		j.at("burning").get_to(c.burning);
+		j.at("healing").get_to(c.healing);
+		j.at("startScale").get_to(c.startScale);
+	}
+
+	static void to_json(nlohmann::json& j, const ElevatorComponent& c, const SerializationContext& context)
+	{
+		j["openHeight"] = c.openHeight;
+		j["speed"] = c.speed;
+		j["closedPos"] = c.closedPos;
+		j["state"] = c.state == ElevatorState::Closed ? "Closed" :
+			c.state == ElevatorState::Opening ? "Opening" :
+			c.state == ElevatorState::Open ? "Open" : "Closing";
+		j["buttonEntity"] = entity_to_json(c.buttonEntity, context);
+		j["maxHeight"] = c.maxHeight;
+		j["isMoving"] = c.isMoving;
+		j["shouldOpen"] = c.shouldOpen;
+		j["hasInitClosedPos"] = c.hasInitClosedPos;
+		j["startY"] = c.startY;
+		j["isDoor"] = c.isDoor;
+		j["doorDir"] = c.doorDir == ElevatorComponent::DoorDir::Left ? "Left" : "Right";
+		j["locked"] = c.locked;
+	}
+
+	static void from_json(const nlohmann::json& j, ElevatorComponent& c, const DeserializationContext& context)
+	{
+		j.at("openHeight").get_to(c.openHeight);
+		j.at("speed").get_to(c.speed);
+		j.at("closedPos").get_to(c.closedPos);
+		std::string stateStr = j.at("state").get<std::string>();
+		if (stateStr == "Closed") c.state = ElevatorState::Closed;
+		else if (stateStr == "Opening") c.state = ElevatorState::Opening;
+		else if (stateStr == "Open") c.state = ElevatorState::Open;
+		else if (stateStr == "Closing") c.state = ElevatorState::Closing;
+		c.buttonEntity = entity_from_json(j.at("buttonEntity"), context);
+		j.at("maxHeight").get_to(c.maxHeight);
+		j.at("isMoving").get_to(c.isMoving);
+		j.at("shouldOpen").get_to(c.shouldOpen);
+		j.at("hasInitClosedPos").get_to(c.hasInitClosedPos);
+		j.at("startY").get_to(c.startY);
+		j.at("isDoor").get_to(c.isDoor);
+		std::string doorDirStr = j.at("doorDir").get<std::string>();
+		if (doorDirStr == "Left") c.doorDir = ElevatorComponent::DoorDir::Left;
+		else if (doorDirStr == "Right") c.doorDir = ElevatorComponent::DoorDir::Right;
+		j.at("locked").get_to(c.locked);
+	}
+
+	static void to_json(nlohmann::json& j, const ButtonComponent& c, const SerializationContext& context)
+	{
+		j["isPressed"] = c.isPressed;
+		j["pressDepth"] = c.pressDepth;
+		j["pressSpeed"] = c.pressSpeed;
+		j["elevatorEntity"] = entity_to_json(c.elevatorEntity, context);
+	}
+
+	static void from_json(const nlohmann::json& j, ButtonComponent& c, const DeserializationContext& context)
+	{
+		j.at("isPressed").get_to(c.isPressed);
+		j.at("pressDepth").get_to(c.pressDepth);
+		j.at("pressSpeed").get_to(c.pressSpeed);
+		c.elevatorEntity = entity_from_json(j.at("elevatorEntity"), context);
+	}
+
+
+	static void to_json(nlohmann::json& j, const BreadController& c, const SerializationContext& context)
+	{
+		j["moveSpeed"] = c.moveSpeed;
+		j["jumpSpeed"] = c.jumpSpeed;
+	}
+
+	static void from_json(const nlohmann::json& j, BreadController& c, const DeserializationContext& context)
+	{
+		j.at("moveSpeed").get_to(c.moveSpeed);
+		j.at("jumpSpeed").get_to(c.jumpSpeed);
+	}
+
+	static void to_json(nlohmann::json& j, const ButterController& c, const SerializationContext& context)
+	{
+		j["moveSpeed"] = c.moveSpeed;
+		j["jumpSpeed"] = c.jumpSpeed;
+	}
+
+	static void from_json(const nlohmann::json& j, ButterController& c, const DeserializationContext& context)
+	{
+		j.at("moveSpeed").get_to(c.moveSpeed);
+		j.at("jumpSpeed").get_to(c.jumpSpeed);
+	}
 
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
@@ -563,6 +698,17 @@ namespace Serialization
 
 			serializeComponent(FlyAIComponent);
 
+			serializeComponent(VelocityComponent);
+			serializeComponent(HeatComponent);
+			serializeComponent(RegenComponent);
+			serializeComponent(FreezeComponent);
+			serializeComponent(ButterHealthComponent);
+			serializeComponent(ElevatorComponent);
+			serializeComponent(ButtonComponent);
+
+			serializeComponent(BreadController);
+			serializeComponent(ButterController);
+
 
 			selectionJson["entities"].push_back(entityJson);
 		}
@@ -630,6 +776,17 @@ namespace Serialization
 			deserializeComponent(DirectionalLightComponent);
 
 			deserializeComponent(FlyAIComponent);
+
+			deserializeComponent(VelocityComponent);
+			deserializeComponent(HeatComponent);
+			deserializeComponent(RegenComponent);
+			deserializeComponent(FreezeComponent);
+			deserializeComponent(ButterHealthComponent);
+			deserializeComponent(ElevatorComponent);
+			deserializeComponent(ButtonComponent);
+
+			deserializeComponent(BreadController);
+			deserializeComponent(ButterController);
 		}
 
 		return deserializedEntities;
