@@ -1,0 +1,12 @@
+{
+    "shaders" : [
+        {
+            "name": "Flat",
+            "sources": 
+            {
+                "VERTEX": "res/editor/shaders/flat.vert",
+                "FRAGMENT": "res/editor/shaders/flat.frag"
+            }
+        }
+    ]
+}

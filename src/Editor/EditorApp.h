@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "nlohmann/json.hpp"
 #include "ECS/EventSystem.h"
+#include "Utils/Debug.h"
 
 using json = nlohmann::json;
 
@@ -42,6 +43,10 @@ namespace Editor
 
 		EventSystem& getEventSystem() { return editorEventSystem; }
 
+		Utils::Debug getDebug() { return debug; }
+
+		Shader* getEditorShader(const std::string& name) const;
+
 	protected:
 		void initImGui();
 
@@ -63,6 +68,11 @@ namespace Editor
 		std::unique_ptr<SceneWindow> sceneWindow;
 		std::unique_ptr<GameWindow> gameWindow;
 
+
+		std::unordered_map<std::string, Shader*> editorShaders;
+
+		
+		Utils::Debug debug;
 	};
 
 

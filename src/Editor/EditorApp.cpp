@@ -42,6 +42,35 @@ namespace Editor
 
     	sceneWindow = std::make_unique<SceneWindow>(this);
     	gameWindow = std::make_unique<GameWindow>(this);
+
+
+        std::vector<Shader*> editorShaderVec;
+        Serialization::loadShaderList("res/editor/editorShaderList.json", editorShaderVec);
+        for (Shader* shader : editorShaderVec) {
+            editorShaders[shader->getName()] = shader;
+            GLint numUniformBlocks;
+            glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+
+            for (int i = 0; i < numUniformBlocks; ++i)
+            {
+                GLchar blockName[256];
+                glGetActiveUniformBlockName(shader->ID, i, sizeof(blockName), nullptr, blockName);
+                auto it = uniformBlockMap.find(blockName);
+                if (it != uniformBlockMap.end())
+                {
+                    shader->use();
+                    if (it->second->isInitialized())
+                    {
+                        it->second->init(shader->ID);
+                    }
+                    else
+                    {
+                        it->second->bindToShader(shader->ID);
+                    }
+                }
+
+            }
+        }
     }
 
     EditorApp::~EditorApp()
@@ -323,6 +352,19 @@ namespace Editor
 
         setupEvents();
 	}
+
+
+
+    Shader* EditorApp::getEditorShader(const std::string& name) const
+    {
+        auto it = editorShaders.find(name);
+        if (it != editorShaders.end())
+        {
+            return it->second;
+        }
+
+        return nullptr;
+    }
 
 }
 

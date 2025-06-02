@@ -113,6 +113,8 @@ namespace Editor
 				   ImGui::EndCombo();
 			   }
 
+               ImGui::Checkbox("Colliders", &drawColliders);
+
                ImGui::EndMenuBar();
            }
 
@@ -144,6 +146,16 @@ namespace Editor
             scene->getRenderingSystem().useTree = false;
 			scene->getRenderingSystem().showMotionBlur = false;
             editor->render(editorCamera, *sceneFramebuffer);
+
+            if (drawColliders && scene->hasEntity(editor->selectedObject)
+                && scene->hasComponent<ColliderComponent>(editor->selectedObject))
+            {
+                editor->getDebug().drawCollider(
+                    scene->getComponent<ColliderComponent>(editor->selectedObject).GetColliderShape(),
+                    scene->getComponent<Transform>(editor->selectedObject),
+                    editor->getEditorShader("Flat")
+                );
+            }
 
             GLuint texture = sceneFramebuffer->GetColorTexture();
             ImGui::Image(texture, size, ImVec2(0, 1), ImVec2(1, 0));

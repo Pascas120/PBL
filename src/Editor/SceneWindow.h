@@ -41,5 +41,7 @@ namespace Editor
 		ImGuizmo::OPERATION gizmoOperation = ImGuizmo::OPERATION::UNIVERSAL;
 		ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 		Camera editorCamera;
+
+		bool drawColliders = true;
 	};
 }
