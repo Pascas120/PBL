@@ -718,7 +718,7 @@ namespace Serialization
 
 	std::vector<EntityID> deserializeObjects(nlohmann::json objectsJson, Scene& scene, EntityID rootParent, const GlobalDeserializationContext& gContext)
 	{
-		std::unordered_map<std::string, EntityID> uuidToEntityMap = { {"", rootParent} };
+		std::unordered_map<std::string, EntityID> uuidToEntityMap = { {"", (EntityID)-1}};
 		std::vector<EntityID> deserializedEntities;
 		for (const auto& entityJson : objectsJson["entities"])
 		{
@@ -750,12 +750,10 @@ namespace Serialization
 				EntityID parentId = transform.parent;
 				if (parentId == (EntityID)-1)
 				{
-					transform.parent = rootParent;
+					parentId = rootParent;
 				}
-				else
-				{
-					ts.addChild(parentId, entity);
-				}
+				transform.parent = (EntityID)-1;
+				ts.addChild(parentId, entity);
 
 				std::vector<EntityID> children = transform.children;
 				transform.children.clear();

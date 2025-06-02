@@ -284,10 +284,185 @@ void Application::update()
 
 	if (updateScene)
 		ts.update();
-	auto& aiSystem = scene->getFlyAISystem();
-	aiSystem.deltaTime = deltaTime;
-	aiSystem.update();
+
+	std::unordered_set<EntityID> pressedButtons;
+	auto isPlayer = [&](EntityID id) {
+		return scene->hasComponent<ButterController>(id) ||
+			scene->hasComponent<BreadController>(id);
+		};
+	auto isButton = [&](EntityID id) {
+		return scene->hasComponent<ButtonComponent>(id);
+		};
+	for (auto& col : collisions) {
+		if ((isPlayer(col.objectA) && isButton(col.objectB)) ||
+			(isPlayer(col.objectB) && isButton(col.objectA)))
+		{
+			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
+			pressedButtons.insert(btn);
+		}
+	}
+
+	
+	if (auto buttons = scene->getStorage<ButtonComponent>()) {
+		for (int i = 0; i < buttons->getQuantity(); ++i) {
+			auto& btn = buttons->components[i];
+			if (btn.elevatorEntity == (EntityID)-1) continue;
+			auto& e = scene->getComponent<ElevatorComponent>(btn.elevatorEntity);
+
+			bool nowPressed = pressedButtons.count(btn.id) > 0;
+
+			if (e.isDoor) {
+
+				if (e.locked) {
+
+					if (nowPressed && e.state == ElevatorState::Closed) {
+						e.state = ElevatorState::Opening;
+						e.isMoving = true;
+					}
+					else if (nowPressed && e.state == ElevatorState::Open) {
+						e.state = ElevatorState::Closing;
+						e.isMoving = true;
+					}
+				}
+				else {
+
+					if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
+						e.state = ElevatorState::Opening;
+						e.isMoving = true;
+					}
+					else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
+						e.state = ElevatorState::Closing;
+						e.isMoving = true;
+					}
+				}
+			}
+			else {
+
+				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
+					e.state = ElevatorState::Opening;
+					e.isMoving = true;
+				}
+				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
+					e.state = ElevatorState::Closing;
+					e.isMoving = true;
+				}
+			}
+		}
+	}
+
+	if (auto elevs = scene->getStorage<ElevatorComponent>()) {
+		for (int i = 0; i < elevs->getQuantity(); ++i) {
+			auto& e = elevs->components[i];
+			if (!e.isMoving) continue;
+
+			auto& tr = scene->getComponent<Transform>(e.id);
+
+
+			if (!e.hasInitClosedPos) {
+				e.closedPos = tr.translation;
+				e.hasInitClosedPos = true;
+			}
+
+			float delta = e.speed * deltaTime;
+
+			if (e.isDoor) {
+
+				float dir = (e.doorDir == ElevatorComponent::DoorDir::Left ? -1.0f : +1.0f);
+				float minX = e.closedPos.x;
+				float maxX = e.closedPos.x + e.openHeight * dir;
+
+				if (e.state == ElevatorState::Opening) {
+					tr.translation.x += delta * dir;
+					if ((dir > 0 && tr.translation.x >= maxX) ||
+						(dir < 0 && tr.translation.x <= maxX))
+					{
+						tr.translation.x = maxX;
+						e.state = ElevatorState::Open;
+						e.isMoving = false;
+						spdlog::info("Door opened!");
+					}
+				}
+				else if (e.state == ElevatorState::Closing) {
+					tr.translation.x -= delta * dir;
+					if ((dir > 0 && tr.translation.x <= minX) ||
+						(dir < 0 && tr.translation.x >= minX))
+					{
+						tr.translation.x = minX;
+						e.state = ElevatorState::Closed;
+						e.isMoving = false;
+						spdlog::info("Door closed!");
+					}
+				}
+			}
+			else {
+
+				float minY = e.closedPos.y;
+				float maxY = e.closedPos.y + e.openHeight;
+
+				if (e.state == ElevatorState::Opening) {
+					tr.translation.y += delta;
+					if (tr.translation.y >= maxY) {
+						tr.translation.y = maxY;
+						e.state = ElevatorState::Open;
+						e.isMoving = false;
+						spdlog::info("Elevator ruszyla");
+					}
+				}
+				else if (e.state == ElevatorState::Closing) {
+					tr.translation.y -= delta;
+					if (tr.translation.y <= minY) {
+						tr.translation.y = minY;
+						e.state = ElevatorState::Closed;
+						e.isMoving = false;
+						spdlog::info("Elevator zastopowala");
+					}
+				}
+			}
+
+			scene->getTransformSystem().translateEntity(e.id, tr.translation);
+		}
+	}
+
+	{
+		auto& aiSystem = scene->getFlyAISystem();
+		aiSystem.deltaTime = deltaTime;
+		aiSystem.update();
+	}
 	ts.update();
+
+	if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
+		if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
+			auto transforms = scene->getStorage<Transform>();
+			for (int i = 0; i < bhs->getQuantity(); ++i) {
+				auto& bh = bhs->components[i];
+				auto& tr = transforms->get(bh.id);
+
+
+				if (bh.burning && bh.timeLeft > 0.0f)
+					bh.timeLeft -= deltaTime;
+
+				if (bh.healing && bh.timeLeft < bh.secondsToDie)
+					bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
+
+
+				bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
+
+
+				float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
+				float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
+				tr.scale = bh.startScale * scaleRatio;
+
+
+				bh.burning = bh.healing = false;
+			}
+
+			scene->getTransformSystem().update();
+		}
+
+
+	}
+
+
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
@@ -733,4 +908,79 @@ void Application::setupEvents()
 			}
 		}
 	});
+
+	//heat
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) 
+	{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+			if (!scene->hasComponent<ButterHealthComponent>(ev.objectA) ||
+				!scene->hasComponent<HeatComponent>(ev.objectB))
+				return;
+
+			spdlog::info("cieplo");
+
+			// wlaczam burning
+			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(ev.objectA);
+			bh.burning = true;
+	});
+
+	//freeze
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+	{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+
+			if (!scene->hasComponent<FreezeComponent>(ev.objectB))
+				return;
+
+			auto& freeze = scene->getComponent<FreezeComponent>(ev.objectB);
+			spdlog::info("{}", freeze.OnEnterMessage);
+	});
+
+
+	//regen
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+	{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+			if (!scene->hasComponent<ButterHealthComponent>(ev.objectA) ||
+				!scene->hasComponent<RegenComponent>(ev.objectB))
+				return;
+
+			auto& regen = scene->getComponent<RegenComponent>(ev.objectB);
+			spdlog::info("{}", regen.OnEnterMessage);
+
+			auto& bh = scene->getComponent<ButterHealthComponent>(ev.objectA);
+			bh.healing = true;
+	});
+
+
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const CollisionEvent&>(e);
+		if (!ev.isColliding) return;
+
+		if (!(scene->hasComponent<ButterController>(ev.objectA)
+			|| scene->hasComponent<BreadController>(ev.objectA))
+			|| !scene->hasComponent<ButtonComponent>(ev.objectB))
+		{
+			return;
+		}
+
+		auto& button = scene->getComponent<ButtonComponent>(ev.objectB);
+		if (button.elevatorEntity == (EntityID)-1) return;
+
+		auto& elevator = scene->getComponent<ElevatorComponent>(button.elevatorEntity);
+
+		if (!elevator.isMoving) {
+			auto& transform = scene->getComponent<Transform>(elevator.id);
+			elevator.startY = transform.translation.y;
+			elevator.isMoving = true;
+			spdlog::info("Elevator start moving!");
+		}
+	});
+
 }
