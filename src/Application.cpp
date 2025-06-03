@@ -925,6 +925,7 @@ void Application::setupEvents()
 			if (event.separationVector.y > 0.01f && velocityComponent.velocity.y < 0.1f)
 			{
 				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
+				butter->isJumping = true;
 			}
 		}
 	});
