@@ -513,6 +513,7 @@ namespace Serialization
 		j["isPressed"] = c.isPressed;
 		j["pressDepth"] = c.pressDepth;
 		j["pressSpeed"] = c.pressSpeed;
+		j["playerTag"] = c.playerTag;
 		j["elevatorEntity"] = entity_to_json(c.elevatorEntity, context);
 	}
 
@@ -521,6 +522,14 @@ namespace Serialization
 		j.at("isPressed").get_to(c.isPressed);
 		j.at("pressDepth").get_to(c.pressDepth);
 		j.at("pressSpeed").get_to(c.pressSpeed);
+		if (j.contains("playerTag"))
+		{
+			j.at("playerTag").get_to(c.playerTag);
+		}
+		else
+		{
+			c.playerTag.clear();
+		}
 		c.elevatorEntity = entity_from_json(j.at("elevatorEntity"), context);
 	}
 

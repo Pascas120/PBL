@@ -61,10 +61,12 @@ namespace Editor
                     return;
                 }
 				std::string tag = objectInfo.tag;
-				if (ImGui::InputText("Tag", (char*)tag.c_str(), 64))
-				{
-					objectInfo.tag = tag;
-				}
+                const char* tagCStr = tag.c_str();
+
+                if (ImGui::InputText("Tag", (char*)tagCStr, 64))
+                {
+                    objectInfo.tag = tagCStr;
+                }
 
                 ImGui::Separator();
 
@@ -590,6 +592,14 @@ namespace Editor
         {
             ImGui::DragFloat("Press Depth", &b.pressDepth, 0.01f);
             ImGui::DragFloat("Press Speed", &b.pressSpeed, 0.1f);
+
+			
+			std::string playerTag = b.playerTag;
+			const char* playerTagCStr = playerTag.c_str();
+			if (ImGui::InputText("Player Tag", (char*)playerTagCStr, 64))
+			{
+				b.playerTag = playerTagCStr;
+			}
 
             
             Utils::entityRefField("Elevator Entity", b.elevatorEntity, *scene);

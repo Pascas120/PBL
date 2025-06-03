@@ -298,6 +298,17 @@ void Application::update()
 			(isPlayer(col.objectB) && isButton(col.objectA)))
 		{
 			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
+			EntityID playerId = isPlayer(col.objectA) ? col.objectA : col.objectB;
+
+			auto& button = scene->getComponent<ButtonComponent>(btn);
+
+			if (!button.playerTag.empty())
+			{
+				auto& playerInfo = scene->getComponent<ObjectInfoComponent>(playerId);
+				if (playerInfo.tag != button.playerTag) {
+					continue;
+				}
+			}
 			pressedButtons.insert(btn);
 		}
 	}
@@ -972,6 +983,14 @@ void Application::setupEvents()
 
 		auto& button = scene->getComponent<ButtonComponent>(ev.objectB);
 		if (button.elevatorEntity == (EntityID)-1) return;
+
+		if (!button.playerTag.empty())
+		{
+			auto& playerInfo = scene->getComponent<ObjectInfoComponent>(ev.objectA);
+			if (playerInfo.tag != button.playerTag) {
+				return;
+			}
+		}
 
 		auto& elevator = scene->getComponent<ElevatorComponent>(button.elevatorEntity);
 

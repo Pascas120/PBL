@@ -222,6 +222,7 @@ struct ButtonComponent {
     bool isPressed = false;
     float pressDepth = 0.1f;
     float pressSpeed = 4.0f;
+    std::string playerTag;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
 };
 #endif //PBL_COMPONENTS_H
