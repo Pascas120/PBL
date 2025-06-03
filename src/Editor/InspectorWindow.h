@@ -29,5 +29,6 @@ namespace Editor
 		void drawRegen(const EditorContext& context, EntityID id);
 		void drawElevator(const EditorContext& context, EntityID id);
 		void drawButton(const EditorContext& context, EntityID id);
+		void drawCameraController(const EditorContext& context, EntityID id);
 	};
 }

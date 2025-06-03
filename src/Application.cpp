@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include "Serialization.h"
+#include "ECS/components/CameraController.h"
 
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -473,6 +474,14 @@ void Application::update()
 
 	}
 
+	if(auto cc = scene->getStorage<CameraController>())
+	{
+		for (int i = 0; i < cc->getQuantity(); ++i)
+		{
+			auto& controller = cc->components[i];
+			controller.update(window, scene.get(), deltaTime);
+		}
+	}
 
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
