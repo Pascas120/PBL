@@ -30,6 +30,7 @@ namespace Editor
 {
     EditorApp::EditorApp() : Application()
     {
+    	spdlog::info("dupa");
         initImGui();
         spdlog::info("Initialized ImGui.");
 

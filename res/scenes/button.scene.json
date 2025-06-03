@@ -88,6 +88,14 @@
                     0.0
                 ]
             },
+            "CameraController": {
+                "offset": [
+                    -15.0,
+                    6.0,
+                    0.0
+                ],
+                "targetID": "839ea407-301a-6942-55ed-743b8374a902"
+            },
             "ObjectInfoComponent": {
                 "name": "Camera",
                 "uuid": "9d88bab4-a333-7fc2-9372-c0c269eb872c"
@@ -335,7 +343,7 @@
                 ],
                 "scale": [
                     5.0,
-                    1.437999963760376,
+                    2.799999952316284,
                     1.9906715154647827
                 ],
                 "translation": [
@@ -590,7 +598,7 @@
                 ],
                 "translation": [
                     -2.7474262714385986,
-                    2.5131211280822754,
+                    3.934718608856201,
                     5.1032185554504395
                 ]
             }
@@ -625,9 +633,9 @@
                 "isMoving": false,
                 "locked": false,
                 "maxHeight": 5.0,
-                "openHeight": 2.299999952316284,
+                "openHeight": 4.0,
                 "shouldOpen": false,
-                "speed": 0.800000011920929,
+                "speed": 1.5,
                 "startY": -1.0,
                 "state": "Closed"
             },

@@ -4,6 +4,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "ECS/components/CameraController.h"
 
 #define ADD_COMPONENT(T, name) \
     ImGui::BeginDisabled(scene->hasComponent<T>(editor->selectedObject)); \
@@ -83,6 +84,7 @@ namespace Editor
                 drawRegen(context, editor->selectedObject);
                 drawElevator(context, editor->selectedObject);
                 drawButton(context, editor->selectedObject);
+                drawCameraController(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -121,6 +123,7 @@ namespace Editor
                     ADD_COMPONENT(RegenComponent, "Regen");
                     ADD_COMPONENT(ElevatorComponent, "Elevator");
                     ADD_COMPONENT(ButtonComponent, "Button");
+                    ADD_COMPONENT(CameraController, "Camera Controller");
 
                     ImGui::EndCombo();
                 }
@@ -607,7 +610,23 @@ namespace Editor
         ImGui::PopID();
     }
 
+    void InspectorWindow::drawCameraController(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<CameraController>(id)) return;
+        auto& cc = scene->getComponent<CameraController>(id);
 
+        ImGui::PushID(&cc);
+        bool open = ImGui::CollapsingHeader("CameraController", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<CameraController>(context, id)) return;
+        if (open)
+        {
+            ImGui::DragFloat3("Offset", &cc.offset[0], 0.1f);
+
+            Utils::entityRefField("Target Entity", cc.targetID, *scene);
+        }
+        ImGui::PopID();
+    }
 
 
 

@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 #include "ECS/Components.h"
+#include "ECS/components/CameraController.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
@@ -558,6 +559,18 @@ namespace Serialization
 		j.at("jumpSpeed").get_to(c.jumpSpeed);
 	}
 
+	static void to_json(nlohmann::json& j, const CameraController& c, const SerializationContext& context)
+	{
+		j["offset"] = c.offset;
+		j["targetID"] = entity_to_json(c.targetID, context);
+	}
+
+	static void from_json(const nlohmann::json& j, CameraController& c, const DeserializationContext& context)
+	{
+		j.at("offset").get_to(c.offset);
+		c.targetID = entity_from_json(j.at("targetID"), context);
+	}
+
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);
@@ -718,6 +731,8 @@ namespace Serialization
 			serializeComponent(BreadController);
 			serializeComponent(ButterController);
 
+			serializeComponent(CameraController);
+
 
 			selectionJson["entities"].push_back(entityJson);
 		}
@@ -804,6 +819,7 @@ namespace Serialization
 
 			deserializeComponent(BreadController);
 			deserializeComponent(ButterController);
+			deserializeComponent(CameraController);
 		}
 
 		return deserializedEntities;
