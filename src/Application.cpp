@@ -910,7 +910,7 @@ void Application::setupEvents()
 		ButterController* butter = &scene->getComponent<ButterController>(event.objectA);
 		BreadController* bread = &scene->getComponent<BreadController>(event.objectB);
 
-		if (bread && butter)
+		if (bread && butter && bread->isBouncy)
 		{
 			auto& velocityComponent = scene->getComponent<VelocityComponent>(event.objectA);
 			if (event.separationVector.y > 0.01f && velocityComponent.velocity.y < 0.1f)

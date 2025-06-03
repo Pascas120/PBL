@@ -295,6 +295,17 @@ namespace Editor
             sceneBackup = std::make_shared<Scene>(*scene);
 			ImGui::SetWindowFocus("Game");
 			scene->getRenderingSystem().buildTree();
+
+			auto breadControllers = scene->getStorage<BreadController>();
+            if (breadControllers)
+            {
+				for (int i = 0; i < breadControllers->getQuantity(); i++)
+				{
+					auto& breadController = breadControllers->components[i];
+					breadController.startScale = scene->getComponent<Transform>(breadController.id).scale;
+				}
+            }
+
         }
 		else if (mode == PlayMode::STOP)
 		{

@@ -32,6 +32,29 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			transformSystem.rotateEntity(id, glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
 		}
 
+		if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		{
+			if (relativeScale < 1.5f)
+			{
+				relativeScale += deltaTime * 0.8f;
+				relativeScale = glm::clamp(relativeScale, 1.0f, 1.25f);
+
+				transformSystem.scaleEntity(id, startScale * relativeScale);
+				isBouncy = true;
+			}
+		}
+		else
+		{
+			if (relativeScale > 1.0f)
+			{
+				relativeScale -= deltaTime * 0.8f;
+				relativeScale = glm::clamp(relativeScale, 1.0f, 1.25f);
+
+				transformSystem.scaleEntity(id, startScale * relativeScale);
+				isBouncy = false;
+			}
+		}
+
 		if (glm::length(movement) > 0.0f)
 		{
 			movement = glm::normalize(movement) * moveSpeed;
