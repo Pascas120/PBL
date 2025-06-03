@@ -197,6 +197,7 @@ namespace Editor
 
         if (open)
         {
+			ImGui::Checkbox("Static", &collider.isStatic);
             glm::vec3 center = shape->center;
             if (ImGui::DragFloat3("Center", &center[0], 0.1f))
             {
