@@ -27,6 +27,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
+                "tag": "maslo",
                 "uuid": "f71e62d5-677c-cc02-29af-fac95ed22292"
             },
             "Transform": {
@@ -71,7 +72,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7813410758972168,
+                "aspectRatio": 1.7826087474822998,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -145,6 +146,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
+                "tag": "chleb",
                 "uuid": "839ea407-301a-6942-55ed-743b8374a902"
             },
             "Transform": {
@@ -230,12 +232,12 @@
                 "scale": [
                     5.0,
                     0.10000000149011612,
-                    5.0
+                    35.0
                 ],
                 "translation": [
                     0.0,
                     0.0,
-                    0.0
+                    29.0
                 ]
             }
         },
@@ -313,6 +315,58 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
+                "name": "Wall 1 (1)",
+                "uuid": "652c0112-d8c4-291a-bee0-5cac066a1b56"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    5.0,
+                    1.437999963760376,
+                    1.9906715154647827
+                ],
+                "translation": [
+                    0.0,
+                    1.0,
+                    5.877815246582031
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
                 "name": "Wall 2",
                 "uuid": "27367d06-da21-7501-dc51-6c8178af8c20"
             },
@@ -334,12 +388,12 @@
                 "scale": [
                     1.0,
                     1.0,
-                    5.0
+                    35.0
                 ],
                 "translation": [
                     6.0,
                     1.0,
-                    0.0
+                    29.0
                 ]
             }
         },
@@ -386,64 +440,12 @@
                 "scale": [
                     1.0,
                     1.0,
-                    5.0
+                    35.0
                 ],
                 "translation": [
                     -6.0,
                     1.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true
-            },
-            "ModelComponent": {
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "Wall 5",
-                "uuid": "8c403029-b5da-1963-bb41-b07a13a34313"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    30.0,
-                    180.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    -0.258819043636322,
-                    -1.1313339598473249e-08,
-                    0.9659258127212524,
-                    -4.222195926217864e-08
-                ],
-                "scale": [
-                    0.5,
-                    2.0,
-                    0.5
-                ],
-                "translation": [
-                    1.0,
-                    1.0,
-                    2.0
+                    29.0
                 ]
             }
         },
@@ -538,7 +540,7 @@
             "ButtonComponent": {
                 "elevatorEntity": "235e9685-8321-c18d-bf45-9c3bd5b1e8c4",
                 "isPressed": false,
-                "playerTag": "chleb",
+                "playerTag": "",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -583,13 +585,13 @@
                 ],
                 "scale": [
                     0.5400000214576721,
-                    0.2235172986984253,
+                    0.2056725174188614,
                     0.5400000214576721
                 ],
                 "translation": [
                     -2.7474262714385986,
-                    0.23547983169555664,
-                    0.0
+                    2.5131211280822754,
+                    5.1032185554504395
                 ]
             }
         },
@@ -623,9 +625,9 @@
                 "isMoving": false,
                 "locked": false,
                 "maxHeight": 5.0,
-                "openHeight": 1.899999976158142,
+                "openHeight": 2.299999952316284,
                 "shouldOpen": false,
-                "speed": 0.4000000059604645,
+                "speed": 0.800000011920929,
                 "startY": -1.0,
                 "state": "Closed"
             },
