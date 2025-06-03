@@ -39,6 +39,12 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			movement = glm::normalize(movement) * moveSpeed;
 		}
 
+		timeSinceLastGroundContact += deltaTime;
+		if (!isJumping && timeSinceLastGroundContact > 0.3f)
+		{
+			isJumping = true;
+		}
+
 		if (!isJumping && glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
 		{
 			movement.y += jumpSpeed;

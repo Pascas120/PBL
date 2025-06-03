@@ -10,6 +10,7 @@ struct ButterController
 	float moveSpeed;
 	float jumpSpeed;
 	bool isJumping = false;
+	float timeSinceLastGroundContact = 0.0f;
 
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);
 

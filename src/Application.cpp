@@ -887,11 +887,12 @@ void Application::setupEvents()
 		if (!scene->hasComponent<ButterController>(event.objectA))
 			return;
 
-		ButterController* breadController = &scene->getComponent<ButterController>(event.objectA);
+		ButterController* butterController = &scene->getComponent<ButterController>(event.objectA);
 
-		if (event.separationVector.y > 0.01f && breadController->isJumping)
+		if (event.separationVector.y > 0.01f && butterController->isJumping)
 		{
-			breadController->isJumping = false;
+			butterController->isJumping = false;
+			butterController->timeSinceLastGroundContact = 0.0f;
 		}
 	});
 
