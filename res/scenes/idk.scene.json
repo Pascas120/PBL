@@ -23,7 +23,8 @@
             },
             "Transform": {
                 "children": [
-                    "20d4cf88-ac7f-f0b1-ca75-13cc44e7219f"
+                    "20d4cf88-ac7f-f0b1-ca75-13cc44e7219f",
+                    "6792e170-2bc1-e958-f485-d9c3510f8dbc"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -67,12 +68,44 @@
                     0.0
                 ],
                 "isStatic": true,
-                "parent": "20223709-e370-72af-81fb-d872aec3be9f",
+                "parent": "",
                 "rotation": [
                     -0.7071067690849304,
                     0.0,
                     0.0,
                     0.7071067690849304
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "New Object (1)",
+                "uuid": "6792e170-2bc1-e958-f485-d9c3510f8dbc"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "20223709-e370-72af-81fb-d872aec3be9f",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
                 ],
                 "scale": [
                     1.0,
@@ -153,7 +186,7 @@
                     0.0
                 ],
                 "isStatic": true,
-                "parent": "69e225a2-09f0-a663-ddb6-1377399b5555",
+                "parent": "",
                 "rotation": [
                     -0.7071067690849304,
                     0.0,
@@ -594,7 +627,7 @@
                     0.0
                 ],
                 "isStatic": true,
-                "parent": "a5c8174d-a904-7fe3-7352-63e1cd1c6b2b",
+                "parent": "",
                 "rotation": [
                     -7.143235655759916e-12,
                     0.0,
@@ -648,7 +681,7 @@
                 ],
                 "translation": [
                     15.060576438903809,
-                    10.357338905334473,
+                    12.057000160217285,
                     8.218868255615234
                 ]
             }

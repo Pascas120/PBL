@@ -167,6 +167,10 @@ bool TransformSystem::addChild(EntityID parent, EntityID child) const {
     if (childTransform.parent == parent)
         return false;
 
+	if (childTransform.parent != (EntityID)-1 &&
+        std::find(parentTransform.children.begin(), parentTransform.children.end(), child) != parentTransform.children.end())
+		return false;
+
     EntityID ancestor = parentTransform.id;
 	while (ancestor != scene->getSceneRootEntity() && ancestor != (EntityID)-1) {
         if (ancestor == child) {
@@ -177,7 +181,7 @@ bool TransformSystem::addChild(EntityID parent, EntityID child) const {
         ancestor = ancestorTransform.parent;
     }
 
-    if (childTransform.parent != -1) {
+    if (childTransform.parent != (EntityID)-1) {
         removeChild(childTransform.parent, child);
     }
 

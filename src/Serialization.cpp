@@ -736,6 +736,9 @@ namespace Serialization
 			.deserializeUuid = gContext.deserializeUuid
 		};
 
+		EntityID sceneRoot = scene.getSceneRootEntity();
+		auto& sceneRootTransform = scene.getComponent<Transform>(sceneRoot);
+
 		for (auto& entityJson : objectsJson["entities"])
 		{
 			EntityID entity = uuidToEntityMap[entityJson["ObjectInfoComponent"]["uuid"].get<std::string>()];
@@ -748,19 +751,26 @@ namespace Serialization
 				auto& transform = scene.getComponent<Transform>(entity);
 
 				EntityID parentId = transform.parent;
+
+				if (parentId != sceneRoot)
+				{
+					std::erase(sceneRootTransform.children, entity);
+				}
+
 				if (parentId == (EntityID)-1)
 				{
-					parentId = rootParent;
+					//parentId = rootParent;
+					ts.addChild(rootParent, entity);
 				}
-				transform.parent = (EntityID)-1;
-				ts.addChild(parentId, entity);
+				//transform.parent = (EntityID)-1;
+				//ts.addChild(parentId, entity);
 
-				std::vector<EntityID> children = transform.children;
+				/*std::vector<EntityID> children = transform.children;
 				transform.children.clear();
 				for (auto child : children)
 				{
 					ts.addChild(entity, child);
-				}
+				}*/
 			}
 
 			deserializeComponent(ModelComponent);
