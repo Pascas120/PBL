@@ -39,6 +39,14 @@
                 "VERTEX": "res/shaders/postprocess/postprocess.vert",
                 "FRAGMENT": "res/shaders/postprocess/ShadowFxaa.frag"
             }
+        },
+                {
+            "name": "DOF",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/dof.vert",
+                "FRAGMENT": "res/shaders/postprocess/dof.frag"
+            }
         }
     ]
 }

@@ -43,6 +43,8 @@ private:
         const CustomFramebuffer& inVel, const Framebuffer& out);
     void fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const CustomFramebuffer& test, const Framebuffer& out);
     void shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const Framebuffer& out);
+    void dofFilter(Shader* dof, const CustomFramebuffer& in,const CustomFramebuffer& indepth, const Framebuffer& out);
+
 
 	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 
         { AttachmentType::COLOR, AttachmentType::DEPTH,

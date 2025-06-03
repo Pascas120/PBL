@@ -186,6 +186,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     Shader* sobelShader = postShaders.at("Sobel");
     Shader* motionBlurShader = postShaders.at("MotionBlur");
+    Shader* Dof = postShaders.at("DOF");
     Shader* FXAAShader = postShaders.at("FXAA");
 
     CustomFramebuffer* postBuffers[2] = { &postProcessingFramebuffer1, &postProcessingFramebuffer2 };
@@ -202,7 +203,8 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
 		cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
 		fxaaFilter(FXAAShader, postProcessingFramebuffer1, postProcessingFramebuffer1, postProcessingFramebuffer2);
-		motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, framebuffer);
+		motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, postProcessingFramebuffer1);
+        dofFilter(Dof, postProcessingFramebuffer1, customFramebuffer, framebuffer);
     }
     else
     {
@@ -211,6 +213,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     }
 
 }
+
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
     if (!initializedHud) initHud(); // Inicjalizacja, jeśli nie została wykonana
@@ -415,6 +418,25 @@ void RenderingSystem::shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in
     glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, in.GetDepthTexture());
     fxaa->setInt("shadowMap", 0);
+
+    glBindVertexArray(hudVAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+
+//dof
+void RenderingSystem::dofFilter(Shader* dof, const CustomFramebuffer& in, const CustomFramebuffer& indepth, const Framebuffer& out) {
+    out.Bind();
+    dof->use();
+    auto [width, height] = in.GetSizePair();
+    dof->setVec2("screenSize", (float)width, (float)height);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+    dof->setInt("colorTex", 0);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, indepth.GetDepthTexture());
+    dof->setInt("depthTex", 1);
 
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
