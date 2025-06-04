@@ -298,9 +298,8 @@ void Application::update()
 		if ((isPlayer(col.objectA) && isButton(col.objectB)) ||
 			(isPlayer(col.objectB) && isButton(col.objectA)))
 		{
-			bool isEntAButton = isButton(col.objectA);
-			EntityID btn = isEntAButton ? col.objectA : col.objectB;
-			EntityID playerId = !isEntAButton ? col.objectA : col.objectB;
+			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
+			EntityID playerId = isPlayer(col.objectA) ? col.objectA : col.objectB;
 
 			auto& button = scene->getComponent<ButtonComponent>(btn);
 
@@ -311,17 +310,11 @@ void Application::update()
 					continue;
 				}
 			}
-
-			//int sign = (isEntAButton ? -1 : 1);
-			//if (sign * col.separationVector.y > 0.003f)
-			if (abs(col.separationVector.x) < 0.001f && abs(col.separationVector.z) < 0.001f)
-			{
-				pressedButtons.insert(btn);
-			}
+			pressedButtons.insert(btn);
 		}
 	}
 
-	
+
 	if (auto buttons = scene->getStorage<ButtonComponent>()) {
 		for (int i = 0; i < buttons->getQuantity(); ++i) {
 			auto& btn = buttons->components[i];
@@ -481,7 +474,7 @@ void Application::update()
 
 	}
 
-	if(auto cc = scene->getStorage<CameraController>())
+	if (auto cc = scene->getStorage<CameraController>())
 	{
 		for (int i = 0; i < cc->getQuantity(); ++i)
 		{
@@ -493,6 +486,9 @@ void Application::update()
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
+
+
+
 
 
 
