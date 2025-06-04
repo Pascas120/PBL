@@ -298,8 +298,9 @@ void Application::update()
 		if ((isPlayer(col.objectA) && isButton(col.objectB)) ||
 			(isPlayer(col.objectB) && isButton(col.objectA)))
 		{
-			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
-			EntityID playerId = isPlayer(col.objectA) ? col.objectA : col.objectB;
+			bool isEntAButton = isButton(col.objectA);
+			EntityID btn = isEntAButton ? col.objectA : col.objectB;
+			EntityID playerId = !isEntAButton ? col.objectA : col.objectB;
 
 			auto& button = scene->getComponent<ButtonComponent>(btn);
 
@@ -310,7 +311,13 @@ void Application::update()
 					continue;
 				}
 			}
-			pressedButtons.insert(btn);
+
+			//int sign = (isEntAButton ? -1 : 1);
+			//if (sign * col.separationVector.y > 0.003f)
+			if (abs(col.separationVector.x) < 0.001f && abs(col.separationVector.z) < 0.001f)
+			{
+				pressedButtons.insert(btn);
+			}
 		}
 	}
 
@@ -884,6 +891,7 @@ void Application::setupEvents()
 		if (event.separationVector.y > 0.01f && breadController->isJumping)
 		{
 			breadController->isJumping = false;
+			breadController->timeSinceLastGroundContact = 0.0f;
 		}
 	});
 
@@ -991,6 +999,8 @@ void Application::setupEvents()
 		{
 			return;
 		}
+
+		if (ev.separationVector.y < 0.01f) return;
 
 		auto& button = scene->getComponent<ButtonComponent>(ev.objectB);
 		if (button.elevatorEntity == (EntityID)-1) return;
