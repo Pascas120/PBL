@@ -124,6 +124,7 @@ namespace Editor
                     ADD_COMPONENT(ElevatorComponent, "Elevator");
                     ADD_COMPONENT(ButtonComponent, "Button");
                     ADD_COMPONENT(CameraController, "Camera Controller");
+					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
 
                     ImGui::EndCombo();
                 }

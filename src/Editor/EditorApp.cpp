@@ -306,6 +306,15 @@ namespace Editor
 					breadController.startScale = scene->getComponent<Transform>(breadController.id).scale;
 				}
             }
+			auto butterHealthComponents = scene->getStorage<ButterHealthComponent>();
+            if (butterHealthComponents)
+            {
+                for (int i = 0; i < butterHealthComponents->getQuantity(); i++)
+                {
+                    auto& bh = butterHealthComponents->components[i];
+                    bh.startScale = scene->getComponent<Transform>(bh.id).scale;
+                }
+            }
 
         }
 		else if (mode == PlayMode::STOP)
