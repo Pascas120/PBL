@@ -695,6 +695,12 @@ void Application::setupScene()
 
 	scene->addComponent<VelocityComponent>(ent, {});
 	scene->addComponent<ButterController>(ent, { 3.0f, 5.0f });
+	auto& bh = scene->addComponent<ButterHealthComponent>(ent, {});
+	bh.startScale = scene->getComponent<Transform>(ent).scale;
+	scene->getComponent<ObjectInfoComponent>(ent).tag = "maslo";
+
+
+
 
 
 	ent = scene->createEntity();
@@ -929,55 +935,77 @@ void Application::setupEvents()
 			}
 		}
 	});
-
 	//heat
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e) 
-	{
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+		{
 			const auto& ev = static_cast<const CollisionEvent&>(e);
-			if (!ev.isColliding) return;
 
-			if (!scene->hasComponent<ButterHealthComponent>(ev.objectA) ||
-				!scene->hasComponent<HeatComponent>(ev.objectB))
-				return;
+			auto isMaslo = [&](EntityID id)
+				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
+				scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
+
+			auto isHeat = [&](EntityID id)
+				{ return scene->hasComponent<HeatComponent>(id); };
+
+			bool condition =
+				(isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
+				(isMaslo(ev.objectB) && isHeat(ev.objectA));
+
+			if (!condition) return;
+
 
 			spdlog::info("cieplo");
 
-			// wlaczam burning
-			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(ev.objectA);
+			//wlaczam burning
+			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
+				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
 			bh.burning = true;
-	});
+		});
 
 	//freeze
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-	{
+		{
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 			if (!ev.isColliding) return;
 
+			bool aIsPlayer = (ev.objectA == player);
+			bool bIsPlayer = (ev.objectB == player);
 
-			if (!scene->hasComponent<FreezeComponent>(ev.objectB))
-				return;
+			bool aIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectA);
+			bool bIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectB);
 
-			auto& freeze = scene->getComponent<FreezeComponent>(ev.objectB);
-			spdlog::info("{}", freeze.OnEnterMessage);
-	});
+			if ((aIsPlayer && bIsFreeze) || (bIsPlayer && aIsFreeze))
+			{
 
+				auto& freeze = scene->getComponent<FreezeComponent>(aIsFreeze ? ev.objectA : ev.objectB);
+				spdlog::info("{}", freeze.OnEnterMessage);
+			}
+		});
 
 	//regen
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
-	{
+		{
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 			if (!ev.isColliding) return;
 
-			if (!scene->hasComponent<ButterHealthComponent>(ev.objectA) ||
-				!scene->hasComponent<RegenComponent>(ev.objectB))
-				return;
+			auto isMaslo = [&](EntityID id) { return scene->hasComponent<ObjectInfoComponent>(id)
+				&& scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
+			auto isRegen = [&](EntityID id) { return scene->hasComponent<RegenComponent>(id); };
 
-			auto& regen = scene->getComponent<RegenComponent>(ev.objectB);
+			bool condition = (isMaslo(ev.objectA) && isRegen(ev.objectB)) ||
+				(isMaslo(ev.objectB) && isRegen(ev.objectA));
+			if (!condition) return;
+
+
+			auto& regen = scene->getComponent<RegenComponent>(
+				isRegen(ev.objectA) ? ev.objectA : ev.objectB);
 			spdlog::info("{}", regen.OnEnterMessage);
 
-			auto& bh = scene->getComponent<ButterHealthComponent>(ev.objectA);
+
+			auto& bh = scene->getComponent<ButterHealthComponent>(
+				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
 			bh.healing = true;
-	});
+		});
 
 
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
