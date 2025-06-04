@@ -85,7 +85,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7790697813034058,
+                "aspectRatio": 1.7771317958831787,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -104,10 +104,10 @@
             "CameraController": {
                 "offset": [
                     0.0,
-                    4.0,
-                    -10.0
+                    13.399999618530273,
+                    -15.0
                 ],
-                "targetID": "839ea407-301a-6942-55ed-743b8374a902"
+                "targetID": "f71e62d5-677c-cc02-29af-fac95ed22292"
             },
             "ObjectInfoComponent": {
                 "name": "Camera",
@@ -1037,9 +1037,9 @@
                 "hasInitClosedPos": false,
                 "isDoor": true,
                 "isMoving": false,
-                "locked": true,
+                "locked": false,
                 "maxHeight": 5.0,
-                "openHeight": 4.599999904632568,
+                "openHeight": 8.0,
                 "shouldOpen": false,
                 "speed": 2.0,
                 "startY": -1.0,
@@ -1173,14 +1173,71 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.9999794363975525,
+                    0.9999768137931824,
                     14.0,
-                    1.8079948425292969
+                    2.258392810821533
                 ],
                 "translation": [
-                    7.138177394866943,
+                    8.048443794250488,
                     -6.75,
                     113.62545013427734
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "HeatComponent": {
+                "OnEnterMessage": "cieplo",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ModelComponent": {
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "heat",
+                "uuid": "315117f3-980c-1051-d696-7037a9770658"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -180.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.7072288393974304,
+                    -3.090329414590087e-08,
+                    -0.7069846987724304,
+                    -3.091396649779199e-08
+                ],
+                "scale": [
+                    4.999898910522461,
+                    0.10000000149011612,
+                    4.707898139953613
+                ],
+                "translation": [
+                    9.059349060058594,
+                    0.14337158203125,
+                    106.96531677246094
                 ]
             }
         },
