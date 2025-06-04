@@ -85,7 +85,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7813410758972168,
+                "aspectRatio": 1.7826087474822998,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -104,10 +104,10 @@
             "CameraController": {
                 "offset": [
                     0.0,
-                    4.0,
-                    -10.0
+                    5.0,
+                    -15.0
                 ],
-                "targetID": "839ea407-301a-6942-55ed-743b8374a902"
+                "targetID": "f71e62d5-677c-cc02-29af-fac95ed22292"
             },
             "ObjectInfoComponent": {
                 "name": "Camera",
