@@ -280,8 +280,8 @@ namespace Editor
     {
         if (scrollYOffset != 0.0f)
         {
-            cameraSpeed += scrollYOffset * 0.1f;
-            cameraSpeed = glm::clamp(cameraSpeed, 0.1f, 2.0f);
+            cameraSpeed += scrollYOffset * 0.2f;
+            cameraSpeed = glm::clamp(cameraSpeed, 0.1f, 25.0f);
         }
         float scaledCamSpeed = cameraSpeed * deltaTime;
 

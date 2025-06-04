@@ -11,22 +11,22 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	{
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
 			movement.z -= moveSpeed;
 			transformSystem.rotateEntity(id, glm::vec3(0.0f, 180.0f, 0.0f), deltaTime*10);
 		}
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
 			movement.z += moveSpeed;
 			transformSystem.rotateEntity(id, glm::vec3(0.0f, 0.0f, 0.0f), deltaTime*10);
 		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{
 			movement.x -= moveSpeed;
 			transformSystem.rotateEntity(id, glm::vec3(0.0f, 270.0f, 0.0f), deltaTime*10);
 		}
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			movement.x += moveSpeed;
 			transformSystem.rotateEntity(id, glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
