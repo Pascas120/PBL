@@ -298,8 +298,9 @@ void Application::update()
 		if ((isPlayer(col.objectA) && isButton(col.objectB)) ||
 			(isPlayer(col.objectB) && isButton(col.objectA)))
 		{
-			EntityID btn = isButton(col.objectA) ? col.objectA : col.objectB;
-			EntityID playerId = isPlayer(col.objectA) ? col.objectA : col.objectB;
+			bool isEntAButton = isButton(col.objectA);
+			EntityID btn = isEntAButton ? col.objectA : col.objectB;
+			EntityID playerId = !isEntAButton ? col.objectA : col.objectB;
 
 			auto& button = scene->getComponent<ButtonComponent>(btn);
 
@@ -310,7 +311,10 @@ void Application::update()
 					continue;
 				}
 			}
-			pressedButtons.insert(btn);
+			if (abs(col.separationVector.x) < 0.001f && abs(col.separationVector.z) < 0.001f)
+			{
+				pressedButtons.insert(btn);
+			}
 		}
 	}
 
