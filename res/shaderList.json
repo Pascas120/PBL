@@ -5,7 +5,7 @@
             "sources": 
             {
                 "VERTEX": "res/shaders/basic.vert",
-                "FRAGMENT": "res/shaders/basic.frag"
+                "FRAGMENT": "res/shaders/material.frag"
             }
         },
         {
