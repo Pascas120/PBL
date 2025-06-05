@@ -1,6 +1,23 @@
 {
     "entities": [
         {
+            "ButterController": {
+                "jumpSpeed": 6.0,
+                "moveSpeed": 7.0
+            },
+            "ButterHealthComponent": {
+                "burning": false,
+                "healing": false,
+                "minScale": 0.5,
+                "secondsToDie": 5.0,
+                "secondsToHeal": 5.0,
+                "startScale": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "timeLeft": 5.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -28,6 +45,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
+                "tag": "maslo",
                 "uuid": "20223709-e370-72af-81fb-d872aec3be9f"
             },
             "Transform": {
@@ -55,9 +73,26 @@
                     18.61429786682129,
                     -6.8137006759643555
                 ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "useGravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
             }
         },
         {
+            "BreadController": {
+                "jumpSpeed": 5.0,
+                "moveSpeed": 7.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -85,6 +120,7 @@
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
+                "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
             },
             "Transform": {
@@ -112,11 +148,24 @@
                     18.940631866455078,
                     -5.70587682723999
                 ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "useGravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
             }
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7780678272247314,
+                "aspectRatio": 1.7813410758972168,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -132,6 +181,14 @@
                     0.0
                 ]
             },
+            "CameraController": {
+                "offset": [
+                    0.0,
+                    5.099999904632568,
+                    -10.0
+                ],
+                "targetID": "20223709-e370-72af-81fb-d872aec3be9f"
+            },
             "ObjectInfoComponent": {
                 "name": "Camera",
                 "uuid": "ed8f3ef2-35d8-2ba4-5bc9-4837612e3441"
@@ -139,17 +196,17 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -25.0,
+                    -180.0,
                     0.0,
-                    0.0
+                    -180.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    -0.2164396196603775,
                     0.0,
+                    1.0,
                     0.0,
-                    0.9762960076332092
+                    -4.371138828673793e-08
                 ],
                 "scale": [
                     1.0,
@@ -157,13 +214,21 @@
                     1.0
                 ],
                 "translation": [
-                    0.0,
-                    5.0,
-                    11.0
+                    -3.0906605275049515e-07,
+                    21.27984619140625,
+                    -16.575639724731445
                 ]
             }
         },
         {
+            "CameraController": {
+                "offset": [
+                    16.5,
+                    9.399999618530273,
+                    4.099999904632568
+                ],
+                "targetID": "20223709-e370-72af-81fb-d872aec3be9f"
+            },
             "DirectionalLightComponent": {
                 "color": [
                     1.0,
@@ -1302,7 +1367,7 @@
                 ],
                 "translation": [
                     11.00115966796875,
-                    712.39208984375,
+                    708.166015625,
                     -109.27261352539063
                 ]
             }
@@ -1350,7 +1415,7 @@
                 ],
                 "translation": [
                     -5.949714660644531,
-                    712.39208984375,
+                    708.166015625,
                     87.25498962402344
                 ]
             }
@@ -1398,7 +1463,7 @@
                 ],
                 "translation": [
                     176.54244995117188,
-                    712.42138671875,
+                    708.166015625,
                     112.65763092041016
                 ]
             }
@@ -1448,6 +1513,146 @@
                     255.74276733398438,
                     712.0157470703125,
                     -22.173067092895508
+                ]
+            }
+        },
+        {
+            "ButtonComponent": {
+                "elevatorEntity": "f5eb05ba-1775-368a-0bb9-93a33034383e",
+                "isPressed": false,
+                "playerTag": "",
+                "pressDepth": 0.10000000149011612,
+                "pressSpeed": 4.0
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ModelComponent": {
+                "color": [
+                    0.8941176533699036,
+                    0.32549020648002625,
+                    0.3529411852359772
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "przycisk",
+                "uuid": "c8370dea-0d1d-91bd-6b08-7159e7e2084d"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.5099999904632568,
+                    0.26320916414260864,
+                    0.5099999904632568
+                ],
+                "translation": [
+                    -0.528419017791748,
+                    24.189191818237305,
+                    -2.564645767211914
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "ElevatorComponent": {
+                "buttonEntity": "c8370dea-0d1d-91bd-6b08-7159e7e2084d",
+                "closedPos": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "doorDir": "Left",
+                "hasInitClosedPos": false,
+                "isDoor": false,
+                "isMoving": false,
+                "locked": false,
+                "maxHeight": 5.0,
+                "openHeight": 5.400000095367432,
+                "shouldOpen": false,
+                "speed": 4.599999904632568,
+                "startY": -1.0,
+                "state": "Closed"
+            },
+            "ModelComponent": {
+                "color": [
+                    0.2666666805744171,
+                    0.24705882370471954,
+                    0.6980392336845398
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "winda",
+                "uuid": "f5eb05ba-1775-368a-0bb9-93a33034383e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.8619000315666199,
+                    0.21914473176002502,
+                    0.8619000315666199
+                ],
+                "translation": [
+                    2.0336971282958984,
+                    18.542999267578125,
+                    -5.326988220214844
                 ]
             }
         },
