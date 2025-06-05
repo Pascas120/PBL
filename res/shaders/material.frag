@@ -5,11 +5,13 @@ layout (location = 1) out vec2 Velocity;
 in vec2 texCoords;
 in vec3 fragPos;
 in vec3 normal;
+in vec4 fragPosLightSpace;
 
 in vec4 currClipPos;
 in vec4 prevClipPos;
 
 uniform vec3 diffuse;
+uniform sampler2D shadowMap;
 
 layout(std140) uniform Camera
 {
@@ -54,6 +56,7 @@ layout(std140) uniform Lights
 
 float CalculatePointLight(PointLight light, vec3 norm, vec3 viewDir);
 float CalculateDirectionalLight(DirectionalLight light, vec3 norm, vec3 viewDir);
+float ShadowCalculation(vec4 fragPosLightSpace);
 
 void main()
 {
@@ -68,7 +71,12 @@ void main()
     }
 
     for (int i = 0; i < directionalLightCount; i++) {
-        lighting += CalculateDirectionalLight(directionalLights[i], norm, viewDir);
+        float dirLighting = CalculateDirectionalLight(directionalLights[i], norm, viewDir);
+        if (i == 0) {
+            dirLighting *= (1 - ShadowCalculation(vec4(fragPosLightSpace)));
+        }
+
+        lighting += dirLighting;
     }
 
     if (lighting > 0.8) {
@@ -121,4 +129,20 @@ float CalculateDirectionalLight(DirectionalLight light, vec3 norm, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
 
     return (0.6 * diff) + (0.4 * spec) * light.intensity;
+}
+
+float ShadowCalculation(vec4 fragPosLightSpace) {
+    if( fragPosLightSpace.w <= 0.0) {
+        return 1.0;
+    }
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float closestDepth = texture(shadowMap, projCoords.xy).r;
+    float currentDepth = projCoords.z;
+
+
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
 }
