@@ -344,7 +344,7 @@ namespace Editor
 	{
 		if (path.empty())
 		{
-			auto pathResult = Utils::openSaveDialog({ {"Scene JSON", "scene.json"} }, "res/scenes");
+			auto pathResult = Utils::openSaveDialog({ {"Scene JSON", ".2json"} }, "res/scenes");
 			if (!pathResult)
 			{
 				return;
@@ -357,7 +357,7 @@ namespace Editor
 
 	void EditorApp::loadScene()
 	{
-		auto pathResult = Utils::openLoadDialog({ {"Scene JSON", "scene.json"} }, "res/scenes");
+		auto pathResult = Utils::openLoadDialog({ {"Scene JSON", "json"} }, "res/scenes");
 		if (!pathResult)
 		{
 			return;

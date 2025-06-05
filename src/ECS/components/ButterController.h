@@ -11,6 +11,7 @@ struct ButterController
 	float jumpSpeed;
 	bool isJumping = false;
 	float timeSinceLastGroundContact = 0.0f;
+    EntityID respawnPoint = (EntityID)-1;
 
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);
 

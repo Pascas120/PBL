@@ -55,3 +55,14 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 if(MSVC)
     target_compile_definitions(${PROJECT_NAME} PUBLIC NOMINMAX)
 endif()
+
+if(APPLE)
+	find_library(APPKIT_FRAMEWORK AppKit)
+	find_library(UNIFORMTYPEIDENTIFIERS_FRAMEWORK UniformTypeIdentifiers)
+
+	target_link_libraries(nfd
+			PRIVATE
+			${APPKIT_FRAMEWORK}
+			${UNIFORMTYPEIDENTIFIERS_FRAMEWORK}
+	)
+endif()

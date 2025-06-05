@@ -12,6 +12,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
+        auto& transform = scene->getComponent<Transform>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
@@ -56,6 +57,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		velocityComponent.velocity = movement;
+
+        if(transform.translation.y<-9.5){
+            transformSystem.translateEntity(id, scene->getComponent<Transform>(respawnPoint).translation);
+        }
 
 	}
 
