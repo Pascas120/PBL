@@ -85,6 +85,7 @@ namespace Editor
                 drawElevator(context, editor->selectedObject);
                 drawButton(context, editor->selectedObject);
                 drawCameraController(context, editor->selectedObject);
+                drawButterController(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -125,6 +126,7 @@ namespace Editor
                     ADD_COMPONENT(ButtonComponent, "Button");
                     ADD_COMPONENT(CameraController, "Camera Controller");
 					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
+                    ADD_COMPONENT(ButterController, "Butter Controller");
 
                     ImGui::EndCombo();
                 }
@@ -629,6 +631,21 @@ namespace Editor
         ImGui::PopID();
     }
 
+    void InspectorWindow::drawButterController(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<ButterController>(id)) return;
+        auto& cc = scene->getComponent<ButterController>(id);
+
+        ImGui::PushID(&cc);
+        bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ButterController>(context, id)) return;
+        if (open)
+        {
+            Utils::entityRefField("Respawn Point", cc.respawnPoint, *scene);
+        }
+        ImGui::PopID();
+    }
 
 
 }
