@@ -656,6 +656,9 @@ void Application::setupScene()
 	models.emplace_back(new Model("res/models/CHLEB.fbx"));
 	models.emplace_back(new Model("res/models/poziomy.fbx"));
 	models.emplace_back(new Model("res/models/wallpaper.fbx"));
+	models.emplace_back(new Model("res/models/blat.fbx"));
+	models.emplace_back(new Model("res/models/mikrofala.fbx"));
+	models.emplace_back(new Model("res/models/plyta.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];

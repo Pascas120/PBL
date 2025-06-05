@@ -106,7 +106,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7780678272247314,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -461,32 +461,32 @@
         },
         {
             "ModelComponent": {
-                "model": "res/models/poziomy.fbx",
+                "model": "res/models/blat.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
-                "name": "New Object",
+                "name": "blat",
                 "uuid": "a5c8174d-a904-7fe3-7352-63e1cd1c6b2b"
             },
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -90.0,
+                    -89.99998474121094,
                     0.0,
                     0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    -0.7071067690849304,
+                    -0.7071066498756409,
                     0.0,
                     0.0,
-                    0.7071067690849304
+                    0.70710688829422
                 ],
                 "scale": [
                     0.009999999776482582,
-                    0.009999999776482582,
-                    0.009999999776482582
+                    0.009999997913837433,
+                    0.009999997913837433
                 ],
                 "translation": [
                     0.0,
@@ -532,6 +532,94 @@
                     15.060576438903809,
                     10.357338905334473,
                     8.218868255615234
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false
+            },
+            "ModelComponent": {
+                "model": "res/models/mikrofala.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "mikrofala",
+                "uuid": "8ff19d85-13fb-15b7-0783-2fc18135fb12"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
+                ],
+                "translation": [
+                    0.0,
+                    9.54469108581543,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "model": "res/models/plyta.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "plyta",
+                "uuid": "2e3ac57e-cf71-8ce3-7e68-f1e16b381d0b"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
+                ],
+                "translation": [
+                    0.0,
+                    10.308235168457031,
+                    0.0
                 ]
             }
         }
