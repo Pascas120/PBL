@@ -659,6 +659,9 @@ void Application::setupScene()
 	models.emplace_back(new Model("res/models/blat.fbx"));
 	models.emplace_back(new Model("res/models/mikrofala.fbx"));
 	models.emplace_back(new Model("res/models/plyta.fbx"));
+	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
+	models.emplace_back(new Model("res/models/woda.fbx"));
+	models.emplace_back(new Model("res/models/GABKA.fbx"));
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];

@@ -13,10 +13,10 @@ Model::Model(std::string const &path, bool gamma) : gammaCorrection(gamma)
     loadModel(path);
 }
 
-void Model::draw(Shader *shader)
+void Model::draw(Shader *shader, glm::vec3 color)
 {
     for(unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].draw(shader);
+        meshes[i].draw(shader, color);
 }
 
 void Model::loadModel(std::string const &path)

@@ -60,6 +60,7 @@ struct ModelComponent {
     Shader* shader;
     Model* model;
     Transform* transform;
+    glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	glm::mat4 prevModelMatrix = glm::mat4(1.0f);
 

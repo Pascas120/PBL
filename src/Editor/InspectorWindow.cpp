@@ -275,6 +275,8 @@ namespace Editor
 
                 ImGui::EndCombo();
             }
+
+			ImGui::ColorEdit3("Color", &modelComponent.color[0]);
         }
 
 

@@ -49,7 +49,7 @@ public:
     unsigned int VAO;
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
-    void draw(Shader *shader);
+    void draw(Shader *shader, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
 
     void setDrawMode(GLenum mode) {
         drawMode = mode;

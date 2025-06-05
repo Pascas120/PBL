@@ -31,7 +31,7 @@ public:
 
     Model();
     Model(std::string const &path, bool gamma = false);
-    void draw(Shader *shader);
+	void draw(Shader* shader, glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f));
     std::map<std::string, BoneInfo>& getBoneInfoMap();
     int& getBoneCount();
 

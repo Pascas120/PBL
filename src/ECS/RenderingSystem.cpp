@@ -13,7 +13,14 @@
 
 
 
-RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) {}
+RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) 
+{
+	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+}
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
     const std::unordered_map<std::string, Shader*>& postShaders) 
@@ -58,7 +65,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     //CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     if(useShadows) {
         glm::vec3 lightPos = transforms->get(mainLight.id).translation;
-        glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 20.0f);
+        glm::mat4 lightProjection = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 60.0f);
         glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
         shadowFramebuffer.Bind();
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -180,7 +187,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 		}
 
         modelComponent.shader->setMat4("model", modelMatrix);
-        modelComponent.model->draw(modelComponent.shader);
+		modelComponent.model->draw(modelComponent.shader, modelComponent.color);
     }
 
 

@@ -13,7 +13,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     setupMesh();
 }
 
-void Mesh::draw(Shader *shader)
+void Mesh::draw(Shader *shader, glm::vec3 color)
 {
     unsigned int diffuseNr  = 1;
     unsigned int specularNr = 1;
@@ -21,7 +21,7 @@ void Mesh::draw(Shader *shader)
     unsigned int heightNr   = 1;
 
     shader->use();
-    shader->setVec3("diffuse", material.diffuse);
+	shader->setVec3("diffuse", material.diffuse * color);
     shader->setVec3("ambient", material.ambient);
     for(unsigned int i = 0; i < textures.size(); i++)
     {

@@ -167,12 +167,17 @@ namespace Serialization
 	{
 		j["shader"] = c.shader->getName();
 		j["model"] = c.model->path;
+		j["color"] = c.color;
 	}
 
 	static void from_json(const nlohmann::json& j, ModelComponent& c, const DeserializationContext& context)
 	{
 		from_json(j.at("shader"), c.shader, context);
 		from_json(j.at("model"), c.model, context);
+		if (j.contains("color"))
+		{
+			j.at("color").get_to(c.color);
+		}
 	}
 
 	static void to_json(nlohmann::json& j, const ImageComponent& c, const SerializationContext& context)
