@@ -17,22 +17,22 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
 			movement.z -= moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 180.0f, 0.0f), deltaTime*10);
+			transformSystem.rotateEntity(id, glm::vec3(0.0f, 0.0f, 0.0f), deltaTime*10);
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		{
 			movement.z += moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 0.0f, 0.0f), deltaTime*10);
+			transformSystem.rotateEntity(id, glm::vec3(0.0f, 180.0f, 0.0f), deltaTime*10);
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		{
 			movement.x -= moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 270.0f, 0.0f), deltaTime*10);
+			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 270.0f, 0.0f), deltaTime*10);
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		{
 			movement.x += moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
+			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
 		}
 
 		if (glm::length(movement) > 0.0f)
