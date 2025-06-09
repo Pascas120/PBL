@@ -936,7 +936,7 @@ void Application::setupEvents()
 
 		BreadController* breadController = &scene->getComponent<BreadController>(event.objectA);
 
-		if (event.separationVector.y > 0.01f && breadController->isJumping)
+		if (event.separationVector.y > 0.01f)
 		{
 			breadController->isJumping = false;
 			breadController->timeSinceLastGroundContact = 0.0f;
@@ -954,7 +954,7 @@ void Application::setupEvents()
 
 		ButterController* butterController = &scene->getComponent<ButterController>(event.objectA);
 
-		if (event.separationVector.y > 0.01f && butterController->isJumping)
+		if (event.separationVector.y > 0.01f)
 		{
 			butterController->isJumping = false;
 			butterController->timeSinceLastGroundContact = 0.0f;

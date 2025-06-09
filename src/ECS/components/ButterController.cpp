@@ -76,10 +76,6 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		timeSinceLastGroundContact += deltaTime;
-		if (timeSinceLastGroundContact > 0.3f)
-		{
-			spdlog::info("Maslo nie dotyka ziemi, czas: {}", timeSinceLastGroundContact);
-		}
 		if (!isJumping && timeSinceLastGroundContact > 0.3f)
 		{
 			isJumping = true;
