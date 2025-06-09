@@ -5,6 +5,8 @@
 #include "Serialization.h"
 #include "ECS/components/CameraController.h"
 
+#include <fstream>
+
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 static void glfw_error_callback(int error, const char* description)
@@ -136,6 +138,20 @@ bool Application::init()
 	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// TODO?: osobne pliki dla każdego prefabu
+	std::ifstream file("res/prefabs.json");
+	if (file.is_open())
+	{
+		json prefabListJson;
+		file >> prefabListJson;
+		file.close();
+
+		for (const auto& prefabJson : prefabListJson["prefabs"])
+		{
+			std::string prefabName = prefabJson["name"].get<std::string>();
+			prefabs[prefabName] = prefabJson["data"];
+		}
+	}
 	setupScene();
 
 	return true;
@@ -642,6 +658,26 @@ void Application::endFrame()
 
 
 
+std::vector<EntityID> Application::instantiatePrefab(const std::string& prefabName, Scene& scene, EntityID parent)
+{
+	if (parent == (EntityID)-1)
+	{
+		parent = scene.getSceneRootEntity();
+	}
+
+	auto it = prefabs.find(prefabName);
+	if (it == prefabs.end())
+	{
+		return {};
+	}
+
+	json prefabData = it->second;
+	std::vector<EntityID> instantiatedEntities = Serialization::deserializeObjects(
+		prefabData, scene, parent, { shaders, models, false });
+
+	return instantiatedEntities;
+}
+
 
 
 
@@ -678,7 +714,7 @@ void Application::setupScene()
 	};
 	constexpr FlyVariant SELECTED_FLY = FlyVariant::GOLD;
 
-	scene = std::make_shared<Scene>();
+	scene = std::make_shared<Scene>(this);
 
 	EntityID ent;
 	ImageComponent* imageComponent;

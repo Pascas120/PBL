@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Application.h"
-#include "nlohmann/json.hpp"
 #include "ECS/EventSystem.h"
 #include "Utils/Debug.h"
 
-using json = nlohmann::json;
 
 namespace Editor
 {
@@ -46,6 +44,8 @@ namespace Editor
 		Utils::Debug getDebug() { return debug; }
 
 		Shader* getEditorShader(const std::string& name) const;
+
+		void prefabWindow();
 
 	protected:
 		void initImGui();

@@ -16,6 +16,11 @@
 #include "UniformBuffer.h"
 
 #include "ECS/TransformSystem.h"
+
+#include "nlohmann/json.hpp"
+
+using json = nlohmann::json;
+
 class Application
 {
 public:
@@ -37,6 +42,8 @@ public:
 	{
 		return deltaTime;
 	}
+
+	std::vector<EntityID> instantiatePrefab(const std::string& prefabName, Scene& scene, EntityID parent = (EntityID)-1);
 
 protected:
 	bool init();
@@ -73,6 +80,8 @@ protected:
 	};
 
 	std::vector<Model*> models;
+
+	std::unordered_map<std::string, json> prefabs;
 
 	std::shared_ptr<Scene> scene;
 

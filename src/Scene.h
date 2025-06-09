@@ -18,8 +18,12 @@
 
 #include "uuid.h"
 
+class Application;
+
 class Scene {
 private:
+    Application* app = nullptr;
+
     std::unordered_map<std::type_index, std::unique_ptr<IComponentStorage>> storages;
     EntityManager entityManager;
     TransformSystem transformSystem = TransformSystem(this);
@@ -45,21 +49,9 @@ private:
     }
 public:
 
-    Scene() {
-        entityManager = EntityManager();
-        sceneGraphRoot = entityManager.createEntity();
-        auto& t = addComponent<Transform>(sceneGraphRoot, Transform{});
+    Scene(Application* app);
 
-        auto& info = addComponent<ObjectInfoComponent>(sceneGraphRoot);
-		info.uuid = uuid::generate();
-    }
-
-	Scene(const Scene& other) : entityManager(other.entityManager) 
-    {
-		for (const auto& [type, storage] : other.storages) {
-            storages[type] = std::unique_ptr<IComponentStorage>(storage->clone());
-		}
-    }
+    Scene(const Scene& other);
 
     Scene& operator=(const Scene&) = delete; // Wyłączenie przypisania
     Scene(Scene&&) = default; // Przenoszenie dozwolone
@@ -128,45 +120,16 @@ public:
 
 
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a
-    EntityID createEntity(EntityID parent = -1) {
-        EntityID id = entityManager.createEntity();
-        auto& t = addComponent<Transform>(id, Transform{});
-        auto& info = addComponent<ObjectInfoComponent>(id);
-
-        if (parent < 0 || parent > MAX_ENTITIES) parent = sceneGraphRoot;
-        auto& parentTransform = getComponent<Transform>(parent);
-        parentTransform.children.push_back(id);
-
-        t.parent = parent;
-        info.uuid = uuid::generate();
-        return id;
-    }
+    EntityID createEntity(EntityID parent = -1);
 
 
-    void destroyEntity(EntityID id) {
-        if (hasComponent<Transform>(id)) {
-            auto& transform = getComponent<Transform>(id);
+    void destroyEntity(EntityID id);
 
-            for (const auto& child : transform.children) {
-                destroyEntity(child);
-            }
-            transformSystem.removeChild(transform.parent, id);
-            for (auto& component : storages) {
-				if (component.second->has(id)) {
-					component.second->remove(id);
-				}
-            }
-        }
-        entityManager.destroyEntity(id);
-    }
+	bool hasEntity(EntityID id) const;
 
-	bool hasEntity(EntityID id) const {
-		return entityManager.isAlive(id);
-	}
+	const std::vector<EntityID>& getEntities() const;
 
-	const std::vector<EntityID>& getEntities() const {
-		return entityManager.getEntities();
-	}
+    std::vector<EntityID> instantiatePrefab(const std::string& prefabName, EntityID parent = (EntityID)-1);
 
 };
 

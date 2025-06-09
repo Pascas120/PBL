@@ -35,12 +35,51 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
 		}
 
+		if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
+		{
+			bool addTrail = true;
+			if (timeSinceLastGroundContact > 0.1f)
+			{
+				addTrail = false;
+			}
+
+			if (addTrail && !trailEntities.empty())
+			{
+				EntityID lastTrail = trailEntities.back();
+				auto& lastTransform = scene->getComponent<Transform>(lastTrail);
+				if (glm::length(lastTransform.translation - transform.translation) < 0.3f)
+				{
+					addTrail = false;
+				}
+			}
+
+			if (addTrail)
+			{
+				EntityID trail = scene->instantiatePrefab("Trail")[0];
+
+				transformSystem.translateEntity(trail, transform.translation - glm::vec3(0.0f, 0.22f, 0.0f));
+				transformSystem.rotateEntity(trail, transform.rotation);
+
+				trailEntities.push(trail);
+				if (trailEntities.size() > 50)
+				{
+					EntityID oldTrail = trailEntities.front();
+					trailEntities.pop();
+					scene->destroyEntity(oldTrail);
+				}
+			}
+		}
+
 		if (glm::length(movement) > 0.0f)
 		{
 			movement = glm::normalize(movement) * moveSpeed;
 		}
 
 		timeSinceLastGroundContact += deltaTime;
+		if (timeSinceLastGroundContact > 0.3f)
+		{
+			spdlog::info("Maslo nie dotyka ziemi, czas: {}", timeSinceLastGroundContact);
+		}
 		if (!isJumping && timeSinceLastGroundContact > 0.3f)
 		{
 			isJumping = true;

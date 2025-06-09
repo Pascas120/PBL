@@ -15,6 +15,7 @@
 #include <nfd.h>
 #include <filesystem>
 #include "Serialization.h"
+#include <fstream>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -203,6 +204,13 @@ namespace Editor
 				ImGui::EndMenu();
 			}
 
+            /*if (ImGui::BeginMenu("Prefabs"))
+            {
+                ImGui::OpenPopup("prefabWindow");
+
+				ImGui::EndMenu();
+            }*/
+
             constexpr float playButtonWidth = 70;
             float playButtonPos = (menuBarSize.x - playButtonWidth * 2) / 2;
 			ImGui::SetCursorPosX(playButtonPos);
@@ -230,10 +238,18 @@ namespace Editor
 			ImGui::EndDisabled();
             ImGui::PopStyleColor();
 
-
+			static const ImVec2 prefabButtonSize = ImVec2(100, 0);
 			static const ImVec2 resButtonSize = ImVec2(200, 0);
 			static const float resButtonRightOffset = 100.0f;
 			ImGui::SetCursorPosX(menuBarSize.x - resButtonRightOffset - resButtonSize.x);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() - prefabButtonSize.x);
+
+			if (ImGui::Button("Prefabs", prefabButtonSize))
+			{
+                ImGui::OpenPopup("prefabWindow");
+			}
+            prefabWindow();
+
             if (ImGui::Button("Open resource folder", resButtonSize))
             {
                 Utils::openFolder("res");
@@ -365,7 +381,7 @@ namespace Editor
 		selectedObject = (EntityID)-1;
 		setPlayMode(PlayMode::STOP);
 
-		scene = std::make_shared<Scene>();
+		scene = std::make_shared<Scene>(this);
 		std::string path = *pathResult;
 		Serialization::loadScene(path, *scene, { shaders, models, true });
 		scenePath = path;
@@ -385,6 +401,84 @@ namespace Editor
         }
 
         return nullptr;
+    }
+
+    void EditorApp::prefabWindow()
+    {
+
+		if (!ImGui::BeginPopup("prefabWindow", ImGuiWindowFlags_NoDocking))
+			return;
+
+		static std::string prefabName;
+        char prefabNameBuffer[128];
+		std::strncpy(prefabNameBuffer, prefabName.c_str(), sizeof(prefabNameBuffer));
+        if (ImGui::InputText("Prefab Name", prefabNameBuffer, sizeof(prefabNameBuffer)))
+        {
+			prefabName = std::string(prefabNameBuffer);
+        }
+
+        if (ImGui::BeginListBox("##prefabList"))
+        {
+			for (const auto& [name, prefab] : prefabs)
+			{
+				bool isSelected = (name == prefabName);
+				if (ImGui::Selectable(name.c_str(), isSelected))
+				{
+					prefabName = name;
+				}
+			}
+			ImGui::EndListBox();
+        }
+
+		ImGui::BeginDisabled(selectedObject == (EntityID)-1);
+
+            auto it = prefabs.find(prefabName);
+		    bool prefabExists = it != prefabs.end();
+		    ImGui::BeginDisabled(!prefabExists);
+		    if (ImGui::Button("Instantiate"))
+		    {
+			    auto instantiatedEntities = Serialization::deserializeObjects(it->second, *scene, selectedObject, { shaders, models, false });
+			    /*if (!instantiatedEntities.empty())
+			    {
+				    selectedObject = instantiatedEntities[0];
+			    }*/
+		    }
+		    ImGui::EndDisabled();
+
+		    ImGui::SameLine();
+            ImGui::BeginDisabled(!prefabExists && prefabName.empty() || selectedObject == scene->getSceneRootEntity());
+            if (ImGui::Button(prefabExists ? "Update" : "Create"))
+            {
+                prefabs[prefabName] = Serialization::serializeObjects({ selectedObject }, *scene);
+
+				// TODO?: osobne pliki dla każdego prefabu
+				std::ofstream prefabFile("res/prefabs.json");
+                if (prefabFile.is_open())
+                {
+                    json prefabListJson;
+                    prefabListJson["prefabs"] = json::array();
+                    for (const auto& [name, prefab] : prefabs)
+                    {
+                        json prefabJson;
+                        prefabJson["name"] = name;
+                        prefabJson["data"] = prefab;
+                        prefabListJson["prefabs"].push_back(prefabJson);
+                    }
+
+					prefabFile << std::setw(4) << prefabListJson << std::endl;
+					prefabFile.close();
+				}
+				else
+				{
+					spdlog::error("Failed to open prefab file for writing.");
+                }
+            }
+		    ImGui::EndDisabled();
+
+		ImGui::EndDisabled();
+
+        ImGui::EndPopup();
+
     }
 
 }

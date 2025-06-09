@@ -1,0 +1,66 @@
+{
+    "prefabs": [
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ButterHealthComponent": {
+                            "burning": false,
+                            "healing": false,
+                            "minScale": 0.5,
+                            "secondsToDie": 5.0,
+                            "secondsToHeal": 5.0,
+                            "startScale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "timeLeft": 5.0
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/MASLO.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "88b3c5d1-aa8d-1786-f7f7-829f18945721"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.00046488040243275464,
+                                0.004882157780230045
+                            ],
+                            "translation": [
+                                -0.4241061508655548,
+                                18.61429786682129,
+                                -7.976927280426025
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail"
+        }
+    ]
+}
