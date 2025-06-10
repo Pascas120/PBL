@@ -4,6 +4,7 @@
 
 #include "Serialization.h"
 #include "ECS/components/CameraController.h"
+#include "ECS/components/ButterController.h"
 
 #include <fstream>
 
@@ -1006,20 +1007,19 @@ void Application::setupEvents()
 			auto isHeat = [&](EntityID id)
 				{ return scene->hasComponent<HeatComponent>(id); };
 
-			bool condition =
-				(isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
-				(isMaslo(ev.objectB) && isHeat(ev.objectA));
+			if (!((isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
+				(isMaslo(ev.objectB) && isHeat(ev.objectA))))
+				return;
 
-			if (!condition) return;
-
+			EntityID masloID = isMaslo(ev.objectA) ? ev.objectA : ev.objectB;
 
 			spdlog::info("cieplo");
+			scene->getComponent<ButterHealthComponent>(masloID).burning = true;
 
-			//wlaczam burning
-			ButterHealthComponent& bh = scene->getComponent<ButterHealthComponent>(
-				isMaslo(ev.objectA) ? ev.objectA : ev.objectB);
-			bh.burning = true;
+			
+			scene->getComponent<ButterController>(masloID).inHeat = true;
 		});
+
 
 	//freeze
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
@@ -1027,19 +1027,28 @@ void Application::setupEvents()
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 			if (!ev.isColliding) return;
 
-			bool aIsPlayer = (ev.objectA == player);
-			bool bIsPlayer = (ev.objectB == player);
+			auto isFreeze = [&](EntityID id)
+				{ return scene->hasComponent<FreezeComponent>(id); };
 
-			bool aIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectA);
-			bool bIsFreeze = scene->hasComponent<FreezeComponent>(ev.objectB);
+			auto isChleb = [&](EntityID id)
+				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
+				scene->getComponent<ObjectInfoComponent>(id).tag == "chleb"; };
 
-			if ((aIsPlayer && bIsFreeze) || (bIsPlayer && aIsFreeze))
+			bool aFreeze = isFreeze(ev.objectA);
+			bool bFreeze = isFreeze(ev.objectB);
+			bool aChleb = isChleb(ev.objectA);
+			bool bChleb = isChleb(ev.objectB);
+
+			if ((aFreeze && bChleb) || (bFreeze && aChleb))
 			{
-
-				auto& freeze = scene->getComponent<FreezeComponent>(aIsFreeze ? ev.objectA : ev.objectB);
-				spdlog::info("{}", freeze.OnEnterMessage);
+				spdlog::info("zimno");
+				EntityID breadID = aChleb ? ev.objectA : ev.objectB;
+				scene->getComponent<BreadController>(breadID).freezing = true;
 			}
+
 		});
+
+
 
 	//regen
 	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
