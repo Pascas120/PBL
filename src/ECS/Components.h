@@ -156,8 +156,8 @@ struct FlyAIComponent {
     glm::vec3 patrolTarget;
     enum PatrolAxis { Horizontal, Vertical } 
     patrolAxis = PatrolAxis::Horizontal;
-    glm::vec3 patrolStart;
-    glm::vec3 patrolEnd;
+	glm::vec3 patrolStart = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 patrolEnd = { 0.0f, 0.0f, 0.0f };
     bool movingForward = true;
     EntityID id = (EntityID)-1;
 };

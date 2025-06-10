@@ -462,7 +462,22 @@ namespace Editor
 				}
 				ImGui::EndCombo();
             }
-			ImGui::DragFloat3("Patrol Target", &flyAI.patrolTarget[0], 0.1f, -100.0f, 100.0f);
+			ImGui::DragFloat3("Patrol Target", &flyAI.patrolTarget[0], 0.1f);
+
+			if (ImGui::BeginCombo("Patrol Axis", flyAI.patrolAxis == FlyAIComponent::PatrolAxis::Horizontal ? "Horizontal" : "Vertical"))
+			{
+				if (ImGui::Selectable("Horizontal", flyAI.patrolAxis == FlyAIComponent::PatrolAxis::Horizontal))
+				{
+					flyAI.patrolAxis = FlyAIComponent::PatrolAxis::Horizontal;
+				}
+				if (ImGui::Selectable("Vertical", flyAI.patrolAxis == FlyAIComponent::PatrolAxis::Vertical))
+				{
+					flyAI.patrolAxis = FlyAIComponent::PatrolAxis::Vertical;
+				}
+				ImGui::EndCombo();
+			}
+			ImGui::DragFloat3("Patrol Start", &flyAI.patrolStart[0], 0.1f);
+			ImGui::DragFloat3("Patrol End", &flyAI.patrolEnd[0], 0.1f);
 
 		}
 		ImGui::PopID();

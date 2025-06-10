@@ -370,6 +370,9 @@ namespace Serialization
 		}
 		j["state"] = stateStr;
 		j["patrolTarget"] = c.patrolTarget;
+		j["patrolAxis"] = c.patrolAxis == FlyAIComponent::PatrolAxis::Horizontal ? "Horizontal" : "Vertical";
+		j["patrolStart"] = c.patrolStart;
+		j["patrolEnd"] = c.patrolEnd;
 	}
 
 	static void from_json(const nlohmann::json& j, FlyAIComponent& c, const DeserializationContext& context)
@@ -392,6 +395,13 @@ namespace Serialization
 		else if (stateStr == "Diving") c.state = FlyAIComponent::Diving;
 		else if (stateStr == "Returning") c.state = FlyAIComponent::Returning;
 		j.at("patrolTarget").get_to(c.patrolTarget);
+		std::string patrolAxisStr = j.value("patrolAxis", "Horizontal");
+		if (patrolAxisStr == "Horizontal")
+			c.patrolAxis = FlyAIComponent::PatrolAxis::Horizontal;
+		else if (patrolAxisStr == "Vertical")
+			c.patrolAxis = FlyAIComponent::PatrolAxis::Vertical;
+		c.patrolStart = j.value("patrolStart", c.patrolStart);
+		c.patrolEnd = j.value("patrolEnd", c.patrolEnd);
 	}
 
 	static void to_json(nlohmann::json& j, const VelocityComponent& c, const SerializationContext& context)
