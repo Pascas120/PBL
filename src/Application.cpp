@@ -106,33 +106,47 @@ bool Application::init()
 		app->scrollYOffset += yoffset;
 		});
 
-	Serialization::loadShaderList("res/shaderList.json", shaders);
 
+	auto bindBlocks = [&](Shader* shader)
+		{
+			GLint numUniformBlocks;
+			glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
+			for (int i = 0; i < numUniformBlocks; ++i)
+			{
+				GLchar blockName[256];
+				glGetActiveUniformBlockName(shader->ID, i, sizeof(blockName), nullptr, blockName);
+				auto it = uniformBlockMap.find(blockName);
+				if (it != uniformBlockMap.end())
+				{
+					shader->use();
+					if (!it->second->isInitialized())
+					{
+						it->second->init(shader->ID);
+					}
+					else
+					{
+						it->second->bindToShader(shader->ID);
+					}
+				}
+
+			}
+		};
+
+	Serialization::loadShaderList("res/shaderList.json", shaders);
 	for (Shader* shader : shaders)
 	{
-		GLint numUniformBlocks;
-		glGetProgramiv(shader->ID, GL_ACTIVE_UNIFORM_BLOCKS, &numUniformBlocks);
-		spdlog::info("Shader '{}' has {} uniform blocks.", shader->getName(), numUniformBlocks);
-		for (int i = 0; i < numUniformBlocks; ++i)
-		{
-			GLchar blockName[256];
-			glGetActiveUniformBlockName(shader->ID, i, sizeof(blockName), nullptr, blockName);
-			auto it = uniformBlockMap.find(blockName);
-			if (it != uniformBlockMap.end())
-			{
-				shader->use();
-				if (!it->second->isInitialized())
-				{
-					it->second->init(shader->ID);
-				}
-				else
-				{
-					it->second->bindToShader(shader->ID);
-				}
-			}
-
-		}
+		bindBlocks(shader);
 	}
+	std::vector<Shader*> postShaderVec;
+	Serialization::loadShaderList("res/postprocessShaderList.json", postShaderVec);
+	for (Shader* shader : postShaderVec) {
+		bindBlocks(shader);
+		postShaders[shader->getName()] = shader;
+	}
+
+
+	
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -875,12 +889,6 @@ void Application::setupScene()
 
 
 	scene->getTransformSystem().update();
-	//scene->getRenderingSystem().buildTree();
-	std::vector<Shader*> postShaderVec;
-	Serialization::loadShaderList("res/postprocessShaderList.json", postShaderVec);
-	for (Shader* shader : postShaderVec) {
-		postShaders[shader->getName()] = shader;
-	}
 }
 
 

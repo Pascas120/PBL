@@ -52,6 +52,7 @@ enum class AttachmentType
 {
 	COLOR,
 	DEPTH,
+	POSITION,
 	NORMAL,
 	VELOCITY
 };
@@ -61,6 +62,8 @@ struct FramebufferConfig
 	uint32_t width;
 	uint32_t height;
 	std::set<AttachmentType> attachments { AttachmentType::COLOR, AttachmentType::DEPTH };
+	GLenum colorFormat = GL_RGB;
+	GLenum colorType = GL_UNSIGNED_BYTE;
 };
 
 class CustomFramebuffer : public Framebuffer
@@ -89,6 +92,7 @@ public:
 	GLuint GetDepthTexture() const override { return GetTexture(AttachmentType::DEPTH); }
 	GLuint GetVelocityTexture() const { return GetTexture(AttachmentType::VELOCITY); }
 	GLuint GetNormalTexture() const { return GetTexture(AttachmentType::NORMAL); }
+	GLuint GetPositionTexture() const { return GetTexture(AttachmentType::POSITION); }
 
 	GLuint GetTexture(AttachmentType attachment) const
 	{

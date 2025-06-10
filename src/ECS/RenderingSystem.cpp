@@ -11,6 +11,39 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <unordered_set>
 
+#include "Random.h"
+
+
+static std::array<glm::vec3, 64> generateSSAOKernel() {
+    std::array<glm::vec3, 64> kernel;
+    for (int i = 0; i < 64; ++i) {
+        glm::vec3 sample = Random::inUnitSphere();
+        sample.z = std::abs(sample.z);
+        sample *= Random::getFloat(0.0f, 1.0f);
+
+        float scale = float(i) / 64.0f;
+        scale = glm::mix(0.1f, 1.0f, scale * scale);
+        sample *= scale;
+
+        kernel[i] = sample;
+    }
+    return kernel;
+}
+
+static std::array<glm::vec3, 16> generateSSAONoise() {
+    std::array<glm::vec3, 16> noise;
+    for (int i = 0; i < 16; ++i) {
+        glm::vec3 v = {
+            Random::getFloat(-1.0f, 1.0f),
+            Random::getFloat(-1.0f, 1.0f),
+            0.0f
+        };
+        noise[i] = glm::normalize(v);
+    }
+
+	return noise;
+}
+
 
 
 RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) 
@@ -20,6 +53,22 @@ RenderingSystem::RenderingSystem(Scene *scene) : scene(scene)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	ssaoKernel = generateSSAOKernel();
+	ssaoNoise = generateSSAONoise();
+
+	glGenTextures(1, &ssaoNoiseTexture);
+	glBindTexture(GL_TEXTURE_2D, ssaoNoiseTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, ssaoNoise.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+}
+
+RenderingSystem::~RenderingSystem()
+{
+	glDeleteTextures(1, &ssaoNoiseTexture);
 }
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
@@ -144,16 +193,11 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 
     if (useShadows) {
         Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
-        /*models->get(renderingQueue[0]).shader->use();
-        shadowFramebuffer.Bind();*/
-		//postProcessingFramebuffer1.Resize(shadowMapWidth, shadowMapHeight);
 		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
 
 
         glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
-		//glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
-        //models->get(renderingQueue[0]).shader->setInt("shadowMap", 1);
     }
 
     customFramebuffer.Bind();
@@ -194,29 +238,29 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
     Shader* sobelShader = postShaders.at("Sobel");
     Shader* motionBlurShader = postShaders.at("MotionBlur");
     Shader* FXAAShader = postShaders.at("FXAA");
+	Shader* ssaoShader = postShaders.at("SSAO");
+	Shader* ssaoApplyShader = postShaders.at("SSAOApply");
 
-    CustomFramebuffer* postBuffers[2] = { &postProcessingFramebuffer1, &postProcessingFramebuffer2 };
-    for (int i = 0; i < 2; i++) {
-        auto [pfboWidth, pfboHeight] = postBuffers[i]->GetSizePair();
+    std::array postBuffers = { &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer };
+	for (auto& postBuffer : postBuffers) {
+        auto [pfboWidth, pfboHeight] = postBuffer->GetSizePair();
         if (pfboWidth != width || pfboHeight != height) {
-            postBuffers[i]->Resize(width, height);
+            postBuffer->Resize(width, height);
         }
     }
 
+    ssaoFilter(ssaoShader, customFramebuffer, ssaoFramebuffer);
+    sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
+	ssaoApplyFilter(ssaoApplyShader, postProcessingFramebuffer1, ssaoFramebuffer, postProcessingFramebuffer2);
+
+    fxaaFilter(FXAAShader, postProcessingFramebuffer2, postProcessingFramebuffer2,
+        showMotionBlur ? postProcessingFramebuffer1 : framebuffer);
+
     if (showMotionBlur)
     {
-        sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
-
-		cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
-		fxaaFilter(FXAAShader, postProcessingFramebuffer1, postProcessingFramebuffer1, postProcessingFramebuffer2);
-		motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, framebuffer);
+        cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
+		motionBlurFilter(motionBlurShader, postProcessingFramebuffer1, customFramebuffer, framebuffer);
     }
-    else
-    {
-		sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
-		fxaaFilter(FXAAShader, postProcessingFramebuffer1, postProcessingFramebuffer1, framebuffer);
-    }
-
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
@@ -399,6 +443,7 @@ void RenderingSystem::motionBlurFilter(Shader* blur, const CustomFramebuffer& in
 void RenderingSystem::fxaaFilter(Shader* fxaa, const CustomFramebuffer& in, 
     const CustomFramebuffer& test, const Framebuffer& out) {
     out.Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fxaa->use();
     auto [width, height] = in.GetSizePair();
     fxaa->setVec2("resolution", (float)width, (float)height);
@@ -416,6 +461,7 @@ void RenderingSystem::fxaaFilter(Shader* fxaa, const CustomFramebuffer& in,
 
 void RenderingSystem::shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const Framebuffer& out) {
     out.Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     fxaa->use();
     auto [width, height] = in.GetSizePair();
     fxaa->setVec2("resolution", (float)width, (float)height);
@@ -426,6 +472,61 @@ void RenderingSystem::shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in
     glBindVertexArray(hudVAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+}
+
+void RenderingSystem::ssaoFilter(Shader* ssao, const CustomFramebuffer& gBuffer, const Framebuffer& out) {
+    out.Bind();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ssao->use();
+	auto [width, height] = gBuffer.GetSizePair();
+	ssao->setInt("width", width);
+	ssao->setInt("height", height);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gBuffer.GetPositionTexture());
+	ssao->setInt("positionTexture", 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, gBuffer.GetNormalTexture());
+	ssao->setInt("normalTexture", 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, ssaoNoiseTexture);
+	ssao->setInt("noiseTexture", 2);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, gBuffer.GetDepthTexture());
+	ssao->setInt("depthTexture", 3);
+
+	for (int i = 0; i < ssaoKernel.size(); i++) {
+		ssao->setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+	}
+
+	glBindVertexArray(hudVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void RenderingSystem::ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out)
+{
+	out.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ssaoApply->use();
+	auto [width, height] = in.GetSizePair();
+	ssaoApply->setInt("width", width);
+	ssaoApply->setInt("height", height);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+	ssaoApply->setInt("colorTexture", 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, ssao.GetColorTexture());
+	ssaoApply->setInt("ssaoTexture", 1);
+
+	glBindVertexArray(hudVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
 }
 
 void RenderingSystem::updatePreviousModelMatrices() {

@@ -58,7 +58,7 @@ void CustomFramebuffer::Setup()
 		GLuint colorTexture;
 		glGenTextures(1, &colorTexture);
 		glBindTexture(GL_TEXTURE_2D, colorTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, config.width, config.height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, config.colorFormat, config.width, config.height, 0, config.colorFormat, config.colorType, NULL);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -67,6 +67,23 @@ void CustomFramebuffer::Setup()
 		colorAttachment++;
 
 		textures[AttachmentType::COLOR] = colorTexture;
+	}
+
+	// Position
+	if (std::find(config.attachments.begin(), config.attachments.end(), AttachmentType::POSITION) != config.attachments.end())
+	{
+		GLuint positionTexture;
+		glGenTextures(1, &positionTexture);
+		glBindTexture(GL_TEXTURE_2D, positionTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, config.width, config.height, 0, GL_RGB, GL_HALF_FLOAT, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachment, GL_TEXTURE_2D, positionTexture, 0);
+		colorAttachment++;
+
+		textures[AttachmentType::POSITION] = positionTexture;
 	}
 
 	// Normal

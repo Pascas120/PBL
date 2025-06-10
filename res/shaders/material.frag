@@ -1,6 +1,8 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec2 Velocity;
+layout (location = 1) out vec4 Position;
+layout (location = 2) out vec4 Normal;
+layout (location = 3) out vec2 Velocity;
 
 in vec2 texCoords;
 in vec3 fragPos;
@@ -93,6 +95,10 @@ void main()
     vec4 finalColor = vec4(diffuse * lighting, 1.0);
 
     FragColor = finalColor;
+
+    Position = vec4(fragPos, 1.0);
+
+    Normal = vec4(norm, 1.0);
 
 
     vec2 currNDC = currClipPos.xy / currClipPos.w;

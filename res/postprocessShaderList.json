@@ -39,6 +39,22 @@
                 "VERTEX": "res/shaders/postprocess/postprocess.vert",
                 "FRAGMENT": "res/shaders/postprocess/ShadowFxaa.frag"
             }
+        },
+        {
+            "name": "SSAO",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/ssao.frag"
+            }
+        },
+        {
+            "name": "SSAOApply",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/ssaoapply.frag"
+            }
         }
     ]
 }

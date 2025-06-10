@@ -2,8 +2,9 @@
 #include "Scene.h"
 #include "Components.h"
 #include <glm/gtc/quaternion.hpp>
-#include <random>
-#include <cmath>
+#include "Random.h"
+//#include <random>
+//#include <cmath>
 #include <spdlog/spdlog.h>
 
 FlyAISystem::FlyAISystem(Scene* scene) : scene(scene) {}
@@ -93,20 +94,21 @@ void FlyAISystem::lookAt2D(const FlyAIAndTransform& flyComp, glm::vec3 target)
     }
 }
 
-static glm::vec2 randomInUnitCircle() {
-    static std::mt19937 rng(std::random_device{}());
-    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-
-    float angle = dist(rng) * 2.0f * glm::pi<float>();
-    float radius = std::sqrt(dist(rng)); // sqrt for uniform distribution
-    return glm::vec2(std::cos(angle), std::sin(angle)) * radius;
-}
+//static glm::vec2 randomInUnitCircle() {
+//    static std::mt19937 rng(std::random_device{}());
+//    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+//
+//    float angle = dist(rng) * 2.0f * glm::pi<float>();
+//    float radius = std::sqrt(dist(rng)); // sqrt for uniform distribution
+//    return glm::vec2(std::cos(angle), std::sin(angle)) * radius;
+//}
 
 void FlyAISystem::chooseNewPatrolPoint(const FlyAIAndTransform& flyComp)
 {
     auto& transform = flyComp.transform;
     auto& flyAI = flyComp.flyAI;
-    glm::vec2 offset = randomInUnitCircle() * flyAI.patrolRange;
+    //glm::vec2 offset = randomInUnitCircle() * flyAI.patrolRange;
+	glm::vec2 offset = Random::inUnitCircle() * flyAI.patrolRange;
 	flyAI.patrolTarget = glm::vec3(transform.globalMatrix[3]) + glm::vec3(offset.x, 0.0f, offset.y);
 }
 
