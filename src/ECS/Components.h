@@ -154,10 +154,12 @@ struct FlyAIComponent {
     enum FlyState { Patrolling, Diving, Returning }
     state = FlyState::Patrolling;
     glm::vec3 patrolTarget;
-
+    enum PatrolAxis { Horizontal, Vertical } 
+    patrolAxis = PatrolAxis::Horizontal;
+    glm::vec3 patrolStart;
+    glm::vec3 patrolEnd;
+    bool movingForward = true;
     EntityID id = (EntityID)-1;
-
-
 };
 
 struct VelocityComponent {
