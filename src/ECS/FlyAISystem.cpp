@@ -58,23 +58,22 @@ void FlyAISystem::update() {
 void FlyAISystem::patrol(const FlyAIAndTransform& flyComp, float patrolHeight) {
     auto& transform = flyComp.transform;
     auto& flyAI = flyComp.flyAI;
-	auto& ts = scene->getTransformSystem();
-    glm::vec3 direction = flyAI.patrolTarget - glm::vec3(transform.globalMatrix[3]);
+    auto& ts = scene->getTransformSystem();
+
+    glm::vec3 currentPosition = glm::vec3(transform.globalMatrix[3]);
+    glm::vec3 direction = glm::normalize(flyAI.patrolTarget - currentPosition);
     direction.y = 0.f;
-	direction = glm::normalize(direction);
 
-    glm::vec3 position = transform.globalMatrix[3];
-	position += direction * flyAI.patrolSpeed * deltaTime;
-    position.y = patrolHeight;
+    glm::vec3 newPosition = currentPosition + direction * flyAI.patrolSpeed * deltaTime;
+    newPosition.y = patrolHeight;
 
-	ts.translateEntity(flyAI.id, position);
-
-    
-
+    ts.translateEntity(flyAI.id, newPosition);
     lookAt2D(flyComp, flyAI.patrolTarget);
-    if (glm::distance(position, flyAI.patrolTarget) < flyAI.patrolPointReachedThreshold)
-    {
-        chooseNewPatrolPoint(flyComp);
+
+    if (glm::distance(newPosition, flyAI.patrolTarget) < flyAI.patrolPointReachedThreshold) {
+        // Zmien kierunek
+        flyAI.movingForward = !flyAI.movingForward;
+        flyAI.patrolTarget = flyAI.movingForward ? flyAI.patrolEnd : flyAI.patrolStart;
     }
 }
 
@@ -106,8 +105,20 @@ void FlyAISystem::chooseNewPatrolPoint(const FlyAIAndTransform& flyComp)
 {
     auto& transform = flyComp.transform;
     auto& flyAI = flyComp.flyAI;
-    glm::vec2 offset = randomInUnitCircle() * flyAI.patrolRange;
-	flyAI.patrolTarget = glm::vec3(transform.globalMatrix[3]) + glm::vec3(offset.x, 0.0f, offset.y);
+
+    glm::vec3 basePos = glm::vec3(transform.globalMatrix[3]);
+
+    if (flyAI.patrolAxis == FlyAIComponent::PatrolAxis::Horizontal) {
+        flyAI.patrolStart = basePos + glm::vec3(-flyAI.patrolRange, 0.f, 0.f);
+        flyAI.patrolEnd = basePos + glm::vec3(flyAI.patrolRange, 0.f, 0.f);
+    }
+    else {
+        flyAI.patrolStart = basePos + glm::vec3(0.f, 0.f, -flyAI.patrolRange);
+        flyAI.patrolEnd = basePos + glm::vec3(0.f, 0.f, flyAI.patrolRange);
+    }
+
+    flyAI.patrolTarget = flyAI.patrolEnd; // zaczyna w stronê koñca
+    flyAI.movingForward = true;
 }
 
 void FlyAISystem::dive(const FlyAIAndTransform& flyComp)
