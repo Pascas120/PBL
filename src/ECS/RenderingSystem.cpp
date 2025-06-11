@@ -439,32 +439,10 @@ void RenderingSystem::dynamicSplitScreen(Shader *dynamicSplitScreen, Camera& cam
 	out.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	dynamicSplitScreen->use();
-	glm::vec3 p1 = scene->getComponent<Transform>(scene->getComponentArray<ButterController>()[0].id).translation;
-	glm::vec3 p2 = scene->getComponent<Transform>(scene->getComponentArray<BreadController>()[0].id).translation;
-
-	// Próg aktywacji podziału
-	float split_threshold = 8.0f;
-	bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold/2;
-
-	glm::vec3 split_dir_world = glm::normalize(p2 - p1);
-
-	glm::mat4 projection = camera.getFrustum().getProjectionMatrix();
-	glm::mat4 view = camera.getViewMatrix();
-
-	glm::vec4 clip = projection * view * glm::vec4(p1, 1.0f);
-	glm::vec3 ndc = glm::vec3(clip) / clip.w;
-	glm::vec2 screen_p1 = glm::vec2(p1.x, -p1.z);
-
-	clip = projection * view * glm::vec4(p2, 1.0f);
-	ndc = glm::vec3(clip) / clip.w;
-	glm::vec2 screen_p2 = glm::vec2(p2.x, -p2.z);
 
 	glm::vec2 viewportSize = glm::vec2(in.GetSizePair().first, in.GetSizePair().second);
-
-	dynamicSplitScreen->setBool("split_active", split_active);
-	dynamicSplitScreen->setVec2("player1_screen_pos", screen_p1);
-	dynamicSplitScreen->setVec2("player2_screen_pos", screen_p2);
 	dynamicSplitScreen->setVec2("viewport_size", viewportSize);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
 	dynamicSplitScreen->setInt("viewport1", 0);

@@ -651,13 +651,74 @@ void Application::render(const Framebuffer& framebuffer)
 
 
 	}
-	if(cameras->getQuantity() == 1)
+	auto camControllers = scene->getStorage<CameraController>();
+
+	if (cameras->getQuantity() > 1 && camControllers != nullptr && camControllers->getQuantity() >= 2)
+	{
+		auto& camController1 = camControllers->components[0];
+		auto& cam1 = scene->getComponent<CameraComponent>(camController1.id).camera;
+		glm::vec3& p1 = scene->getComponent<Transform>(camController1.targetID).translation;
+
+		auto& camController2 = camControllers->components[1];
+		auto& cam2 = scene->getComponent<CameraComponent>(camController2.id).camera;
+		glm::vec3& p2 = scene->getComponent<Transform>(camController2.targetID).translation;
+
+
+
+		float split_threshold = 8.0f;
+		bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold / 2;
+
+		if (split_active)
+		{
+			auto& dynamicSplitScreen = postShaders["SplitScreen"];
+			dynamicSplitScreen->use();
+
+			glm::vec2 world_p1 = glm::vec2(p1.x, -p1.z);
+			glm::vec2 world_p2 = glm::vec2(p2.x, -p2.z);
+
+			glm::vec2 dx = world_p2 - world_p1;
+			glm::vec2 center = (world_p1 + world_p2) / 2.0f;
+
+			float splitSlope;
+
+			if (dx.y == 0.0f)
+			{
+				splitSlope = 100000.0f;
+			}
+			else
+			{
+				splitSlope = dx.x / dx.y;
+			}
+			dynamicSplitScreen->setFloat("split_slope", splitSlope);
+
+			bool player1AboveSlope = (p1.y - (splitSlope * (p1.x - center.x) + center.y)) > 0.0f;
+
+			//dynamicSplitScreen->setVec2("player1_position", screen_p1);
+			//dynamicSplitScreen->setVec2("player2_position", screen_p2);
+
+			//glm::vec4 clipSpace = cam1.getFrustum().getProjectionMatrix() * cam1.getViewMatrix() * glm::vec4(p1, 1.0);
+			//glm::vec3 ndc = glm::vec3(clipSpace) / clipSpace.w;
+			//glm::vec2 screen_p1 = glm::vec2((ndc.x + 1.0f) / 2.0f, 1.0f - (ndc.y + 1.0f) / 2.0f);
+
+			//bool player1AboveSlope = (ndc.y - splitSlope * ndc.x) > 0.0f;
+			dynamicSplitScreen->setBool("player1_above", player1AboveSlope);
+
+			/*clipSpace = cam2.getFrustum().getProjectionMatrix() * cam2.getViewMatrix() * glm::vec4(p2, 1.0);
+			ndc = glm::vec3(clipSpace) / clipSpace.w;
+			glm::vec2 screen_p2 = glm::vec2((ndc.x + 1.0f) / 2.0f, 1.0f - (ndc.y + 1.0f) / 2.0f);*/
+
+
+
+			scene->getRenderingSystem().drawScene(framebuffer, cam1, &cam2, uniformBlockStorage, postShaders);
+		}
+		else
+		{
+			scene->getRenderingSystem().drawScene(framebuffer, cam1, nullptr, uniformBlockStorage, postShaders);
+		}
+	}
+	else
 	{
 		scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
-	}
-	else if (cameras->getQuantity() > 1)
-	{
-			scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, &cameras->components[1].camera, uniformBlockStorage, postShaders);
 	}
 }
 
