@@ -38,7 +38,6 @@ private:
     TextRenderer t1;
     std::unique_ptr<BVHNode> rootNode;
     
-    std::array<glm::vec3, 64> ssaoKernel;
     std::array<glm::vec3, 16> ssaoNoise;
 	GLuint ssaoNoiseTexture;
 

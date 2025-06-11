@@ -14,22 +14,6 @@
 #include "Random.h"
 
 
-static std::array<glm::vec3, 64> generateSSAOKernel() {
-    std::array<glm::vec3, 64> kernel;
-    for (int i = 0; i < 64; ++i) {
-        glm::vec3 sample = Random::inUnitSphere();
-        sample.z = std::abs(sample.z);
-        sample *= Random::getFloat(0.0f, 1.0f);
-
-        float scale = float(i) / 64.0f;
-        scale = glm::mix(0.1f, 1.0f, scale * scale);
-        sample *= scale;
-
-        kernel[i] = sample;
-    }
-    return kernel;
-}
-
 static std::array<glm::vec3, 16> generateSSAONoise() {
     std::array<glm::vec3, 16> noise;
     for (int i = 0; i < 16; ++i) {
@@ -54,7 +38,6 @@ RenderingSystem::RenderingSystem(Scene *scene) : scene(scene)
 	GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-	ssaoKernel = generateSSAOKernel();
 	ssaoNoise = generateSSAONoise();
 
 	glGenTextures(1, &ssaoNoiseTexture);
@@ -70,6 +53,7 @@ RenderingSystem::~RenderingSystem()
 {
 	glDeleteTextures(1, &ssaoNoiseTexture);
 }
+
 
 void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
     const std::unordered_map<std::string, Shader*>& postShaders) 
@@ -482,10 +466,6 @@ void RenderingSystem::ssaoFilter(Shader* ssao, const CustomFramebuffer& gBuffer,
 	ssao->setInt("width", width);
 	ssao->setInt("height", height);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, gBuffer.GetPositionTexture());
-	ssao->setInt("positionTexture", 0);
-
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, gBuffer.GetNormalTexture());
 	ssao->setInt("normalTexture", 1);
@@ -498,9 +478,6 @@ void RenderingSystem::ssaoFilter(Shader* ssao, const CustomFramebuffer& gBuffer,
 	glBindTexture(GL_TEXTURE_2D, gBuffer.GetDepthTexture());
 	ssao->setInt("depthTexture", 3);
 
-	for (int i = 0; i < ssaoKernel.size(); i++) {
-		ssao->setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
-	}
 
 	glBindVertexArray(hudVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

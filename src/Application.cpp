@@ -4,6 +4,8 @@
 
 #include "Serialization.h"
 #include "ECS/components/CameraController.h"
+#include "Random.h"
+#include <glm/gtc/type_ptr.hpp>
 
 #include <fstream>
 
@@ -63,6 +65,21 @@ void Application::run()
 }
 
 
+static std::array<glm::vec3, 64> generateSSAOKernel() {
+	std::array<glm::vec3, 64> kernel;
+	for (int i = 0; i < 64; ++i) {
+		glm::vec3 sample = Random::inUnitSphere();
+		sample.z = std::abs(sample.z);
+		sample *= Random::getFloat(0.0f, 1.0f);
+
+		float scale = float(i) / 64.0f;
+		scale = glm::mix(0.1f, 1.0f, scale * scale);
+		sample *= scale;
+
+		kernel[i] = sample;
+	}
+	return kernel;
+}
 
 bool Application::init()
 {
@@ -143,9 +160,10 @@ bool Application::init()
 		bindBlocks(shader);
 		postShaders[shader->getName()] = shader;
 	}
-
-
-	
+	std::array<glm::vec3, 64> ssaoKernel = generateSSAOKernel();
+	postShaders["SSAO"]->use();
+	glUniform3fv(glGetUniformLocation(postShaders["SSAO"]->ID, "samples"), ssaoKernel.size(), glm::value_ptr(ssaoKernel[0]));
+		
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);

@@ -9,6 +9,9 @@ in vec3 fragPos;
 in vec3 normal;
 in vec4 fragPosLightSpace;
 
+in vec3 fragViewPos;
+in vec3 fragViewNormal;
+
 in vec4 currClipPos;
 in vec4 prevClipPos;
 
@@ -96,9 +99,9 @@ void main()
 
     FragColor = finalColor;
 
-    Position = vec4(fragPos, 1.0);
+    Position = vec4(fragViewPos, 1.0);
 
-    Normal = vec4(norm, 1.0);
+    Normal = vec4(normalize(fragViewNormal), 1.0);
 
 
     vec2 currNDC = currClipPos.xy / currClipPos.w;

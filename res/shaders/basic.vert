@@ -8,6 +8,9 @@ out vec3 normal;
 out vec3 fragPos;
 out vec4 fragPosLightSpace;
 
+out vec3 fragViewPos;
+out vec3 fragViewNormal;
+
 out vec4 currClipPos;
 out vec4 prevClipPos;
 
@@ -34,6 +37,10 @@ void main()
     normal = mat3(transpose(inverse(model))) * aNormal;
     texCoords = aTexCoords;
     fragPosLightSpace = lightProjection * lightView * vec4(fragPos, 1.0);
+
+    mat4 modelView = view * model;
+    fragViewPos = vec3(modelView * vec4(aPos, 1.0));
+    fragViewNormal = mat3(transpose(inverse(modelView))) * aNormal;
 
     currClipPos = viewProjection * model * vec4(aPos, 1.0);
     prevClipPos = prevViewProjection * prevModel * vec4(aPos, 1.0);

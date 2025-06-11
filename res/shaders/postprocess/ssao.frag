@@ -1,6 +1,5 @@
 #version 330 core
 
-uniform sampler2D positionTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D noiseTexture;
 uniform sampler2D depthTexture;
@@ -29,8 +28,18 @@ out float fragColor;
 
 const int kernelSize = 64;
 const float radius = 0.5;
-const float bias = 0.1;
+const float bias = 0.075;
 const float power = 2.3;
+
+vec3 getFragViewPos(vec2 texCoord)
+{
+    vec2 ndc = texCoord * 2.0 - 1.0;
+    float depth = texture(depthTexture, texCoord).r;
+    vec4 clipPos = vec4(ndc, depth, 1.0);
+    vec4 viewPos4 = invProjection * clipPos;
+    viewPos4 /= viewPos4.w;
+    return viewPos4.xyz;
+}
 
 void main()
 {
@@ -41,8 +50,8 @@ void main()
 
     vec2 noiseScale = vec2(width, height) / 4.0;
 
-    vec3 fragPos = (view * vec4(texture(positionTexture, texCoord).xyz, 1.0)).xyz;
-    vec3 normal = normalize(mat3(view) * texture(normalTexture, texCoord).xyz);
+    vec3 fragPos = getFragViewPos(texCoord);
+    vec3 normal = texture(normalTexture, texCoord).xyz;
     vec3 randomVec = texture(noiseTexture, texCoord * noiseScale).xyz;
 
 
@@ -66,10 +75,10 @@ void main()
         if (texture(depthTexture, offset.xy).r == 1.0)
             continue;
 
-        float sampleDepth = (view * texture(positionTexture, offset.xy)).z;
+        float sampleDepth = getFragViewPos(offset.xy).z;
 
         float depthDiff = abs(fragPos.z - sampleDepth);
-        float rangeCheck = smoothstep(0.0, 1.0, radius / max(depthDiff, 1e-6));
+        float rangeCheck = smoothstep(0.0, 1.0, radius / max(depthDiff, 1e-8));
 
         occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;
     }
