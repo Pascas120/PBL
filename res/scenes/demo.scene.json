@@ -684,6 +684,63 @@
                 },
                 "isStatic": true
             },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "Ksiazka",
+                "uuid": "de793c1f-8b2c-ea87-bc9f-ffd6a736ab48"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    8.40771198272705,
+                    0.6487905383110046,
+                    2.1035518646240234
+                ],
+                "translation": [
+                    0.22349166870117188,
+                    18.715436935424805,
+                    -35.58539581298828
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
             "ElevatorComponent": {
                 "buttonEntity": "29e98fa1-71d6-3e74-50df-641852db931d",
                 "closedPos": [
@@ -732,14 +789,14 @@
                     1.0
                 ],
                 "scale": [
-                    1.4806385040283203,
+                    2.4058287143707275,
                     0.21914473176002502,
                     0.8619000315666199
                 ],
                 "translation": [
-                    49.89228057861328,
+                    48.647029876708984,
                     15.64218521118164,
-                    25.31766700744629
+                    18.288570404052734
                 ]
             }
         },
@@ -833,8 +890,7 @@
                     "4082248c-4261-8b74-bd89-f3c86b7085e0",
                     "eaf87254-07e5-e679-029e-c1e16596a4cc",
                     "ee3cf972-d988-c97b-bcad-c2524305a3c2",
-                    "15779c6c-f07a-2d0e-dc50-76eb7102f196",
-                    "de793c1f-8b2c-ea87-bc9f-ffd6a736ab48"
+                    "15779c6c-f07a-2d0e-dc50-76eb7102f196"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -1648,63 +1704,6 @@
                     ],
                     "type": "BOX"
                 },
-                "isStatic": true
-            },
-            "ModelComponent": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "Ksiazka",
-                "uuid": "de793c1f-8b2c-ea87-bc9f-ffd6a736ab48"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "539c2a93-75c3-0011-142b-74bf9f80083b",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    280.257080078125,
-                    23.15412712097168,
-                    70.11839294433594
-                ],
-                "translation": [
-                    7.449712753295898,
-                    633.0908203125,
-                    -1186.1798095703125
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
                 "isStatic": false
             },
             "ModelComponent": {
@@ -2144,6 +2143,11 @@
                 },
                 "isStatic": true
             },
+            "HeatComponent": {
+                "OnEnterMessage": "cieplo",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
             "ObjectInfoComponent": {
                 "name": "col",
                 "uuid": "6773099c-7e9f-78aa-080e-17aba1777ec0"
@@ -2234,6 +2238,68 @@
                     0.9948511123657227,
                     18.27737808227539,
                     17.200035095214844
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "HeatComponent": {
+                "OnEnterMessage": "cieplo",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.7156862616539001,
+                    0.17892156541347504,
+                    0.17892156541347504
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "regen (1)",
+                "uuid": "6904c201-aa66-f63f-46df-f7b5e7a0106f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.8735771775245667,
+                    0.10000000149011612,
+                    1.798067331314087
+                ],
+                "translation": [
+                    34.0075798034668,
+                    18.27737808227539,
+                    18.34833526611328
                 ]
             }
         },
