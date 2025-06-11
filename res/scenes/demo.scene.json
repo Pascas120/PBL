@@ -415,27 +415,27 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -180.0,
                     0.0,
-                    -180.0
+                    0.0,
+                    0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
-                    1.0,
                     0.0,
-                    -4.371138828673793e-08
+                    0.0,
+                    1.0
                 ],
                 "scale": [
-                    0.02999999187886715,
-                    0.029999999329447746,
-                    0.02999999187886715
+                    0.03030843287706375,
+                    0.030000001192092896,
+                    0.02817772701382637
                 ],
                 "translation": [
-                    1.2372769117355347,
+                    0.4947173297405243,
                     0.0,
-                    18.348922729492188
+                    17.53108024597168
                 ]
             }
         },
@@ -2192,23 +2192,23 @@
                 },
                 "isStatic": true
             },
-            "HeatComponent": {
-                "OnEnterMessage": "cieplo",
-                "hasTriggered": false,
-                "triggerRadius": 1.0
-            },
             "ModelComponent": {
                 "color": [
+                    0.6841118931770325,
                     0.7156862616539001,
-                    0.17892156541347504,
                     0.17892156541347504
                 ],
                 "model": "res/models/grass_block/grass_block.obj",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "heat",
+                "name": "regen",
                 "uuid": "98d9db32-42aa-eb6e-ee0d-58903f656a8f"
+            },
+            "RegenComponent": {
+                "OnEnterMessage": "regen",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
             },
             "Transform": {
                 "children": [],
@@ -2226,14 +2226,14 @@
                     1.0
                 ],
                 "scale": [
-                    4.0,
+                    0.8735771775245667,
                     0.10000000149011612,
-                    4.0
+                    1.798067331314087
                 ],
                 "translation": [
-                    1.628100037574768,
+                    0.9948511123657227,
                     18.27737808227539,
-                    19.9621639251709
+                    17.200035095214844
                 ]
             }
         },
