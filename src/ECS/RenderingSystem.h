@@ -51,7 +51,7 @@ private:
 	void ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out);
 	void dynamicSplitScreen(Shader* dynamicSplitScreen,  Camera& camera, const CustomFramebuffer& in, CustomFramebuffer& in2, const Framebuffer& out);
 
-	void drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, EntityID* renderingQueue, uint16_t renderingQueueSize, bool useShadows);
+	void drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, Shader* shadowShader, bool useShadows);
 
 
 	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 

@@ -83,9 +83,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
         mainLight = lights->components[0];
         useShadows = true;
     }
-    uint16_t renderingQueueSize = 0;
-
-    EntityID renderingQueue[MAX_ENTITIES];
 
     auto [width, height] = framebuffer.GetSizePair();
     if (width == 0 || height == 0) {
@@ -139,47 +136,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
     float aspectRatio = (float)width / (float)height;
     auto& frustum = cameraP1.getFrustum();
 
-    FrustumPlanes globalPlanes = frustum.getPlanes();
-    globalPlanes.applyTransform(cameraP1.getInvViewMatrix());
 
-    //buildTree();
-    std::vector<EntityID> visibleEntities;
-
-    visibleEntities.reserve(models->getQuantity());
-    if (useTree && rootNode) {
-        /*spdlog::info("planes: {}, {}, {}",
-                     frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
-        */
-        traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
-		//spdlog::info("Tree: {} entities visible", visibleEntities.size());
-    } else if (useTree && !rootNode) {
-        spdlog::warn("BVH root node is null, skipping frustum culling.");
-    }
-
-    for (int i = 0; i < models->getQuantity(); i++) {
-        auto& modelComponent = models->components[i];
-
-        if (useShadows) {
-            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
-            modelComponent.model->draw(shadowShader);
-        }
-		if (!useTree || !transforms->get(models->components[i].id).isStatic)
-        {
-            auto& boundingBox = modelComponent.model->boundingBox;
-
-		    
-            if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
-                renderingQueue[renderingQueueSize++] = modelComponent.id;
-            }
-        }
-    }
-
-    for(int i = 0; i < visibleEntities.size(); i++) {
-        EntityID entityID = visibleEntities[i];
-        if (models->has(entityID)) {
-                renderingQueue[renderingQueueSize++] = entityID;
-        }
-    }
 
 	//spdlog::info("Rendering {} models", renderingQueueSize);
 
@@ -197,17 +154,17 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
 	}
 
 	if(cameraP2 != nullptr) {
-		drawBase(postProcessingFramebuffer1, cameraP1, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
+		drawBase(postProcessingFramebuffer1, cameraP1, uniformBlockStorage, shadowShader, useShadows);
 		glm::mat4 viewMatrixP2 = cameraP2->getViewMatrix();
 		glm::mat4 projectionMatrixP2 = cameraP2->getFrustum().getProjectionMatrix();
 		glm::mat4 viewProjectionMatrixP2 = projectionMatrixP2 * viewMatrixP2;
 
-		drawBase(postProcessingFramebuffer2, *cameraP2, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
+		drawBase(postProcessingFramebuffer2, *cameraP2, uniformBlockStorage, shadowShader, useShadows);
 
 		dynamicSplitScreen(postShaders.at("SplitScreen"), cameraP1, postProcessingFramebuffer1, postProcessingFramebuffer2, customFramebuffer);
 	}
 	else {
-		drawBase(customFramebuffer, cameraP1, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
+		drawBase(customFramebuffer, cameraP1, uniformBlockStorage, shadowShader, useShadows);
 	}
 
 
@@ -510,23 +467,21 @@ void RenderingSystem::dynamicSplitScreen(Shader *dynamicSplitScreen, Camera& cam
 	glm::vec3 p2 = scene->getComponent<Transform>(scene->getComponentArray<BreadController>()[0].id).translation;
 
 	// Próg aktywacji podziału
-	float split_threshold = 3.0f;
-	bool split_active = glm::distance(p1, p2) > split_threshold;
+	float split_threshold = 8.0f;
+	bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold/2;
 
-	// Oblicz kierunek między graczami w świecie
 	glm::vec3 split_dir_world = glm::normalize(p2 - p1);
 
 	glm::mat4 projection = camera.getFrustum().getProjectionMatrix();
 	glm::mat4 view = camera.getViewMatrix();
 
-	// Rzutuj pozycje graczy na ekran
 	glm::vec4 clip = projection * view * glm::vec4(p1, 1.0f);
 	glm::vec3 ndc = glm::vec3(clip) / clip.w;
-	glm::vec2 screen_p1 = glm::vec2(ndc.x * 0.5f + 0.5f, ndc.y * 0.5f + 0.5f);
+	glm::vec2 screen_p1 = glm::vec2(p1.x, -p1.z);
 
 	clip = projection * view * glm::vec4(p2, 1.0f);
 	ndc = glm::vec3(clip) / clip.w;
-	glm::vec2 screen_p2 = glm::vec2(ndc.x * 0.5f + 0.5f, ndc.y * 0.5f + 0.5f);
+	glm::vec2 screen_p2 = glm::vec2(p2.x, -p2.z);
 
 	glm::vec2 viewportSize = glm::vec2(in.GetSizePair().first, in.GetSizePair().second);
 
@@ -554,8 +509,56 @@ void RenderingSystem::updatePreviousModelMatrices() {
     }
 }
 
-void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, EntityID* renderingQueue, uint16_t renderingQueueSize, bool useShadows) {
+void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, Shader* shadowShader, bool useShadows) {
 	auto& frustum = camera.getFrustum();
+    auto models = scene->getStorage<ModelComponent>();
+    auto transforms = scene->getStorage<Transform>();
+    uint16_t renderingQueueSize = 0;
+
+    EntityID renderingQueue[MAX_ENTITIES];
+
+    FrustumPlanes globalPlanes = frustum.getPlanes();
+    globalPlanes.applyTransform(camera.getInvViewMatrix());
+
+    //buildTree();
+    std::vector<EntityID> visibleEntities;
+
+    visibleEntities.reserve(models->getQuantity());
+    if (useTree && rootNode) {
+        /*spdlog::info("planes: {}, {}, {}",
+                     frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
+        */
+        traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
+        //spdlog::info("Tree: {} entities visible", visibleEntities.size());
+    } else if (useTree && !rootNode) {
+        spdlog::warn("BVH root node is null, skipping frustum culling.");
+    }
+
+    for (int i = 0; i < models->getQuantity(); i++) {
+        auto& modelComponent = models->components[i];
+
+        if (useShadows) {
+            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
+            modelComponent.model->draw(shadowShader);
+        }
+        if (!useTree || !transforms->get(models->components[i].id).isStatic)
+        {
+            auto& boundingBox = modelComponent.model->boundingBox;
+
+
+            if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
+                renderingQueue[renderingQueueSize++] = modelComponent.id;
+            }
+        }
+    }
+
+    for(int i = 0; i < visibleEntities.size(); i++) {
+        EntityID entityID = visibleEntities[i];
+        if (models->has(entityID)) {
+            renderingQueue[renderingQueueSize++] = entityID;
+        }
+    }
+
 	auto& cameraBlock = uniformBlockStorage.cameraBlock;
     glm::mat4 viewMatrix = camera.getViewMatrix();
     glm::mat4 invViewMatrix = camera.getInvViewMatrix();
@@ -583,8 +586,7 @@ void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camer
 
 	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
 
-	auto models = scene->getStorage<ModelComponent>();
-	auto transforms = scene->getStorage<Transform>();
+
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);

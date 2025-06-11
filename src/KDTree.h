@@ -73,7 +73,7 @@ inline std::unique_ptr<BVHNode> buildBVH(std::vector<ModelComponent*>& objects, 
     }
 
     // Wybór osi (X/Y/Z)
-    int axis = depth % 2;
+    int axis = depth % 3;
     std::sort(objects.begin(), objects.end(), [axis](ModelComponent* a, ModelComponent* b) {
         auto ca = a->model->boundingBox.getGlobalCenter(*a->transform);
         auto cb = b->model->boundingBox.getGlobalCenter(*b->transform);

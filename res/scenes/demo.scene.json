@@ -165,7 +165,64 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7813410758972168,
+                "aspectRatio": 1.7806451320648193,
+                "farPlane": 1000.0,
+                "fovSizeAxis": "VERTICAL",
+                "nearPlane": 0.10000000149011612,
+                "orthographic": {
+                    "size": 5.0
+                },
+                "perspective": {
+                    "fov": 0.7853981852531433
+                },
+                "projectionType": "PERSPECTIVE",
+                "screenOffset": [
+                    0.0,
+                    0.0
+                ]
+            },
+            "CameraController": {
+                "offset": [
+                    0.0,
+                    5.0,
+                    -10.0
+                ],
+                "targetID": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "ObjectInfoComponent": {
+                "name": "Camera 2",
+                "uuid": "89d3dbd2-7c18-1340-9587-195ee266492f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -20.0,
+                    -180.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    7.59040297282354e-09,
+                    -0.9848077297210693,
+                    -0.1736481785774231,
+                    -4.304731149318286e-08
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    -3.0906605275049515e-07,
+                    21.27984619140625,
+                    -16.575639724731445
+                ]
+            }
+        },
+        {
+            "CameraComponent": {
+                "aspectRatio": 1.7806451320648193,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -196,17 +253,17 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -180.0,
+                    -200.0,
                     0.0,
                     -180.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    0.0,
-                    1.0,
-                    0.0,
-                    -4.371138828673793e-08
+                    4.304731149318286e-08,
+                    0.9848077297210693,
+                    0.1736481934785843,
+                    7.59040386100196e-09
                 ],
                 "scale": [
                     1.0,
