@@ -165,7 +165,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7806451320648193,
+                "aspectRatio": 1.7790697813034058,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -222,7 +222,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7806451320648193,
+                "aspectRatio": 1.7790697813034058,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -1801,6 +1801,130 @@
                     1.8148362636566162,
                     612.034912109375,
                     -594.4647827148438
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "HeatComponent": {
+                "OnEnterMessage": "cieplo",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.7156862616539001,
+                    0.17892156541347504,
+                    0.17892156541347504
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "heat",
+                "uuid": "98d9db32-42aa-eb6e-ee0d-58903f656a8f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    4.0,
+                    0.10000000149011612,
+                    4.0
+                ],
+                "translation": [
+                    1.628100037574768,
+                    18.27737808227539,
+                    19.9621639251709
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true
+            },
+            "FreezeComponent": {
+                "OnEnterMessage": "zimno",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.17892156541347504,
+                    0.636750340461731,
+                    0.7156862616539001
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "freeze",
+                "uuid": "10497c11-728b-ea4a-21f0-1ba5182fd572"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    2.0,
+                    0.10000000149011612,
+                    6.0
+                ],
+                "translation": [
+                    -5.086301803588867,
+                    18.27737808227539,
+                    2.1595821380615234
                 ]
             }
         }
