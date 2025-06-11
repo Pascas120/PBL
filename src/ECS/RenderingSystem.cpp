@@ -71,7 +71,7 @@ RenderingSystem::~RenderingSystem()
 	glDeleteTextures(1, &ssaoNoiseTexture);
 }
 
-void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
+void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1, Camera* cameraP2, const UniformBlockStorage& uniformBlockStorage,
     const std::unordered_map<std::string, Shader*>& postShaders) 
 {
     auto models = scene->getStorage<ModelComponent>();
@@ -126,12 +126,21 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
         shadowShader->setVec3("lightPos", lightPos);
 
     }
+
+	if (useShadows) {
+		Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
+		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
+
+
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
+	}
     //##############################################
     float aspectRatio = (float)width / (float)height;
-    auto& frustum = camera.getFrustum();
+    auto& frustum = cameraP1.getFrustum();
 
     FrustumPlanes globalPlanes = frustum.getPlanes();
-    globalPlanes.applyTransform(camera.getInvViewMatrix());
+    globalPlanes.applyTransform(cameraP1.getInvViewMatrix());
 
     //buildTree();
     std::vector<EntityID> visibleEntities;
@@ -175,65 +184,34 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 	//spdlog::info("Rendering {} models", renderingQueueSize);
 
     auto& cameraBlock = uniformBlockStorage.cameraBlock;
-    glm::mat4 viewMatrix = camera.getViewMatrix();
-    glm::mat4 invViewMatrix = camera.getInvViewMatrix();
-    glm::vec3 cameraPosition = invViewMatrix[3];
+    glm::mat4 viewMatrix = cameraP1.getViewMatrix();
     glm::mat4 projectionMatrix = frustum.getProjectionMatrix();
-    glm::mat4 invProjectionMatrix = glm::inverse(projectionMatrix);
     glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
-    glm::mat4 invViewProjectionMatrix = glm::inverse(viewProjectionMatrix);
 
-    cameraBlock.setData("viewPos", &cameraPosition);
-    cameraBlock.setData("view", &viewMatrix);
-    cameraBlock.setData("invView", &invViewMatrix);
-    cameraBlock.setData("projection", &projectionMatrix);
-    cameraBlock.setData("invProjection", &invProjectionMatrix);
-    cameraBlock.setData("viewProjection", &viewProjectionMatrix);
-    cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
-
-    if (useShadows) {
-        Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
-		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
-
-
-        glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
-    }
-
-    customFramebuffer.Bind();
-	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3, drawBuffers);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	static const float zeroVelocity[] = { 0, 0 };
-	glClearBufferfv(GL_COLOR, 2, zeroVelocity);
-
-	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
-
-    for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = models->get(renderingQueue[i]);
-
-        EntityID entityID = modelComponent.id;
-
-		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
-        modelComponent.shader->use();
-		if (useShadows && shadersUpdatedWithShadowMap.find(modelComponent.shader) == shadersUpdatedWithShadowMap.end()) {
-			modelComponent.shader->setInt("shadowMap", 1);
-			shadersUpdatedWithShadowMap.insert(modelComponent.shader);
+	std::array postBuffers = { &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer };
+	for (auto& postBuffer : postBuffers) {
+		auto [pfboWidth, pfboHeight] = postBuffer->GetSizePair();
+		if (pfboWidth != width || pfboHeight != height) {
+			postBuffer->Resize(width, height);
 		}
+	}
 
-		if (showMotionBlur)
-		{
-			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);
-		}
-		else
-		{
-			modelComponent.shader->setMat4("prevModel", modelMatrix);
-		}
+	if(cameraP2 != nullptr) {
+		drawBase(postProcessingFramebuffer1, cameraP1, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
+		glm::mat4 viewMatrixP2 = cameraP2->getViewMatrix();
+		glm::mat4 projectionMatrixP2 = cameraP2->getFrustum().getProjectionMatrix();
+		glm::mat4 viewProjectionMatrixP2 = projectionMatrixP2 * viewMatrixP2;
 
-        modelComponent.shader->setMat4("model", modelMatrix);
-		modelComponent.model->draw(modelComponent.shader, modelComponent.color);
-    }
+		drawBase(postProcessingFramebuffer2, *cameraP2, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
 
+		dynamicSplitScreen(postShaders.at("SplitScreen"), cameraP1, postProcessingFramebuffer1, postProcessingFramebuffer2, customFramebuffer);
+	}
+	else {
+		drawBase(customFramebuffer, cameraP1, uniformBlockStorage, renderingQueue, renderingQueueSize, useShadows);
+	}
+
+
+	//##################POST PROCESSING##################
 
     Shader* sobelShader = postShaders.at("Sobel");
     Shader* motionBlurShader = postShaders.at("MotionBlur");
@@ -241,13 +219,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& camera, 
 	Shader* ssaoShader = postShaders.at("SSAO");
 	Shader* ssaoApplyShader = postShaders.at("SSAOApply");
 
-    std::array postBuffers = { &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer };
-	for (auto& postBuffer : postBuffers) {
-        auto [pfboWidth, pfboHeight] = postBuffer->GetSizePair();
-        if (pfboWidth != width || pfboHeight != height) {
-            postBuffer->Resize(width, height);
-        }
-    }
+
 
     ssaoFilter(ssaoShader, customFramebuffer, ssaoFramebuffer);
     sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
@@ -529,11 +501,113 @@ void RenderingSystem::ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer
 	glBindVertexArray(0);
 }
 
+void RenderingSystem::dynamicSplitScreen(Shader *dynamicSplitScreen, Camera& camera, const CustomFramebuffer &in,
+	CustomFramebuffer &in2, const Framebuffer &out) {
+	out.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	dynamicSplitScreen->use();
+	glm::vec3 p1 = scene->getComponent<Transform>(scene->getComponentArray<ButterController>()[0].id).translation;
+	glm::vec3 p2 = scene->getComponent<Transform>(scene->getComponentArray<BreadController>()[0].id).translation;
+
+	// Próg aktywacji podziału
+	float split_threshold = 3.0f;
+	bool split_active = glm::distance(p1, p2) > split_threshold;
+
+	// Oblicz kierunek między graczami w świecie
+	glm::vec3 split_dir_world = glm::normalize(p2 - p1);
+
+	glm::mat4 projection = camera.getFrustum().getProjectionMatrix();
+	glm::mat4 view = camera.getViewMatrix();
+
+	// Rzutuj pozycje graczy na ekran
+	glm::vec4 clip = projection * view * glm::vec4(p1, 1.0f);
+	glm::vec3 ndc = glm::vec3(clip) / clip.w;
+	glm::vec2 screen_p1 = glm::vec2(ndc.x * 0.5f + 0.5f, ndc.y * 0.5f + 0.5f);
+
+	clip = projection * view * glm::vec4(p2, 1.0f);
+	ndc = glm::vec3(clip) / clip.w;
+	glm::vec2 screen_p2 = glm::vec2(ndc.x * 0.5f + 0.5f, ndc.y * 0.5f + 0.5f);
+
+	glm::vec2 viewportSize = glm::vec2(in.GetSizePair().first, in.GetSizePair().second);
+
+	dynamicSplitScreen->setBool("split_active", split_active);
+	dynamicSplitScreen->setVec2("player1_screen_pos", screen_p1);
+	dynamicSplitScreen->setVec2("player2_screen_pos", screen_p2);
+	dynamicSplitScreen->setVec2("viewport_size", viewportSize);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
+	dynamicSplitScreen->setInt("viewport1", 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, in2.GetColorTexture());
+	dynamicSplitScreen->setInt("viewport2", 1);
+	glBindVertexArray(hudVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
 void RenderingSystem::updatePreviousModelMatrices() {
     auto models = scene->getStorage<ModelComponent>();
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
 		auto& transform = scene->getComponent<Transform>(modelComponent.id);
         modelComponent.prevModelMatrix = transform.globalMatrix;
+    }
+}
+
+void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, EntityID* renderingQueue, uint16_t renderingQueueSize, bool useShadows) {
+	auto& frustum = camera.getFrustum();
+	auto& cameraBlock = uniformBlockStorage.cameraBlock;
+    glm::mat4 viewMatrix = camera.getViewMatrix();
+    glm::mat4 invViewMatrix = camera.getInvViewMatrix();
+    glm::vec3 cameraPosition = invViewMatrix[3];
+    glm::mat4 projectionMatrix = frustum.getProjectionMatrix();
+    glm::mat4 invProjectionMatrix = glm::inverse(projectionMatrix);
+    glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+    glm::mat4 invViewProjectionMatrix = glm::inverse(viewProjectionMatrix);
+
+    cameraBlock.setData("viewPos", &cameraPosition);
+    cameraBlock.setData("view", &viewMatrix);
+    cameraBlock.setData("invView", &invViewMatrix);
+    cameraBlock.setData("projection", &projectionMatrix);
+    cameraBlock.setData("invProjection", &invProjectionMatrix);
+    cameraBlock.setData("viewProjection", &viewProjectionMatrix);
+    cameraBlock.setData("invViewProjection", &invViewProjectionMatrix);
+
+
+    customFramebuffer.Bind();
+	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, drawBuffers);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	static const float zeroVelocity[] = { 0, 0 };
+	glClearBufferfv(GL_COLOR, 2, zeroVelocity);
+
+	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
+
+	auto models = scene->getStorage<ModelComponent>();
+	auto transforms = scene->getStorage<Transform>();
+
+    for (int i = 0; i < renderingQueueSize; i++) {
+        auto& modelComponent = models->get(renderingQueue[i]);
+
+        EntityID entityID = modelComponent.id;
+
+		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
+        modelComponent.shader->use();
+		if (useShadows && shadersUpdatedWithShadowMap.find(modelComponent.shader) == shadersUpdatedWithShadowMap.end()) {
+			modelComponent.shader->setInt("shadowMap", 1);
+			shadersUpdatedWithShadowMap.insert(modelComponent.shader);
+		}
+
+		if (showMotionBlur)
+		{
+			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);
+		}
+		else
+		{
+			modelComponent.shader->setMat4("prevModel", modelMatrix);
+		}
+
+        modelComponent.shader->setMat4("model", modelMatrix);
+		modelComponent.model->draw(modelComponent.shader, modelComponent.color);
     }
 }

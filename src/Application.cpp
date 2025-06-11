@@ -631,7 +631,15 @@ void Application::render(const Framebuffer& framebuffer)
 			cameraComponent.updateProjectionMatrix();
 		}
 
-		scene->getRenderingSystem().drawScene(framebuffer, cameraComponent.camera, uniformBlockStorage, postShaders);
+
+	}
+	if(cameras->getQuantity() == 1)
+	{
+		scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
+	}
+	else if (cameras->getQuantity() > 1)
+	{
+			scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, &cameras->components[1].camera, uniformBlockStorage, postShaders);
 	}
 }
 
@@ -648,7 +656,7 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 
 	lightSystem(*scene, uniformBlockStorage);
 
-	scene->getRenderingSystem().drawScene(framebuffer, camera, uniformBlockStorage, postShaders);
+	scene->getRenderingSystem().drawScene(framebuffer, camera, nullptr, uniformBlockStorage, postShaders);
 	scene->getRenderingSystem().drawHud(framebuffer);
 }
 
