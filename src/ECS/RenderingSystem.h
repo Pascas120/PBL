@@ -48,13 +48,17 @@ private:
     void shadowFxaaFilter(Shader* fxaa, const CustomFramebuffer& in, const Framebuffer& out);
 	void ssaoFilter(Shader* ssao, const CustomFramebuffer& gBuffer, const Framebuffer& out);
 	void ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out);
+	void dynamicSplitScreen(Shader* dynamicSplitScreen,  Camera& camera, const CustomFramebuffer& in, CustomFramebuffer& in2, const Framebuffer& out);
+
+	void drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, Shader* shadowShader, bool useShadows);
+
 
 	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 
 		{ AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::POSITION, 
         AttachmentType::NORMAL, AttachmentType::VELOCITY } } };
 
-	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR,  AttachmentType::DEPTH } } };
+    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR,  AttachmentType::DEPTH } } };
 	CustomFramebuffer ssaoFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR }, GL_RED, GL_FLOAT } };
 
     const uint32_t shadowMapWidth = 2048;
@@ -66,8 +70,8 @@ public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);
     RenderingSystem(Scene* scene);
 	~RenderingSystem();
-    void drawScene(const Framebuffer& framebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
-        const std::unordered_map<std::string, Shader*>& postShaders);
+	void drawScene(const Framebuffer& framebuffer, Camera& cameraP1, Camera* cameraP2, const UniformBlockStorage& uniformBlockStorage,
+	const std::unordered_map<std::string, Shader*>& postShaders);
     void drawHud(const Framebuffer& framebuffer);
     void buildTree();
 

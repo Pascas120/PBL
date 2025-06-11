@@ -55,6 +55,14 @@
                 "VERTEX": "res/shaders/postprocess/postprocess.vert",
                 "FRAGMENT": "res/shaders/postprocess/ssaoapply.frag"
             }
+        },
+        {
+            "name": "SplitScreen",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/splitscreen.frag"
+            }
         }
     ]
 }

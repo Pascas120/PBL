@@ -16,8 +16,15 @@ struct ButterController
 
 	std::queue<EntityID> trailEntities;
 
+	bool  inHeat = false;  
+	bool  wasInHeat = false;   
+	float trailBurstLeft = 0.f;   
+	float trailCooldown = 0.f;    
+
+
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);
 
+	void addTrailIfPossible(Scene* scene);
 
 	EntityID id = (EntityID)-1;
 };

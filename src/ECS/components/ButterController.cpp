@@ -7,7 +7,18 @@
 void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
+	if (trailBurstLeft > 0.f)
+	{
+		const float SPAWN_EVERY = 0.01f;     
+		trailBurstLeft -= deltaTime;
+		trailCooldown -= deltaTime;
 
+		if (trailCooldown <= 0.f)
+		{
+			addTrailIfPossible(scene);
+			trailCooldown = SPAWN_EVERY;
+		}
+	}
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
@@ -33,41 +44,6 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		{
 			movement.x += moveSpeed;
 			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
-		}
-
-		if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
-		{
-			bool addTrail = true;
-			if (timeSinceLastGroundContact > 0.1f)
-			{
-				addTrail = false;
-			}
-
-			if (addTrail && !trailEntities.empty())
-			{
-				EntityID lastTrail = trailEntities.back();
-				auto& lastTransform = scene->getComponent<Transform>(lastTrail);
-				if (glm::length(lastTransform.translation - transform.translation) < 0.3f)
-				{
-					addTrail = false;
-				}
-			}
-
-			if (addTrail)
-			{
-				EntityID trail = scene->instantiatePrefab("Trail")[0];
-
-				transformSystem.translateEntity(trail, transform.translation - glm::vec3(0.0f, 0.22f, 0.0f));
-				transformSystem.rotateEntity(trail, transform.rotation);
-
-				trailEntities.push(trail);
-				if (trailEntities.size() > 50)
-				{
-					EntityID oldTrail = trailEntities.front();
-					trailEntities.pop();
-					scene->destroyEntity(oldTrail);
-				}
-			}
 		}
 
 		if (glm::length(movement) > 0.0f)
@@ -97,7 +73,54 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
             transformSystem.translateEntity(id, scene->getComponent<Transform>(respawnPoint).translation);
         }
 
+
+		
+		if (wasInHeat && !inHeat)               
+		{
+			trailBurstLeft = 5.0f;               //czas5s
+			trailCooldown = 0.f;              
+		}
+		wasInHeat = inHeat;                    
+		inHeat = false;                       
+		
+
 	}
 
 
+
 }
+	void ButterController::addTrailIfPossible(Scene * scene)
+	{
+		auto& transformSystem = scene->getTransformSystem();
+		auto& transform = scene->getComponent<Transform>(id);
+
+	
+		bool addTrail = (timeSinceLastGroundContact <= 0.1f);
+
+		
+		if (addTrail && !trailEntities.empty())
+		{
+			EntityID lastTrail = trailEntities.back();
+			auto& lastTransform = scene->getComponent<Transform>(lastTrail);
+			if (glm::length(lastTransform.translation - transform.translation) < 0.3f)
+				addTrail = false;
+		}
+
+		if (!addTrail) return;
+
+		
+		EntityID trail = scene->instantiatePrefab("Trail")[0];
+
+		transformSystem.translateEntity(trail,
+			transform.translation - glm::vec3(0.0f, 0.22f, 0.0f));
+		transformSystem.rotateEntity(trail, transform.rotation);
+
+		
+		trailEntities.push(trail);
+		if (trailEntities.size() > 200)
+		{
+			EntityID oldTrail = trailEntities.front();
+			trailEntities.pop();
+			scene->destroyEntity(oldTrail);
+		}
+	}
