@@ -128,51 +128,45 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
     glm::mat4 projectionMatrix = frustum.getProjectionMatrix();
     glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 
-	std::array postBuffers = { &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer };
-	for (auto& postBuffer : postBuffers) {
-		auto [pfboWidth, pfboHeight] = postBuffer->GetSizePair();
+	std::array auxBuffers = { &auxiliaryFramebuffer1, &auxiliaryFramebuffer2,
+        &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer };
+	for (auto& auxBuffer : auxBuffers) {
+		auto [pfboWidth, pfboHeight] = auxBuffer->GetSizePair();
 		if (pfboWidth != width || pfboHeight != height) {
-			postBuffer->Resize(width, height);
+            auxBuffer->Resize(width, height);
 		}
 	}
 
-	if(cameraP2 != nullptr) {
-		drawBase(postProcessingFramebuffer1, cameraP1, uniformBlockStorage, shadowShader, useShadows);
+    CustomFramebuffer* baseOutputFramebuffer;
+
+	if (cameraP2 != nullptr) {
+		drawBase(auxiliaryFramebuffer1, cameraP1, uniformBlockStorage, postShaders, useShadows);
 		glm::mat4 viewMatrixP2 = cameraP2->getViewMatrix();
 		glm::mat4 projectionMatrixP2 = cameraP2->getFrustum().getProjectionMatrix();
 		glm::mat4 viewProjectionMatrixP2 = projectionMatrixP2 * viewMatrixP2;
 
-		drawBase(postProcessingFramebuffer2, *cameraP2, uniformBlockStorage, shadowShader, useShadows);
+		drawBase(auxiliaryFramebuffer2, *cameraP2, uniformBlockStorage, postShaders, useShadows);
 
-		dynamicSplitScreen(postShaders.at("SplitScreen"), cameraP1, postProcessingFramebuffer1, postProcessingFramebuffer2, customFramebuffer);
+		baseOutputFramebuffer = &postProcessingFramebuffer1;
+		dynamicSplitScreen(postShaders.at("SplitScreen"), cameraP1, auxiliaryFramebuffer1, auxiliaryFramebuffer2, *baseOutputFramebuffer);
 	}
 	else {
-		drawBase(customFramebuffer, cameraP1, uniformBlockStorage, shadowShader, useShadows);
+		baseOutputFramebuffer = &auxiliaryFramebuffer1;
+		drawBase(*baseOutputFramebuffer, cameraP1, uniformBlockStorage, postShaders, useShadows);
 	}
 
 
 	//##################POST PROCESSING##################
 
-    Shader* sobelShader = postShaders.at("Sobel");
-    Shader* motionBlurShader = postShaders.at("MotionBlur");
+    
     Shader* FXAAShader = postShaders.at("FXAA");
-	Shader* ssaoShader = postShaders.at("SSAO");
-	Shader* ssaoApplyShader = postShaders.at("SSAOApply");
 
 
 
-    ssaoFilter(ssaoShader, customFramebuffer, ssaoFramebuffer);
-    sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
-	ssaoApplyFilter(ssaoApplyShader, postProcessingFramebuffer1, ssaoFramebuffer, postProcessingFramebuffer2);
+    
 
-    fxaaFilter(FXAAShader, postProcessingFramebuffer2, postProcessingFramebuffer2,
-        showMotionBlur ? postProcessingFramebuffer1 : framebuffer);
+    fxaaFilter(FXAAShader, *baseOutputFramebuffer, *baseOutputFramebuffer, framebuffer);
 
-    if (showMotionBlur)
-    {
-        cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
-		motionBlurFilter(motionBlurShader, postProcessingFramebuffer1, customFramebuffer, framebuffer);
-    }
 }
 
 void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
@@ -463,7 +457,8 @@ void RenderingSystem::updatePreviousModelMatrices() {
     }
 }
 
-void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, Shader* shadowShader, bool useShadows) {
+void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, 
+    const std::unordered_map<std::string, Shader*>& postShaders, bool useShadows) {
 	auto& frustum = camera.getFrustum();
     auto models = scene->getStorage<ModelComponent>();
     auto transforms = scene->getStorage<Transform>();
@@ -487,6 +482,8 @@ void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camer
     } else if (useTree && !rootNode) {
         spdlog::warn("BVH root node is null, skipping frustum culling.");
     }
+
+    Shader* shadowShader = postShaders.at("ShadowMap");
 
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
@@ -565,5 +562,22 @@ void RenderingSystem::drawBase(const CustomFramebuffer& customFramebuffer, Camer
 
         modelComponent.shader->setMat4("model", modelMatrix);
 		modelComponent.model->draw(modelComponent.shader, modelComponent.color);
+    }
+
+    Shader* sobelShader = postShaders.at("Sobel");
+    Shader* motionBlurShader = postShaders.at("MotionBlur");
+    Shader* ssaoShader = postShaders.at("SSAO");
+    Shader* ssaoApplyShader = postShaders.at("SSAOApply");
+
+    ssaoFilter(ssaoShader, customFramebuffer, ssaoFramebuffer);
+    sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
+    ssaoApplyFilter(ssaoApplyShader, postProcessingFramebuffer1, ssaoFramebuffer, 
+		showMotionBlur ? postProcessingFramebuffer2 : outputFramebuffer);
+
+
+    if (showMotionBlur)
+    {
+        cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
+        motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, outputFramebuffer);
     }
 }

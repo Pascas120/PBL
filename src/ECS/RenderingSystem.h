@@ -50,15 +50,18 @@ private:
 	void ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out);
 	void dynamicSplitScreen(Shader* dynamicSplitScreen,  Camera& camera, const CustomFramebuffer& in, CustomFramebuffer& in2, const Framebuffer& out);
 
-	void drawBase(const CustomFramebuffer& customFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, Shader* shadowShader, bool useShadows);
+	void drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, 
+        const std::unordered_map<std::string, Shader*>& postShaders, bool useShadows);
 
 
 	CustomFramebuffer customFramebuffer{ FramebufferConfig{ 1920, 1080, 
 		{ AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::POSITION, 
         AttachmentType::NORMAL, AttachmentType::VELOCITY } } };
 
-	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR,  AttachmentType::DEPTH } } };
-    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR,  AttachmentType::DEPTH } } };
+    CustomFramebuffer auxiliaryFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+	CustomFramebuffer auxiliaryFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
+    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
 	CustomFramebuffer ssaoFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR }, GL_RED, GL_FLOAT } };
 
     const uint32_t shadowMapWidth = 2048;
