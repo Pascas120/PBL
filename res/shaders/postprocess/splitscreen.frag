@@ -43,7 +43,7 @@ void main() {
     } else {
         float split_current_y = (split_origin.x - texCoord.x) * split_slope + split_origin.y;
 
-        bool above_split = texCoord.y > split_current_y;
+        bool above_split = texCoord.y < split_current_y;
 
         if ((above_split && player1_above) || (!above_split && !player1_above)) {
             fragColor = vec4(view1, 1.0);

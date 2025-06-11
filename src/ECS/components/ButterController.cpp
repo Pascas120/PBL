@@ -9,7 +9,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	auto& transformSystem = scene->getTransformSystem();
 	if (trailBurstLeft > 0.f)
 	{
-		const float SPAWN_EVERY = 0.01f;     
+		const float SPAWN_EVERY = 0.05f;     
 		trailBurstLeft -= deltaTime;
 		trailCooldown -= deltaTime;
 
@@ -111,8 +111,16 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		
 		EntityID trail = scene->instantiatePrefab("Trail")[0];
 
+		float offsetScale = 1.0f;
+		if (scene->hasComponent<ButterHealthComponent>(id))
+		{
+			auto& bh = scene->getComponent<ButterHealthComponent>(id);
+			float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
+			offsetScale = glm::mix(1.0f, bh.minScale, lostRatio);
+		}
+
 		transformSystem.translateEntity(trail,
-			transform.translation - glm::vec3(0.0f, 0.22f, 0.0f));
+			transform.translation - glm::vec3(0.0f, 0.22f * offsetScale, 0.0f));
 		transformSystem.rotateEntity(trail, transform.rotation);
 
 		

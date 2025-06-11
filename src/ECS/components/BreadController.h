@@ -12,7 +12,7 @@ struct BreadController {
 
 	bool  freezing = false;   
 	float freezeRatio = 0.0f;    
-	float freezeDuration = 5.0f;   
+	float freezeDuration = 3.0f;   
 
 	glm::vec3 startScale = { 1.0f, 1.0f, 1.0f };
 	float relativeScale = 1.0f;
