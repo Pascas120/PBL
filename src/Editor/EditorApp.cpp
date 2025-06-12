@@ -313,24 +313,7 @@ namespace Editor
 			ImGui::SetWindowFocus("Game");
 			scene->getRenderingSystem().buildTree();
 
-			auto breadControllers = scene->getStorage<BreadController>();
-            if (breadControllers)
-            {
-				for (int i = 0; i < breadControllers->getQuantity(); i++)
-				{
-					auto& breadController = breadControllers->components[i];
-					breadController.startScale = scene->getComponent<Transform>(breadController.id).scale;
-				}
-            }
-			auto butterHealthComponents = scene->getStorage<ButterHealthComponent>();
-            if (butterHealthComponents)
-            {
-                for (int i = 0; i < butterHealthComponents->getQuantity(); i++)
-                {
-                    auto& bh = butterHealthComponents->components[i];
-                    bh.startScale = scene->getComponent<Transform>(bh.id).scale;
-                }
-            }
+            setStartValues();
 
         }
 		else if (mode == PlayMode::STOP)

@@ -89,6 +89,7 @@ protected:
 	EntityID player = (EntityID)-1;
 
 	void setupEvents();
+	void setStartValues();
 
 private:
 	// TODO: remove

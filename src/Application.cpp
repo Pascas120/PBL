@@ -202,7 +202,11 @@ bool Application::init()
 	scene = std::make_shared<Scene>(this);
 	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, true});
 	setupEvents();
+	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
+#ifndef EDITOR_APP
+	setStartValues();
+#endif
 
 	return true;
 }
@@ -641,6 +645,7 @@ void Application::render(const Framebuffer& framebuffer)
 	framebuffer.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	auto& renderingSystem = scene->getRenderingSystem();
 
 	auto& ts = scene->getTransformSystem();
 	ts.update();
@@ -723,20 +728,20 @@ void Application::render(const Framebuffer& framebuffer)
 
 
 
-			scene->getRenderingSystem().drawScene(framebuffer, cam1.camera, &cam2.camera, uniformBlockStorage, postShaders);
+			renderingSystem.drawScene(framebuffer, cam1.camera, &cam2.camera, uniformBlockStorage, postShaders);
 		}
 		else
 		{
 			cam1.screenOffset = glm::vec2(0.0f, 0.0f);
 			cam1.updateProjectionMatrix();
-			scene->getRenderingSystem().drawScene(framebuffer, cam1.camera, nullptr, uniformBlockStorage, postShaders);
+			renderingSystem.drawScene(framebuffer, cam1.camera, nullptr, uniformBlockStorage, postShaders);
 		}
 	}
 	else
 	{
-		scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
+		renderingSystem.drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
 	}
-	scene->getRenderingSystem().drawHud(framebuffer);
+	renderingSystem.drawHud(framebuffer);
 }
 
 
@@ -1203,4 +1208,26 @@ void Application::setupEvents()
 		}
 	});
 
+}
+
+void Application::setStartValues()
+{
+	auto breadControllers = scene->getStorage<BreadController>();
+	if (breadControllers)
+	{
+		for (int i = 0; i < breadControllers->getQuantity(); i++)
+		{
+			auto& breadController = breadControllers->components[i];
+			breadController.startScale = scene->getComponent<Transform>(breadController.id).scale;
+		}
+	}
+	auto butterHealthComponents = scene->getStorage<ButterHealthComponent>();
+	if (butterHealthComponents)
+	{
+		for (int i = 0; i < butterHealthComponents->getQuantity(); i++)
+		{
+			auto& bh = butterHealthComponents->components[i];
+			bh.startScale = scene->getComponent<Transform>(bh.id).scale;
+		}
+	}
 }
