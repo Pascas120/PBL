@@ -21,6 +21,8 @@ struct ButterController
 	float trailBurstLeft = 0.f;   
 	float trailCooldown = 0.f;    
 
+	bool floating = false;
+
 
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);
 

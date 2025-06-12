@@ -19,6 +19,7 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	
 	float rotMul = freezeFactor;
 
+	float moveSpeed = this->moveSpeed * ((glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) ? 2.0f : 1.0f);
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{

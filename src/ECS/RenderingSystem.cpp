@@ -105,9 +105,13 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
         uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
         shadowShader->setVec3("lightPos", lightPos);
 
-    }
+        for (int i = 0; i < models->getQuantity(); i++) {
+            auto& modelComponent = models->components[i];
 
-	if (useShadows) {
+            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
+            modelComponent.model->draw(shadowShader);
+        }
+
 		Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
 		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
 
@@ -488,10 +492,6 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
 
-        if (useShadows) {
-            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
-            modelComponent.model->draw(shadowShader);
-        }
         if (!useTree || !transforms->get(models->components[i].id).isStatic)
         {
             auto& boundingBox = modelComponent.model->boundingBox;
@@ -529,11 +529,16 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
 
 
     customFramebuffer.Bind();
-	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3, drawBuffers);
+    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+    glDrawBuffers(4, drawBuffers);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	static const float zeroVelocity[] = { 0, 0 };
-	glClearBufferfv(GL_COLOR, 2, zeroVelocity);
+
+    const float clearVec4[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    glClearBufferfv(GL_COLOR, 1, clearVec4);
+    glClearBufferfv(GL_COLOR, 2, clearVec4);
+
+    const float clearVec2[] = { 0.0f, 0.0f };
+    glClearBufferfv(GL_COLOR, 3, clearVec2);
 
 	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
 
@@ -572,12 +577,12 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
     ssaoFilter(ssaoShader, customFramebuffer, ssaoFramebuffer);
     sobelFilter(sobelShader, customFramebuffer, postProcessingFramebuffer1);
     ssaoApplyFilter(ssaoApplyShader, postProcessingFramebuffer1, ssaoFramebuffer, 
-		showMotionBlur ? postProcessingFramebuffer2 : outputFramebuffer);
+		outputFramebuffer);
 
 
-    if (showMotionBlur)
+    /*if (showMotionBlur)
     {
         cameraBlock.setData("prevViewProjection", &viewProjectionMatrix);
         motionBlurFilter(motionBlurShader, postProcessingFramebuffer2, customFramebuffer, outputFramebuffer);
-    }
+    }*/
 }
