@@ -59,7 +59,7 @@ void Application::run()
 
 		input();
 		update();
-		render();
+		render(DefaultFramebuffer::GetInstance());
 		renderToWindow();
 		endFrame();
 	}
@@ -185,7 +185,24 @@ bool Application::init()
 			prefabs[prefabName] = prefabJson["data"];
 		}
 	}
-	setupScene();
+	//setupScene();
+	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
+	models.emplace_back(new Model("res/models/MASLO.fbx"));
+	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
+	models.emplace_back(new Model("res/models/CHLEB.fbx"));
+	models.emplace_back(new Model("res/models/poziomy.fbx"));
+	models.emplace_back(new Model("res/models/wallpaper.fbx"));
+	models.emplace_back(new Model("res/models/blat.fbx"));
+	models.emplace_back(new Model("res/models/mikrofala.fbx"));
+	models.emplace_back(new Model("res/models/plyta.fbx"));
+	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
+	models.emplace_back(new Model("res/models/woda.fbx"));
+	models.emplace_back(new Model("res/models/GABKA.fbx"));
+
+	scene = std::make_shared<Scene>(this);
+	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, true});
+	setupEvents();
+	scene->getRenderingSystem().buildTree();
 
 	return true;
 }
@@ -673,7 +690,6 @@ void Application::render(const Framebuffer& framebuffer)
 
 
 		float split_threshold = 8.0f;
-		//bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold / 2;
 
 		if (ssc.splitActive)
 		{
@@ -705,14 +721,6 @@ void Application::render(const Framebuffer& framebuffer)
 
 			dynamicSplitScreen->setFloat("split_line_thickness", ssc.splitLineThickness);
 
-			/*glm::vec2 p1NDC = glm::normalize(dx) * 0.5f;
-			glm::vec2 p2NDC = -p1NDC;
-
-			cam1.screenOffset = p1NDC;
-			cam2.screenOffset = p2NDC;
-
-			cam1.updateProjectionMatrix();
-			cam2.updateProjectionMatrix();*/
 
 
 			scene->getRenderingSystem().drawScene(framebuffer, cam1.camera, &cam2.camera, uniformBlockStorage, postShaders);
@@ -728,6 +736,7 @@ void Application::render(const Framebuffer& framebuffer)
 	{
 		scene->getRenderingSystem().drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
 	}
+	scene->getRenderingSystem().drawHud(framebuffer);
 }
 
 
@@ -739,7 +748,7 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 	auto& ts = scene->getTransformSystem();
 	ts.update();
 
-	scene->getRenderingSystem().buildTree();
+	//scene->getRenderingSystem().buildTree();
 
 	lightSystem(*scene, uniformBlockStorage);
 
@@ -796,18 +805,7 @@ std::vector<EntityID> Application::instantiatePrefab(const std::string& prefabNa
 
 void Application::setupScene()
 {
-	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
-	models.emplace_back(new Model("res/models/MASLO.fbx"));
-	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
-	models.emplace_back(new Model("res/models/CHLEB.fbx"));
-	models.emplace_back(new Model("res/models/poziomy.fbx"));
-	models.emplace_back(new Model("res/models/wallpaper.fbx"));
-	models.emplace_back(new Model("res/models/blat.fbx"));
-	models.emplace_back(new Model("res/models/mikrofala.fbx"));
-	models.emplace_back(new Model("res/models/plyta.fbx"));
-	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
-	models.emplace_back(new Model("res/models/woda.fbx"));
-	models.emplace_back(new Model("res/models/GABKA.fbx"));
+	
 
 	Model& ourModel = *models[0];
 	Model& model2 = *models[1];

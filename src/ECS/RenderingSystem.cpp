@@ -549,6 +549,7 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
         auto& modelComponent = models->get(renderingQueue[i]);
 
         EntityID entityID = modelComponent.id;
+		auto& info = scene->getComponent<ObjectInfoComponent>(entityID);
 
 		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
         modelComponent.shader->use();

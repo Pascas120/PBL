@@ -81,11 +81,6 @@ void SplitScreenController::update(GLFWwindow* window, Scene* scene, float delta
 	}
 	ts.rotateEntity(camera1, rotation);
 	ts.rotateEntity(camera2, rotation);
-
-
-	/*clip = projection * centerView * glm::vec4(targetTransform2.translation, 1.0f);
-	glm::vec3 ndc2 = glm::vec3(clip) / clip.w;*/
-
 	
 
 }
