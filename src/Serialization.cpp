@@ -586,6 +586,24 @@ namespace Serialization
 		c.targetID = entity_from_json(j.at("targetID"), context);
 	}
 
+	static void to_json(nlohmann::json& j, SplitScreenController& c, const SerializationContext& context)
+	{
+		j["offset"] = c.offset;
+		j["target1"] = entity_to_json(c.target1, context);
+		j["camera1"] = entity_to_json(c.camera1, context);
+		j["target2"] = entity_to_json(c.target2, context);
+		j["camera2"] = entity_to_json(c.camera2, context);
+	}
+
+	static void from_json(const nlohmann::json& j, SplitScreenController& c, const DeserializationContext& context)
+	{
+		j.at("offset").get_to(c.offset);
+		c.target1 = entity_from_json(j.at("target1"), context);
+		c.camera1 = entity_from_json(j.at("camera1"), context);
+		c.target2 = entity_from_json(j.at("target2"), context);
+		c.camera2 = entity_from_json(j.at("camera2"), context);
+	}
+
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);
@@ -747,6 +765,7 @@ namespace Serialization
 			serializeComponent(ButterController);
 
 			serializeComponent(CameraController);
+			serializeComponent(SplitScreenController);
 
 
 			selectionJson["entities"].push_back(entityJson);
@@ -834,7 +853,9 @@ namespace Serialization
 
 			deserializeComponent(BreadController);
 			deserializeComponent(ButterController);
+
 			deserializeComponent(CameraController);
+			deserializeComponent(SplitScreenController);
 		}
 
 		return deserializedEntities;

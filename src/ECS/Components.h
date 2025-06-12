@@ -18,6 +18,7 @@
 #include "Camera.h"
 #include "components/BreadController.h"
 #include "components/CameraComponent.h"
+#include "components/SplitScreenController.h"
 #include "components/ButterController.h"
 
 enum class FlyVariant : uint8_t {

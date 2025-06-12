@@ -535,6 +535,14 @@ void Application::update()
 			controller.update(window, scene.get(), deltaTime);
 		}
 	}
+	if (auto ssc = scene->getStorage<SplitScreenController>())
+	{
+		for (int i = 0; i < ssc->getQuantity(); ++i)
+		{
+			auto& controller = ssc->components[i];
+			controller.update(window, scene.get(), deltaTime);
+		}
+	}
 
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
@@ -651,24 +659,23 @@ void Application::render(const Framebuffer& framebuffer)
 
 
 	}
-	auto camControllers = scene->getStorage<CameraController>();
+	auto splitScreenControllers = scene->getStorage<SplitScreenController>();
 
-	if (cameras->getQuantity() > 1 && camControllers != nullptr && camControllers->getQuantity() >= 2)
+	if (cameras->getQuantity() > 1 && splitScreenControllers != nullptr && splitScreenControllers->getQuantity() >= 1)
 	{
-		auto& camController1 = camControllers->components[0];
-		auto& cam1 = scene->getComponent<CameraComponent>(camController1.id);
-		glm::vec3& p1 = scene->getComponent<Transform>(camController1.targetID).translation;
+		auto& ssc = splitScreenControllers->components[0];
+		auto& cam1 = scene->getComponent<CameraComponent>(ssc.camera1);
+		glm::vec3& p1 = scene->getComponent<Transform>(ssc.target1).translation;
 
-		auto& camController2 = camControllers->components[1];
-		auto& cam2 = scene->getComponent<CameraComponent>(camController2.id);
-		glm::vec3& p2 = scene->getComponent<Transform>(camController2.targetID).translation;
+		auto& cam2 = scene->getComponent<CameraComponent>(ssc.camera2);
+		glm::vec3& p2 = scene->getComponent<Transform>(ssc.target2).translation;
 
 
 
 		float split_threshold = 8.0f;
-		bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold / 2;
+		//bool split_active = glm::distance(p1, p2) > split_threshold || glm::distance(p1.y, p2.y) > split_threshold / 2;
 
-		if (split_active)
+		if (ssc.splitActive)
 		{
 			auto& dynamicSplitScreen = postShaders["SplitScreen"];
 			dynamicSplitScreen->use();
@@ -689,20 +696,23 @@ void Application::render(const Framebuffer& framebuffer)
 			{
 				splitSlope = -dx.x / dx.y;
 			}
-			dynamicSplitScreen->setFloat("split_slope", splitSlope);
+
+			dynamicSplitScreen->setFloat("split_slope", ssc.splitSlope);
 
 			bool player1AboveSlope = (p1.z - (splitSlope * (p1.x - center.x) + center.y)) < 0.0f;
 
-			dynamicSplitScreen->setBool("player1_above", player1AboveSlope);
+			dynamicSplitScreen->setBool("player1_above", ssc.target1AboveSlope);
 
-			glm::vec2 p1NDC = glm::normalize(dx) * 0.5f;
+			dynamicSplitScreen->setFloat("split_line_thickness", ssc.splitLineThickness);
+
+			/*glm::vec2 p1NDC = glm::normalize(dx) * 0.5f;
 			glm::vec2 p2NDC = -p1NDC;
 
 			cam1.screenOffset = p1NDC;
 			cam2.screenOffset = p2NDC;
 
 			cam1.updateProjectionMatrix();
-			cam2.updateProjectionMatrix();
+			cam2.updateProjectionMatrix();*/
 
 
 			scene->getRenderingSystem().drawScene(framebuffer, cam1.camera, &cam2.camera, uniformBlockStorage, postShaders);

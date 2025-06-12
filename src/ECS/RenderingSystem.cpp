@@ -115,9 +115,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
 		Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
 		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
 
-
-		glActiveTexture(GL_TEXTURE0 + 1);
-		glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
 	}
     //##############################################
     float aspectRatio = (float)width / (float)height;
@@ -542,7 +539,11 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
 
 	std::unordered_set<Shader*> shadersUpdatedWithShadowMap;
 
-
+    if (useShadows)
+    {
+        glActiveTexture(GL_TEXTURE0 + 1);
+        glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
+    }
 
     for (int i = 0; i < renderingQueueSize; i++) {
         auto& modelComponent = models->get(renderingQueue[i]);

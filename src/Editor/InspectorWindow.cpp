@@ -85,6 +85,7 @@ namespace Editor
                 drawElevator(context, editor->selectedObject);
                 drawButton(context, editor->selectedObject);
                 drawCameraController(context, editor->selectedObject);
+				drawSplitScreenController(context, editor->selectedObject);
                 drawButterController(context, editor->selectedObject);
 
 
@@ -125,6 +126,7 @@ namespace Editor
                     ADD_COMPONENT(ElevatorComponent, "Elevator");
                     ADD_COMPONENT(ButtonComponent, "Button");
                     ADD_COMPONENT(CameraController, "Camera Controller");
+                    ADD_COMPONENT(SplitScreenController, "Split Screen Controller");
 					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
                     ADD_COMPONENT(ButterController, "Butter Controller");
 
@@ -644,6 +646,29 @@ namespace Editor
             ImGui::DragFloat3("Offset", &cc.offset[0], 0.1f);
 
             Utils::entityRefField("Target Entity", cc.targetID, *scene);
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawSplitScreenController(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<SplitScreenController>(id)) return;
+        auto& ssc = scene->getComponent<SplitScreenController>(id);
+
+        ImGui::PushID(&ssc);
+        bool open = ImGui::CollapsingHeader("Split Screen Controller", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<SplitScreenController>(context, id)) return;
+        if (open)
+        {
+            ImGui::DragFloat3("Offset", &ssc.offset[0], 0.1f);
+			ImGui::Separator();
+			Utils::entityRefField("Target Entity 1", ssc.target1, *scene);
+			Utils::entityRefField("Camera Entity 1", ssc.camera1, *scene);
+			ImGui::Separator();
+			Utils::entityRefField("Target Entity 2", ssc.target2, *scene);
+			Utils::entityRefField("Camera Entity 2", ssc.camera2, *scene);
+
         }
         ImGui::PopID();
     }

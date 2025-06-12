@@ -30,6 +30,7 @@ namespace Editor
 		void drawElevator(const EditorContext& context, EntityID id);
 		void drawButton(const EditorContext& context, EntityID id);
 		void drawCameraController(const EditorContext& context, EntityID id);
+		void drawSplitScreenController(const EditorContext& context, EntityID id);
         void drawButterController(const EditorContext& context, EntityID id);
 	};
 }
