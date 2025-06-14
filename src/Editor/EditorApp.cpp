@@ -274,7 +274,7 @@ namespace Editor
 
 
         //imguiScene();
-		EditorContext context{ scene, shaders, models };
+		EditorContext context{ scene, shaders, models, sounds };
 
 		hierarchyWindow->draw(context);
 		inspectorWindow->draw(context);
@@ -318,6 +318,7 @@ namespace Editor
         }
 		else if (mode == PlayMode::STOP)
 		{
+			scene->getAudioSystem().stopAllSounds();
 			if (sceneBackup)
             {
                 if (selectedObject != (EntityID)-1)
@@ -366,7 +367,7 @@ namespace Editor
 
 		scene = std::make_shared<Scene>(this);
 		std::string path = *pathResult;
-		Serialization::loadScene(path, *scene, { shaders, models, true });
+		Serialization::loadScene(path, *scene, { shaders, models, sounds, true });
 		scenePath = path;
 
 
@@ -420,7 +421,7 @@ namespace Editor
 		    ImGui::BeginDisabled(!prefabExists);
 		    if (ImGui::Button("Instantiate"))
 		    {
-			    auto instantiatedEntities = Serialization::deserializeObjects(it->second, *scene, selectedObject, { shaders, models, false });
+			    auto instantiatedEntities = Serialization::deserializeObjects(it->second, *scene, selectedObject, { shaders, models, sounds, false });
 			    /*if (!instantiatedEntities.empty())
 			    {
 				    selectedObject = instantiatedEntities[0];

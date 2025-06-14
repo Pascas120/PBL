@@ -112,6 +112,12 @@ bool Application::init()
 
 	glfwSwapInterval(1); // Enable vsync
 
+	ma_result result = ma_engine_init(nullptr, &audioEngine);
+	if (result != MA_SUCCESS) {
+		spdlog::error("AudioSystem: Failed to initialize audio engine: {}", ma_result_description(result));
+		return false;
+	}
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		spdlog::error("Failed to initialize OpenGL context!");
@@ -199,8 +205,12 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/woda.fbx"));
 	models.emplace_back(new Model("res/models/GABKA.fbx"));
 
+	//TODO Automatyczne wczytywanie z folderu
+	sounds.emplace_back("res/sounds/background.mp3");
+	sounds.emplace_back("res/sounds/boing.mp3");
+
 	scene = std::make_shared<Scene>(this);
-	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, true});
+	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, true});
 	setupEvents();
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
@@ -797,7 +807,7 @@ std::vector<EntityID> Application::instantiatePrefab(const std::string& prefabNa
 
 	json prefabData = it->second;
 	std::vector<EntityID> instantiatedEntities = Serialization::deserializeObjects(
-		prefabData, scene, parent, { shaders, models, false });
+		prefabData, scene, parent, { shaders, models, sounds, false });
 
 	return instantiatedEntities;
 }
@@ -1085,6 +1095,7 @@ void Application::setupEvents()
 
 		if (bread && butter && bread->isBouncy)
 		{
+			scene->getAudioSystem().playSound(event.objectB);
 			auto& velocityComponent = scene->getComponent<VelocityComponent>(event.objectA);
 			if (event.separationVector.y > 0.01f && velocityComponent.velocity.y < 0.1f)
 			{
@@ -1229,5 +1240,11 @@ void Application::setStartValues()
 			auto& bh = butterHealthComponents->components[i];
 			bh.startScale = scene->getComponent<Transform>(bh.id).scale;
 		}
+	}
+
+	//TODO WOLNE
+	EntityID ost = scene->getEntityByName("ost");
+	if(ost != (EntityID) -1) {
+		scene->getAudioSystem().playSound(ost);
 	}
 }

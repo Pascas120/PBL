@@ -17,6 +17,7 @@
 #include "ECS/FlyAISystem.h"
 
 #include "uuid.h"
+#include "ECS/AudioSystem.h"
 
 class Application;
 
@@ -31,6 +32,7 @@ private:
     CollisionSystem collisionSystem = CollisionSystem(this);
     EventSystem eventSystem = EventSystem();
 	FlyAISystem flyAISystem = FlyAISystem(this);
+    AudioSystem audioSystem = AudioSystem(this);
 
 
     EntityID sceneGraphRoot = 0;
@@ -74,9 +76,18 @@ public:
     EventSystem& getEventSystem() {
         return eventSystem;
     }
+
 	FlyAISystem& getFlyAISystem() {
 		return flyAISystem;
 	}
+
+    AudioSystem& getAudioSystem() {
+        return audioSystem;
+    }
+
+    Application* getApplication() const {
+        return app;
+    }
 
     template<typename T>
     T& addComponent(EntityID id, const T& value = T{}) {
@@ -117,6 +128,7 @@ public:
         return static_cast<ComponentStorage<T>*>(it->second.get());
     }
 
+    EntityID getEntityByName(const std::string& name);
 
 
     // Tworzy nowe entity, dodaje mu Transform i do grafu jako dziecko root-a

@@ -20,6 +20,16 @@ Scene::Scene(const Scene& other)
     }
 }
 
+//TODO WOLNE
+EntityID Scene::getEntityByName(const std::string &name)  {
+    for (int i = 0; i < getStorage<ObjectInfoComponent>()->getQuantity(); ++i) {
+        auto& info = getStorage<ObjectInfoComponent>()->components[i];
+        if (info.name == name) {
+            return info.id;
+        }
+    }
+    return -1;
+}
 
 EntityID Scene::createEntity(EntityID parent) {
     EntityID id = entityManager.createEntity();

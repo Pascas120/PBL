@@ -24,6 +24,8 @@ using json = nlohmann::json;
 class Application
 {
 public:
+	ma_engine audioEngine;
+
 	Application();
 	virtual ~Application();
 	virtual void run();
@@ -68,6 +70,7 @@ protected:
 	float lastFrame = 0.0f;
 
 
+
 	// TODO: move to resource manager(s?)
 	std::vector<Shader*> shaders;
 	std::unordered_map<std::string, Shader*> postShaders;
@@ -78,6 +81,8 @@ protected:
 		{ "Camera", &uniformBlockStorage.cameraBlock },
 		{ "Lights", &uniformBlockStorage.lightBlock }
 	};
+
+	std::vector<std::string> sounds;
 
 	std::vector<Model*> models;
 

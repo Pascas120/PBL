@@ -604,6 +604,21 @@ namespace Serialization
 		c.camera2 = entity_from_json(j.at("camera2"), context);
 	}
 
+	static void to_json(nlohmann::json& j, SoundComponent& c, const SerializationContext& context)
+	{
+		j["soundPath"] = c.soundPath;
+		j["volume"] = c.volume;
+		j["loop"] = c.loop;
+	}
+
+	static void from_json(const nlohmann::json& j, SoundComponent& c, const DeserializationContext& context)
+	{
+		j.at("soundPath").get_to(c.soundPath);
+		j.at("volume").get_to(c.volume);
+		j.at("loop").get_to(c.loop);
+		c.isInitialized = false;
+	}
+
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);

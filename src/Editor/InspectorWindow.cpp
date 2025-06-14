@@ -87,6 +87,7 @@ namespace Editor
                 drawCameraController(context, editor->selectedObject);
 				drawSplitScreenController(context, editor->selectedObject);
                 drawButterController(context, editor->selectedObject);
+                drawSound(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -129,6 +130,7 @@ namespace Editor
                     ADD_COMPONENT(SplitScreenController, "Split Screen Controller");
 					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
                     ADD_COMPONENT(ButterController, "Butter Controller");
+                    ADD_COMPONENT(SoundComponent, "Sound");
 
                     ImGui::EndCombo();
                 }
@@ -677,17 +679,44 @@ namespace Editor
     {
         auto& scene = context.scene;
         if (!scene->hasComponent<ButterController>(id)) return;
-        auto& cc = scene->getComponent<ButterController>(id);
+        auto& bc = scene->getComponent<ButterController>(id);
 
-        ImGui::PushID(&cc);
+        ImGui::PushID(&bc);
         bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<ButterController>(context, id)) return;
         if (open)
         {
-            Utils::entityRefField("Respawn Point", cc.respawnPoint, *scene);
+            Utils::entityRefField("Respawn Point", bc.respawnPoint, *scene);
         }
         ImGui::PopID();
     }
 
+    void InspectorWindow::drawSound(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<SoundComponent>(id)) return;
+        auto& sound = scene->getComponent<SoundComponent>(id);
 
+        ImGui::PushID(&sound);
+        bool open = ImGui::CollapsingHeader("SoundComponent", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<SoundComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::Checkbox("Loop", &sound.loop);
+            ImGui::DragFloat("Volume", &sound.volume, 0.01f, 0.0f, 1.0f);
+            if (ImGui::BeginCombo("Sound##Combo", sound.soundPath.c_str()))
+            {
+                for (int i = 0; i < context.sounds.size(); i++)
+                {
+                    if (ImGui::Selectable(context.sounds[i].c_str(), sound.soundPath == context.sounds[i]))
+                    {
+                        sound.soundPath = context.sounds[i].c_str();
+                        sound.isInitialized = false;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+        ImGui::PopID();
+    }
 }

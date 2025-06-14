@@ -125,7 +125,7 @@ namespace Editor
                         {
                             json objectJson = editor->clipboard.objectJson;
                             auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-                                transform.parent, { context.shaders, context.models, false });
+                                transform.parent, { context.shaders, context.models, context.sounds, false });
 
                             int index = ts.getChildIndex(id);
                             for (auto& entity : pastedEntities)
@@ -146,7 +146,7 @@ namespace Editor
                         {
                             json objectJson = editor->clipboard.objectJson;
                             auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-                                id, { context.shaders, context.models, false });
+                                id, { context.shaders, context.models, context.sounds, false });
 
                             for (auto& entity : pastedEntities)
                             {
@@ -162,7 +162,7 @@ namespace Editor
                 {
                     json objectJson = Serialization::serializeObjects({ id }, *scene);
                     auto pastedEntities = Serialization::deserializeObjects(objectJson, *scene,
-                        transform.parent, { context.shaders, context.models, false });
+                        transform.parent, { context.shaders, context.models, context.sounds, false });
 
                     for (auto& entity : pastedEntities)
                     {

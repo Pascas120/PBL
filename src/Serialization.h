@@ -16,6 +16,7 @@ namespace Serialization
 	struct GlobalDeserializationContext {
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
+		std::vector<std::string> sounds;
 		bool deserializeUuid;
 	};
 

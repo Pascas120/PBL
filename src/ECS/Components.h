@@ -20,6 +20,7 @@
 #include "components/CameraComponent.h"
 #include "components/SplitScreenController.h"
 #include "components/ButterController.h"
+#include "miniaudio.h"
 
 enum class FlyVariant : uint8_t {
     GREEN = 0,
@@ -219,8 +220,6 @@ struct ElevatorComponent {
     bool locked = false;
 };
 
-
-
 struct ButtonComponent {
     EntityID id;  
     bool isPressed = false;
@@ -228,5 +227,16 @@ struct ButtonComponent {
     float pressSpeed = 4.0f;
     std::string playerTag;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
+};
+
+struct SoundComponent {
+    std::string soundPath;
+    ma_sound sound;
+    bool loop = false;
+    float volume = 1.0f;
+    float pitch = 1.0f;
+    bool isInitialized = false;
+
+    EntityID id = (EntityID)-1;
 };
 #endif //PBL_COMPONENTS_H

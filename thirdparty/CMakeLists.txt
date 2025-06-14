@@ -16,6 +16,13 @@ set(stb_image_SOURCE_DIR ${STB_IMAGE_DIR} CACHE INTERNAL "")
 add_library(stb_image STATIC ${STB_IMAGE_DIR}/stb_image.cpp)
 target_include_directories(stb_image PRIVATE ${STB_IMAGE_DIR})
 
+# miniaudio
+set(MINIAUDIO_DIR ${CMAKE_CURRENT_LIST_DIR}/miniaudio)
+set(miniaudio_SOURCE_DIR ${MINIAUDIO_DIR} CACHE INTERNAL "")
+add_library(miniaudio STATIC ${MINIAUDIO_DIR}/miniaudio.cpp)
+target_include_directories(miniaudio PRIVATE ${MINIAUDIO_DIR})
+
+
 # TODO: remove (editor)
 # ImGuizmo
 set(ImGuizmo_DIR ${CMAKE_CURRENT_LIST_DIR}/ImGuizmo)
@@ -40,7 +47,6 @@ CPMAddPackage(
 		OPTIONS "FT_DISABLE_HARFBUZZ ON" # jeżeli chcesz uniknąć dodatkowej zależności
 )
 
-
 set(imgui_SOURCE_DIR ${imgui_SOURCE_DIR} CACHE INTERNAL "") # TODO: remove (editor)
 add_library(imgui STATIC ${imgui_SOURCE_DIR}/imgui.cpp
 					     ${imgui_SOURCE_DIR}/imgui_demo.cpp
@@ -63,6 +69,7 @@ set_target_properties(glad
                       spdlog
 					  nlohmann_json
 					  nfd
+					  miniaudio
 					  PROPERTIES FOLDER "thirdparty")
 
 if (TARGET zlibstatic)
