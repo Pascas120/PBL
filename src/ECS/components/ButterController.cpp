@@ -7,6 +7,16 @@
 void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
+	auto getInputDir = [](GLFWwindow* w) -> glm::vec3
+		{
+			glm::vec3 d(0.0f);
+			if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS)  d.x += 1.f;   // +X = w lewo
+			if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS)  d.x -= 1.f;   // -X = w prawo
+			if (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS)  d.z += 1.f;   // +Z = w przód
+			if (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS)  d.z -= 1.f;   // -Z = w tył
+			if (d.x != 0.f || d.z != 0.f) d = glm::normalize(d);
+			return d;
+		};
 	if (trailBurstLeft > 0.f)
 	{
 		const float SPAWN_EVERY = 0.05f;     
@@ -17,6 +27,26 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		{
 			addTrailIfPossible(scene);
 			trailCooldown = SPAWN_EVERY;
+		}
+
+	}
+	if (isClinging)
+	{
+		glm::vec3 inputDir = getInputDir(window);
+		bool stillPushing = glm::dot(inputDir, -clingNormal) > 0.5f;
+
+		if (stillPushing)
+		{
+			auto& vel = scene->getComponent<VelocityComponent>(id);
+			vel.useGravity = false;
+			vel.velocity = glm::vec3(0.0f);
+			return;                      
+		}
+		else
+		{
+			isClinging = false;
+			auto& vel = scene->getComponent<VelocityComponent>(id);
+			vel.useGravity = true;       
 		}
 	}
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
@@ -156,4 +186,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			trailEntities.pop();
 			scene->destroyEntity(oldTrail);
 		}
+
+
+
 	}

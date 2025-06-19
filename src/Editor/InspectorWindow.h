@@ -34,5 +34,6 @@ namespace Editor
         void drawButterController(const EditorContext& context, EntityID id);
 		void drawBreadController(const EditorContext& context, EntityID id);
 		void drawSound(const EditorContext& context, EntityID id);
+		void drawTrailDetector(const EditorContext& context, EntityID id);
 	};
 }

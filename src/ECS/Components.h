@@ -248,5 +248,10 @@ struct AnimationComponent {
 
     EntityID id = (EntityID)-1;
 };
-
+struct TrailCollisionDetectorComponent
+{
+    float sprintTimeLeft = 0.0f;   
+    float sprintMultiplier = 2.0f;   
+    EntityID id = static_cast<EntityID>(-1);
+};
 #endif //PBL_COMPONENTS_H

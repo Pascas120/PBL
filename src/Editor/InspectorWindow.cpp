@@ -89,6 +89,7 @@ namespace Editor
                 drawButterController(context, editor->selectedObject);
                 drawSound(context, editor->selectedObject);
                 drawBreadController(context, editor->selectedObject);
+                drawTrailDetector(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -133,6 +134,7 @@ namespace Editor
                     ADD_COMPONENT(ButterController, "Butter Controller");
                     ADD_COMPONENT(BreadController, "Bread Controller");
                     ADD_COMPONENT(SoundComponent, "Sound");
+                    ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
 
                     ImGui::EndCombo();
                 }
@@ -708,6 +710,28 @@ namespace Editor
         }
         ImGui::PopID();
     }
+
+    void InspectorWindow::drawTrailDetector(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<TrailCollisionDetectorComponent>(id))
+            return;
+
+        // marker – brak edytowalnych pól, ale pozwalamy usunąć
+        auto& comp = scene->getComponent<TrailCollisionDetectorComponent>(id);
+        ImGui::PushID(&comp);
+
+        bool open = ImGui::CollapsingHeader("Trail Detector", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<TrailCollisionDetectorComponent>(context, id)) { ImGui::PopID(); return; }
+
+        if (open)
+        {
+            ImGui::TextUnformatted("brak parametrow");
+        }
+
+        ImGui::PopID();
+    }
+
 
     void InspectorWindow::drawSound(const EditorContext& context, EntityID id)
     {
