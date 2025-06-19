@@ -554,24 +554,28 @@ namespace Serialization
 	{
 		j["moveSpeed"] = c.moveSpeed;
 		j["jumpSpeed"] = c.jumpSpeed;
+		j["respawnPoint"] = entity_to_json(c.respawnPoint, context);
 	}
 
 	static void from_json(const nlohmann::json& j, BreadController& c, const DeserializationContext& context)
 	{
 		j.at("moveSpeed").get_to(c.moveSpeed);
 		j.at("jumpSpeed").get_to(c.jumpSpeed);
+		c.respawnPoint = entity_from_json(j.at("respawnPoint"), context);
 	}
 
 	static void to_json(nlohmann::json& j, const ButterController& c, const SerializationContext& context)
 	{
 		j["moveSpeed"] = c.moveSpeed;
 		j["jumpSpeed"] = c.jumpSpeed;
+		j["respawnPoint"] = entity_to_json(c.respawnPoint, context);
 	}
 
 	static void from_json(const nlohmann::json& j, ButterController& c, const DeserializationContext& context)
 	{
 		j.at("moveSpeed").get_to(c.moveSpeed);
 		j.at("jumpSpeed").get_to(c.jumpSpeed);
+		c.respawnPoint = entity_from_json(j.at("respawnPoint"), context);
 	}
 
 	static void to_json(nlohmann::json& j, const CameraController& c, const SerializationContext& context)
@@ -781,7 +785,7 @@ namespace Serialization
 
 			serializeComponent(CameraController);
 			serializeComponent(SplitScreenController);
-
+			serializeComponent(SoundComponent);
 
 			selectionJson["entities"].push_back(entityJson);
 		}
@@ -871,6 +875,7 @@ namespace Serialization
 
 			deserializeComponent(CameraController);
 			deserializeComponent(SplitScreenController);
+			deserializeComponent(SoundComponent);
 		}
 
 		return deserializedEntities;

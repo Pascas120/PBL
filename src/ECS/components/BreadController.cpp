@@ -94,5 +94,11 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 	}
 
+	auto& transform = scene->getComponent<Transform>(id);
+
+	if(transform.translation.y<-9.5){
+		transformSystem.translateEntity(id, scene->getComponent<Transform>(respawnPoint).translation);
+	}
+
 	freezing = false;
 }

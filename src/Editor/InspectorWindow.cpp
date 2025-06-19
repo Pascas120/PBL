@@ -88,6 +88,7 @@ namespace Editor
 				drawSplitScreenController(context, editor->selectedObject);
                 drawButterController(context, editor->selectedObject);
                 drawSound(context, editor->selectedObject);
+                drawBreadController(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -130,6 +131,7 @@ namespace Editor
                     ADD_COMPONENT(SplitScreenController, "Split Screen Controller");
 					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
                     ADD_COMPONENT(ButterController, "Butter Controller");
+                    ADD_COMPONENT(BreadController, "Bread Controller");
                     ADD_COMPONENT(SoundComponent, "Sound");
 
                     ImGui::EndCombo();
@@ -684,6 +686,22 @@ namespace Editor
         ImGui::PushID(&bc);
         bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<ButterController>(context, id)) return;
+        if (open)
+        {
+            Utils::entityRefField("Respawn Point", bc.respawnPoint, *scene);
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawBreadController(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<BreadController>(id)) return;
+        auto& bc = scene->getComponent<BreadController>(id);
+
+        ImGui::PushID(&bc);
+        bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<BreadController>(context, id)) return;
         if (open)
         {
             Utils::entityRefField("Respawn Point", bc.respawnPoint, *scene);

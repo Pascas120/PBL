@@ -208,6 +208,11 @@ bool Application::init()
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
 	sounds.emplace_back("res/sounds/boing.mp3");
+	sounds.emplace_back("res/sounds/ost1.mp3");
+	sounds.emplace_back("res/sounds/ost2.mp3");
+	sounds.emplace_back("res/sounds/ost3.mp3");
+	sounds.emplace_back("res/sounds/ost4.mp3");
+	sounds.emplace_back("res/sounds/ost5.mp3");
 
 	scene = std::make_shared<Scene>(this);
 	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, true});

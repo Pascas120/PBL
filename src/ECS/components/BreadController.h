@@ -7,6 +7,7 @@ class Scene;
 struct BreadController {
 	float moveSpeed;
 	float jumpSpeed;
+	EntityID respawnPoint = (EntityID)-1;
 	bool isJumping = false;
 	float timeSinceLastGroundContact = 0.0f;
 

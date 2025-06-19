@@ -14,6 +14,7 @@
 #include "ColliderShape.h"
 #include <memory>
 
+#include "Animator.h"
 #include "ECS/BoundingVolumes.h"
 #include "Camera.h"
 #include "components/BreadController.h"
@@ -239,4 +240,13 @@ struct SoundComponent {
 
     EntityID id = (EntityID)-1;
 };
+
+struct AnimationComponent {
+    Animator* animator;
+    bool isPlaying = false;
+    float playbackSpeed = 1.0f;
+
+    EntityID id = (EntityID)-1;
+};
+
 #endif //PBL_COMPONENTS_H
