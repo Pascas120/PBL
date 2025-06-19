@@ -20,8 +20,6 @@ class Scene;
 #include "Framebuffer.h"
 #include "UniformBuffer.h"
 
-bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum, const Transform& transform);
-
 class RenderingSystem {
 private:
     Scene* scene;
@@ -36,7 +34,8 @@ private:
     bool initializedHud = false;
     void initHud();
     TextRenderer t1;
-    std::unique_ptr<BVHNode> rootNode;
+    //std::unique_ptr<BVHNode> rootNode;
+    BVH<ModelComponent*> bvh;
     
     std::array<glm::vec3, 16> ssaoNoise;
 	GLuint ssaoNoiseTexture;

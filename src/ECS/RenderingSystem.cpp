@@ -30,7 +30,7 @@ static std::array<glm::vec3, 16> generateSSAONoise() {
 
 
 
-RenderingSystem::RenderingSystem(Scene *scene) : scene(scene) 
+RenderingSystem::RenderingSystem(Scene *scene) : scene(scene)
 {
 	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.GetDepthTexture());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -297,16 +297,23 @@ void RenderingSystem::initHud() {
 
 void RenderingSystem::buildTree() {
     auto models = scene->getStorage<ModelComponent>();
-    std::vector<ModelComponent*> modelComponents;
+	std::vector<TreeBox<ModelComponent*>> modelComponents;
     modelComponents.reserve(models->getQuantity());
 
     for (int i = 0; i < models->getQuantity(); i++) {
         models->components[i].transform = &scene->getComponent<Transform>(models->components[i].id);
         if (models->components[i].transform->isStatic)
-            modelComponents.push_back(&models->components[i]);
+        {
+			TreeBox<ModelComponent*> box;
+			box.object = &models->components[i];
+			box.globalBox = models->components[i].model->boundingBox.getGlobalBox(*models->components[i].transform);
+			modelComponents.push_back(box);
+        }
+            //modelComponents.push_back(&models->components[i]);
     }
 
-    rootNode = buildBVH(modelComponents);
+	bvh.build(modelComponents);
+    //rootNode = buildBVH(modelComponents);
 }
 
 void RenderingSystem::sobelFilter(Shader* sobel, const CustomFramebuffer &in, const Framebuffer &out) {
@@ -474,11 +481,12 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
     std::vector<EntityID> visibleEntities;
 
     visibleEntities.reserve(models->getQuantity());
+    auto rootNode = bvh.getRoot();
     if (useTree && rootNode) {
         /*spdlog::info("planes: {}, {}, {}",
                      frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
         */
-        traverseBVHFrustum(rootNode.get(), globalPlanes, visibleEntities);
+        traverseBVHFrustum(rootNode, globalPlanes, visibleEntities);
         //spdlog::info("Tree: {} entities visible", visibleEntities.size());
     } else if (useTree && !rootNode) {
         spdlog::warn("BVH root node is null, skipping frustum culling.");

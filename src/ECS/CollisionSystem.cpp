@@ -5,13 +5,6 @@
 
 #include <functional>
 
-struct ColliderObjectInfo
-{
-	Transform* transform;
-	ColliderComponent* collider;
-	ColliderShape* shape;
-};
-
 
 struct ColliderTypePairHash
 {
@@ -38,12 +31,81 @@ static std::unordered_map<
 	};
 
 
+static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform);
+static GlobalSphere sphereColliderToGlobalSphere(SphereCollider* shape, Transform* transform);
+
+static BoundingBox getBoundingBox(const OBB& obb);
+static BoundingBox getBoundingBox(const GlobalSphere& sphere);
+
+
+
+ColliderObjectInfo::ColliderObjectInfo(ColliderComponent* collider, Transform* transform)
+	: transform(transform), collider(collider), shape(collider->GetColliderShape())
+{
+	if (shape->getType() == ColliderType::BOX)
+	{
+		globalShape.obb = boxColliderToOBB(static_cast<BoxCollider*>(shape), transform);
+		boundingBox = getBoundingBox(globalShape.obb);
+	}
+	else if (shape->getType() == ColliderType::SPHERE)
+	{
+		globalShape.sphere = sphereColliderToGlobalSphere(static_cast<SphereCollider*>(shape), transform);
+		boundingBox = getBoundingBox(globalShape.sphere);
+	}
+}
+
 CollisionSystem::CollisionSystem(Scene* scene) : scene(scene)
 {
 }
 
 CollisionSystem::~CollisionSystem()
 {
+}
+
+void CollisionSystem::buildTree()
+{
+	auto colliderStorage = scene->getStorage<ColliderComponent>();
+	if (colliderStorage == nullptr) {
+		return;
+	}
+
+	auto transformStorage = scene->getStorage<Transform>();
+
+	std::vector<TreeBox<ColliderObjectInfo>> staticColliderBoxes;
+	for (int i = 0; i < colliderStorage->getQuantity(); i++)
+	{
+		auto& transform = transformStorage->get(colliderStorage->components[i].id);
+		if (transform.isStatic)
+		{
+			auto& colliderComponent = colliderStorage->components[i];
+			ColliderObjectInfo colliderObjectInfo(&colliderComponent, &transform);
+
+			/*ColliderShape* shape = colliderComponent.GetColliderShape();
+			BoundingBox boundingBox;
+			if (shape->getType() == ColliderType::BOX)
+			{
+				OBB& obb = colliderObjectInfo.globalShape.obb;
+				boundingBox = getBoundingBox(obb);
+			}
+			else if (shape->getType() == ColliderType::SPHERE)
+			{
+				GlobalSphere& sphere = colliderObjectInfo.globalShape.sphere;
+				boundingBox = getBoundingBox(sphere);
+			}
+			else
+			{
+				continue;
+			}*/
+
+			TreeBox<ColliderObjectInfo> box {
+				.globalBox = colliderObjectInfo.boundingBox,
+				.object = colliderObjectInfo
+			};
+			staticColliderBoxes.push_back(box);
+		}
+	}
+
+	staticColliderTree.build(staticColliderBoxes);
 }
 
 
@@ -61,70 +123,94 @@ void CollisionSystem::CheckCollisions()
 
 	for (int i = 0; i < colliderStorage->getQuantity(); i++)
 	{
-		auto& colliderComponent = colliderStorage->components[i];
-		colliderObjects.push_back({
-				.transform = &transformStorage->get(colliderComponent.id),
-				.collider = &colliderComponent,
-				.shape = colliderComponent.GetColliderShape()
-			});
+		auto& transform = transformStorage->get(colliderStorage->components[i].id);
+		if (!transform.isStatic)
+		{
+			auto& colliderComponent = colliderStorage->components[i];
+			colliderObjects.push_back(ColliderObjectInfo(&colliderComponent, &transform));
+		}
 	}
 
 	for (size_t i = 0; i < colliderObjects.size(); ++i)
 	{
+		BoundingBox boundingBox;
+		ColliderShape* shape = colliderObjects[i].shape;
+		if (shape->getType() == ColliderType::BOX)
+		{
+			OBB& obb = colliderObjects[i].globalShape.obb;
+			boundingBox = getBoundingBox(obb);
+		}
+		else if (shape->getType() == ColliderType::SPHERE)
+		{
+			GlobalSphere& sphere = colliderObjects[i].globalShape.sphere;
+			boundingBox = getBoundingBox(sphere);
+		}
+		else
+		{
+			continue;
+		}
+
+		auto broadPhaseResults = staticColliderTree.query(boundingBox);
+		for (const auto& staticCollider : broadPhaseResults)
+		{
+			checkPair(colliderObjects[i], staticCollider);
+		}
+
 		for (size_t j = i + 1; j < colliderObjects.size(); ++j)
 		{
-			ColliderObjectInfo objectFirst = colliderObjects[i];
-			ColliderObjectInfo objectSecond = colliderObjects[j];
-
-			if (objectFirst.collider->isStatic && objectSecond.collider->isStatic)
-				continue;
-
-			CollisionEvent collisionInfo{};
-
-			if (objectFirst.shape->getType() > objectSecond.shape->getType())
-				std::swap(objectFirst, objectSecond);
-
-			std::pair<ColliderType, ColliderType> shapeTypePair = {
-				objectFirst.shape->getType(),
-				objectSecond.shape->getType()
-			};
-
-			auto it = collisionFunctions.find(shapeTypePair);
-			if (it != collisionFunctions.end())
+			if (colliderObjects[i].boundingBox.intersects(colliderObjects[j].boundingBox))
 			{
-				CollisionFunction collisionFunction = it->second;
-				collisionInfo = collisionFunction(objectFirst, objectSecond);
+				checkPair(colliderObjects[i], colliderObjects[j]);
 			}
-
-			if (collisionInfo.isColliding)
-			{
-				collisionInfo.objectA = objectFirst.collider->id;
-				collisionInfo.objectB = objectSecond.collider->id;
-
-				collisions.push_back(collisionInfo);
-				scene->getEventSystem().queueEvent(collisionInfo);
-
-				CollisionEvent swappedCollisionInfo = collisionInfo;
-				swappedCollisionInfo.objectA = objectSecond.collider->id;
-				swappedCollisionInfo.objectB = objectFirst.collider->id;
-				swappedCollisionInfo.separationVector = -swappedCollisionInfo.separationVector;
-
-				scene->getEventSystem().queueEvent(swappedCollisionInfo);
-			}
-
 		}
 	}
 }
 
 
-// helper functions
-
-struct OBB
+void CollisionSystem::checkPair(const ColliderObjectInfo& objectFirstIn, const ColliderObjectInfo& objectSecondIn)
 {
-	glm::vec3 center;
-	glm::vec3 halfSize;
-	glm::vec3 axes[3];
-};
+	if (objectFirstIn.collider->isStatic && objectSecondIn.collider->isStatic)
+		return;
+
+	CollisionEvent collisionInfo{};
+
+	ColliderObjectInfo objectFirst = objectFirstIn;
+	ColliderObjectInfo objectSecond = objectSecondIn;
+
+	if (objectFirst.shape->getType() > objectSecond.shape->getType())
+		std::swap(objectFirst, objectSecond);
+
+	std::pair<ColliderType, ColliderType> shapeTypePair = {
+		objectFirst.shape->getType(),
+		objectSecond.shape->getType()
+	};
+
+	auto it = collisionFunctions.find(shapeTypePair);
+	if (it != collisionFunctions.end())
+	{
+		CollisionFunction collisionFunction = it->second;
+		collisionInfo = collisionFunction(objectFirst, objectSecond);
+	}
+
+	if (collisionInfo.isColliding)
+	{
+		collisionInfo.objectA = objectFirst.collider->id;
+		collisionInfo.objectB = objectSecond.collider->id;
+
+		collisions.push_back(collisionInfo);
+		scene->getEventSystem().queueEvent(collisionInfo);
+
+		CollisionEvent swappedCollisionInfo = collisionInfo;
+		swappedCollisionInfo.objectA = objectSecond.collider->id;
+		swappedCollisionInfo.objectB = objectFirst.collider->id;
+		swappedCollisionInfo.separationVector = -swappedCollisionInfo.separationVector;
+
+		scene->getEventSystem().queueEvent(swappedCollisionInfo);
+	}
+}
+
+
+// helper functions
 
 static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform)
 {
@@ -152,21 +238,61 @@ static OBB boxColliderToOBB(BoxCollider* shape, Transform* transform)
 		}
 	}
 
-
 	return obb;
 }
 
-static float sphereColliderWorldRadius(SphereCollider* shape, Transform* transform)
+static GlobalSphere sphereColliderToGlobalSphere(SphereCollider* shape, Transform* transform)
 {
+	GlobalSphere sphere;
 	const glm::mat4& modelMatrix = transform->globalMatrix;
+	sphere.center = glm::vec3(modelMatrix * glm::vec4(shape->center, 1.0f));
+	
 	glm::vec3 scale;
 	scale.x = glm::length(glm::vec3(modelMatrix[0]));
 	scale.y = glm::length(glm::vec3(modelMatrix[1]));
 	scale.z = glm::length(glm::vec3(modelMatrix[2]));
-	float maxScale = std::max(scale.x, std::max(scale.y, scale.z));
 
-	return shape->radius * maxScale;
+	float maxScale = std::max(scale.x, std::max(scale.y, scale.z));
+	sphere.radius = shape->radius * maxScale;
+
+	return sphere;
 }
+
+constexpr glm::vec3 boundingBoxPadding(0.0f, 0.0f, 0.0f);
+
+static BoundingBox getBoundingBox(const OBB& obb)
+{
+	glm::vec3 right = glm::vec3(obb.axes[0]) * obb.halfSize.x;
+	glm::vec3 up = glm::vec3(obb.axes[1]) * obb.halfSize.y;
+	glm::vec3 forward = glm::vec3(obb.axes[2]) * obb.halfSize.z;
+
+	glm::vec3 corners[8];
+	int i = 0;
+	
+	for (int i = 0; i < 8; ++i) {
+		corners[i] = obb.center +
+			((i & 1) ? right : -right) +
+			((i & 2) ? up : -up) +
+			((i & 4) ? forward : -forward);
+	}
+
+	glm::vec3 min = corners[0];
+	glm::vec3 max = corners[0];
+	for (int j = 1; j < 8; ++j) {
+		min = glm::min(min, corners[j]);
+		max = glm::max(max, corners[j]);
+	}
+
+	return BoundingBox(min - boundingBoxPadding, max + boundingBoxPadding);
+}
+
+static BoundingBox getBoundingBox(const GlobalSphere& sphere)
+{
+	glm::vec3 min = sphere.center - glm::vec3(sphere.radius);
+	glm::vec3 max = sphere.center + glm::vec3(sphere.radius);
+	return BoundingBox(min - boundingBoxPadding, max + boundingBoxPadding);
+}
+
 
 static float SATgetAxisOverlap(const glm::vec3& axis, const OBB& obbA, const OBB& obbB)
 {
@@ -205,8 +331,8 @@ static CollisionEvent BoxBoxCollision(const ColliderObjectInfo& boxA, const Coll
 {
 	CollisionEvent collisionInfo = {};
 
-	OBB obbA = boxColliderToOBB(static_cast<BoxCollider*>(boxA.shape), boxA.transform);
-	OBB obbB = boxColliderToOBB(static_cast<BoxCollider*>(boxB.shape), boxB.transform);
+	OBB obbA = boxA.globalShape.obb;
+	OBB obbB = boxB.globalShape.obb;
 
 	glm::vec3 axes[15];
 
@@ -254,25 +380,23 @@ static CollisionEvent BoxSphereCollision(const ColliderObjectInfo& box, const Co
 {
 	CollisionEvent collisionInfo = {};
 
-	OBB obb = boxColliderToOBB(static_cast<BoxCollider*>(box.shape), box.transform);
+	OBB obb = box.globalShape.obb;
 
-	SphereCollider* sphereCollider = static_cast<SphereCollider*>(sphere.shape);
-	glm::vec3 sphereCenter = sphere.transform->globalMatrix * glm::vec4(sphereCollider->center, 1.0f);
-	float sphereRadius = sphereColliderWorldRadius(sphereCollider, sphere.transform);
+	GlobalSphere sphereGlobal = sphere.globalShape.sphere;
 
-	glm::vec3 delta = sphereCenter - closestPointOnOBB(obb, sphereCenter);
+	glm::vec3 delta = sphereGlobal.center - closestPointOnOBB(obb, sphereGlobal.center);
 	float distance = glm::length(delta);
 
-	if (distance < sphereRadius)
+	if (distance < sphereGlobal.radius)
 	{
 		collisionInfo.isColliding = true;
-		float separationDistance = distance - sphereRadius;
+		float separationDistance = distance - sphereGlobal.radius;
 
 		if (distance > 0.0f)
 		{
-			collisionInfo.separationVector = delta / distance * (distance - sphereRadius);
+			collisionInfo.separationVector = delta / distance * (distance - sphereGlobal.radius);
 		}
-		else if (sphereCenter == obb.center)
+		else if (sphereGlobal.center == obb.center)
 		{
 			collisionInfo.separationVector = glm::vec3(0.0f);
 		}
@@ -307,18 +431,21 @@ static CollisionEvent SphereSphereCollision(const ColliderObjectInfo& sphereA, c
 {
 	CollisionEvent collisionInfo = {};
 
-	SphereCollider* sphereColliderA = static_cast<SphereCollider*>(sphereA.shape);
-	SphereCollider* sphereColliderB = static_cast<SphereCollider*>(sphereB.shape);
+	//SphereCollider* sphereColliderA = static_cast<SphereCollider*>(sphereA.shape);
+	//SphereCollider* sphereColliderB = static_cast<SphereCollider*>(sphereB.shape);
 
-	glm::vec3 centerA = sphereA.transform->globalMatrix * glm::vec4(sphereColliderA->center, 1.0f);
+	/*glm::vec3 centerA = sphereA.transform->globalMatrix * glm::vec4(sphereColliderA->center, 1.0f);
 	glm::vec3 centerB = sphereB.transform->globalMatrix * glm::vec4(sphereColliderB->center, 1.0f);
 
 	float radiusA = sphereColliderWorldRadius(sphereColliderA, sphereA.transform);
-	float radiusB = sphereColliderWorldRadius(sphereColliderB, sphereB.transform);
+	float radiusB = sphereColliderWorldRadius(sphereColliderB, sphereB.transform);*/
 
-	glm::vec3 delta = centerA - centerB;
+	GlobalSphere sphereAGlobal = sphereA.globalShape.sphere;
+	GlobalSphere sphereBGlobal = sphereB.globalShape.sphere;
+
+	glm::vec3 delta = sphereAGlobal.center - sphereBGlobal.center;
 	float distance = glm::length(delta);
-	float radiusSum = radiusA + radiusB;
+	float radiusSum = sphereAGlobal.radius + sphereBGlobal.radius;
 
 	if (distance < radiusSum)
 	{

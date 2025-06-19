@@ -30,6 +30,7 @@ public:
     glm::vec3 getCenter() const { return center;}
     glm::vec3 getExtents() const { return extents;}
     BoundingBox merge(BoundingBox other);
+	bool intersects(const BoundingBox& other) const;
 
     BoundingBox getGlobalBox(const Transform& transform) const;
     glm::vec3 getGlobalCenter(const Transform& transform) const;

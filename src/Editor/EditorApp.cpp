@@ -312,6 +312,7 @@ namespace Editor
             sceneBackup = std::make_shared<Scene>(*scene);
 			ImGui::SetWindowFocus("Game");
 			scene->getRenderingSystem().buildTree();
+			scene->getCollisionSystem().buildTree();
 
             setStartValues();
 

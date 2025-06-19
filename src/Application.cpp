@@ -214,6 +214,7 @@ bool Application::init()
 	setupEvents();
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
+	scene->getCollisionSystem().buildTree();
 #ifndef EDITOR_APP
 	setStartValues();
 #endif

@@ -6,7 +6,8 @@
 #define PBL_KDTREE_H
 #include "ECS/BoundingVolumes.h"
 #include "ECS/ComponentStorage.h"
-#include "Ecs/RenderingSystem.h"
+#include "ECS/Components.h"
+#include <optional>
 
 static bool isOnOrForwardPlane(const BoundingBox& aabb, const Plane& plane)
 {
@@ -45,75 +46,115 @@ inline bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum
         isOnOrForwardPlane(globalAABB, camFrustum.farFace));
 }
 
-
+template<typename T>
 struct BVHNode {
     BoundingBox box;
     std::unique_ptr<BVHNode> left;
     std::unique_ptr<BVHNode> right;
-    ModelComponent* object = nullptr;
+	std::optional<T> object;
 
-    bool isLeaf() const { return object != nullptr; }
+	bool isLeaf() const { return object.has_value(); }
 };
 
-inline std::unique_ptr<BVHNode> buildBVH(std::vector<ModelComponent*>& objects, int depth = 0) {
-    if (objects.empty()) return nullptr;
+template<typename T>
+struct TreeBox {
+	BoundingBox globalBox;
+    T object;
+};
 
-    auto node = std::make_unique<BVHNode>();
+template<typename T>
+class BVH {
+	std::unique_ptr<BVHNode<T>> root;
+    std::unique_ptr<BVHNode<T>> build(std::vector<TreeBox<T>>& objects, int depth)
+    {
+		if (objects.empty()) return nullptr;
 
-    // // Początkowe AABB to pierwszy obiekt
-    // node->box = objects[0]->getBoundingVolume()->getGlobalBox(*objects[0]->transform);
-    // for (size_t i = 1; i < objects.size(); ++i) {
-    //     auto globalBox = objects[i]->getBoundingVolume()->getGlobalBox(*objects[i]->transform);
-    //     node->box = node->box.merge(globalBox);
-    // }
-    if (objects.size() == 1) {
-        node->object = objects[0];
-        node->box = objects[0]->model->boundingBox.getGlobalBox(*objects[0]->transform);
-        return node;
+		auto node = std::make_unique<BVHNode<T>>();
+
+		if (objects.size() == 1) {
+			node->object = objects[0].object;
+			node->box = objects[0].globalBox;
+			return node;
+		}
+
+
+		// Wybór osi (X/Y/Z)
+		int axis = depth % 3;
+		std::sort(objects.begin(), objects.end(), [axis](const TreeBox<T>& a, const TreeBox<T>& b) {
+            auto ca = a.globalBox.center;
+            auto cb = b.globalBox.center;
+			return (axis == 0) ? ca.x < cb.x :
+				(axis == 1) ? ca.y < cb.y : ca.z < cb.z;
+		});
+
+		size_t mid = objects.size() / 2;
+		std::vector<TreeBox<T>> left(objects.begin(), objects.begin() + mid);
+		std::vector<TreeBox<T>> right(objects.begin() + mid, objects.end());
+
+		node->left = build(left, depth + 1);
+		node->right = build(right, depth + 1);
+
+		if (node->left && node->right) {
+			node->box = node->left->box.merge(node->right->box);
+		}
+		else if (node->left) {
+			node->box = node->left->box;
+		}
+		else if (node->right) {
+			node->box = node->right->box;
+		}
+
+		return node;
     }
 
-    // Wybór osi (X/Y/Z)
-    int axis = depth % 3;
-    std::sort(objects.begin(), objects.end(), [axis](ModelComponent* a, ModelComponent* b) {
-        auto ca = a->model->boundingBox.getGlobalCenter(*a->transform);
-        auto cb = b->model->boundingBox.getGlobalCenter(*b->transform);
-        return (axis == 0) ? ca.x < cb.x :
-               (axis == 1) ? ca.y < cb.y : ca.z < cb.z;
-    });
+	void queryRecursion(const BVHNode<T>* node, const BoundingBox& box, std::vector<T>& results) const
+	{
+		if (!node) return;
+		if (!node->box.intersects(box)) return;
 
-    size_t mid = objects.size() / 2;
-    std::vector<ModelComponent*> left(objects.begin(), objects.begin() + mid);
-    std::vector<ModelComponent*> right(objects.begin() + mid, objects.end());
+		if (node->isLeaf())
+		{
+			results.push_back(node->object.value());
+		}
+		else
+		{
+			queryRecursion(node->left.get(), box, results);
+			queryRecursion(node->right.get(), box, results);
+		}
+	}
 
-    node->left = buildBVH(left, depth + 1);
-    node->right = buildBVH(right, depth + 1);
+public:
+	void build(std::vector<TreeBox<T>>& objects)
+	{
+		root = build(objects, 0);
+	}
+	BVHNode<T>* getRoot() const { return root.get(); }
 
-    if(node->left && node->right) {
+	std::vector<T> query(const BoundingBox& box) const
+	{
+		std::vector<T> results;
+		queryRecursion(root.get(), box, results);
+		return results;
+	}
 
-        node->box = node->left->box.merge(node->right->box);
-    } else if (node->left) {
-        node->box = node->left->box;
-    } else if (node->right) {
-        node->box = node->right->box;
-    }
-    return node;
-}
+};
 
-inline void traverseBVHFrustum(const BVHNode* node, const FrustumPlanes& frustum, std::vector<EntityID>& visibleIds) {
+
+inline void traverseBVHFrustum(const BVHNode<ModelComponent*>* node, const FrustumPlanes& frustum, std::vector<EntityID>& visibleIds) {
     if (!node) return;
 ;
     if (!isOnFrustum(node->box, frustum, Transform{}))
         return;
 
     if (node->isLeaf()) {
-        if (isOnFrustum(node->object->model->boundingBox, frustum, *node->object->transform)) {
-            visibleIds.push_back(node->object->id);
-        }
+		ModelComponent* modelComponent = node->object.value();
+		if (isOnFrustum(modelComponent->model->boundingBox, frustum, *modelComponent->transform)) {
+			visibleIds.push_back(modelComponent->id);
+		}
     } else {
         traverseBVHFrustum(node->left.get(), frustum, visibleIds);
         traverseBVHFrustum(node->right.get(), frustum, visibleIds);
     }
 }
-
 
 #endif //PBL_KDTREE_H

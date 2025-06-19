@@ -53,6 +53,13 @@ BoundingBox BoundingBox::merge(BoundingBox other) {
     return BoundingBox(newMin, newMax);
 }
 
+bool BoundingBox::intersects(const BoundingBox& other) const
+{
+	return (std::abs(center.x - other.center.x) <= (extents.x + other.extents.x)) &&
+		(std::abs(center.y - other.center.y) <= (extents.y + other.extents.y)) &&
+		(std::abs(center.z - other.center.z) <= (extents.z + other.extents.z));
+}
+
 BoundingBox BoundingBox::getGlobalBox(const Transform &transform) const {
     const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(center, 1.f) };
     const glm::vec3 right = transform.globalMatrix[0] * extents.x;
