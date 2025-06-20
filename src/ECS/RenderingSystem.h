@@ -49,6 +49,7 @@ private:
 	void ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out);
 	void dynamicSplitScreen(Shader* dynamicSplitScreen,  Camera& camera, const CustomFramebuffer& in, CustomFramebuffer& in2, const Framebuffer& out);
 
+    std::vector<EntityID> getVisibleEntities(const FrustumPlanes& frustumPlanes);
 	void drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, 
         const std::unordered_map<std::string, Shader*>& postShaders, bool useShadows);
 
@@ -67,6 +68,7 @@ private:
     const uint32_t shadowMapHeight = 2048;
     CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{ shadowMapWidth, shadowMapHeight, { AttachmentType::DEPTH } });
 	CustomFramebuffer shadowPostFramebuffer = CustomFramebuffer(FramebufferConfig{ shadowMapWidth, shadowMapHeight, { AttachmentType::COLOR } });
+    Frustum shadowFrustum = Frustum(glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 60.0f));
 
 public:
     //RenderingSystem(Scene* scene, Shader &sceneShader, Shader &hudShader, Shader &textShader);

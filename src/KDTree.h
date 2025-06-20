@@ -17,33 +17,29 @@ static bool isOnOrForwardPlane(const BoundingBox& aabb, const Plane& plane)
     return -r <= plane.getSignedDistanceToPlane(aabb.center);
 }
 
-inline bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum, const Transform& transform)
+inline bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum)
 {
-    const glm::vec3 globalCenter{ transform.globalMatrix * glm::vec4(aabb.center, 1.f) };
-    const glm::vec3 right = transform.globalMatrix[0] * aabb.extents.x;
-    const glm::vec3 up = transform.globalMatrix[1] * aabb.extents.y;
-    const glm::vec3 forward = -transform.globalMatrix[2] * aabb.extents.z;
+	return (isOnOrForwardPlane(aabb, camFrustum.leftFace) &&
+		isOnOrForwardPlane(aabb, camFrustum.rightFace) &&
+		isOnOrForwardPlane(aabb, camFrustum.topFace) &&
+		isOnOrForwardPlane(aabb, camFrustum.bottomFace) &&
+		isOnOrForwardPlane(aabb, camFrustum.nearFace) &&
+		isOnOrForwardPlane(aabb, camFrustum.farFace));
+}
 
-    const float newIi = std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 1.f, 0.f, 0.f }, forward));
+inline bool isOnFrustum(const BoundingBox& aabb, const FrustumPlanes& camFrustum, const glm::mat4 globalMatrix)
+{
+	const glm::vec3 globalCenter = glm::vec3(globalMatrix * glm::vec4(aabb.center, 1.0f));
 
-    const float newIj = std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 1.f, 0.f }, forward));
+	const glm::vec3 right = glm::vec3(globalMatrix[0]) * aabb.extents.x;
+	const glm::vec3 up = glm::vec3(globalMatrix[1]) * aabb.extents.y;
+	const glm::vec3 forward = glm::vec3(globalMatrix[2]) * aabb.extents.z;
 
-    const float newIk = std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, right)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, up)) +
-        std::abs(glm::dot(glm::vec3{ 0.f, 0.f, 1.f }, forward));
+	const glm::vec3 absExtents = glm::abs(right) + glm::abs(up) + glm::abs(forward);
 
-    const BoundingBox globalAABB(globalCenter, newIi, newIj, newIk);
+	const BoundingBox globalAABB(globalCenter, absExtents.x, absExtents.y, absExtents.z);
 
-    return (isOnOrForwardPlane(globalAABB, camFrustum.leftFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.rightFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.topFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.bottomFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.nearFace) &&
-        isOnOrForwardPlane(globalAABB, camFrustum.farFace));
+	return isOnFrustum(globalAABB, camFrustum);
 }
 
 template<typename T>
@@ -143,13 +139,12 @@ public:
 inline void traverseBVHFrustum(const BVHNode<ModelComponent*>* node, const FrustumPlanes& frustum, std::vector<EntityID>& visibleIds) {
     if (!node) return;
 ;
-    if (!isOnFrustum(node->box, frustum, Transform{}))
+    if (!isOnFrustum(node->box, frustum))
         return;
 
     if (node->isLeaf()) {
-		ModelComponent* modelComponent = node->object.value();
-		if (isOnFrustum(modelComponent->model->boundingBox, frustum, *modelComponent->transform)) {
-			visibleIds.push_back(modelComponent->id);
+		if (isOnFrustum(node->box, frustum)) {
+			visibleIds.push_back(node->object.value()->id);
 		}
     } else {
         traverseBVHFrustum(node->left.get(), frustum, visibleIds);

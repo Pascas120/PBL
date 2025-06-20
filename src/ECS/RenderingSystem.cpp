@@ -94,7 +94,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
     //CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     if(useShadows) {
         glm::vec3 lightPos = transforms->get(mainLight.id).translation;
-        glm::mat4 lightProjection = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 60.0f);
+		glm::mat4 lightProjection = shadowFrustum.getProjectionMatrix();
         glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
         shadowFramebuffer.Bind();
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -105,12 +105,18 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
         uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
         shadowShader->setVec3("lightPos", lightPos);
 
-        for (int i = 0; i < models->getQuantity(); i++) {
-            auto& modelComponent = models->components[i];
+		FrustumPlanes shadowFrustumPlanes = shadowFrustum.getPlanes();
+		shadowFrustumPlanes.applyTransform(glm::inverse(lightView));
+		std::vector<EntityID> shadowVisibleEntities = getVisibleEntities(shadowFrustumPlanes);
 
-            shadowShader->setMat4("model", transforms->get(modelComponent.id).globalMatrix);
-            modelComponent.model->draw(shadowShader);
-        }
+		for (const auto& entityID : shadowVisibleEntities) {
+			auto& modelComponent = models->get(entityID);
+			auto& transform = transforms->get(entityID);
+
+			shadowShader->setMat4("model", transform.globalMatrix);
+			modelComponent.model->draw(shadowShader);
+		}
+
 
 		Shader* ShadowFXAAShader = postShaders.at("ShadowFXAA");
 		shadowFxaaFilter(ShadowFXAAShader, shadowFramebuffer, shadowPostFramebuffer);
@@ -465,55 +471,56 @@ void RenderingSystem::updatePreviousModelMatrices() {
     }
 }
 
-void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, 
-    const std::unordered_map<std::string, Shader*>& postShaders, bool useShadows) {
-	auto& frustum = camera.getFrustum();
-    auto models = scene->getStorage<ModelComponent>();
-    auto transforms = scene->getStorage<Transform>();
-    uint16_t renderingQueueSize = 0;
+std::vector<EntityID> RenderingSystem::getVisibleEntities(const FrustumPlanes& frustumPlanes)
+{
+	std::vector<EntityID> visibleEntities;
 
-    EntityID renderingQueue[MAX_ENTITIES];
+	auto models = scene->getStorage<ModelComponent>();
+	auto transforms = scene->getStorage<Transform>();
 
-    FrustumPlanes globalPlanes = frustum.getPlanes();
-    globalPlanes.applyTransform(camera.getInvViewMatrix());
-
-    //buildTree();
-    std::vector<EntityID> visibleEntities;
-
-    visibleEntities.reserve(models->getQuantity());
     auto rootNode = bvh.getRoot();
     if (useTree && rootNode) {
         /*spdlog::info("planes: {}, {}, {}",
                      frustum.getPlanes().nearFace.normal.x,frustum.getPlanes().nearFace.normal.y,frustum.getPlanes().nearFace.normal.z);
         */
-        traverseBVHFrustum(rootNode, globalPlanes, visibleEntities);
+        traverseBVHFrustum(rootNode, frustumPlanes, visibleEntities);
         //spdlog::info("Tree: {} entities visible", visibleEntities.size());
-    } else if (useTree && !rootNode) {
+    }
+    else if (useTree && !rootNode) {
         spdlog::warn("BVH root node is null, skipping frustum culling.");
     }
 
-    Shader* shadowShader = postShaders.at("ShadowMap");
-
     for (int i = 0; i < models->getQuantity(); i++) {
         auto& modelComponent = models->components[i];
-
-        if (!useTree || !transforms->get(models->components[i].id).isStatic)
+        auto& transform = transforms->get(modelComponent.id);
+        if (!useTree || !transform.isStatic)
         {
             auto& boundingBox = modelComponent.model->boundingBox;
 
-
-            if (isOnFrustum(boundingBox, globalPlanes, transforms->get(modelComponent.id))) {
-                renderingQueue[renderingQueueSize++] = modelComponent.id;
+            if (isOnFrustum(boundingBox, frustumPlanes, transform.globalMatrix)) {
+                visibleEntities.push_back(modelComponent.id);
             }
         }
     }
 
-    for(int i = 0; i < visibleEntities.size(); i++) {
-        EntityID entityID = visibleEntities[i];
-        if (models->has(entityID)) {
-            renderingQueue[renderingQueueSize++] = entityID;
-        }
-    }
+	return visibleEntities;
+}
+
+void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage,
+    const std::unordered_map<std::string, Shader*>& postShaders, bool useShadows) {
+	auto& frustum = camera.getFrustum();
+    auto models = scene->getStorage<ModelComponent>();
+    auto transforms = scene->getStorage<Transform>();
+
+    FrustumPlanes globalPlanes = frustum.getPlanes();
+    globalPlanes.applyTransform(camera.getInvViewMatrix());
+
+	std::vector<EntityID> renderingQueue = getVisibleEntities(globalPlanes);
+
+
+    Shader* shadowShader = postShaders.at("ShadowMap");
+
+	//spdlog::info("Rendering {} models", renderingQueue.size());
 
 	auto& cameraBlock = uniformBlockStorage.cameraBlock;
     glm::mat4 viewMatrix = camera.getViewMatrix();
@@ -553,10 +560,9 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
         glBindTexture(GL_TEXTURE_2D, shadowPostFramebuffer.GetColorTexture());
     }
 
-    for (int i = 0; i < renderingQueueSize; i++) {
-        auto& modelComponent = models->get(renderingQueue[i]);
+	for (const auto& entityID : renderingQueue) {
+		auto& modelComponent = models->get(entityID);
 
-        EntityID entityID = modelComponent.id;
 		auto& info = scene->getComponent<ObjectInfoComponent>(entityID);
 
 		glm::mat4 modelMatrix = transforms->get(entityID).globalMatrix;
