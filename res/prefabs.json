@@ -17,6 +17,23 @@
                             ],
                             "timeLeft": 5.0
                         },
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "halfSize": [
+                                    123.9000015258789,
+                                    64.5,
+                                    67.5
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
                         "ModelComponent": {
                             "color": [
                                 1.0,
@@ -29,7 +46,7 @@
                         "ObjectInfoComponent": {
                             "name": "Trail",
                             "tag": "trail",
-                            "uuid": "88b3c5d1-aa8d-1786-f7f7-829f18945721"
+                            "uuid": "436e2b89-877a-62cf-1f3b-9625af2278fc"
                         },
                         "Transform": {
                             "children": [],

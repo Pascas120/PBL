@@ -40,6 +40,11 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			auto& vel = scene->getComponent<VelocityComponent>(id);
 			vel.useGravity = false;
 			vel.velocity = glm::vec3(0.0f);
+			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingNormal, glm::vec3(0.0f, 1.0f, 0.0f)));
+			normalEulerY = glm::degrees(normalEulerY);
+			normalEulerY.y += 180.0f;
+			transformSystem.rotateEntity(id, normalEulerY);
+
 			return;                      
 		}
 		else
@@ -127,7 +132,6 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
         if(transform.translation.y<-9.5){
             transformSystem.translateEntity(id, scene->getComponent<Transform>(respawnPoint).translation);
         }
-
 
 		
 		if (wasInHeat && !inHeat)               

@@ -366,7 +366,8 @@ void Application::update()
 		auto& colliderA = scene->getComponent<ColliderComponent>(collision.objectA);
 		auto& colliderB = scene->getComponent<ColliderComponent>(collision.objectB);
 
-		if (colliderA.isStatic && colliderB.isStatic)
+		if ((colliderA.isStatic && colliderB.isStatic) ||
+			(colliderA.isTrigger || colliderB.isTrigger))
 		{
 			continue;
 		}
@@ -1250,28 +1251,15 @@ void Application::setupEvents()
 	});
 
 	//slad masla sprint
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
-		const auto& ev = static_cast<const CollisionEvent&>(e);
-		if (!ev.isColliding) return;
+	eventSystem.registerListener<TriggerEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const TriggerEvent&>(e);
 
-		auto hasTrailTag = [&](EntityID id) {
-			return scene->hasComponent<ObjectInfoComponent>(id) &&
-				scene->getComponent<ObjectInfoComponent>(id).tag == "trail";
-			};
-		auto hasDetector = [&](EntityID id) {
-			return scene->hasComponent<TrailCollisionDetectorComponent>(id);
-			};
-
-		bool detectorHitsTrail =
-			(hasTrailTag(ev.objectA) && hasDetector(ev.objectB)) ||
-			(hasTrailTag(ev.objectB) && hasDetector(ev.objectA));
-
-		if (!detectorHitsTrail) return;
-
-		EntityID runner = hasDetector(ev.objectA) ? ev.objectA : ev.objectB;
+		if (!(scene->getComponent<ObjectInfoComponent>(ev.triggerObject).tag == "trail") ||
+			!scene->hasComponent<TrailCollisionDetectorComponent>(ev.otherObject))
+			return;
 
 		// odśwież licznik sprintu do 3 s
-		scene->getComponent<TrailCollisionDetectorComponent>(runner).sprintTimeLeft = 3.0f;
+		scene->getComponent<TrailCollisionDetectorComponent>(ev.otherObject).sprintTimeLeft = 3.0f;
 
 		spdlog::info("wykryto kolizje sladu z obiektem - sprint3s");
 		});

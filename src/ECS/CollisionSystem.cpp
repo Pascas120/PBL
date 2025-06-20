@@ -182,14 +182,44 @@ void CollisionSystem::checkPair(const ColliderObjectInfo& objectFirstIn, const C
 		collisionInfo.objectB = objectSecond.collider->id;
 
 		collisions.push_back(collisionInfo);
-		scene->getEventSystem().queueEvent(collisionInfo);
+		if (objectFirst.collider->isTrigger || objectSecond.collider->isTrigger)
+		{
+			TriggerEvent triggerEvent;
+			triggerEvent.triggerObject = objectFirst.collider->id;
+			triggerEvent.otherObject = objectSecond.collider->id;
 
-		CollisionEvent swappedCollisionInfo = collisionInfo;
-		swappedCollisionInfo.objectA = objectSecond.collider->id;
-		swappedCollisionInfo.objectB = objectFirst.collider->id;
-		swappedCollisionInfo.separationVector = -swappedCollisionInfo.separationVector;
+			bool twoTriggers = false;
+			if (!objectFirst.collider->isTrigger)
+			{
+				std::swap(triggerEvent.triggerObject, triggerEvent.otherObject);
+			}
+			else if (objectSecond.collider->isTrigger)
+			{
+				twoTriggers = true;
+			}
 
-		scene->getEventSystem().queueEvent(swappedCollisionInfo);
+			triggerEvent.separationVector = collisionInfo.separationVector;
+			scene->getEventSystem().queueEvent(triggerEvent);
+
+			if (twoTriggers)
+			{
+				TriggerEvent swappedTriggerEvent = triggerEvent;
+				std::swap(swappedTriggerEvent.triggerObject, swappedTriggerEvent.otherObject);
+				swappedTriggerEvent.separationVector = -swappedTriggerEvent.separationVector;
+				scene->getEventSystem().queueEvent(swappedTriggerEvent);
+			}
+		}
+		else
+		{
+			scene->getEventSystem().queueEvent(collisionInfo);
+
+			CollisionEvent swappedCollisionInfo = collisionInfo;
+			swappedCollisionInfo.objectA = objectSecond.collider->id;
+			swappedCollisionInfo.objectB = objectFirst.collider->id;
+			swappedCollisionInfo.separationVector = -swappedCollisionInfo.separationVector;
+
+			scene->getEventSystem().queueEvent(swappedCollisionInfo);
+		}
 	}
 }
 

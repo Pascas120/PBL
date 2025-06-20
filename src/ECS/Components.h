@@ -90,7 +90,7 @@ struct TextComponent {
 };
 
 struct ColliderComponent {
-    ColliderComponent(ColliderType colliderType, bool isStatic = false) : isStatic{ isStatic }
+    ColliderComponent(ColliderType colliderType, bool isStatic = true) : isStatic{ isStatic }
     {
         switch (colliderType)
         {
@@ -114,6 +114,7 @@ struct ColliderComponent {
     }
 
     bool isStatic;
+	bool isTrigger = false;
 
 
     EntityID id = (EntityID)-1;

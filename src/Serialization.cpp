@@ -236,6 +236,7 @@ namespace Serialization
 			j["colliderShape"] = shapeJson;
 		}
 		j["isStatic"] = c.isStatic;
+		j["isTrigger"] = c.isTrigger;
 	}
 
 	static void from_json(const nlohmann::json& j, ColliderComponent& c, const DeserializationContext& context)
@@ -267,6 +268,7 @@ namespace Serialization
 				}
 
 				c.isStatic = j.at("isStatic").get<bool>();
+				c.isTrigger = j.value("isTrigger", c.isTrigger);
 			}
 		}
 	}
@@ -578,6 +580,16 @@ namespace Serialization
 		c.respawnPoint = entity_from_json(j.at("respawnPoint"), context);
 	}
 
+	static void to_json(nlohmann::json& j, const TrailCollisionDetectorComponent& c, const SerializationContext& context)
+	{
+		j["sprintMultiplier"] = c.sprintMultiplier;
+	}
+
+	static void from_json(const nlohmann::json& j, TrailCollisionDetectorComponent& c, const DeserializationContext& context)
+	{
+		j.at("sprintMultiplier").get_to(c.sprintMultiplier);
+	}
+
 	static void to_json(nlohmann::json& j, const CameraController& c, const SerializationContext& context)
 	{
 		j["offset"] = c.offset;
@@ -783,6 +795,8 @@ namespace Serialization
 			serializeComponent(BreadController);
 			serializeComponent(ButterController);
 
+			serializeComponent(TrailCollisionDetectorComponent);
+
 			serializeComponent(CameraController);
 			serializeComponent(SplitScreenController);
 			serializeComponent(SoundComponent);
@@ -872,6 +886,8 @@ namespace Serialization
 
 			deserializeComponent(BreadController);
 			deserializeComponent(ButterController);
+
+			deserializeComponent(TrailCollisionDetectorComponent);
 
 			deserializeComponent(CameraController);
 			deserializeComponent(SplitScreenController);

@@ -45,6 +45,13 @@ struct CollisionEvent final : public Event
 	glm::vec3 separationVector;
 };
 
+struct TriggerEvent final : public Event
+{
+	EntityID triggerObject = -1;
+	EntityID otherObject = -1;
+	glm::vec3 separationVector;
+};
+
 class CollisionSystem
 {
 private:
