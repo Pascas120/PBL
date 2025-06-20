@@ -48,6 +48,9 @@ public:
 private:
     std::string name;
     std::vector<UniformInfo> uniforms;
+	std::unordered_map<std::string, GLint> uniformLocations;
+
+    GLint getUniformLocation(const std::string& name) const;
 };
 
 #endif

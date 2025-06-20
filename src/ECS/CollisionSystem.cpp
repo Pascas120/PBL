@@ -80,22 +80,6 @@ void CollisionSystem::buildTree()
 			auto& colliderComponent = colliderStorage->components[i];
 			ColliderObjectInfo colliderObjectInfo(&colliderComponent, &transform);
 
-			/*ColliderShape* shape = colliderComponent.GetColliderShape();
-			BoundingBox boundingBox;
-			if (shape->getType() == ColliderType::BOX)
-			{
-				OBB& obb = colliderObjectInfo.globalShape.obb;
-				boundingBox = getBoundingBox(obb);
-			}
-			else if (shape->getType() == ColliderType::SPHERE)
-			{
-				GlobalSphere& sphere = colliderObjectInfo.globalShape.sphere;
-				boundingBox = getBoundingBox(sphere);
-			}
-			else
-			{
-				continue;
-			}*/
 
 			TreeBox<ColliderObjectInfo> box {
 				.globalBox = colliderObjectInfo.boundingBox,

@@ -4,9 +4,6 @@ uniform sampler2D colorTexture;
 uniform sampler2D ssaoTexture;
 
 
-uniform int width;
-uniform int height;
-
 in vec2 texCoord;
 out vec4 fragColor;
 

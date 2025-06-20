@@ -93,7 +93,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
 
     //CustomFramebuffer shadowFramebuffer = CustomFramebuffer(FramebufferConfig{width, height});
     if(useShadows) {
-        glm::vec3 lightPos = transforms->get(mainLight.id).translation;
 		glm::mat4 lightProjection = shadowFrustum.getProjectionMatrix();
         glm::mat4 lightView = glm::inverse(transforms->get(mainLight.id).globalMatrix);
         shadowFramebuffer.Bind();
@@ -103,7 +102,6 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
         uniformBlockStorage.cameraBlock.setData("lightProjection", &lightProjection);
         shadowShader->setMat4("lightView", lightView);
         uniformBlockStorage.cameraBlock.setData("lightView", &lightView);
-        shadowShader->setVec3("lightPos", lightPos);
 
 		FrustumPlanes shadowFrustumPlanes = shadowFrustum.getPlanes();
 		shadowFrustumPlanes.applyTransform(glm::inverse(lightView));
@@ -425,9 +423,6 @@ void RenderingSystem::ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer
 	out.Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ssaoApply->use();
-	auto [width, height] = in.GetSizePair();
-	ssaoApply->setInt("width", width);
-	ssaoApply->setInt("height", height);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, in.GetColorTexture());
