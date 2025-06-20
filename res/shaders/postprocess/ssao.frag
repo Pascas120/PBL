@@ -31,6 +31,8 @@ const float radius = 0.5;
 const float bias = 0.075;
 const float power = 2.3;
 
+const int maxMisses = 24;
+
 vec3 getFragViewPos(vec2 texCoord)
 {
     vec2 ndc = texCoord * 2.0 - 1.0;
@@ -60,6 +62,8 @@ void main()
     mat3 TBN = mat3(tangent, bitangent, normal);
 
     float occlusion = 0.0;
+    int missCount = 0;
+
     for (int i = 0; i < kernelSize; ++i) {
         vec3 samplePos = TBN * samples[i];
         samplePos = fragPos + samplePos * radius;
@@ -77,13 +81,23 @@ void main()
 
         float sampleDepth = getFragViewPos(offset.xy).z;
 
-        float depthDiff = abs(fragPos.z - sampleDepth);
-        float rangeCheck = smoothstep(0.0, 1.0, radius / max(depthDiff, 1e-8));
-
-        occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;
+        // after:
+        if (sampleDepth >= samplePos.z + bias) {
+            missCount = -1;
+            float depthDiff = abs(fragPos.z - sampleDepth);
+            float rangeCheck = smoothstep(0.0, 1.0, radius / max(depthDiff, 1e-8));
+            occlusion += rangeCheck;
+        }
+        else if (missCount != -1) {
+            missCount++;
+            if (missCount >= maxMisses) {
+                fragColor = 1.0;
+                return;
+            }
+        }
     }
 
-    occlusion = 1.0 - (occlusion / kernelSize);
+    occlusion = 1.0 - (occlusion / (kernelSize - missCount));
 
     fragColor = pow(occlusion, power);
 }

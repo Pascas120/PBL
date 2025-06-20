@@ -79,6 +79,7 @@ static std::array<glm::vec3, 64> generateSSAOKernel() {
 
 		kernel[i] = sample;
 	}
+	std::reverse(kernel.begin(), kernel.end());
 	return kernel;
 }
 
