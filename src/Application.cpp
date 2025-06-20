@@ -209,6 +209,11 @@ bool Application::init()
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
 	sounds.emplace_back("res/sounds/boing.mp3");
+	sounds.emplace_back("res/sounds/ost1.mp3");
+	sounds.emplace_back("res/sounds/ost2.mp3");
+	sounds.emplace_back("res/sounds/ost3.mp3");
+	sounds.emplace_back("res/sounds/ost4.mp3");
+	sounds.emplace_back("res/sounds/ost5.mp3");
 
 	scene = std::make_shared<Scene>(this);
 	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, true});
@@ -293,12 +298,35 @@ void Application::update()
 				velocityComponent.velocity.y -= 9.81f * deltaTime;
 			}
 
+			//sprint z trail
+			if (scene->hasComponent<TrailCollisionDetectorComponent>(velocityComponent.id))
+			{
+				const auto& det = scene->getComponent<TrailCollisionDetectorComponent>(velocityComponent.id);
+				if (det.sprintTimeLeft > 0.f)
+				{
+					velocityComponent.velocity.x *= det.sprintMultiplier;
+					velocityComponent.velocity.z *= det.sprintMultiplier;
+				}
+			}
+
 			glm::vec3 newTranslation = transform.translation + velocityComponent.velocity * deltaTime;
 			scene->getTransformSystem().translateEntity(velocityComponent.id, newTranslation);
 			glm::vec3 newRotation = transform.eulerRotation + velocityComponent.angularVelocity * deltaTime;
 			scene->getTransformSystem().rotateEntity(velocityComponent.id, newRotation);
 		}
 	}
+
+	// trail sprint
+	if (auto dets = scene->getStorage<TrailCollisionDetectorComponent>())
+	{
+		for (int i = 0; i < dets->getQuantity(); ++i)
+		{
+			auto& det = dets->components[i];
+			if (det.sprintTimeLeft > 0.f)
+				det.sprintTimeLeft -= deltaTime;
+		}
+	}
+
 
 	auto butterControllers = scene->getStorage<ButterController>();
 	if (butterControllers != nullptr)
@@ -1220,6 +1248,71 @@ void Application::setupEvents()
 			spdlog::info("Elevator start moving!");
 		}
 	});
+
+	//slad masla sprint
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const CollisionEvent&>(e);
+		if (!ev.isColliding) return;
+
+		auto hasTrailTag = [&](EntityID id) {
+			return scene->hasComponent<ObjectInfoComponent>(id) &&
+				scene->getComponent<ObjectInfoComponent>(id).tag == "trail";
+			};
+		auto hasDetector = [&](EntityID id) {
+			return scene->hasComponent<TrailCollisionDetectorComponent>(id);
+			};
+
+		bool detectorHitsTrail =
+			(hasTrailTag(ev.objectA) && hasDetector(ev.objectB)) ||
+			(hasTrailTag(ev.objectB) && hasDetector(ev.objectA));
+
+		if (!detectorHitsTrail) return;
+
+		EntityID runner = hasDetector(ev.objectA) ? ev.objectA : ev.objectB;
+
+		// odśwież licznik sprintu do 3 s
+		scene->getComponent<TrailCollisionDetectorComponent>(runner).sprintTimeLeft = 3.0f;
+
+		spdlog::info("wykryto kolizje sladu z obiektem - sprint3s");
+		});
+
+	//maslo przyczepia sie do sciany
+	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+		{
+			const auto& ev = static_cast<const CollisionEvent&>(e);
+			if (!ev.isColliding) return;
+
+			
+			if (!scene->hasComponent<ButterController>(ev.objectA) ||
+				!scene->hasComponent<ColliderComponent>(ev.objectB) ||
+				scene->getComponent<ColliderComponent>(ev.objectB).isStatic == false)
+				return;
+
+			auto& butter = scene->getComponent<ButterController>(ev.objectA);
+			auto& velocity = scene->getComponent<VelocityComponent>(ev.objectA);
+
+			
+			glm::vec3 n = glm::normalize(ev.separationVector);
+			if (std::abs(n.y) > 0.3f) return;         
+
+		
+			glm::vec3 inputDir(0.0f);
+			if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)  inputDir.x += 1.f;
+			if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)  inputDir.x -= 1.f;
+			if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)  inputDir.z += 1.f;
+			if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)  inputDir.z -= 1.f;
+			if (inputDir.x != 0.f || inputDir.z != 0.f) inputDir = glm::normalize(inputDir);
+
+			bool pushing = glm::dot(inputDir, -n) > 0.5f;
+
+			if (pushing)
+			{
+				butter.isClinging = true;
+				butter.clingNormal = n;
+				velocity.useGravity = false;
+				velocity.velocity = glm::vec3(0.0f);  
+			}
+		});
 
 }
 

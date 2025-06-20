@@ -2,12 +2,14 @@
 #include "glfw/glfw3.h"
 #include "ECS/EntityManager.h"
 #include <queue>
+#include "glm/glm.hpp"
 
 class Scene;
 
 
 struct ButterController
 {
+
 	float moveSpeed;
 	float jumpSpeed;
 	bool isJumping = false;
@@ -28,5 +30,7 @@ struct ButterController
 
 	void addTrailIfPossible(Scene* scene);
 
-	EntityID id = (EntityID)-1;
+	EntityID id = (EntityID)-1;	
+	bool isClinging = false;
+	glm::vec3 clingNormal = {};
 };

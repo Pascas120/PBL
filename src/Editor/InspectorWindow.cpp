@@ -88,6 +88,8 @@ namespace Editor
 				drawSplitScreenController(context, editor->selectedObject);
                 drawButterController(context, editor->selectedObject);
                 drawSound(context, editor->selectedObject);
+                drawBreadController(context, editor->selectedObject);
+                drawTrailDetector(context, editor->selectedObject);
 
 
                 ImGui::Dummy(ImVec2(0, 10));
@@ -130,7 +132,9 @@ namespace Editor
                     ADD_COMPONENT(SplitScreenController, "Split Screen Controller");
 					ADD_COMPONENT(ButterHealthComponent, "Butter Health");
                     ADD_COMPONENT(ButterController, "Butter Controller");
+                    ADD_COMPONENT(BreadController, "Bread Controller");
                     ADD_COMPONENT(SoundComponent, "Sound");
+                    ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
 
                     ImGui::EndCombo();
                 }
@@ -690,6 +694,44 @@ namespace Editor
         }
         ImGui::PopID();
     }
+
+    void InspectorWindow::drawBreadController(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<BreadController>(id)) return;
+        auto& bc = scene->getComponent<BreadController>(id);
+
+        ImGui::PushID(&bc);
+        bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<BreadController>(context, id)) return;
+        if (open)
+        {
+            Utils::entityRefField("Respawn Point", bc.respawnPoint, *scene);
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawTrailDetector(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<TrailCollisionDetectorComponent>(id))
+            return;
+
+        // marker – brak edytowalnych pól, ale pozwalamy usunąć
+        auto& comp = scene->getComponent<TrailCollisionDetectorComponent>(id);
+        ImGui::PushID(&comp);
+
+        bool open = ImGui::CollapsingHeader("Trail Detector", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<TrailCollisionDetectorComponent>(context, id)) { ImGui::PopID(); return; }
+
+        if (open)
+        {
+            ImGui::TextUnformatted("brak parametrow");
+        }
+
+        ImGui::PopID();
+    }
+
 
     void InspectorWindow::drawSound(const EditorContext& context, EntityID id)
     {
