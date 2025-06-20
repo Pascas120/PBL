@@ -7,16 +7,16 @@
 void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
-	auto getInputDir = [](GLFWwindow* w) -> glm::vec3
-		{
-			glm::vec3 d(0.0f);
-			if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS)  d.x += 1.f;   // +X = w lewo
-			if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS)  d.x -= 1.f;   // -X = w prawo
-			if (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS)  d.z += 1.f;   // +Z = w przód
-			if (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS)  d.z -= 1.f;   // -Z = w tył
-			if (d.x != 0.f || d.z != 0.f) d = glm::normalize(d);
-			return d;
-		};
+	//auto getInputDir = [](GLFWwindow* w) -> glm::vec3
+	//	{
+	//		glm::vec3 d(0.0f);
+	//		if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS)  d.x += 1.f;   // +X = w lewo
+	//		if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS)  d.x -= 1.f;   // -X = w prawo
+	//		if (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS)  d.z += 1.f;   // +Z = w przód
+	//		if (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS)  d.z -= 1.f;   // -Z = w tył
+	//		if (d.x != 0.f || d.z != 0.f) d = glm::normalize(d);
+	//		return d;
+	//	};
 	if (trailBurstLeft > 0.f)
 	{
 		const float SPAWN_EVERY = 0.05f;     
@@ -30,12 +30,20 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 	}
+
+	if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
+	{
+		isSticky = true;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_RELEASE)
+	{
+		isSticky = false;
+	}
+
 	if (isClinging)
 	{
-		glm::vec3 inputDir = getInputDir(window);
-		bool stillPushing = glm::dot(inputDir, -clingNormal) > 0.5f;
 
-		if (stillPushing)
+		if (isSticky)
 		{
 			auto& vel = scene->getComponent<VelocityComponent>(id);
 			vel.useGravity = false;
@@ -52,6 +60,9 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			isClinging = false;
 			auto& vel = scene->getComponent<VelocityComponent>(id);
 			vel.useGravity = true;       
+
+			auto& collider = scene->getComponent<ColliderComponent>(id);
+			collider.isStatic = false;
 		}
 	}
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
@@ -102,7 +113,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			movement.y = velocityComponent.velocity.y;
 		}
 
-		if (!floating && glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
+		/*if (!floating && glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
 		{
 			velocityComponent.useGravity = false;
 			if (scene->hasComponent<ColliderComponent>(id))
@@ -125,7 +136,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		if (floating)
 		{
 			movement = glm::vec3(0.0f, 0.0f, 0.0f);
-		}
+		}*/
 
 		velocityComponent.velocity = movement;
 

@@ -31,6 +31,7 @@ struct ButterController
 	void addTrailIfPossible(Scene* scene);
 
 	EntityID id = (EntityID)-1;	
+	bool isSticky = false;
 	bool isClinging = false;
 	glm::vec3 clingNormal = {};
 };

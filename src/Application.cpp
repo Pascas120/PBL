@@ -1277,6 +1277,9 @@ void Application::setupEvents()
 				return;
 
 			auto& butter = scene->getComponent<ButterController>(ev.objectA);
+			if (!butter.isSticky || butter.isClinging)
+				return;
+
 			auto& velocity = scene->getComponent<VelocityComponent>(ev.objectA);
 
 			
@@ -1295,8 +1298,12 @@ void Application::setupEvents()
 
 			if (pushing)
 			{
+				auto& collider = scene->getComponent<ColliderComponent>(butter.id);
+				collider.isStatic = true;
+
 				butter.isClinging = true;
 				butter.clingNormal = n;
+
 				velocity.useGravity = false;
 				velocity.velocity = glm::vec3(0.0f);  
 			}

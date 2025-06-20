@@ -172,7 +172,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7790697813034058,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -221,7 +221,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7790697813034058,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -723,7 +723,7 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": true
+                "isTrigger": false
             },
             "ModelComponent": {
                 "color": [
