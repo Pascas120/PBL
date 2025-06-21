@@ -9,6 +9,7 @@
 #include "ECS/components/ButterController.h"
 
 #include <fstream>
+#include <random>
 
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -221,6 +222,24 @@ bool Application::init()
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
 	scene->getCollisionSystem().buildTree();
+
+	std::ifstream fileJokes("res/jokes.txt");
+	if (!fileJokes.is_open())
+	{
+		spdlog::error("Failed to open jokes file!");
+		return false;
+	}
+	for (std::string line; std::getline(fileJokes, line);)
+	{
+		if (!line.empty())
+		{
+			jokes.push_back(line);
+		}
+	}
+	std::shuffle(jokes.begin(), jokes.end(), std::mt19937(std::random_device()()));
+	spdlog::info("Loaded {} jokes.", jokes.size());
+	spdlog::info(jokes[0]);
+
 #ifndef EDITOR_APP
 	setStartValues();
 #endif

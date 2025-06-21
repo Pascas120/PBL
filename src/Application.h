@@ -96,6 +96,8 @@ protected:
 	void setupEvents();
 	void setStartValues();
 
+	std::vector<std::string> jokes;
+
 private:
 	// TODO: remove
 	void setupScene();
