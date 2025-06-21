@@ -29,6 +29,7 @@ public:
     inline float GetDuration() { return m_Duration; }
     inline const AssimpNodeData& GetRootNode() { return m_RootNode; }
     inline const std::map<std::string, BoneInfo>& GetBoneIDMap() { return m_BoneInfoMap; }
+    std::string path;
 
 private:
     void ReadMissingBones(const aiAnimation* animation, Model& model);

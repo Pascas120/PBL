@@ -14,6 +14,12 @@ public:
     void PlayAnimation(Animation* pAnimation);
     void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
     std::vector<glm::mat4> GetFinalBoneMatrices();
+    std::string GetCurrentAnimationName() const {
+        if (m_CurrentAnimation != nullptr) {
+            return m_CurrentAnimation->path;
+        }
+        return "No Animation";
+    }
 
 private:
     std::vector<glm::mat4> m_FinalBoneMatrices;

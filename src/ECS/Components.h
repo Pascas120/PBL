@@ -243,12 +243,14 @@ struct SoundComponent {
 };
 
 struct AnimationComponent {
-    Animator* animator;
+    Animator* animator = new Animator(nullptr);
     bool isPlaying = false;
     float playbackSpeed = 1.0f;
+    bool loop = false;
 
     EntityID id = (EntityID)-1;
 };
+
 struct TrailCollisionDetectorComponent
 {
     float sprintTimeLeft = 0.0f;   

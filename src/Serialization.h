@@ -17,12 +17,14 @@ namespace Serialization
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
 		std::vector<std::string> sounds;
+		std::vector<Animation*>& animations;
 		bool deserializeUuid;
 	};
 
 	struct DeserializationContext {
 		std::vector<Shader*>& shaders;
 		std::vector<Model*>& models;
+		std::vector<Animation*>& animations;
 		const std::unordered_map<std::string, EntityID>& uuidMap;
 		bool deserializeUuid;
 	};

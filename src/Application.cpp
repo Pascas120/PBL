@@ -45,6 +45,14 @@ Application::~Application()
 			model = nullptr;
 		}
 	}
+	for (Animation* animation : animations)
+	{
+		if (animation)
+		{
+			delete animation;
+			animation = nullptr;
+		}
+	}
 }
 
 
@@ -193,6 +201,7 @@ bool Application::init()
 		}
 	}
 	//setupScene();
+	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
 	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
 	models.emplace_back(new Model("res/models/MASLO.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
@@ -206,6 +215,8 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/woda.fbx"));
 	models.emplace_back(new Model("res/models/GABKA.fbx"));
 
+	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
+
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
 	sounds.emplace_back("res/sounds/boing.mp3");
@@ -216,7 +227,7 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/ost5.mp3");
 
 	scene = std::make_shared<Scene>(this);
-	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, true});
+	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, animations, true});
 	setupEvents();
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
@@ -283,6 +294,7 @@ void Application::update()
 
 	auto transforms = scene->getStorage<Transform>();
 	auto velocityComponents = scene->getStorage<VelocityComponent>();
+	scene->getAnimationSystem().update(deltaTime);
 
 	if (velocityComponents != nullptr)
 	{
@@ -838,7 +850,7 @@ std::vector<EntityID> Application::instantiatePrefab(const std::string& prefabNa
 
 	json prefabData = it->second;
 	std::vector<EntityID> instantiatedEntities = Serialization::deserializeObjects(
-		prefabData, scene, parent, { shaders, models, sounds, false });
+		prefabData, scene, parent, { shaders, models, sounds, animations, false });
 
 	return instantiatedEntities;
 }

@@ -72,6 +72,20 @@ namespace Serialization
 		}
 	}
 
+	static void from_json(const nlohmann::json& j, Animation*& aptr, const DeserializationContext& context)
+	{
+		std::string animationPath = j.get<std::string>();
+		auto itAnimation = std::find_if(context.animations.begin(), context.animations.end(),
+			[&](Animation* animation) { return animation->path == animationPath; });
+		if (itAnimation != context.animations.end())
+		{
+			aptr = *itAnimation;
+		}
+		else
+		{
+			aptr = context.animations[0];
+		}
+	}
 
 	static json entity_to_json(EntityID entity, const SerializationContext& context)
 	{
@@ -823,6 +837,7 @@ namespace Serialization
 		DeserializationContext context{
 			.shaders = gContext.shaders,
 			.models = gContext.models,
+			.animations = gContext.animations,
 			.uuidMap = uuidToEntityMap,
 			.deserializeUuid = gContext.deserializeUuid
 		};

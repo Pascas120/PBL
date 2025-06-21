@@ -90,7 +90,7 @@ namespace Editor
                 drawSound(context, editor->selectedObject);
                 drawBreadController(context, editor->selectedObject);
                 drawTrailDetector(context, editor->selectedObject);
-
+                drawAnimator(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -135,6 +135,7 @@ namespace Editor
                     ADD_COMPONENT(BreadController, "Bread Controller");
                     ADD_COMPONENT(SoundComponent, "Sound");
                     ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
+                    ADD_COMPONENT(AnimationComponent, "Animator");
 
                     ImGui::EndCombo();
                 }
@@ -755,6 +756,38 @@ namespace Editor
                     {
                         sound.soundPath = context.sounds[i].c_str();
                         sound.isInitialized = false;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawAnimator(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<AnimationComponent>(id)) return;
+        auto& animator = scene->getComponent<AnimationComponent>(id);
+
+        auto animations = context.animations;
+
+        ImGui::PushID(&animator);
+        bool open = ImGui::CollapsingHeader("AnimatorComponent", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<AnimationComponent>(context, id)) return;
+        if (open)
+        {
+            ImGui::Checkbox("Loop", &animator.loop);
+            ImGui::Checkbox("IsPlaying", &animator.isPlaying);
+            ImGui::DragFloat("Playback Speed", &animator.playbackSpeed, 0.01f, 0.0f, 2.0f);
+            if (ImGui::BeginCombo("Animation##Combo", animator.animator->GetCurrentAnimationName().c_str()))
+            {
+                for (int i = 0; i < context.animations.size(); i++)
+                {
+                    if (ImGui::Selectable(context.animations[i]->path.c_str(), animator.animator->GetCurrentAnimationName() == context.animations[i]->path))
+                    {
+                        animator.animator->PlayAnimation(context.animations[i]);
+                        //animator.isPlaying = true;
                     }
                 }
                 ImGui::EndCombo();

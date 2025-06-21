@@ -86,6 +86,8 @@ protected:
 
 	std::vector<Model*> models;
 
+	std::vector<Animation*> animations;
+
 	std::unordered_map<std::string, json> prefabs;
 
 	std::shared_ptr<Scene> scene;

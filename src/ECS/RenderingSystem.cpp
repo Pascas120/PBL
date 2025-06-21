@@ -567,6 +567,13 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
 			shadersUpdatedWithShadowMap.insert(modelComponent.shader);
 		}
 
+		if (scene->hasComponent<AnimationComponent>(entityID)) {
+			auto& animationComponent = scene->getComponent<AnimationComponent>(entityID);
+			auto boneMatrices = animationComponent.animator->GetFinalBoneMatrices();
+			for (int i = 0; i < boneMatrices.size(); ++i)
+            modelComponent.shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+		}
+
 		if (showMotionBlur)
 		{
 			modelComponent.shader->setMat4("prevModel", modelComponent.prevModelMatrix);

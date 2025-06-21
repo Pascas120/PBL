@@ -24,7 +24,9 @@ add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${ASSETS_FILES}
 		ECS/components/CameraController.cpp
 		ECS/components/CameraController.h
 		ECS/AudioSystem.cpp
-		ECS/AudioSystem.h)
+		ECS/AudioSystem.h
+		ECS/AnimationSystem.cpp
+		ECS/AnimationSystem.h)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE GLFW_INCLUDE_NONE)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LIBRARY_SUFFIX="")

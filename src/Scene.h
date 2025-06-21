@@ -17,6 +17,7 @@
 #include "ECS/FlyAISystem.h"
 
 #include "uuid.h"
+#include "ECS/AnimationSystem.h"
 #include "ECS/AudioSystem.h"
 
 class Application;
@@ -33,6 +34,7 @@ private:
     EventSystem eventSystem = EventSystem();
 	FlyAISystem flyAISystem = FlyAISystem(this);
     AudioSystem audioSystem = AudioSystem(this);
+    AnimationSystem animationSystem = AnimationSystem(this);
 
 
     EntityID sceneGraphRoot = 0;
@@ -83,6 +85,10 @@ public:
 
     AudioSystem& getAudioSystem() {
         return audioSystem;
+    }
+
+    AnimationSystem& getAnimationSystem() {
+        return animationSystem;
     }
 
     Application* getApplication() const {

@@ -9,6 +9,14 @@
             }
         },
         {
+            "name": "Animation",
+            "sources":
+            {
+                "VERTEX": "res/shaders/anim.vert",
+                "FRAGMENT": "res/shaders/material.frag"
+            }
+        },
+        {
             "name": "Flat",
             "sources": 
             {
