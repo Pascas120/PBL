@@ -1304,6 +1304,20 @@ void Application::setupEvents()
 				butter.isClinging = true;
 				butter.clingNormal = n;
 
+				EntityID clingEntity = scene->createEntity(ev.objectB);
+				auto& ts = scene->getTransformSystem();
+				ts.setGlobalMatrix(clingEntity, scene->getComponent<Transform>(ev.objectA).globalMatrix);
+
+				glm::mat4 wallMatrix = scene->getComponent<Transform>(ev.objectB).globalMatrix;
+
+				glm::vec3 upLocal = glm::inverse(wallMatrix) * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+				if (glm::length(upLocal) > 0.0f) upLocal = glm::normalize(upLocal);
+
+				glm::quat rotation = glm::quatLookAt(-n, upLocal);
+				ts.rotateEntity(clingEntity, rotation);
+
+				butter.clingEntity = clingEntity;
+
 				velocity.useGravity = false;
 				velocity.velocity = glm::vec3(0.0f);  
 			}

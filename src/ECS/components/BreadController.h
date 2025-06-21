@@ -11,6 +11,8 @@ struct BreadController {
 	bool isJumping = false;
 	float timeSinceLastGroundContact = 0.0f;
 
+	glm::vec3 targetRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	bool  freezing = false;   
 	float freezeRatio = 0.0f;    
 	float freezeDuration = 3.0f;   

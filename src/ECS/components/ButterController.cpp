@@ -7,6 +7,8 @@
 void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
+	auto& transform = scene->getComponent<Transform>(id);
+
 	//auto getInputDir = [](GLFWwindow* w) -> glm::vec3
 	//	{
 	//		glm::vec3 d(0.0f);
@@ -43,12 +45,20 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	if (isClinging)
 	{
 
-		if (isSticky)
+		if (isSticky && scene->hasEntity(clingEntity))
 		{
 			auto& vel = scene->getComponent<VelocityComponent>(id);
 			vel.useGravity = false;
 			vel.velocity = glm::vec3(0.0f);
-			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingNormal, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+			glm::mat4 clingEntityMatrix = scene->getComponent<Transform>(clingEntity).globalMatrix;
+			glm::vec3 clingEntPos = clingEntityMatrix[3];
+			transformSystem.translateEntity(id, clingEntPos);
+
+			glm::vec3 clingEntZ = glm::normalize(clingEntityMatrix[2]);
+			glm::vec3 clingEntY = glm::normalize(clingEntityMatrix[1]);
+
+			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingEntZ, clingEntY));
 			normalEulerY = glm::degrees(normalEulerY);
 			normalEulerY.y += 180.0f;
 			transformSystem.rotateEntity(id, normalEulerY);
@@ -58,6 +68,13 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		else
 		{
 			isClinging = false;
+
+			if (scene->hasEntity(clingEntity))
+			{
+				scene->destroyEntity(clingEntity);
+			}
+
+			clingEntity = (EntityID)-1;
 			auto& vel = scene->getComponent<VelocityComponent>(id);
 			vel.useGravity = true;       
 
@@ -65,31 +82,41 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			collider.isStatic = false;
 		}
 	}
+
+	transformSystem.rotateEntity(id, targetRotation, deltaTime * 15.0f);
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
-        auto& transform = scene->getComponent<Transform>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
+
+		glm::vec3 newTargetRotationDir = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
 			movement.z -= moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 0.0f, 0.0f), deltaTime*10);
+			newTargetRotationDir += glm::vec3(0.0f, 0.0f, -1.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 		{
 			movement.z += moveSpeed;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 180.0f, 0.0f), deltaTime*10);
+			newTargetRotationDir += glm::vec3(0.0f, 0.0f, 1.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		{
 			movement.x -= moveSpeed;
-			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 270.0f, 0.0f), deltaTime*10);
+			newTargetRotationDir += glm::vec3(-1.0f, 0.0f, 0.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 		{
 			movement.x += moveSpeed;
-			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10);
+			newTargetRotationDir += glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+
+		if (newTargetRotationDir != glm::vec3(0.0f, 0.0f, 0.0f))
+		{
+			newTargetRotationDir = glm::normalize(newTargetRotationDir);
+			targetRotation = glm::eulerAngles(glm::quatLookAt(newTargetRotationDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+			targetRotation = glm::degrees(targetRotation);
 		}
 
 		if (glm::length(movement) > 0.0f)
