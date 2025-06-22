@@ -197,20 +197,34 @@ void ButterController::addTrailIfPossible(Scene * scene)
 		offsetScale = glm::mix(1.0f, bh.minScale, lostRatio);
 	}
 
+	glm::vec3 newTrailPos;
+	bool defaultTrailPos = true;
+
 	constexpr float minTrailDist = 0.4f;
 		
 	if (!trailEntities.empty())
 	{
 		EntityID lastTrail = trailEntities.back();
 		auto& lastTransform = scene->getComponent<Transform>(lastTrail);
-		glm::vec3 diff = lastTransform.translation - transform.translation;
+		glm::vec3 diff = transform.translation - lastTransform.translation;
 		diff.y = 0.0f;
-		spdlog::info("Trail dist: {}, min dist: {}", glm::length(diff), minTrailDist * offsetScale);
 
-		if (glm::length(diff) < (minTrailDist * offsetScale)) {
+		float trailDist = glm::length(diff);
+		float scaledMinTrailDist = minTrailDist * offsetScale;
+		if (trailDist < scaledMinTrailDist) {
 			return;
 		}
+
+		if (trailDist < 2 * scaledMinTrailDist)
+		{
+			newTrailPos = lastTransform.translation + glm::normalize(diff) * scaledMinTrailDist;
+			defaultTrailPos = false;
+		}
 	}
+
+	if (defaultTrailPos)
+		newTrailPos = transform.translation - glm::vec3(0.0f, 0.22f * offsetScale, 0.0f);
+
 
 	constexpr std::array trailNames = { "Trail1", "Trail2", "Trail3" };
 	const std::string& trailName = trailNames[Random::getInt(0, trailNames.size() - 1)];
@@ -221,13 +235,12 @@ void ButterController::addTrailIfPossible(Scene * scene)
 
 
 		
-	glm::vec3 newTrailPos = transform.translation - glm::vec3(0.0f, 0.22f * offsetScale, 0.0f);
 	transformSystem.translateEntity(trail, newTrailPos);
 
 	float trailRotY = Random::getFloat(-180.0f, 180.0f);
 	transformSystem.rotateEntity(trail, glm::vec3(0.0f, trailRotY, 0.0f));
 
-	glm::vec3 newScale = transform.scale * offsetScale * 1.7f;
+	glm::vec3 newScale = transform.scale * 1.5f;
 	newScale.y = transform.scale.y;
 	transformSystem.scaleEntity(trail, newScale);
 

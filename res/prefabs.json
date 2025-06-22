@@ -4,19 +4,6 @@
             "data": {
                 "entities": [
                     {
-                        "ButterHealthComponent": {
-                            "burning": false,
-                            "healing": false,
-                            "minScale": 0.5,
-                            "secondsToDie": 5.0,
-                            "secondsToHeal": 5.0,
-                            "startScale": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "timeLeft": 5.0
-                        },
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
@@ -83,19 +70,6 @@
             "data": {
                 "entities": [
                     {
-                        "ButterHealthComponent": {
-                            "burning": false,
-                            "healing": false,
-                            "minScale": 0.5,
-                            "secondsToDie": 5.0,
-                            "secondsToHeal": 5.0,
-                            "startScale": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "timeLeft": 5.0
-                        },
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
@@ -162,19 +136,6 @@
             "data": {
                 "entities": [
                     {
-                        "ButterHealthComponent": {
-                            "burning": false,
-                            "healing": false,
-                            "minScale": 0.5,
-                            "secondsToDie": 5.0,
-                            "secondsToHeal": 5.0,
-                            "startScale": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "timeLeft": 5.0
-                        },
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
@@ -241,19 +202,6 @@
             "data": {
                 "entities": [
                     {
-                        "ButterHealthComponent": {
-                            "burning": false,
-                            "healing": false,
-                            "minScale": 0.5,
-                            "secondsToDie": 5.0,
-                            "secondsToHeal": 5.0,
-                            "startScale": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "timeLeft": 5.0
-                        },
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [

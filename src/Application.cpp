@@ -284,6 +284,8 @@ void Application::update()
 {
 	scene->getRenderingSystem().updatePreviousModelMatrices();
 
+	auto& ts = scene->getTransformSystem();
+
 	auto transforms = scene->getStorage<Transform>();
 	auto velocityComponents = scene->getStorage<VelocityComponent>();
 
@@ -313,9 +315,9 @@ void Application::update()
 			}
 
 			glm::vec3 newTranslation = transform.translation + velocityComponent.velocity * deltaTime;
-			scene->getTransformSystem().translateEntity(velocityComponent.id, newTranslation);
+			ts.translateEntity(velocityComponent.id, newTranslation);
 			glm::vec3 newRotation = transform.eulerRotation + velocityComponent.angularVelocity * deltaTime;
-			scene->getTransformSystem().rotateEntity(velocityComponent.id, newRotation);
+			ts.rotateEntity(velocityComponent.id, newRotation);
 		}
 	}
 
@@ -351,7 +353,6 @@ void Application::update()
 		}
 	}
 
-	auto& ts = scene->getTransformSystem();
 	ts.update();
 
 	auto& cs = scene->getCollisionSystem();
@@ -549,7 +550,7 @@ void Application::update()
 				}
 			}
 
-			scene->getTransformSystem().translateEntity(e.id, tr.translation);
+			ts.translateEntity(e.id, tr.translation);
 		}
 	}
 
@@ -561,35 +562,31 @@ void Application::update()
 	ts.update();
 
 	if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
-		if (auto bhs = scene->getStorage<ButterHealthComponent>()) {
-			auto transforms = scene->getStorage<Transform>();
-			for (int i = 0; i < bhs->getQuantity(); ++i) {
-				auto& bh = bhs->components[i];
-				auto& tr = transforms->get(bh.id);
+		auto transforms = scene->getStorage<Transform>();
+		for (int i = 0; i < bhs->getQuantity(); ++i) {
+			auto& bh = bhs->components[i];
+			auto& tr = transforms->get(bh.id);
 
 
-				if (bh.burning && bh.timeLeft > 0.0f)
-					bh.timeLeft -= deltaTime;
+			if (bh.burning && bh.timeLeft > 0.0f)
+				bh.timeLeft -= deltaTime;
 
-				if (bh.healing && bh.timeLeft < bh.secondsToDie)
-					bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
-
-
-				bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
+			if (bh.healing && bh.timeLeft < bh.secondsToDie)
+				bh.timeLeft += deltaTime * (bh.secondsToDie / bh.secondsToHeal);
 
 
-				float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
-				float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
-				tr.scale = bh.startScale * scaleRatio;
+			bh.timeLeft = glm::clamp(bh.timeLeft, 0.0f, bh.secondsToDie);
 
 
-				bh.burning = bh.healing = false;
-			}
+			float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
+			float scaleRatio = glm::mix(1.0f, bh.minScale, lostRatio);
+			ts.scaleEntity(bh.id, bh.startScale * scaleRatio);
 
-			scene->getTransformSystem().update();
+
+			bh.burning = bh.healing = false;
 		}
 
-
+		ts.update();
 	}
 
 	if (auto cc = scene->getStorage<CameraController>())
