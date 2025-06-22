@@ -21,9 +21,9 @@ struct ButterController
 	std::queue<EntityID> trailEntities;
 
 	bool  inHeat = false;  
-	bool  wasInHeat = false;   
+	//bool  wasInHeat = false;   
 	float trailBurstLeft = 0.f;   
-	float trailCooldown = 0.f;    
+	//float trailCooldown = 0.f;    
 
 	bool floating = false;
 

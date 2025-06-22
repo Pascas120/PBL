@@ -1156,8 +1156,9 @@ void Application::setupEvents()
 
 			scene->getComponent<ButterHealthComponent>(ev.objectA).burning = true;
 
-			
-			scene->getComponent<ButterController>(ev.objectA).inHeat = true;
+			auto& butter = scene->getComponent<ButterController>(ev.objectA);
+			butter.inHeat = true;
+			butter.trailBurstLeft = 5.0f;
 		});
 
 

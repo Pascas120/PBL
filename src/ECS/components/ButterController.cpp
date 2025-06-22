@@ -10,28 +10,18 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	auto& transformSystem = scene->getTransformSystem();
 	auto& transform = scene->getComponent<Transform>(id);
 
-	//auto getInputDir = [](GLFWwindow* w) -> glm::vec3
-	//	{
-	//		glm::vec3 d(0.0f);
-	//		if (glfwGetKey(w, GLFW_KEY_LEFT) == GLFW_PRESS)  d.x += 1.f;   // +X = w lewo
-	//		if (glfwGetKey(w, GLFW_KEY_RIGHT) == GLFW_PRESS)  d.x -= 1.f;   // -X = w prawo
-	//		if (glfwGetKey(w, GLFW_KEY_UP) == GLFW_PRESS)  d.z += 1.f;   // +Z = w przód
-	//		if (glfwGetKey(w, GLFW_KEY_DOWN) == GLFW_PRESS)  d.z -= 1.f;   // -Z = w tył
-	//		if (d.x != 0.f || d.z != 0.f) d = glm::normalize(d);
-	//		return d;
-	//	};
-	if (trailBurstLeft > 0.f)
+	if (trailBurstLeft > 0.f && !inHeat)
 	{
 		const float SPAWN_EVERY = 0.05f;     
 		trailBurstLeft -= deltaTime;
-		trailCooldown -= deltaTime;
+		//trailCooldown -= deltaTime;
 
 
 		addTrailIfPossible(scene);
-		if (trailCooldown <= 0.f)
+		/*if (trailCooldown <= 0.f)
 		{
 			trailCooldown = SPAWN_EVERY;
-		}
+		}*/
 
 	}
 
@@ -174,13 +164,13 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
         }
 
 		
-		if (wasInHeat && !inHeat)               
-		{
-			trailBurstLeft = 5.0f;               //czas5s
-			trailCooldown = 0.f;              
-		}
-		wasInHeat = inHeat;                    
-		inHeat = false;                       
+		//if (wasInHeat && !inHeat)               
+		//{
+		//	trailBurstLeft = 5.0f;               //czas5s
+		//	trailCooldown = 0.f;              
+		//}
+		//wasInHeat = inHeat;                    
+		inHeat = false;
 		
 
 	}
