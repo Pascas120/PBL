@@ -16,12 +16,14 @@ struct ButterController
 	float timeSinceLastGroundContact = 0.0f;
     EntityID respawnPoint = (EntityID)-1;
 
+	glm::vec3 targetRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	std::queue<EntityID> trailEntities;
 
 	bool  inHeat = false;  
-	bool  wasInHeat = false;   
+	//bool  wasInHeat = false;   
 	float trailBurstLeft = 0.f;   
-	float trailCooldown = 0.f;    
+	//float trailCooldown = 0.f;    
 
 	bool floating = false;
 
@@ -34,4 +36,5 @@ struct ButterController
 	bool isSticky = false;
 	bool isClinging = false;
 	glm::vec3 clingNormal = {};
+	EntityID clingEntity = (EntityID)-1;
 };

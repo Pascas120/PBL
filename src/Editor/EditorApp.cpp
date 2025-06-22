@@ -156,6 +156,11 @@ namespace Editor
 			loadScene();
 		}
 
+		if (!scene->hasEntity(selectedObject))
+		{
+			selectedObject = (EntityID)-1;
+		}
+
 
         if (ImGui::BeginMainMenuBar())
         {

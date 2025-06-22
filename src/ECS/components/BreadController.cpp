@@ -20,30 +20,41 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	float rotMul = freezeFactor;
 
 	float moveSpeed = this->moveSpeed;
+
+	transformSystem.rotateEntity(id, targetRotation, deltaTime * 15.0f * rotMul);
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
+
+		glm::vec3 newTargetRotationDir = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
 			movement.z -= moveSpeed * freezeFactor;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 0.0f, 0.0f), deltaTime*10 * rotMul);
+			newTargetRotationDir += glm::vec3(0.0f, 0.0f, -1.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
 			movement.z += moveSpeed * freezeFactor;
-			transformSystem.rotateEntity(id, glm::vec3(0.0f, 180.0f, 0.0f), deltaTime*10 * rotMul);
+			newTargetRotationDir += glm::vec3(0.0f, 0.0f, 1.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{
 			movement.x -= moveSpeed * freezeFactor;
-			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 270.0f, 0.0f), deltaTime*10 * rotMul);
+			newTargetRotationDir += glm::vec3(-1.0f, 0.0f, 0.0f);
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			movement.x += moveSpeed * freezeFactor;
-			transformSystem.rotateEntity(id, -glm::vec3(0.0f, 90.0f, 0.0f), deltaTime*10 * rotMul);
+			newTargetRotationDir += glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+
+		if (newTargetRotationDir != glm::vec3(0.0f, 0.0f, 0.0f))
+		{
+			newTargetRotationDir = glm::normalize(newTargetRotationDir);
+			targetRotation = glm::eulerAngles(glm::quatLookAt(newTargetRotationDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+			targetRotation = glm::degrees(targetRotation);
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
@@ -75,7 +86,7 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		timeSinceLastGroundContact += deltaTime;
-		if (!isJumping && timeSinceLastGroundContact > 0.3f)
+		if (!isJumping && timeSinceLastGroundContact > 0.15f)
 		{
 			isJumping = true;
 		}
