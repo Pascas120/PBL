@@ -20,6 +20,85 @@
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
+                                    -5.300000190734863,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    113.80000305175781,
+                                    8.600000381469727,
+                                    108.9000015258789
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama2.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "2749eb5b-9a9c-e4e3-5614-11d632a4d204"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -0.8992981314659119,
+                                18.61429786682129,
+                                -7.476591110229492
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail2"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ButterHealthComponent": {
+                            "burning": false,
+                            "healing": false,
+                            "minScale": 0.5,
+                            "secondsToDie": 5.0,
+                            "secondsToHeal": 5.0,
+                            "startScale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "timeLeft": 5.0
+                        },
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
                                     0.0,
                                     0.0,
                                     0.0
@@ -78,6 +157,164 @@
                 ]
             },
             "name": "Trail"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ButterHealthComponent": {
+                            "burning": false,
+                            "healing": false,
+                            "minScale": 0.5,
+                            "secondsToDie": 5.0,
+                            "secondsToHeal": 5.0,
+                            "startScale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "timeLeft": 5.0
+                        },
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    -7.800000190734863
+                                ],
+                                "halfSize": [
+                                    110.9000015258789,
+                                    8.600000381469727,
+                                    88.9000015258789
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama1.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "700092d0-bc04-201e-3303-2ecdc2e4ec75"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -0.4241061508655548,
+                                18.61429786682129,
+                                -7.976927280426025
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail1"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ButterHealthComponent": {
+                            "burning": false,
+                            "healing": false,
+                            "minScale": 0.5,
+                            "secondsToDie": 5.0,
+                            "secondsToHeal": 5.0,
+                            "startScale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "timeLeft": 5.0
+                        },
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    10.100000381469727,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    128.39999389648438,
+                                    8.600000381469727,
+                                    109.30000305175781
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama3.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -1.46438729763031,
+                                18.61429786682129,
+                                -8.249442100524902
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail3"
         }
     ]
 }

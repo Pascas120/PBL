@@ -205,6 +205,9 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
 	models.emplace_back(new Model("res/models/woda.fbx"));
 	models.emplace_back(new Model("res/models/GABKA.fbx"));
+	models.emplace_back(new Model("res/models/plama1.fbx"));
+	models.emplace_back(new Model("res/models/plama2.fbx"));
+	models.emplace_back(new Model("res/models/plama3.fbx"));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
@@ -1064,10 +1067,14 @@ void Application::setupEvents()
 
 		VelocityComponent* velocityComponent = &scene->getComponent<VelocityComponent>(event.objectA);
 
-		if (event.separationVector.y > 0.01f && velocityComponent->useGravity
-			&& velocityComponent->velocity.y < 0.1f)
+		if (velocityComponent->useGravity && glm::length(event.separationVector) != 0.0f)
 		{
-			velocityComponent->velocity.y = 0.0f;
+			float upDot = glm::dot(glm::normalize(event.separationVector), glm::vec3(0.0f, 1.0f, 0.0f));
+			if ((upDot > 0.9f && velocityComponent->velocity.y < 0.1f) ||
+				upDot < -0.9f)
+			{
+				velocityComponent->velocity.y = 0.0f;
+			}
 		}
 	});
 
@@ -1084,7 +1091,8 @@ void Application::setupEvents()
 
 		BreadController* breadController = &scene->getComponent<BreadController>(event.objectA);
 
-		if (event.separationVector.y > 0.01f)
+		if (glm::length(event.separationVector) != 0.0f &&
+			glm::dot(glm::normalize(event.separationVector), glm::vec3(0.0f, 1.0f, 0.0f)) > 0.9f)
 		{
 			breadController->isJumping = false;
 			breadController->timeSinceLastGroundContact = 0.0f;
@@ -1102,7 +1110,8 @@ void Application::setupEvents()
 
 		ButterController* butterController = &scene->getComponent<ButterController>(event.objectA);
 
-		if (event.separationVector.y > 0.01f)
+		if (glm::length(event.separationVector) != 0.0f &&
+			glm::dot(glm::normalize(event.separationVector), glm::vec3(0.0f, 1.0f, 0.0f)) > 0.9f)
 		{
 			butterController->isJumping = false;
 			butterController->timeSinceLastGroundContact = 0.0f;
@@ -1140,24 +1149,15 @@ void Application::setupEvents()
 		{
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 
-			auto isMaslo = [&](EntityID id)
-				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
-				scene->getComponent<ObjectInfoComponent>(id).tag == "maslo"; };
-
-			auto isHeat = [&](EntityID id)
-				{ return scene->hasComponent<HeatComponent>(id); };
-
-			if (!((isMaslo(ev.objectA) && isHeat(ev.objectB)) ||
-				(isMaslo(ev.objectB) && isHeat(ev.objectA))))
+			if (!scene->hasComponent<ButterController>(ev.objectA) ||
+				!scene->hasComponent<ButterHealthComponent>(ev.objectA) ||
+				!scene->hasComponent<HeatComponent>(ev.objectB))
 				return;
 
-			EntityID masloID = isMaslo(ev.objectA) ? ev.objectA : ev.objectB;
-
-			spdlog::info("cieplo");
-			scene->getComponent<ButterHealthComponent>(masloID).burning = true;
+			scene->getComponent<ButterHealthComponent>(ev.objectA).burning = true;
 
 			
-			scene->getComponent<ButterController>(masloID).inHeat = true;
+			scene->getComponent<ButterController>(ev.objectA).inHeat = true;
 		});
 
 
@@ -1181,7 +1181,6 @@ void Application::setupEvents()
 
 			if ((aFreeze && bChleb) || (bFreeze && aChleb))
 			{
-				spdlog::info("zimno");
 				EntityID breadID = aChleb ? ev.objectA : ev.objectB;
 				scene->getComponent<BreadController>(breadID).freezing = true;
 			}
@@ -1227,7 +1226,13 @@ void Application::setupEvents()
 			return;
 		}
 
-		if (ev.separationVector.y < 0.01f) return;
+
+		//if (ev.separationVector.y < 0.01f) return;
+		if (glm::length(ev.separationVector) == 0.0f ||
+			glm::dot(glm::normalize(ev.separationVector), glm::vec3(0.0f, 1.0f, 0.0f)) < 0.9f)
+		{
+			return;
+		}
 
 		auto& button = scene->getComponent<ButtonComponent>(ev.objectB);
 		if (button.elevatorEntity == (EntityID)-1) return;
@@ -1246,7 +1251,6 @@ void Application::setupEvents()
 			auto& transform = scene->getComponent<Transform>(elevator.id);
 			elevator.startY = transform.translation.y;
 			elevator.isMoving = true;
-			spdlog::info("Elevator start moving!");
 		}
 	});
 
@@ -1260,8 +1264,6 @@ void Application::setupEvents()
 
 		// odśwież licznik sprintu do 3 s
 		scene->getComponent<TrailCollisionDetectorComponent>(ev.otherObject).sprintTimeLeft = 3.0f;
-
-		spdlog::info("wykryto kolizje sladu z obiektem - sprint3s");
 		});
 
 	//maslo przyczepia sie do sciany
@@ -1282,9 +1284,10 @@ void Application::setupEvents()
 
 			auto& velocity = scene->getComponent<VelocityComponent>(ev.objectA);
 
-			
+			if (glm::length(ev.separationVector) == 0.0f)
+				return;
 			glm::vec3 n = glm::normalize(ev.separationVector);
-			if (std::abs(n.y) > 0.3f) return;         
+			if (std::abs(n.y) > 0.3f) return;
 
 		
 			glm::vec3 inputDir(0.0f);

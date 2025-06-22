@@ -86,7 +86,7 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		timeSinceLastGroundContact += deltaTime;
-		if (!isJumping && timeSinceLastGroundContact > 0.3f)
+		if (!isJumping && timeSinceLastGroundContact > 0.15f)
 		{
 			isJumping = true;
 		}

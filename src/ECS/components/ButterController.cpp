@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 #include "Scene.h"
 #include "spdlog/spdlog.h"
+#include "Random.h"
 
 void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
@@ -25,9 +26,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		trailBurstLeft -= deltaTime;
 		trailCooldown -= deltaTime;
 
+
+		addTrailIfPossible(scene);
 		if (trailCooldown <= 0.f)
 		{
-			addTrailIfPossible(scene);
 			trailCooldown = SPAWN_EVERY;
 		}
 
@@ -125,7 +127,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		timeSinceLastGroundContact += deltaTime;
-		if (!isJumping && timeSinceLastGroundContact > 0.3f)
+		if (!isJumping && timeSinceLastGroundContact > 0.15f)
 		{
 			isJumping = true;
 		}
@@ -186,49 +188,68 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 
 }
-	void ButterController::addTrailIfPossible(Scene * scene)
-	{
-		auto& transformSystem = scene->getTransformSystem();
-		auto& transform = scene->getComponent<Transform>(id);
+
+
+
+void ButterController::addTrailIfPossible(Scene * scene)
+{
+	auto& transformSystem = scene->getTransformSystem();
+	auto& transform = scene->getComponent<Transform>(id);
 
 	
-		bool addTrail = (timeSinceLastGroundContact <= 0.1f);
+	if (timeSinceLastGroundContact != 0.0f) return;
 
-		
-		if (addTrail && !trailEntities.empty())
-		{
-			EntityID lastTrail = trailEntities.back();
-			auto& lastTransform = scene->getComponent<Transform>(lastTrail);
-			if (glm::length(lastTransform.translation - transform.translation) < 0.3f)
-				addTrail = false;
-		}
-
-		if (!addTrail) return;
-
-		
-		EntityID trail = scene->instantiatePrefab("Trail")[0];
-
-		float offsetScale = 1.0f;
-		if (scene->hasComponent<ButterHealthComponent>(id))
-		{
-			auto& bh = scene->getComponent<ButterHealthComponent>(id);
-			float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
-			offsetScale = glm::mix(1.0f, bh.minScale, lostRatio);
-		}
-
-		transformSystem.translateEntity(trail,
-			transform.translation - glm::vec3(0.0f, 0.22f * offsetScale, 0.0f));
-		transformSystem.rotateEntity(trail, transform.rotation);
-
-		
-		trailEntities.push(trail);
-		if (trailEntities.size() > 200)
-		{
-			EntityID oldTrail = trailEntities.front();
-			trailEntities.pop();
-			scene->destroyEntity(oldTrail);
-		}
-
-
-
+	float offsetScale = 1.0f;
+	if (scene->hasComponent<ButterHealthComponent>(id))
+	{
+		auto& bh = scene->getComponent<ButterHealthComponent>(id);
+		float lostRatio = 1.0f - (bh.timeLeft / bh.secondsToDie);
+		offsetScale = glm::mix(1.0f, bh.minScale, lostRatio);
 	}
+
+	constexpr float minTrailDist = 0.4f;
+		
+	if (!trailEntities.empty())
+	{
+		EntityID lastTrail = trailEntities.back();
+		auto& lastTransform = scene->getComponent<Transform>(lastTrail);
+		glm::vec3 diff = lastTransform.translation - transform.translation;
+		diff.y = 0.0f;
+		spdlog::info("Trail dist: {}, min dist: {}", glm::length(diff), minTrailDist * offsetScale);
+
+		if (glm::length(diff) < (minTrailDist * offsetScale)) {
+			return;
+		}
+	}
+
+	constexpr std::array trailNames = { "Trail1", "Trail2", "Trail3" };
+	const std::string& trailName = trailNames[Random::getInt(0, trailNames.size() - 1)];
+		
+	auto trails = scene->instantiatePrefab(trailName);
+	if (trails.empty()) return;
+	EntityID trail = trails[0];
+
+
+		
+	glm::vec3 newTrailPos = transform.translation - glm::vec3(0.0f, 0.22f * offsetScale, 0.0f);
+	transformSystem.translateEntity(trail, newTrailPos);
+
+	float trailRotY = Random::getFloat(-180.0f, 180.0f);
+	transformSystem.rotateEntity(trail, glm::vec3(0.0f, trailRotY, 0.0f));
+
+	glm::vec3 newScale = transform.scale * offsetScale * 1.7f;
+	newScale.y = transform.scale.y;
+	transformSystem.scaleEntity(trail, newScale);
+
+		
+	trailEntities.push(trail);
+	if (trailEntities.size() > 200)
+	{
+		EntityID oldTrail = trailEntities.front();
+		trailEntities.pop();
+		scene->destroyEntity(oldTrail);
+	}
+
+
+
+}
