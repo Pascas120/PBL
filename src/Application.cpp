@@ -1158,17 +1158,23 @@ void Application::setupEvents()
 			!scene->hasComponent<BreadController>(event.objectB))
 			return;
 
-		ButterController* butter = &scene->getComponent<ButterController>(event.objectA);
-		BreadController* bread = &scene->getComponent<BreadController>(event.objectB);
+		if (glm::length(event.separationVector) == 0.0f) return;
 
-		if (bread && butter && bread->isBouncy)
+		ButterController& butter = scene->getComponent<ButterController>(event.objectA);
+		BreadController& bread = scene->getComponent<BreadController>(event.objectB);
+
+		if (bread.isBouncy)
 		{
-			scene->getAudioSystem().playSound(event.objectB);
 			auto& velocityComponent = scene->getComponent<VelocityComponent>(event.objectA);
-			if (event.separationVector.y > 0.01f && velocityComponent.velocity.y < 0.1f)
+			
+
+			if (glm::dot(glm::normalize(event.separationVector), {0.0f, 1.0f, 0.0f}) > 0.9f
+				&& velocityComponent.velocity.y < 0.1f)
 			{
-				velocityComponent.velocity.y = butter->jumpSpeed * 1.5f;
-				butter->isJumping = true;
+				scene->getAudioSystem().playSound(event.objectB);
+
+				velocityComponent.velocity.y = butter.jumpSpeed * 1.5f;
+				butter.isJumping = true;
 			}
 		}
 	});
@@ -1319,14 +1325,18 @@ void Application::setupEvents()
 			if (std::abs(n.y) > 0.3f) return;
 
 		
-			glm::vec3 inputDir(0.0f);
-			if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)  inputDir.x += 1.f;
-			if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)  inputDir.x -= 1.f;
-			if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)  inputDir.z += 1.f;
-			if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)  inputDir.z -= 1.f;
-			if (inputDir.x != 0.f || inputDir.z != 0.f) inputDir = glm::normalize(inputDir);
+			glm::vec3 linearVel = velocity.velocity;
+			linearVel.y = 0.0f;
 
-			bool pushing = glm::dot(inputDir, -n) > 0.5f;
+
+
+			bool pushing = false;
+			
+			if (glm::length(linearVel) > 0.0f)
+			{
+				linearVel = glm::normalize(linearVel);
+				pushing = glm::dot(linearVel, -n) > 0.5f;
+			}
 
 			if (pushing)
 			{

@@ -1,6 +1,7 @@
 #include "BreadController.h"
 #include <glm/glm.hpp>
 #include "Scene.h"
+#include "spdlog/spdlog.h"
 
 void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
@@ -25,39 +26,59 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
+		GLFWgamepadstate state;
+		glfwGetGamepadState(GLFW_JOYSTICK_2, &state);
+
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
 
-		glm::vec3 newTargetRotationDir = glm::vec3(0.0f, 0.0f, 0.0f);
+		int axisCount;
+		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &axisCount);
+
+		glm::vec2 inputAxes = { 0.0f, 0.0f };
+		if (axisCount > 2)
+		{
+			inputAxes = { axes[0], axes[1] };
+			movement.x = -inputAxes.x;
+			movement.z = -inputAxes.y;
+		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			movement.z -= moveSpeed * freezeFactor;
-			newTargetRotationDir += glm::vec3(0.0f, 0.0f, -1.0f);
+			movement.z -= 1.0f;
 		}
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			movement.z += moveSpeed * freezeFactor;
-			newTargetRotationDir += glm::vec3(0.0f, 0.0f, 1.0f);
+			movement.z += 1.0f;
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{
-			movement.x -= moveSpeed * freezeFactor;
-			newTargetRotationDir += glm::vec3(-1.0f, 0.0f, 0.0f);
+			movement.x -= 1.0f;
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			movement.x += moveSpeed * freezeFactor;
-			newTargetRotationDir += glm::vec3(1.0f, 0.0f, 0.0f);
+			movement.x += 1.0f;
 		}
 
-		if (newTargetRotationDir != glm::vec3(0.0f, 0.0f, 0.0f))
+		float movementMag = glm::length(movement);
+		if (movementMag > 1e-4f)
 		{
-			newTargetRotationDir = glm::normalize(newTargetRotationDir);
-			targetRotation = glm::eulerAngles(glm::quatLookAt(newTargetRotationDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::vec3 movementDir = movement / movementMag;
+			float remappedMag = std::min(movementMag / 0.9f, 1.0f);
+			movement = movementDir * remappedMag;
+
+			targetRotation = glm::eulerAngles(glm::quatLookAt(movementDir, glm::vec3(0.0f, 1.0f, 0.0f)));
 			targetRotation = glm::degrees(targetRotation);
 		}
 
-		if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+		movement *= moveSpeed;
+
+		bool inflateButton = glfwGetKey(window, GLFW_KEY_F) ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_LEFT_BUMPER] ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER] ||
+			state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] > 0.5f ||
+			state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.5f;
+
+		if (inflateButton)
 		{
 			if (relativeScale < 1.5f)
 			{
@@ -80,18 +101,19 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			}
 		}
 
-		if (glm::length(movement) > 0.0f)
-		{
-			movement = glm::normalize(movement) * moveSpeed*freezeFactor;
-		}
-
 		timeSinceLastGroundContact += deltaTime;
 		if (!isJumping && timeSinceLastGroundContact > 0.15f)
 		{
 			isJumping = true;
 		}
 
-		if (!isJumping && glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		bool jumpButton = glfwGetKey(window, GLFW_KEY_SPACE) ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_A] ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_B] ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_X] ||
+			state.buttons[GLFW_GAMEPAD_BUTTON_Y];
+
+		if (!isJumping && jumpButton)
 		{
 			movement.y += jumpSpeed * freezeFactor;
 			isJumping = true;
