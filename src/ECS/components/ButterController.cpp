@@ -83,17 +83,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		auto& velocityComponent = scene->getComponent<VelocityComponent>(id);
 		glm::vec3 movement(0.0f, 0.0f, 0.0f);
 		
-		int axisCount;
-		const float* axes = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &axisCount);
+		glm::vec2 inputAxes = { state.axes[GLFW_GAMEPAD_AXIS_LEFT_X], state.axes[GLFW_GAMEPAD_AXIS_LEFT_Y] };
+		movement.x = -inputAxes.x;
+		movement.z = -inputAxes.y;
 
-		glm::vec2 inputAxes = { 0.0f, 0.0f };
-		if (axisCount > 2)
-		{
-			inputAxes = { axes[0], axes[1] };
-			movement.x = -inputAxes.x;
-			movement.z = -inputAxes.y;
-
-		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 		{
 			movement.z -= 1.0f;
