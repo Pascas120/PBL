@@ -218,6 +218,8 @@ namespace Editor
 			ImGui::Checkbox("Trigger", &collider.isTrigger);
             if (ImGui::TreeNodeEx("Properties", ImGuiTreeNodeFlags_DefaultOpen))
             {
+                ImGui::CheckboxFlags("Disable Collider", &collider.properties, ColliderPropertyFlags::DisableCollider);
+                ImGui::Dummy(ImVec2(0, 5));
                 ImGui::CheckboxFlags("Disable Butter Sticking", &collider.properties, ColliderPropertyFlags::DisableButterSticking);
                 ImGui::CheckboxFlags("Disable Butter Trail", &collider.properties, ColliderPropertyFlags::DisableButterTrail);
 

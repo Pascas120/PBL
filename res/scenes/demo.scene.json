@@ -52,7 +52,9 @@
                 "uuid": "20223709-e370-72af-81fb-d872aec3be9f"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "1c131457-6084-fa8e-5881-8d94802defae"
+                ],
                 "eulerRotation": [
                     0.0,
                     -43.52345275878906,
@@ -85,6 +87,57 @@
                 ],
                 "useGravity": true,
                 "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        80.0
+                    ],
+                    "halfSize": [
+                        129.8000030517578,
+                        87.19999694824219,
+                        147.3000030517578
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 4
+            },
+            "ObjectInfoComponent": {
+                "name": "Collider Extension",
+                "tag": "clingColliderExtension",
+                "uuid": "1c131457-6084-fa8e-5881-8d94802defae"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "20223709-e370-72af-81fb-d872aec3be9f",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
                     0.0,
                     0.0,
                     0.0

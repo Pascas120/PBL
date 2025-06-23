@@ -73,6 +73,12 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 			auto& collider = scene->getComponent<ColliderComponent>(id);
 			collider.isStatic = false;
+
+			if (clingColliderExtension != (EntityID)-1)
+			{
+				auto& extCol = scene->getComponent<ColliderComponent>(clingColliderExtension);
+				extCol.properties |= ColliderPropertyFlags::DisableCollider;
+			}
 		}
 	}
 

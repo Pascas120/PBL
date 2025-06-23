@@ -8,6 +8,7 @@ struct ColliderPropertyFlags {
         None = 0,
         DisableButterSticking = 1 << 0,
         DisableButterTrail = 1 << 1,
+        DisableCollider = 1 << 2,
     };
 };
 

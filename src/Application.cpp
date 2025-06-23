@@ -56,6 +56,7 @@ Application::~Application()
 	}
 }
 
+constexpr float maxDeltaTime = 1.0f / 3.0f;
 
 void Application::run()
 {
@@ -65,6 +66,7 @@ void Application::run()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		deltaTime = std::min(deltaTime, maxDeltaTime);
 
 		input();
 		update();
@@ -1099,7 +1101,7 @@ void Application::setupEvents()
 		{
 			float upDot = glm::dot(glm::normalize(event.separationVector), glm::vec3(0.0f, 1.0f, 0.0f));
 			if ((upDot > 0.9f && velocityComponent->velocity.y < 0.1f) ||
-				upDot < -0.9f)
+				(upDot < -0.9f && velocityComponent->velocity.y > 0.1f))
 			{
 				velocityComponent->velocity.y = 0.0f;
 			}
@@ -1366,6 +1368,12 @@ void Application::setupEvents()
 
 				velocity.useGravity = false;
 				velocity.velocity = glm::vec3(0.0f);  
+
+				if (butter.clingColliderExtension != (EntityID)-1)
+				{
+					auto& extCol = scene->getComponent<ColliderComponent>(butter.clingColliderExtension);
+					extCol.properties &= ~(ColliderPropertyFlags::DisableCollider);
+				}
 			}
 		});
 
@@ -1389,6 +1397,25 @@ void Application::setStartValues()
 		{
 			auto& bh = butterHealthComponents->components[i];
 			bh.startScale = scene->getComponent<Transform>(bh.id).scale;
+		}
+	}
+	auto butterControllers = scene->getStorage<ButterController>();
+	if (butterControllers)
+	{
+		for (int i = 0; i < butterControllers->getQuantity(); i++)
+		{
+			auto& butter = butterControllers->components[i];
+			auto& transform = scene->getComponent<Transform>(butter.id);
+
+			for (EntityID child : transform.children)
+			{
+				if (scene->getComponent<ObjectInfoComponent>(child).tag == "clingColliderExtension" &&
+					scene->hasComponent<ColliderComponent>(child))
+				{
+					butter.clingColliderExtension = child;
+					break;
+				}
+			}
 		}
 	}
 
