@@ -33,7 +33,7 @@ add_library(ImGuizmo STATIC ${ImGuizmo_SOURCE_FILES} ${ImGuizmo_HEADER_FILES})
 target_include_directories(ImGuizmo PUBLIC ${ImGuizmo_SOURCE_DIR})
 
 # other
-CPMAddPackage("gh:assimp/assimp@6.0.2")
+CPMAddPackage("gh:assimp/assimp@5.4.3")
 CPMAddPackage("gh:glfw/glfw#3.3.8")
 CPMAddPackage("gh:g-truc/glm#1.0.1")
 CPMAddPackage("gh:ocornut/imgui@1.91.9b-docking") # TODO: remove (editor)

@@ -203,7 +203,7 @@ bool Application::init()
 	}
 	//setupScene();
 	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
-	//models.emplace_back(new Model("res/anims/chica.fbx"));
+	models.emplace_back(new Model("res/anims/chica.fbx"));
 	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
 	models.emplace_back(new Model("res/models/MASLO.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
@@ -221,7 +221,7 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plama3.fbx"));
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
-	//animations.emplace_back(new Animation("res/anims/chica.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chica.fbx", models[1]));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");

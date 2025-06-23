@@ -73,11 +73,28 @@ Shader::Shader(const std::string& name, const std::unordered_map<GLenum, std::st
 
         glGetActiveUniform(ID, i, sizeof(name), NULL, &size, &type, name);
 
-		GLint location = glGetUniformLocation(ID, name);
-		if (location != -1)
-		{
-			uniformLocations[name] = location;
-		}
+    	if (size > 1)
+    	{
+    		for (GLint j = 0; j < size; ++j)
+    		{
+    			std::string indexedName = std::string(name);
+    			indexedName = indexedName.substr(0, indexedName.find('['));
+    			indexedName += "[" + std::to_string(j) + "]";
+    			GLint location = glGetUniformLocation(ID, indexedName.c_str());
+    			if (location != -1)
+    			{
+    				uniformLocations[indexedName] = location;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		GLint location = glGetUniformLocation(ID, name);
+    		if (location != -1)
+    		{
+    			uniformLocations[name] = location;
+    		}
+    	}
 
         processUniformNode(uniforms, name, type, size);
     }
