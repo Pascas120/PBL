@@ -3,6 +3,7 @@
 //
 
 #include "Animator.h"
+#include "spdlog/spdlog.h"
 
 Animator::Animator(Animation* animation)
 {
@@ -42,7 +43,19 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
     if (bone)
     {
         bone->Update(m_CurrentTime);
+        //spdlog::info(bone->toString());
         nodeTransform = bone->GetLocalTransform();
+        // Debug: Log aktualizacji kości
+        // spdlog::info("Bone '{}' updated. Current time: {}", nodeName, m_CurrentTime);
+        // spdlog::info("Node Transform Matrix:");
+        // for (int row = 0; row < 4; ++row)
+        // {
+        //     spdlog::info("[{}, {}, {}, {}]",
+        //                  nodeTransform[row][0],
+        //                  nodeTransform[row][1],
+        //                  nodeTransform[row][2],
+        //                  nodeTransform[row][3]);
+        // }
     }
 
     glm::mat4 globalTransformation = parentTransform * nodeTransform;
@@ -53,6 +66,8 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
         int index = boneInfoMap[nodeName].id;
         glm::mat4 offset = boneInfoMap[nodeName].offset;
         m_FinalBoneMatrices[index] = globalTransformation * offset;
+        // Debug: Log aktualizacji macierzy końcowej
+        spdlog::info("Bone '{}' final matrix updated at index {}.", nodeName, index);
     }
 
     for (int i = 0; i < node->childrenCount; i++)

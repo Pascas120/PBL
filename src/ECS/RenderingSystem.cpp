@@ -570,8 +570,21 @@ void RenderingSystem::drawBase(const CustomFramebuffer& outputFramebuffer, Camer
 		if (scene->hasComponent<AnimationComponent>(entityID)) {
 			auto& animationComponent = scene->getComponent<AnimationComponent>(entityID);
 			auto boneMatrices = animationComponent.animator->GetFinalBoneMatrices();
-			for (int i = 0; i < boneMatrices.size(); ++i)
-            modelComponent.shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+			for (int i = 0; i < boneMatrices.size(); ++i) {
+
+				for (int row = 0; row < 4; ++row)
+				{
+					if(boneMatrices[i] == glm::mat4(1.0f)) {
+						continue;
+					}
+				    spdlog::info("[{}, {}, {}, {}]",
+				                 boneMatrices[i][row][0],
+				                 boneMatrices[i][row][1],
+				                 boneMatrices[i][row][2],
+				                 boneMatrices[i][row][3]);
+				}
+				modelComponent.shader->setMat4("finalBonesMatrices[" + std::to_string(i) + "]", boneMatrices[i]);
+			}
 		}
 
 		if (showMotionBlur)

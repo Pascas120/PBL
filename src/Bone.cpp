@@ -3,6 +3,7 @@
 
 #include "AssimpGLMHelpers.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include <sstream>
 
 Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
     : m_Name(name), m_ID(ID), m_LocalTransform(1.0f)
@@ -133,4 +134,35 @@ glm::mat4 Bone::InterpolateScaling(float animationTime)
                                        m_Scales[p1Index].timeStamp, animationTime);
     glm::vec3 finalScale = glm::mix(m_Scales[p0Index].scale, m_Scales[p1Index].scale, scaleFactor);
     return glm::scale(glm::mat4(1.0f), finalScale);
+}
+
+std::string Bone::toString() const
+{
+    std::ostringstream oss;
+
+    oss << "Bone Name: " << m_Name << "\n";
+    oss << "Bone ID: " << m_ID << "\n";
+
+    oss << "Key Positions:\n";
+    for (const auto& position : m_Positions)
+    {
+        oss << "  Position: (" << position.position.x << ", " << position.position.y << ", " << position.position.z << ")";
+        oss << " at Time: " << position.timeStamp << "\n";
+    }
+
+    oss << "Key Rotations:\n";
+    for (const auto& rotation : m_Rotations)
+    {
+        oss << "  Rotation: (" << rotation.orientation.x << ", " << rotation.orientation.y << ", " << rotation.orientation.z << ", " << rotation.orientation.w << ")";
+        oss << " at Time: " << rotation.timeStamp << "\n";
+    }
+
+    oss << "Key Scales:\n";
+    for (const auto& scale : m_Scales)
+    {
+        oss << "  Scale: (" << scale.scale.x << ", " << scale.scale.y << ", " << scale.scale.z << ")";
+        oss << " at Time: " << scale.timeStamp << "\n";
+    }
+
+    return oss.str();
 }

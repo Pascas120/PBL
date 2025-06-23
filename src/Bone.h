@@ -57,12 +57,14 @@ public:
     int GetPositionIndex(float animationTime);
     int GetRotationIndex(float animationTime);
     int GetScaleIndex(float animationTime);
-
+    std::string toString() const;
 private:
     float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime);
     glm::mat4 InterpolatePosition(float animationTime);
     glm::mat4 InterpolateRotation(float animationTime);
     glm::mat4 InterpolateScaling(float animationTime);
+
+
 };
 
 #endif // BONE_H

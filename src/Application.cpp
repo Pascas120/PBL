@@ -203,6 +203,7 @@ bool Application::init()
 	}
 	//setupScene();
 	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
+	//models.emplace_back(new Model("res/anims/chica.fbx"));
 	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
 	models.emplace_back(new Model("res/models/MASLO.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
@@ -220,6 +221,7 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plama3.fbx"));
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
+	//animations.emplace_back(new Animation("res/anims/chica.fbx", models[1]));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
@@ -318,7 +320,7 @@ void Application::update()
 
 	auto transforms = scene->getStorage<Transform>();
 	auto velocityComponents = scene->getStorage<VelocityComponent>();
-	scene->getAnimationSystem().update(deltaTime);
+
 
 	if (velocityComponents != nullptr)
 	{
@@ -429,9 +431,10 @@ void Application::update()
 		}
 	}
 
-	if (updateScene)
+	if (updateScene) {
 		ts.update();
-
+		scene->getAnimationSystem().update(deltaTime);
+	}
 	std::unordered_set<EntityID> pressedButtons;
 	auto isPlayer = [&](EntityID id) {
 		return scene->hasComponent<ButterController>(id) ||

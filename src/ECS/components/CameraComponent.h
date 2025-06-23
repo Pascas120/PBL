@@ -14,7 +14,7 @@ struct CameraComponent {
 	float aspectRatio = 16.0f / 9.0f;
 
 	float nearPlane = 0.1f;
-	float farPlane = 1000.0f;
+	float farPlane = 10000.0f;
 
 	glm::vec2 screenOffset = { 0.0f, 0.0f };
 

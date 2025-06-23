@@ -4,6 +4,8 @@
 
 #include "Animation.h"
 
+#include "spdlog/spdlog.h"
+
 
 Animation::Animation(const std::string& animationPath, Model* model)
 {
@@ -16,6 +18,10 @@ Animation::Animation(const std::string& animationPath, Model* model)
     ReadHeirarchyData(m_RootNode, scene->mRootNode);
     ReadMissingBones(animation, *model);
     path = animationPath;
+    // for(Bone bone : m_Bones)
+    // {
+    //     spdlog::info(bone.toString());
+    // }
 }
 
 Animation::~Animation() {}

@@ -23,7 +23,7 @@ void Model::loadModel(std::string const &path)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
-        aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_PreTransformVertices);
+        aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -38,17 +38,23 @@ void Model::loadModel(std::string const &path)
     boundingBox = BoundingBox::calculateBoundingBox(meshes);
 }
 
-void Model::processNode(aiNode *node, const aiScene *scene)
+void Model::processNode(aiNode *node, const aiScene *scene, glm::mat4 parentTransform)
 {
-    for(unsigned int i = 0; i < node->mNumMeshes; i++)
+    // Przekształcenie bieżącego węzła
+    glm::mat4 nodeTransform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
+    glm::mat4 globalTransform = parentTransform * nodeTransform;
+
+    // Przetwarzanie wszystkich meshy w bieżącym węźle
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        glm::mat4 transform = AssimpGLMHelpers::ConvertMatrixToGLMFormat(node->mTransformation);
-        meshes.push_back(processMesh(mesh, scene, transform));
+        meshes.push_back(processMesh(mesh, scene, globalTransform));
     }
-    for(unsigned int i = 0; i < node->mNumChildren; i++)
+
+    // Rekurencyjne przetwarzanie dzieci węzła
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i], scene);
+        processNode(node->mChildren[i], scene, globalTransform);
     }
 }
 
@@ -95,11 +101,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene, glm::mat4 transform)
         {
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
-
-        extractBoneWeightForVertices(vertices,mesh,scene);
-
         vertices.push_back(vertex);
     }
+
+    extractBoneWeightForVertices(vertices,mesh,scene);
 
     for(unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
