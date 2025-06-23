@@ -146,44 +146,13 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			movement.y = velocityComponent.velocity.y;
 		}
 
-		/*if (!floating && glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_PRESS)
-		{
-			velocityComponent.useGravity = false;
-			if (scene->hasComponent<ColliderComponent>(id))
-			{
-				auto& collider = scene->getComponent<ColliderComponent>(id);
-				collider.isStatic = true;
-			}
-			floating = true;
-		}
-		else if (floating && glfwGetKey(window, GLFW_KEY_SLASH) == GLFW_RELEASE)
-		{
-			velocityComponent.useGravity = true;
-			if (scene->hasComponent<ColliderComponent>(id))
-			{
-				auto& collider = scene->getComponent<ColliderComponent>(id);
-				collider.isStatic = false;
-			}
-			floating = false;
-		}
-		if (floating)
-		{
-			movement = glm::vec3(0.0f, 0.0f, 0.0f);
-		}*/
 
 		velocityComponent.velocity = movement;
 
         if(transform.translation.y<-9.5){
             transformSystem.translateEntity(id, scene->getComponent<Transform>(respawnPoint).translation);
         }
-
-		
-		//if (wasInHeat && !inHeat)               
-		//{
-		//	trailBurstLeft = 5.0f;               //czas5s
-		//	trailCooldown = 0.f;              
-		//}
-		//wasInHeat = inHeat;                    
+                  
 		inHeat = false;
 		
 
@@ -201,7 +170,7 @@ void ButterController::addTrailIfPossible(Scene * scene)
 	auto& transform = scene->getComponent<Transform>(id);
 
 	
-	if (timeSinceLastGroundContact != 0.0f) return;
+	if (!canLeaveTrail || timeSinceLastGroundContact != 0.0f) return;
 
 	float offsetScale = 1.0f;
 	if (scene->hasComponent<ButterHealthComponent>(id))

@@ -23,9 +23,8 @@ struct ButterController
 	bool  inHeat = false;  
 	//bool  wasInHeat = false;   
 	float trailBurstLeft = 0.f;   
+	bool canLeaveTrail = true;
 	//float trailCooldown = 0.f;    
-
-	bool floating = false;
 
 
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);

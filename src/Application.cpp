@@ -1143,6 +1143,8 @@ void Application::setupEvents()
 		{
 			butterController->isJumping = false;
 			butterController->timeSinceLastGroundContact = 0.0f;
+			int floorProperties = scene->getComponent<ColliderComponent>(event.objectB).properties;
+			butterController->canLeaveTrail = !(floorProperties & ColliderPropertyFlags::DisableButterTrail);
 		}
 	});
 
@@ -1307,11 +1309,13 @@ void Application::setupEvents()
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 			if (!ev.isColliding) return;
 
-			
+
 			if (!scene->hasComponent<ButterController>(ev.objectA) ||
-				!scene->hasComponent<ColliderComponent>(ev.objectB) ||
-				scene->getComponent<ColliderComponent>(ev.objectB).isStatic == false)
+				!scene->hasComponent<ColliderComponent>(ev.objectB))
 				return;
+
+			auto& wallCollider = scene->getComponent<ColliderComponent>(ev.objectB);
+			if (wallCollider.properties & ColliderPropertyFlags::DisableButterSticking) return;
 
 			auto& butter = scene->getComponent<ButterController>(ev.objectA);
 			if (!butter.isSticky || butter.isClinging)

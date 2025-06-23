@@ -216,6 +216,15 @@ namespace Editor
         {
 			ImGui::Checkbox("Static", &collider.isStatic);
 			ImGui::Checkbox("Trigger", &collider.isTrigger);
+            if (ImGui::TreeNodeEx("Properties", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::CheckboxFlags("Disable Butter Sticking", &collider.properties, ColliderPropertyFlags::DisableButterSticking);
+                ImGui::CheckboxFlags("Disable Butter Trail", &collider.properties, ColliderPropertyFlags::DisableButterTrail);
+
+                ImGui::TreePop();
+            }
+            ImGui::Dummy(ImVec2(0, 20));
+
             glm::vec3 center = shape->center;
             if (ImGui::DragFloat3("Center", &center[0], 0.1f))
             {

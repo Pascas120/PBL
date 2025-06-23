@@ -34,7 +34,8 @@
                     "type": "BOX"
                 },
                 "isStatic": false,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -111,7 +112,8 @@
                     "type": "BOX"
                 },
                 "isStatic": false,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 3
             },
             "ModelComponent": {
                 "color": [
@@ -172,7 +174,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7790697813034058,
+                "aspectRatio": 1.7800546884536743,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -221,7 +223,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7790697813034058,
+                "aspectRatio": 1.7800546884536743,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -375,7 +377,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -433,7 +436,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -491,7 +495,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -549,7 +554,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -607,7 +613,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -665,7 +672,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -723,7 +731,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -781,7 +790,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 2
             },
             "ElevatorComponent": {
                 "buttonEntity": "29e98fa1-71d6-3e74-50df-641852db931d",
@@ -865,7 +875,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1023,7 +1034,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1081,7 +1093,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1139,7 +1152,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1197,7 +1211,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1255,7 +1270,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col",
@@ -1304,7 +1320,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (1)",
@@ -1353,7 +1370,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (2)",
@@ -1402,7 +1420,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (3)",
@@ -1451,7 +1470,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col z",
@@ -1500,7 +1520,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col z (1)",
@@ -1549,7 +1570,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col z (2)",
@@ -1598,7 +1620,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col z (3)",
@@ -1647,7 +1670,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1705,7 +1729,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1763,7 +1788,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1821,7 +1847,8 @@
                     "type": "BOX"
                 },
                 "isStatic": false,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -1884,7 +1911,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col",
@@ -1933,7 +1961,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (1)",
@@ -1982,7 +2011,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (2)",
@@ -2031,7 +2061,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "col (3)",
@@ -2087,7 +2118,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "ModelComponent": {
                 "color": [
@@ -2145,7 +2177,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 2
             },
             "ElevatorComponent": {
                 "buttonEntity": "c8370dea-0d1d-91bd-6b08-7159e7e2084d",
@@ -2265,7 +2298,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 0
             },
             "HeatComponent": {
                 "OnEnterMessage": "cieplo",
@@ -2319,7 +2353,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 1
             },
             "ModelComponent": {
                 "color": [
@@ -2382,7 +2417,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 1
             },
             "HeatComponent": {
                 "OnEnterMessage": "cieplo",
@@ -2445,7 +2481,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 1
             },
             "FreezeComponent": {
                 "OnEnterMessage": "zimno",
@@ -2508,7 +2545,8 @@
                     "type": "BOX"
                 },
                 "isStatic": true,
-                "isTrigger": false
+                "isTrigger": false,
+                "properties": 1
             },
             "FreezeComponent": {
                 "OnEnterMessage": "zimno",
