@@ -251,6 +251,7 @@ namespace Serialization
 		}
 		j["isStatic"] = c.isStatic;
 		j["isTrigger"] = c.isTrigger;
+		j["properties"] = c.properties;
 	}
 
 	static void from_json(const nlohmann::json& j, ColliderComponent& c, const DeserializationContext& context)
@@ -281,9 +282,10 @@ namespace Serialization
 					shapeJson.at("center").get_to(sphere->center);
 				}
 
-				c.isStatic = j.at("isStatic").get<bool>();
-				c.isTrigger = j.value("isTrigger", c.isTrigger);
 			}
+			c.isStatic = j.at("isStatic").get<bool>();
+			c.isTrigger = j.value("isTrigger", c.isTrigger);
+			c.properties = j.value("properties", c.properties);
 		}
 	}
 
@@ -649,6 +651,17 @@ namespace Serialization
 		c.isInitialized = false;
 	}
 
+	static void to_json(nlohmann::json& j, LevelExitComponent& c, const SerializationContext& context)
+	{
+		j["nextLevelPath"] = c.nextLevelPath;
+	}
+
+	static void from_json(const nlohmann::json& j, LevelExitComponent& c, const DeserializationContext& context)
+	{
+		c.nextLevelPath = j.value("nextLevelPath", c.nextLevelPath);
+	}
+
+
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);
@@ -815,6 +828,8 @@ namespace Serialization
 			serializeComponent(SplitScreenController);
 			serializeComponent(SoundComponent);
 
+			serializeComponent(LevelExitComponent);
+
 			selectionJson["entities"].push_back(entityJson);
 		}
 
@@ -907,6 +922,8 @@ namespace Serialization
 			deserializeComponent(CameraController);
 			deserializeComponent(SplitScreenController);
 			deserializeComponent(SoundComponent);
+
+			deserializeComponent(LevelExitComponent);
 		}
 
 		return deserializedEntities;

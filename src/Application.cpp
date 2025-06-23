@@ -56,6 +56,7 @@ Application::~Application()
 	}
 }
 
+constexpr float maxDeltaTime = 1.0f / 3.0f;
 
 void Application::run()
 {
@@ -65,6 +66,7 @@ void Application::run()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		deltaTime = std::min(deltaTime, maxDeltaTime);
 
 		input();
 		update();
@@ -232,12 +234,13 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/ost4.mp3");
 	sounds.emplace_back("res/sounds/ost5.mp3");
 
-	scene = std::make_shared<Scene>(this);
+	/*scene = std::make_shared<Scene>(this);
 	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, animations, true});
 	setupEvents();
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
-	scene->getCollisionSystem().buildTree();
+	scene->getCollisionSystem().buildTree();*/
+	loadScene("res/scenes/demo.scene.json");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -255,10 +258,6 @@ bool Application::init()
 	std::shuffle(jokes.begin(), jokes.end(), std::mt19937(std::random_device()()));
 	spdlog::info("Loaded {} jokes.", jokes.size());
 	spdlog::info(jokes[0]);
-
-#ifndef EDITOR_APP
-	setStartValues();
-#endif
 
 	return true;
 }
@@ -640,6 +639,15 @@ void Application::update()
 		}
 	}
 
+	if (auto levelExits = scene->getStorage<LevelExitComponent>())
+	{
+		for (int i = 0; i < levelExits->getQuantity(); ++i)
+		{
+			auto& levelExit = levelExits->components[i];
+			levelExit.playerCount = 0;
+		}
+	}
+
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
@@ -853,6 +861,26 @@ void Application::endFrame()
 	glfwPollEvents();
 	glfwMakeContextCurrent(window);
 	glfwSwapBuffers(window);
+
+	if (!changeSceneTo.empty())
+	{
+		loadScene(changeSceneTo);
+		changeSceneTo.clear();
+	}
+}
+
+void Application::loadScene(const std::string path)
+{
+	scene = std::make_shared<Scene>(this);
+	Serialization::loadScene(path, *scene, { shaders, models,  sounds, animations, true });
+	scenePath = path;
+
+
+	setupEvents();
+	scene->getTransformSystem().update();
+	scene->getRenderingSystem().buildTree();
+	scene->getCollisionSystem().buildTree();
+	setStartValues();
 }
 
 
@@ -1102,7 +1130,7 @@ void Application::setupEvents()
 		{
 			float upDot = glm::dot(glm::normalize(event.separationVector), glm::vec3(0.0f, 1.0f, 0.0f));
 			if ((upDot > 0.9f && velocityComponent->velocity.y < 0.1f) ||
-				upDot < -0.9f)
+				(upDot < -0.9f && velocityComponent->velocity.y > 0.1f))
 			{
 				velocityComponent->velocity.y = 0.0f;
 			}
@@ -1146,6 +1174,8 @@ void Application::setupEvents()
 		{
 			butterController->isJumping = false;
 			butterController->timeSinceLastGroundContact = 0.0f;
+			int floorProperties = scene->getComponent<ColliderComponent>(event.objectB).properties;
+			butterController->canLeaveTrail = !(floorProperties & ColliderPropertyFlags::DisableButterTrail);
 		}
 	});
 
@@ -1310,11 +1340,13 @@ void Application::setupEvents()
 			const auto& ev = static_cast<const CollisionEvent&>(e);
 			if (!ev.isColliding) return;
 
-			
+
 			if (!scene->hasComponent<ButterController>(ev.objectA) ||
-				!scene->hasComponent<ColliderComponent>(ev.objectB) ||
-				scene->getComponent<ColliderComponent>(ev.objectB).isStatic == false)
+				!scene->hasComponent<ColliderComponent>(ev.objectB))
 				return;
+
+			auto& wallCollider = scene->getComponent<ColliderComponent>(ev.objectB);
+			if (wallCollider.properties & ColliderPropertyFlags::DisableButterSticking) return;
 
 			auto& butter = scene->getComponent<ButterController>(ev.objectA);
 			if (!butter.isSticky || butter.isClinging)
@@ -1365,9 +1397,31 @@ void Application::setupEvents()
 
 				velocity.useGravity = false;
 				velocity.velocity = glm::vec3(0.0f);  
+
+				if (butter.clingColliderExtension != (EntityID)-1)
+				{
+					auto& extCol = scene->getComponent<ColliderComponent>(butter.clingColliderExtension);
+					extCol.properties &= ~(ColliderPropertyFlags::DisableCollider);
+				}
 			}
 		});
 
+	eventSystem.registerListener<TriggerEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const TriggerEvent&>(e);
+
+		if (!scene->hasComponent<LevelExitComponent>(ev.triggerObject) ||
+			(!scene->hasComponent<ButterController>(ev.otherObject) &&
+				!scene->hasComponent<BreadController>(ev.otherObject)))
+			return;
+
+		auto& levelExit = scene->getComponent<LevelExitComponent>(ev.triggerObject);
+
+		++levelExit.playerCount;
+		if (levelExit.playerCount == 2)
+		{
+			changeSceneTo = "res/scenes/" + levelExit.nextLevelPath;
+		}
+	});
 }
 
 void Application::setStartValues()
@@ -1388,6 +1442,25 @@ void Application::setStartValues()
 		{
 			auto& bh = butterHealthComponents->components[i];
 			bh.startScale = scene->getComponent<Transform>(bh.id).scale;
+		}
+	}
+	auto butterControllers = scene->getStorage<ButterController>();
+	if (butterControllers)
+	{
+		for (int i = 0; i < butterControllers->getQuantity(); i++)
+		{
+			auto& butter = butterControllers->components[i];
+			auto& transform = scene->getComponent<Transform>(butter.id);
+
+			for (EntityID child : transform.children)
+			{
+				if (scene->getComponent<ObjectInfoComponent>(child).tag == "clingColliderExtension" &&
+					scene->hasComponent<ColliderComponent>(child))
+				{
+					butter.clingColliderExtension = child;
+					break;
+				}
+			}
 		}
 	}
 

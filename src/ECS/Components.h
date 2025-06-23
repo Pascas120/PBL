@@ -11,12 +11,12 @@
 #include <string>
 #include "Model.h"
 #include "EntityManager.h"
-#include "ColliderShape.h"
 #include <memory>
 
 #include "Animator.h"
 #include "ECS/BoundingVolumes.h"
 #include "Camera.h"
+#include "components/ColliderComponent.h"
 #include "components/BreadController.h"
 #include "components/CameraComponent.h"
 #include "components/SplitScreenController.h"
@@ -89,39 +89,7 @@ struct TextComponent {
     EntityID id = (EntityID)-1;
 };
 
-struct ColliderComponent {
-    ColliderComponent(ColliderType colliderType, bool isStatic = true) : isStatic{ isStatic }
-    {
-        switch (colliderType)
-        {
-        case ColliderType::BOX:
-			colliderShape = std::make_unique<BoxCollider>();
-            break;
-        case ColliderType::SPHERE:
-			colliderShape = std::make_unique<SphereCollider>();
-            break;
-        default:
-            colliderShape = nullptr;
-            break;
-        }
-    }
-	ColliderComponent() = default;
 
-    // unsafe (TODO)
-    ColliderShape* GetColliderShape() const
-    {
-        return colliderShape.get();
-    }
-
-    bool isStatic;
-	bool isTrigger = false;
-
-
-    EntityID id = (EntityID)-1;
-
-private:
-    std::shared_ptr<ColliderShape> colliderShape = nullptr;
-};
 
 struct PointLightComponent {
     glm::vec3 color = { 1.0f, 1.0f, 1.0f };
@@ -256,5 +224,13 @@ struct TrailCollisionDetectorComponent
     float sprintTimeLeft = 0.0f;   
     float sprintMultiplier = 2.0f;   
     EntityID id = static_cast<EntityID>(-1);
+};
+
+struct LevelExitComponent
+{
+    std::string nextLevelPath;
+    int playerCount = 0;
+
+    EntityID id = (EntityID)-1;
 };
 #endif //PBL_COMPONENTS_H

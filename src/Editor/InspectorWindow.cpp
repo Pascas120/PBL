@@ -91,6 +91,7 @@ namespace Editor
                 drawBreadController(context, editor->selectedObject);
                 drawTrailDetector(context, editor->selectedObject);
                 drawAnimator(context, editor->selectedObject);
+                drawLevelExit(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -136,6 +137,7 @@ namespace Editor
                     ADD_COMPONENT(SoundComponent, "Sound");
                     ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
                     ADD_COMPONENT(AnimationComponent, "Animator");
+                    ADD_COMPONENT(LevelExitComponent, "Level Exit");
 
                     ImGui::EndCombo();
                 }
@@ -216,6 +218,17 @@ namespace Editor
         {
 			ImGui::Checkbox("Static", &collider.isStatic);
 			ImGui::Checkbox("Trigger", &collider.isTrigger);
+            if (ImGui::TreeNodeEx("Properties", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                ImGui::CheckboxFlags("Disable Collider", &collider.properties, ColliderPropertyFlags::DisableCollider);
+                ImGui::Dummy(ImVec2(0, 5));
+                ImGui::CheckboxFlags("Disable Butter Sticking", &collider.properties, ColliderPropertyFlags::DisableButterSticking);
+                ImGui::CheckboxFlags("Disable Butter Trail", &collider.properties, ColliderPropertyFlags::DisableButterTrail);
+
+                ImGui::TreePop();
+            }
+            ImGui::Dummy(ImVec2(0, 20));
+
             glm::vec3 center = shape->center;
             if (ImGui::DragFloat3("Center", &center[0], 0.1f))
             {
@@ -791,6 +804,27 @@ namespace Editor
                     }
                 }
                 ImGui::EndCombo();
+            }
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawLevelExit(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<LevelExitComponent>(id)) return;
+        auto& levelExit = scene->getComponent<LevelExitComponent>(id);
+
+        ImGui::PushID(&levelExit);
+        bool open = ImGui::CollapsingHeader("Level Exit", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<LevelExitComponent>(context, id)) return;
+        if (open)
+        {
+            std::string levelPath = levelExit.nextLevelPath;
+            const char* levelPathCStr = levelPath.c_str();
+            if (ImGui::InputText("Next Level", (char*)levelPathCStr, 64))
+            {
+                levelExit.nextLevelPath = levelPathCStr;
             }
         }
         ImGui::PopID();

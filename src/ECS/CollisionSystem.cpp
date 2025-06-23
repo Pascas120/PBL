@@ -153,7 +153,9 @@ void CollisionSystem::CheckCollisions()
 
 void CollisionSystem::checkPair(const ColliderObjectInfo& objectFirstIn, const ColliderObjectInfo& objectSecondIn)
 {
-	if (objectFirstIn.collider->isStatic && objectSecondIn.collider->isStatic)
+	if (objectFirstIn.collider->properties & ColliderPropertyFlags::DisableCollider ||
+		objectSecondIn.collider->properties & ColliderPropertyFlags::DisableCollider ||
+		(objectFirstIn.collider->isStatic && objectSecondIn.collider->isStatic))
 		return;
 
 	CollisionEvent collisionInfo{};

@@ -23,18 +23,20 @@ struct ButterController
 	bool  inHeat = false;  
 	//bool  wasInHeat = false;   
 	float trailBurstLeft = 0.f;   
+	bool canLeaveTrail = true;
 	//float trailCooldown = 0.f;    
-
-	bool floating = false;
 
 
 	void update(GLFWwindow* window, Scene* scene, float deltaTime);
 
 	void addTrailIfPossible(Scene* scene);
 
-	EntityID id = (EntityID)-1;	
 	bool isSticky = false;
 	bool isClinging = false;
 	glm::vec3 clingNormal = {};
 	EntityID clingEntity = (EntityID)-1;
+
+	EntityID clingColliderExtension = (EntityID)-1;
+
+	EntityID id = (EntityID)-1;
 };
