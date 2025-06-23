@@ -54,6 +54,10 @@ protected:
 	void renderToWindow();
 	void endFrame();
 
+	std::string scenePath = "";
+	std::string changeSceneTo = "";
+	virtual void loadScene(const std::string path);
+
 	const char* glsl_version = "#version 410";
 	const int32_t GL_VERSION_MAJOR = 4;
 	const int32_t GL_VERSION_MINOR = 1;

@@ -232,12 +232,13 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/ost4.mp3");
 	sounds.emplace_back("res/sounds/ost5.mp3");
 
-	scene = std::make_shared<Scene>(this);
+	/*scene = std::make_shared<Scene>(this);
 	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, animations, true});
 	setupEvents();
 	scene->getTransformSystem().update();
 	scene->getRenderingSystem().buildTree();
-	scene->getCollisionSystem().buildTree();
+	scene->getCollisionSystem().buildTree();*/
+	loadScene("res/scenes/demo.scene.json");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -255,10 +256,6 @@ bool Application::init()
 	std::shuffle(jokes.begin(), jokes.end(), std::mt19937(std::random_device()()));
 	spdlog::info("Loaded {} jokes.", jokes.size());
 	spdlog::info(jokes[0]);
-
-#ifndef EDITOR_APP
-	setStartValues();
-#endif
 
 	return true;
 }
@@ -639,6 +636,15 @@ void Application::update()
 		}
 	}
 
+	if (auto levelExits = scene->getStorage<LevelExitComponent>())
+	{
+		for (int i = 0; i < levelExits->getQuantity(); ++i)
+		{
+			auto& levelExit = levelExits->components[i];
+			levelExit.playerCount = 0;
+		}
+	}
+
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
@@ -852,6 +858,26 @@ void Application::endFrame()
 	glfwPollEvents();
 	glfwMakeContextCurrent(window);
 	glfwSwapBuffers(window);
+
+	if (!changeSceneTo.empty())
+	{
+		loadScene(changeSceneTo);
+		changeSceneTo.clear();
+	}
+}
+
+void Application::loadScene(const std::string path)
+{
+	scene = std::make_shared<Scene>(this);
+	Serialization::loadScene(path, *scene, { shaders, models,  sounds, animations, true });
+	scenePath = path;
+
+
+	setupEvents();
+	scene->getTransformSystem().update();
+	scene->getRenderingSystem().buildTree();
+	scene->getCollisionSystem().buildTree();
+	setStartValues();
 }
 
 
@@ -1377,6 +1403,22 @@ void Application::setupEvents()
 			}
 		});
 
+	eventSystem.registerListener<TriggerEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const TriggerEvent&>(e);
+
+		if (!scene->hasComponent<LevelExitComponent>(ev.triggerObject) ||
+			(!scene->hasComponent<ButterController>(ev.otherObject) &&
+				!scene->hasComponent<BreadController>(ev.otherObject)))
+			return;
+
+		auto& levelExit = scene->getComponent<LevelExitComponent>(ev.triggerObject);
+
+		++levelExit.playerCount;
+		if (levelExit.playerCount == 2)
+		{
+			changeSceneTo = "res/scenes/" + levelExit.nextLevelPath;
+		}
+	});
 }
 
 void Application::setStartValues()

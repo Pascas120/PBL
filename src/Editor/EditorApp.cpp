@@ -368,17 +368,29 @@ namespace Editor
 		{
 			return;
 		}
-		selectedObject = (EntityID)-1;
 		setPlayMode(PlayMode::STOP);
 
-		scene = std::make_shared<Scene>(this);
-		std::string path = *pathResult;
-		Serialization::loadScene(path, *scene, { shaders, models,  sounds, animations, true });
-		scenePath = path;
+        loadScene(*pathResult);
+	}
 
+    void EditorApp::loadScene(const std::string path)
+    {
+        selectedObject = (EntityID)-1;
+
+        scene = std::make_shared<Scene>(this);
+        Serialization::loadScene(path, *scene, { shaders, models,  sounds, animations, true });
+        scenePath = path;
+
+        if (playMode != PlayMode::STOP)
+        {
+            scene->getTransformSystem().update();
+            scene->getRenderingSystem().buildTree();
+            scene->getCollisionSystem().buildTree();
+            setStartValues();
+        }
 
         setupEvents();
-	}
+    }
 
 
 

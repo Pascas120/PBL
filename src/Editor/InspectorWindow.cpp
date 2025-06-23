@@ -91,6 +91,7 @@ namespace Editor
                 drawBreadController(context, editor->selectedObject);
                 drawTrailDetector(context, editor->selectedObject);
                 drawAnimator(context, editor->selectedObject);
+                drawLevelExit(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -136,6 +137,7 @@ namespace Editor
                     ADD_COMPONENT(SoundComponent, "Sound");
                     ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
                     ADD_COMPONENT(AnimationComponent, "Animator");
+                    ADD_COMPONENT(LevelExitComponent, "Level Exit");
 
                     ImGui::EndCombo();
                 }
@@ -802,6 +804,27 @@ namespace Editor
                     }
                 }
                 ImGui::EndCombo();
+            }
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawLevelExit(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<LevelExitComponent>(id)) return;
+        auto& levelExit = scene->getComponent<LevelExitComponent>(id);
+
+        ImGui::PushID(&levelExit);
+        bool open = ImGui::CollapsingHeader("Level Exit", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<LevelExitComponent>(context, id)) return;
+        if (open)
+        {
+            std::string levelPath = levelExit.nextLevelPath;
+            const char* levelPathCStr = levelPath.c_str();
+            if (ImGui::InputText("Next Level", (char*)levelPathCStr, 64))
+            {
+                levelExit.nextLevelPath = levelPathCStr;
             }
         }
         ImGui::PopID();

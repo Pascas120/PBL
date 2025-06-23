@@ -225,4 +225,12 @@ struct TrailCollisionDetectorComponent
     float sprintMultiplier = 2.0f;   
     EntityID id = static_cast<EntityID>(-1);
 };
+
+struct LevelExitComponent
+{
+    std::string nextLevelPath;
+    int playerCount = 0;
+
+    EntityID id = (EntityID)-1;
+};
 #endif //PBL_COMPONENTS_H

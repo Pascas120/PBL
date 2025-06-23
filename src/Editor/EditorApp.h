@@ -53,9 +53,9 @@ namespace Editor
 		void createImGuiDrawData();
 		void renderImGui();
 
-		std::string scenePath = "";
 		void saveScene(std::string path = "");
 		void loadScene();
+		virtual void loadScene(const std::string path) override;
 
 		std::shared_ptr<Scene> sceneBackup = nullptr;
 
