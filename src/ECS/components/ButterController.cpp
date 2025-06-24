@@ -119,6 +119,14 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			
 			targetRotation = glm::eulerAngles(glm::quatLookAt(movementDir, glm::vec3(0.0f, 1.0f, 0.0f)));
 			targetRotation = glm::degrees(targetRotation);
+
+			if(scene->hasComponent<AnimationComponent>(id)) {
+				auto& anim = scene->getComponent<AnimationComponent>(id);
+				if (movementMag > 0.1f && !anim.isPlaying)
+				{
+					scene->getAnimationSystem().playAnimation(id, "res/anims/maselkochodzenie.fbx");
+				}
+			}
 		}
 
 		movement *= moveSpeed;

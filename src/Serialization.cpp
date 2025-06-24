@@ -661,6 +661,38 @@ namespace Serialization
 		c.nextLevelPath = j.value("nextLevelPath", c.nextLevelPath);
 	}
 
+	static void to_json(nlohmann::json& j, AnimationComponent& c, const SerializationContext& context)
+	{
+		j["loop"] = c.loop;
+		j["playbackSpeed"] = c.playbackSpeed;
+		for (const auto& anim : c.animations)
+		{
+			j["animations"].push_back({
+				{"animationPath", anim->path},
+			});
+		}
+	}
+
+	static void from_json(const nlohmann::json& j, AnimationComponent& c, const DeserializationContext& context)
+	{
+		c.loop = j.value("loop", c.loop);
+		c.playbackSpeed = j.value("playbackSpeed", c.playbackSpeed);
+		c.animations.clear();
+		if (j.contains("animations"))
+		{
+			for (const auto& animJson : j.at("animations"))
+			{
+				std::string animationPath = animJson.at("animationPath").get<std::string>();
+				auto itAnimation = std::find_if(context.animations.begin(), context.animations.end(),
+					[&](Animation* animation) { return animation->path == animationPath; });
+				if (itAnimation != context.animations.end())
+				{
+					c.animations.push_back(*itAnimation);
+				}
+			}
+		}
+	}
+
 
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
@@ -830,6 +862,8 @@ namespace Serialization
 
 			serializeComponent(LevelExitComponent);
 
+			serializeComponent(AnimationComponent);
+
 			selectionJson["entities"].push_back(entityJson);
 		}
 
@@ -924,6 +958,8 @@ namespace Serialization
 			deserializeComponent(SoundComponent);
 
 			deserializeComponent(LevelExitComponent);
+
+			deserializeComponent(AnimationComponent);
 		}
 
 		return deserializedEntities;

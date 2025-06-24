@@ -215,6 +215,7 @@ struct AnimationComponent {
     bool isPlaying = false;
     float playbackSpeed = 1.0f;
     bool loop = false;
+    std::vector<Animation*> animations;
 
     EntityID id = (EntityID)-1;
 };

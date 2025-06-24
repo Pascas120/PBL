@@ -16,7 +16,9 @@ public:
 
     void update(float deltaTime);
 
+    void playCurrentAnimation(EntityID entityId);
     void playAnimation(EntityID entityId, Animation* animation);
+    void playAnimation(EntityID entityId, const std::string& animationPath);
     void stopAnimation(EntityID entityId);
 };
 

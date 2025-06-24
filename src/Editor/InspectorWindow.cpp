@@ -793,17 +793,32 @@ namespace Editor
             ImGui::Checkbox("Loop", &animator.loop);
             ImGui::Checkbox("IsPlaying", &animator.isPlaying);
             ImGui::DragFloat("Playback Speed", &animator.playbackSpeed, 0.01f, 0.0f, 2.0f);
-            if (ImGui::BeginCombo("Animation##Combo", animator.animator->GetCurrentAnimationName().c_str()))
+
+            if (ImGui::BeginCombo("Add Animation##Combo", "Select Animation"))
             {
                 for (int i = 0; i < context.animations.size(); i++)
                 {
-                    if (ImGui::Selectable(context.animations[i]->path.c_str(), animator.animator->GetCurrentAnimationName() == context.animations[i]->path))
+                    if (ImGui::Selectable(context.animations[i]->path.c_str()))
                     {
-                        animator.animator->PlayAnimation(context.animations[i]);
-                        //animator.isPlaying = true;
+                        animator.animations.push_back(context.animations[i]);
                     }
                 }
                 ImGui::EndCombo();
+            }
+
+            ImGui::Separator();
+            ImGui::Text("Current Animations:");
+            for (size_t i = 0; i < animator.animations.size(); ++i)
+            {
+                ImGui::PushID(static_cast<int>(i));
+                ImGui::Text("%s", animator.animations[i]->path.c_str());
+                if (ImGui::Button("Remove"))
+                {
+                    animator.animations.erase(animator.animations.begin() + i);
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::PopID();
             }
         }
         ImGui::PopID();

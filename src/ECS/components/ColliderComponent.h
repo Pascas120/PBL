@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "ECS/ColliderShape.h"
 #include "ECS/EntityManager.h"
 

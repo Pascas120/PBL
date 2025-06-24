@@ -12,6 +12,7 @@ public:
 
     void UpdateAnimation(float dt);
     void PlayAnimation(Animation* pAnimation);
+    void PlayCurrentAnimation();
     void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
     std::vector<glm::mat4> GetFinalBoneMatrices();
     std::string GetCurrentAnimationName() const {
@@ -20,12 +21,16 @@ public:
         }
         return "No Animation";
     }
+    void SetLoop(bool loop) { m_loop = loop; }
+    bool IsPlaying() const { return m_isPlaying; }
 
 private:
     std::vector<glm::mat4> m_FinalBoneMatrices;
     Animation* m_CurrentAnimation;
     float m_CurrentTime;
     float m_DeltaTime;
+    bool m_loop = false;
+    bool m_isPlaying = false;
 };
 
 #endif //ANIMATOR_H

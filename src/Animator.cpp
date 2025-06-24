@@ -22,7 +22,15 @@ void Animator::UpdateAnimation(float dt)
     if (m_CurrentAnimation)
     {
         m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt;
-        m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
+        if(m_loop) {
+            m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
+        } else {
+            if (m_CurrentTime > m_CurrentAnimation->GetDuration())
+            {
+                m_CurrentTime = m_CurrentAnimation->GetDuration();
+                m_isPlaying = false;
+            }
+        }
         CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
     }
 }
@@ -31,7 +39,15 @@ void Animator::PlayAnimation(Animation* pAnimation)
 {
     m_CurrentAnimation = pAnimation;
     m_CurrentTime = 0.0f;
+    m_isPlaying = true;
 }
+
+void Animator::PlayCurrentAnimation()
+{
+    m_CurrentTime = 0.0f;
+    m_isPlaying = true;
+}
+
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
@@ -67,7 +83,7 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
         glm::mat4 offset = boneInfoMap[nodeName].offset;
         m_FinalBoneMatrices[index] = globalTransformation * offset;
         // Debug: Log aktualizacji macierzy końcowej
-        spdlog::info("Bone '{}' final matrix updated at index {}.", nodeName, index);
+        //spdlog::info("Bone '{}' final matrix updated at index {}.", nodeName, index);
     }
 
     for (int i = 0; i < node->childrenCount; i++)
