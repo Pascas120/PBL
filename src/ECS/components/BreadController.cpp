@@ -2,27 +2,30 @@
 #include <glm/glm.hpp>
 #include "Scene.h"
 #include "spdlog/spdlog.h"
+#include <glm/gtx/quaternion.hpp>
 
 void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
-
-
-	
-	float rate = deltaTime / freezeDuration;     
-
-	if (freezing)         
-		freezeRatio = glm::clamp(freezeRatio + rate, 0.0f, 1.0f);
-	else                  
-		freezeRatio = glm::clamp(freezeRatio - rate, 0.0f, 1.0f);
-
-	float freezeFactor = 1.0f - freezeRatio;     
-	
-	float rotMul = freezeFactor;
+	if (freezeCooldownTimer > 0.0f)
+		freezeCooldownTimer -= deltaTime;
 
 	float moveSpeed = this->moveSpeed;
 
-	transformSystem.rotateEntity(id, targetRotation, deltaTime * 15.0f * rotMul);
+	transformSystem.rotateEntity(id, targetRotation,
+		deltaTime * 15.0f);
+
+	if (freezing)
+	{
+		freezeCooldownTimer = freezeCooldownDur;         
+
+		if (isBouncy)                                 
+		{
+
+			isBouncy = false;
+		}
+	}
+
 	// Na tą chwilę rotacja przy ruchu jest ograniczona tylko do 4 stron świata, w przyszłości można to zmienić na bardziej płynne obracanie
 	if (scene->hasComponent<VelocityComponent>(id))
 	{
@@ -72,27 +75,25 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			state.axes[GLFW_GAMEPAD_AXIS_LEFT_TRIGGER] > 0.5f ||
 			state.axes[GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0.5f;
 
-		if (inflateButton)
+		if (freezeCooldownTimer <= 0.0f && inflateButton)
 		{
 			if (relativeScale < 1.5f)
 			{
 				relativeScale += deltaTime * 0.8f;
 				relativeScale = glm::clamp(relativeScale, 1.0f, 1.25f);
-
 				transformSystem.scaleEntity(id, startScale * relativeScale);
 				isBouncy = true;
 			}
 		}
-		else
+		else       
 		{
 			if (relativeScale > 1.0f)
 			{
 				relativeScale -= deltaTime * 0.8f;
 				relativeScale = glm::clamp(relativeScale, 1.0f, 1.25f);
-
 				transformSystem.scaleEntity(id, startScale * relativeScale);
-				isBouncy = false;
 			}
+			isBouncy = false;
 		}
 
 		timeSinceLastGroundContact += deltaTime;
@@ -109,7 +110,9 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 		if (!isJumping && jumpButton)
 		{
-			movement.y += jumpSpeed * freezeFactor;
+			
+			float jumpMul = freezing ? 0.5f : 1.0f;
+			movement.y += jumpSpeed * jumpMul;
 			isJumping = true;
 		}
 		else

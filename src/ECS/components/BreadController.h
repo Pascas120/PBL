@@ -13,9 +13,10 @@ struct BreadController {
 
 	glm::vec3 targetRotation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	bool  freezing = false;   
-	float freezeRatio = 0.0f;    
-	float freezeDuration = 3.0f;   
+	bool  freezing = false;
+
+	float freezeCooldownTimer = 0.0f;     
+	static constexpr float freezeCooldownDur = 0.25f;
 
 	glm::vec3 startScale = { 1.0f, 1.0f, 1.0f };
 	float relativeScale = 1.0f;
