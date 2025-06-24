@@ -21,6 +21,7 @@ class TextRenderer{
 private:
     unsigned int VAO, VBO;
     std::map<GLchar, Character> Characters;
+    std::wstring s;
 public:
     TextRenderer();
     ~TextRenderer();

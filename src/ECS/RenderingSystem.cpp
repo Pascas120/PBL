@@ -174,7 +174,7 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
 
 }
 
-void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
+void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unordered_map<std::string, Shader*>& postShaders) {
     if (!initializedHud) initHud(); // Inicjalizacja, jeśli nie została wykonana
 
     auto [width, height] = framebuffer.GetSizePair();
@@ -187,29 +187,31 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
     auto images = scene->getStorage<ImageComponent>();
     auto texts = scene->getStorage<TextComponent>();
 
+	framebuffer.Bind();
+
     if (images != NULL) {
+    	Shader* hudShader = postShaders.at("HUD");
         for (int i = 0; i < images->getQuantity(); i++) {
             auto& image = images->components[i];
 
             EntityID entityID = image.id;
-            image.shader->use();
-
+        	hudShader->use();
             // TODO: uniform blocks
-            image.shader->setMat4("projection", ortho);
+            hudShader->setMat4("projection", ortho);
 
-            image.shader->setMat4("model", glm::scale(transforms->get(entityID).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
+            hudShader->setMat4("model", glm::scale(transforms->get(entityID).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
             if (!image.texturePath.empty()) {
                 if (GLuint textureID = getTexture(image.texturePath)) {
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, textureID);
-                    image.shader->setInt("useTexture", true);
+                    hudShader->setInt("useTexture", true);
                 } else {
-                    image.shader->setInt("useTexture", false);
-                    image.shader->setVec4("color", image.color);
+                    hudShader->setInt("useTexture", false);
+                    hudShader->setVec4("color", image.color);
                 }
             } else {
-                image.shader->setInt("useTexture", false);
-                image.shader->setVec4("color", image.color);
+                hudShader->setInt("useTexture", false);
+                hudShader->setVec4("color", image.color);
             }
             glBindVertexArray(hudVAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -218,18 +220,20 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer) {
     }
 
     if (texts != NULL) {
+    	Shader* textShader = postShaders.at("Text");
         for (int i = 0; i < texts->getQuantity(); i++) {
             auto& text = texts->components[i];
 
             EntityID entityID = text.id;
 
-            text.shader->use();
-            text.shader->setMat4("projection", ortho);
-            t1.renderText(text.shader, text.text, transforms->get(entityID).translation.x, transforms->get(entityID).translation.y, 1.0f, text.color);
+            textShader->use();
+            textShader->setMat4("projection", ortho);
+            t1.renderText(textShader, text.text, transforms->get(entityID).translation.x, transforms->get(entityID).translation.y, text.fontSize, text.color);
         }
     }
 
     glDisable(GL_BLEND);
+
     glEnable(GL_DEPTH_TEST);
 }
 

@@ -196,7 +196,6 @@ namespace Serialization
 
 	static void to_json(nlohmann::json& j, const ImageComponent& c, const SerializationContext& context)
 	{
-		j["shader"] = c.shader->getName();
 		j["texturePath"] = c.texturePath;
 		j["width"] = c.width;
 		j["height"] = c.height;
@@ -205,7 +204,6 @@ namespace Serialization
 
 	static void from_json(const nlohmann::json& j, ImageComponent& c, const DeserializationContext& context)
 	{
-		from_json(j.at("shader"), c.shader, context);
 		j.at("texturePath").get_to(c.texturePath);
 		j.at("width").get_to(c.width);
 		j.at("height").get_to(c.height);
@@ -214,18 +212,18 @@ namespace Serialization
 
 	static void to_json(nlohmann::json& j, const TextComponent& c, const SerializationContext& context)
 	{
-		j["shader"] = c.shader->getName();
 		j["font"] = c.font;
 		j["color"] = c.color;
 		j["text"] = c.text;
+		j["fontSize"] = c.fontSize;
 	}
 
 	static void from_json(const nlohmann::json& j, TextComponent& c, const DeserializationContext& context)
 	{
-		from_json(j.at("shader"), c.shader, context);
 		j.at("font").get_to(c.font);
 		j.at("color").get_to(c.color);
 		j.at("text").get_to(c.text);
+		j.at("fontSize").get_to(c.fontSize);
 	}
 
 	static void to_json(nlohmann::json& j, const ColliderComponent& c, const SerializationContext& context)

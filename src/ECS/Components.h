@@ -71,7 +71,6 @@ struct ModelComponent {
 };
 
 struct ImageComponent {
-    Shader* shader;
     std::string texturePath;
     float width;
     float height;
@@ -81,10 +80,10 @@ struct ImageComponent {
 };
 
 struct TextComponent {
-    Shader* shader;
     std::string font;
     glm::vec4 color;
     std::string text;
+    float fontSize = 1.0f;
 
     EntityID id = (EntityID)-1;
 };

@@ -93,6 +93,8 @@ namespace Editor
                 drawAnimator(context, editor->selectedObject);
                 drawLevelExit(context, editor->selectedObject);
                 drawCollectible(context, editor->selectedObject);
+                drawImage(context, editor->selectedObject);
+                drawText(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -140,6 +142,9 @@ namespace Editor
                     ADD_COMPONENT(AnimationComponent, "Animator");
                     ADD_COMPONENT(LevelExitComponent, "Level Exit");
                     ADD_COMPONENT(CollectibleComponent, "Collectible");
+                    ADD_COMPONENT(ImageComponent, "Image");
+                    ADD_COMPONENT(TextComponent, "Text");
+
 
                     ImGui::EndCombo();
                 }
@@ -867,4 +872,59 @@ namespace Editor
 
         ImGui::PopID();
     }
+
+    void InspectorWindow::drawImage(const EditorContext &context, EntityID id) {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<ImageComponent>(id))
+            return;
+
+        auto& image = scene->getComponent<ImageComponent>(id);
+        ImGui::PushID(&image);
+
+        bool open = ImGui::CollapsingHeader("Image", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<ImageComponent>(context, id)) return;
+        if (open)
+        {
+            char buf[256];
+            std::strncpy(buf, image.texturePath.c_str(), sizeof(buf));
+            buf[sizeof(buf) - 1] = '\0';
+
+            if (ImGui::InputText("Path", buf, sizeof(buf)))
+            {
+                image.texturePath = buf;
+            }
+            ImGui::ColorEdit3("Color", &image.color[0]);
+            ImGui::DragFloat("Height", &image.height, 0.1f, 0.0f, 1000.0f);
+            ImGui::DragFloat("Width", &image.width, 0.1f, 0.0f, 1000.0f);
+        }
+        ImGui::PopID();
+
+    }
+
+    void InspectorWindow::drawText(const EditorContext &context, EntityID id) {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<TextComponent>(id))
+            return;
+
+        auto& text = scene->getComponent<TextComponent>(id);
+        ImGui::PushID(&text);
+
+        bool open = ImGui::CollapsingHeader("Text Component", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<TextComponent>(context, id)) return;
+        if (open)
+        {
+            char buf[256];
+            std::strncpy(buf, text.text.c_str(), sizeof(buf));
+            buf[sizeof(buf) - 1] = '\0';
+
+            if (ImGui::InputText("Text", buf, sizeof(buf)))
+            {
+                text.text = buf;
+            }
+            ImGui::ColorEdit3("Color", &text.color[0]);
+            ImGui::DragFloat("Font Size", &text.fontSize, 0.1f, 1.0f, 100.0f);
+        }
+        ImGui::PopID();
+    }
+
 }

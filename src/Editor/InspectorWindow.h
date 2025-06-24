@@ -38,5 +38,7 @@ namespace Editor
 		void drawAnimator(const EditorContext& context, EntityID id);
 		void drawLevelExit(const EditorContext& context, EntityID id);
 		void drawCollectible(const EditorContext& context, EntityID id);
+		void drawImage(const EditorContext& context, EntityID id);
+		void drawText(const EditorContext& context, EntityID id);
 	};
 }

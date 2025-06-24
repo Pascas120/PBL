@@ -76,7 +76,7 @@ public:
 	~RenderingSystem();
 	void drawScene(const Framebuffer& framebuffer, Camera& cameraP1, Camera* cameraP2, const UniformBlockStorage& uniformBlockStorage,
 	const std::unordered_map<std::string, Shader*>& postShaders);
-    void drawHud(const Framebuffer& framebuffer);
+    void drawHud(const Framebuffer& framebuffer, const std::unordered_map<std::string, Shader*>& postShaders);
     void buildTree();
 
     void updatePreviousModelMatrices();

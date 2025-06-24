@@ -840,7 +840,7 @@ void Application::render(const Framebuffer& framebuffer)
 	{
 		renderingSystem.drawScene(framebuffer, cameras->components[0].camera, nullptr, uniformBlockStorage, postShaders);
 	}
-	renderingSystem.drawHud(framebuffer);
+	renderingSystem.drawHud(framebuffer, postShaders);
 }
 
 
@@ -857,7 +857,7 @@ void Application::render(Camera& camera, const Framebuffer& framebuffer)
 	lightSystem(*scene, uniformBlockStorage);
 
 	scene->getRenderingSystem().drawScene(framebuffer, camera, nullptr, uniformBlockStorage, postShaders);
-	scene->getRenderingSystem().drawHud(framebuffer);
+	scene->getRenderingSystem().drawHud(framebuffer, postShaders);
 }
 
 void Application::renderToWindow()
@@ -1081,14 +1081,14 @@ void Application::setupScene()
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Cloud";
 
-	scene->addComponent(ent, ImageComponent{ shaders[3], "res/textures/cloud.png" });
+	scene->addComponent(ent, ImageComponent{ "res/textures/cloud.png" });
 	ts.translateEntity(ent, glm::vec3(9 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 	ts.scaleEntity(ent, glm::vec3(250.0f));
 
 	ent = scene->createEntity();
 	scene->getComponent<ObjectInfoComponent>(ent).name = "Text";
 
-	scene->addComponent(ent, TextComponent{ shaders[4], "foo", glm::vec4(1, 0, 0, 1), "text" });
+	scene->addComponent(ent, TextComponent{  "foo", glm::vec4(1, 0, 0, 1), "text" });
 	ts.translateEntity(ent, glm::vec3(1 * WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10, 0.0f));
 
 
