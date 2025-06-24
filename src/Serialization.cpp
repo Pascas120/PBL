@@ -693,6 +693,16 @@ namespace Serialization
 		}
 	}
 
+	static void to_json(nlohmann::json& j, CollectibleComponent& c, const SerializationContext& context)
+	{
+		// :)
+	}
+
+	static void from_json(const nlohmann::json& j, CollectibleComponent& c, const DeserializationContext& context)
+	{
+		// ;D
+	}
+
 
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
@@ -862,8 +872,6 @@ namespace Serialization
 
 			serializeComponent(LevelExitComponent);
 
-			serializeComponent(AnimationComponent);
-
 			selectionJson["entities"].push_back(entityJson);
 		}
 
@@ -958,8 +966,6 @@ namespace Serialization
 			deserializeComponent(SoundComponent);
 
 			deserializeComponent(LevelExitComponent);
-
-			deserializeComponent(AnimationComponent);
 		}
 
 		return deserializedEntities;

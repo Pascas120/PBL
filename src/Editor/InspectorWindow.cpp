@@ -92,6 +92,7 @@ namespace Editor
                 drawTrailDetector(context, editor->selectedObject);
                 drawAnimator(context, editor->selectedObject);
                 drawLevelExit(context, editor->selectedObject);
+                drawCollectible(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -138,6 +139,7 @@ namespace Editor
                     ADD_COMPONENT(TrailCollisionDetectorComponent, "Trail Detector");
                     ADD_COMPONENT(AnimationComponent, "Animator");
                     ADD_COMPONENT(LevelExitComponent, "Level Exit");
+                    ADD_COMPONENT(CollectibleComponent, "Collectible");
 
                     ImGui::EndCombo();
                 }
@@ -737,7 +739,7 @@ namespace Editor
         ImGui::PushID(&comp);
 
         bool open = ImGui::CollapsingHeader("Trail Detector", ImGuiTreeNodeFlags_DefaultOpen);
-        if (componentContextMenu<TrailCollisionDetectorComponent>(context, id)) { ImGui::PopID(); return; }
+        if (componentContextMenu<TrailCollisionDetectorComponent>(context, id)) { return; }
 
         if (open)
         {
@@ -842,6 +844,27 @@ namespace Editor
                 levelExit.nextLevelPath = levelPathCStr;
             }
         }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawCollectible(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<CollectibleComponent>(id))
+            return;
+
+        // marker – brak edytowalnych pól, ale pozwalamy usunąć
+        auto& comp = scene->getComponent<CollectibleComponent>(id);
+        ImGui::PushID(&comp);
+
+        bool open = ImGui::CollapsingHeader("Collectible", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<CollectibleComponent>(context, id)) { return; }
+
+        if (open)
+        {
+            ImGui::TextUnformatted("brak parametrow");
+        }
+
         ImGui::PopID();
     }
 }

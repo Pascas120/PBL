@@ -86,6 +86,8 @@ namespace Editor
 
     void EditorApp::run()
     {
+        loadScene(firstScene);
+
         lastFrame = glfwGetTime();
         while (!glfwWindowShouldClose(window))
         {

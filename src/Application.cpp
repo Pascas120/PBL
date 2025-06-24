@@ -60,6 +60,8 @@ constexpr float maxDeltaTime = 1.0f / 3.0f;
 
 void Application::run()
 {
+	loadScene(firstScene);
+
 	lastFrame = glfwGetTime();
 	while (!glfwWindowShouldClose(window))
 	{
@@ -205,7 +207,6 @@ bool Application::init()
 	}
 	//setupScene();
 	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
-	models.emplace_back(new Model("res/anims/chica.fbx"));
 	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
 	models.emplace_back(new Model("res/models/MASLO.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
@@ -223,7 +224,6 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plama3.fbx"));
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
-	animations.emplace_back(new Animation("res/anims/chica.fbx", models[1]));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
@@ -234,13 +234,6 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/ost4.mp3");
 	sounds.emplace_back("res/sounds/ost5.mp3");
 
-	/*scene = std::make_shared<Scene>(this);
-	Serialization::loadScene("res/scenes/demo.scene.json", *scene, {shaders, models, sounds, animations, true});
-	setupEvents();
-	scene->getTransformSystem().update();
-	scene->getRenderingSystem().buildTree();
-	scene->getCollisionSystem().buildTree();*/
-	loadScene("res/scenes/demo.scene.json");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -645,6 +638,29 @@ void Application::update()
 		{
 			auto& levelExit = levelExits->components[i];
 			levelExit.playerCount = 0;
+		}
+	}
+
+
+	if (auto collectibles = scene->getStorage<CollectibleComponent>())
+	{
+		constexpr float collectibleOscTime = 4.0f;
+		constexpr float collectibleOscAmplitude = 0.3f;
+
+		for (int i = 0; i < collectibles->getQuantity(); ++i)
+		{
+			auto& collectible = collectibles->components[i];
+
+			collectible.oscillationTimer += deltaTime;
+			collectible.oscillationTimer = fmodf(collectible.oscillationTimer, collectibleOscTime);
+
+			float heightOffset = sinf(collectible.oscillationTimer / collectibleOscTime * glm::two_pi<float>());
+			heightOffset *= collectibleOscAmplitude;
+
+			glm::vec3 newPos = collectible.startPosition;
+			newPos.y += heightOffset;
+
+			ts.translateEntity(collectible.id, newPos);
 		}
 	}
 
@@ -1406,6 +1422,8 @@ void Application::setupEvents()
 			}
 		});
 
+
+	// przechodzenie do następnego poziomu
 	eventSystem.registerListener<TriggerEvent>([&](const Event& e) {
 		const auto& ev = static_cast<const TriggerEvent&>(e);
 
@@ -1419,8 +1437,29 @@ void Application::setupEvents()
 		++levelExit.playerCount;
 		if (levelExit.playerCount == 2)
 		{
+			++currentLevel;
 			changeSceneTo = "res/scenes/" + levelExit.nextLevelPath;
 		}
+	});
+
+	eventSystem.registerListener<TriggerEvent>([&](const Event& e) {
+		const auto& ev = static_cast<const TriggerEvent&>(e);
+
+		if (!scene->hasComponent<CollectibleComponent>(ev.triggerObject) ||
+			(!scene->hasComponent<ButterController>(ev.otherObject) &&
+				!scene->hasComponent<BreadController>(ev.otherObject)))
+			return;
+
+		auto& collectible = scene->getComponent<CollectibleComponent>(ev.triggerObject);
+
+		auto& collider = scene->getComponent<ColliderComponent>(ev.triggerObject);
+		collider.properties |= ColliderPropertyFlags::DisableCollider;
+
+		for (EntityID child : scene->getComponent<Transform>(ev.triggerObject).children)
+		{
+			scene->destroyEntity(child);
+		}
+		spdlog::info("Suchar: {}", jokes[currentLevel % jokes.size()]);
 	});
 }
 
@@ -1463,6 +1502,30 @@ void Application::setStartValues()
 			}
 		}
 	}
+
+	if (auto collectibles = scene->getStorage<CollectibleComponent>())
+	{
+		constexpr float collectibleOscTime = 4.0f;
+		constexpr float collectibleOscAmplitude = 0.5f;
+
+		for (int i = 0; i < collectibles->getQuantity(); ++i)
+		{
+			auto& collectible = collectibles->components[i];
+			auto& transform = scene->getComponent<Transform>(collectible.id);
+
+			collectible.startPosition = transform.translation;
+		}
+
+		int selectedCollectibleIndex = Random::getInt(0, collectibles->getQuantity());
+
+		auto& selectedCollectible = collectibles->components[selectedCollectibleIndex];
+		scene->instantiatePrefab("CollectibleModel", selectedCollectible.id);
+
+		auto& selectedCollider = scene->getComponent<ColliderComponent>(selectedCollectible.id);
+		selectedCollider.properties &= ~(ColliderPropertyFlags::DisableCollider);
+
+	}
+
 
 	//TODO WOLNE
 	EntityID ost = scene->getEntityByName("ost");

@@ -37,5 +37,6 @@ namespace Editor
 		void drawTrailDetector(const EditorContext& context, EntityID id);
 		void drawAnimator(const EditorContext& context, EntityID id);
 		void drawLevelExit(const EditorContext& context, EntityID id);
+		void drawCollectible(const EditorContext& context, EntityID id);
 	};
 }
