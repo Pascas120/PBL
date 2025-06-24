@@ -227,7 +227,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7778855562210083,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +276,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7778855562210083,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -2888,21 +2888,21 @@
                 "translation": [
                     252.0,
                     241.5,
-                    222.1999969482422
+                    0.0
                 ]
             }
         },
         {
             "ImageComponent": {
                 "color": [
-                    0.0,
-                    0.0,
+                    0.800000011920929,
+                    0.0235294122248888,
                     0.0,
                     0.0
                 ],
-                "height": 827.5,
+                "height": 720.5999755859375,
                 "texturePath": "res/textures/cloud.png",
-                "width": 938.2000122070313
+                "width": 838.5
             },
             "ObjectInfoComponent": {
                 "name": "New Object (1)",
@@ -2931,7 +2931,7 @@
                 "translation": [
                     242.89999389648438,
                     226.6999969482422,
-                    207.8000030517578
+                    0.0
                 ]
             }
         }
