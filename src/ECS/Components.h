@@ -31,6 +31,7 @@ enum class FlyVariant : uint8_t {
     COUNT
 };
 enum class ElevatorState { Closed, Opening, Open, Closing };
+enum class ButtonLinkMode : uint8_t { Single = 0, DoubleD = 1 };
 class Model;
 
 struct ObjectInfoComponent {
@@ -196,6 +197,9 @@ struct ButtonComponent {
     float pressSpeed = 4.0f;
     std::string playerTag;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
+
+    ButtonLinkMode linkMode = ButtonLinkMode::Single;
+    EntityID       linkedButton = static_cast<EntityID>(-1);
 };
 
 struct SoundComponent {

@@ -640,22 +640,27 @@ namespace Editor
 
         ImGui::PushID(&b);
         bool open = ImGui::CollapsingHeader("Button", ImGuiTreeNodeFlags_DefaultOpen);
-        if (componentContextMenu<ButtonComponent>(context, id)) return;
+        if (componentContextMenu<ButtonComponent>(context, id)) { ImGui::PopID(); return; }
+
         if (open)
         {
             ImGui::DragFloat("Press Depth", &b.pressDepth, 0.01f);
             ImGui::DragFloat("Press Speed", &b.pressSpeed, 0.1f);
 
-			
-			std::string playerTag = b.playerTag;
-			const char* playerTagCStr = playerTag.c_str();
-			if (ImGui::InputText("Player Tag", (char*)playerTagCStr, 64))
-			{
-				b.playerTag = playerTagCStr;
-			}
+            char buf[64]; std::strncpy(buf, b.playerTag.c_str(), sizeof(buf));
+            if (ImGui::InputText("Player Tag", buf, sizeof(buf)))
+                b.playerTag = buf;
 
-            
             Utils::entityRefField("Elevator Entity", b.elevatorEntity, *scene);
+
+            // ---------- NOWA CZĘŚĆ ----------
+            const char* linkModes[] = { "Single", "DoubleD" };
+            int mode = static_cast<int>(b.linkMode);
+            if (ImGui::Combo("Link Mode", &mode, linkModes, IM_ARRAYSIZE(linkModes)))
+                b.linkMode = static_cast<ButtonLinkMode>(mode);
+
+            if (b.linkMode == ButtonLinkMode::DoubleD)
+                Utils::entityRefField("Linked Button", b.linkedButton, *scene);
         }
         ImGui::PopID();
     }
