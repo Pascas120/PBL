@@ -233,4 +233,12 @@ struct LevelExitComponent
 
     EntityID id = (EntityID)-1;
 };
+
+struct CollectibleComponent
+{
+    glm::vec3 startPosition;
+    float oscillationTimer;
+
+    EntityID id = (EntityID)-1;
+};
 #endif //PBL_COMPONENTS_H

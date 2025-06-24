@@ -202,6 +202,54 @@
             "data": {
                 "entities": [
                     {
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/CHLEB.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Collectible Model",
+                            "uuid": "fcc4815f-c626-9f5f-c981-be6466be2e65"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                0.003000000026077032,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "CollectibleModel"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
@@ -263,6 +311,73 @@
                 ]
             },
             "name": "Trail3"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "CollectibleComponent": null,
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "radius": 0.5,
+                                "type": "SPHERE"
+                            },
+                            "isStatic": false,
+                            "isTrigger": true,
+                            "properties": 4
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Collectible Pos",
+                            "uuid": "8d209f4d-df08-344f-0ec9-ad0b8b8af094"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.22349166870117188,
+                                20.330055236816406,
+                                -35.58539581298828
+                            ]
+                        },
+                        "VelocityComponent": {
+                            "angularVelocity": [
+                                0.0,
+                                37.5,
+                                0.0
+                            ],
+                            "useGravity": false,
+                            "velocity": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "CollectiblePos"
         }
     ]
 }
