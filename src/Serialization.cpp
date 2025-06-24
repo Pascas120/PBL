@@ -547,6 +547,9 @@ namespace Serialization
 		j["pressSpeed"] = c.pressSpeed;
 		j["playerTag"] = c.playerTag;
 		j["elevatorEntity"] = entity_to_json(c.elevatorEntity, context);
+		j["linkMode"] = c.linkMode;
+		j["linkedButton"] = entity_to_json(c.linkedButton, context);
+
 	}
 
 	static void from_json(const nlohmann::json& j, ButtonComponent& c, const DeserializationContext& context)
@@ -554,6 +557,7 @@ namespace Serialization
 		j.at("isPressed").get_to(c.isPressed);
 		j.at("pressDepth").get_to(c.pressDepth);
 		j.at("pressSpeed").get_to(c.pressSpeed);
+
 		if (j.contains("playerTag"))
 		{
 			j.at("playerTag").get_to(c.playerTag);
@@ -563,9 +567,12 @@ namespace Serialization
 			c.playerTag.clear();
 		}
 		c.elevatorEntity = entity_from_json(j.at("elevatorEntity"), context);
+		c.linkedButton = entity_from_json(j.value("linkedButton", ""), context);
+		c.linkMode = j.value("linkMode", c.linkMode);
 	}
 
-
+	//			c.isTrigger = j.value("isTrigger", c.isTrigger);
+	//			c.properties = j.value("properties", c.properties);
 	static void to_json(nlohmann::json& j, const BreadController& c, const SerializationContext& context)
 	{
 		j["moveSpeed"] = c.moveSpeed;

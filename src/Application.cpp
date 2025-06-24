@@ -460,13 +460,26 @@ void Application::update()
 	}
 
 
+	auto isButtonPressed = [&](const ButtonComponent& b) -> bool
+		{
+	
+			bool pressedSelf = pressedButtons.count(b.id) > 0;
+
+			if (b.linkMode == ButtonLinkMode::DoubleD &&
+				b.linkedButton != static_cast<EntityID>(-1))
+			{
+				bool pressedLinked = pressedButtons.count(b.linkedButton) > 0;
+				return pressedSelf && pressedLinked;   
+			}
+			return pressedSelf;                       
+		};
 	if (auto buttons = scene->getStorage<ButtonComponent>()) {
 		for (int i = 0; i < buttons->getQuantity(); ++i) {
 			auto& btn = buttons->components[i];
 			if (btn.elevatorEntity == (EntityID)-1) continue;
 			auto& e = scene->getComponent<ElevatorComponent>(btn.elevatorEntity);
 
-			bool nowPressed = pressedButtons.count(btn.id) > 0;
+			bool nowPressed = isButtonPressed(btn);
 
 			if (e.isDoor) {
 
