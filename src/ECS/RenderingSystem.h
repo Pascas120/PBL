@@ -48,6 +48,7 @@ private:
 	void ssaoFilter(Shader* ssao, const CustomFramebuffer& gBuffer, const Framebuffer& out);
 	void ssaoApplyFilter(Shader* ssaoApply, const CustomFramebuffer& in, const CustomFramebuffer& ssao, const Framebuffer& out);
 	void dynamicSplitScreen(Shader* dynamicSplitScreen,  Camera& camera, const CustomFramebuffer& in, CustomFramebuffer& in2, const Framebuffer& out);
+    void drawSplitScreenStencil();
 
     std::vector<EntityID> getVisibleEntities(const FrustumPlanes& frustumPlanes);
 	void drawBase(const CustomFramebuffer& outputFramebuffer, Camera& camera, const UniformBlockStorage& uniformBlockStorage, 
@@ -58,11 +59,11 @@ private:
 		{ AttachmentType::COLOR, AttachmentType::DEPTH, AttachmentType::POSITION, 
         AttachmentType::NORMAL, AttachmentType::VELOCITY } } };
 
-    CustomFramebuffer auxiliaryFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-	CustomFramebuffer auxiliaryFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR } } };
-	CustomFramebuffer ssaoFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR }, GL_RED, GL_FLOAT } };
+    CustomFramebuffer auxiliaryFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } } };
+	CustomFramebuffer auxiliaryFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } } };
+	CustomFramebuffer postProcessingFramebuffer1{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } } };
+    CustomFramebuffer postProcessingFramebuffer2{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH } } };
+	CustomFramebuffer ssaoFramebuffer{ FramebufferConfig{ 1920, 1080, { AttachmentType::COLOR, AttachmentType::DEPTH }, GL_RED, GL_FLOAT } };
 
     const uint32_t shadowMapWidth = 2048;
     const uint32_t shadowMapHeight = 2048;

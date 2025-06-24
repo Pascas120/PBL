@@ -4,15 +4,22 @@ precision mediump float;
 uniform vec2 viewport_size;
 uniform sampler2D viewport1;
 uniform sampler2D viewport2;
-//uniform vec2 player1_position;
-//uniform vec2 player2_position;
-//uniform vec2 player1_screen_pos;
-//uniform vec2 player2_screen_pos;
-uniform float split_slope;
-uniform bool player1_above;
 
-uniform float split_line_thickness = 5.0;
-uniform vec4 split_line_color;
+//uniform float split_slope;
+//uniform bool player1_above;
+
+//uniform float split_line_thickness = 5.0;
+//uniform vec4 split_line_color;
+
+layout(std140) uniform SplitScreen
+{
+    float split_slope;
+    bool player1_above;
+
+    float split_line_thickness;
+    vec4 split_line_color;
+};
+    
 
 in vec2 texCoord;           // UV coordinates passed from vertex shader
 out vec4 fragColor;     // Output color
