@@ -195,28 +195,33 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unorder
     if (!initializedHud) initHud(); // Inicjalizacja, jeśli nie została wykonana
 
     auto [width, height] = framebuffer.GetSizePair();
-    glm::mat4 ortho = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
-
+    glm::mat4 ortho = glm::ortho(0.0f, (float)width,  0.0f, (float)height, -1.0f, 1.0f);
 
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
     auto transforms = scene->getStorage<Transform>();
     auto images = scene->getStorage<ImageComponent>();
     auto texts = scene->getStorage<TextComponent>();
 
-	framebuffer.Bind();
+    framebuffer.Bind();
 
-    if (images != NULL) {
-    	Shader* hudShader = postShaders.at("HUD");
+    static auto lastLogTime = std::chrono::steady_clock::now();
+
+    if (images != nullptr) {
+        Shader* hudShader = postShaders.at("HUD");
         for (int i = 0; i < images->getQuantity(); i++) {
             auto& image = images->components[i];
 
             EntityID entityID = image.id;
-        	hudShader->use();
-            // TODO: uniform blocks
+            hudShader->use();
             hudShader->setMat4("projection", ortho);
 
-            hudShader->setMat4("model", glm::scale(transforms->get(entityID).globalMatrix, glm::vec3(image.width, image.height, 1.0f)));
+            glm::mat4 modelMatrix = glm::scale(transforms->get(entityID).globalMatrix, glm::vec3(image.width, image.height, 1.0f));
+            hudShader->setMat4("model", modelMatrix);
+
+
             if (!image.texturePath.empty()) {
                 if (GLuint textureID = getTexture(image.texturePath)) {
                     glActiveTexture(GL_TEXTURE0);
@@ -236,13 +241,12 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unorder
         }
     }
 
-    if (texts != NULL) {
-    	Shader* textShader = postShaders.at("Text");
+    if (texts != nullptr) {
+        Shader* textShader = postShaders.at("Text");
         for (int i = 0; i < texts->getQuantity(); i++) {
             auto& text = texts->components[i];
 
             EntityID entityID = text.id;
-
             textShader->use();
             textShader->setMat4("projection", ortho);
             t1.renderText(textShader, text.text, transforms->get(entityID).translation.x, transforms->get(entityID).translation.y, text.fontSize, text.color);
@@ -250,8 +254,8 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unorder
     }
 
     glDisable(GL_BLEND);
-
     glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 }
 
 GLuint RenderingSystem::getTexture(std::string path) {
@@ -315,7 +319,7 @@ void RenderingSystem::initHud() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    t1.init("../../res/fonts/sixtyfour.ttf");
+    t1.init("../../res/fonts/roboto.ttf");
 
     initializedHud = true;
 }
