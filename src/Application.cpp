@@ -259,6 +259,19 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/lody2.fbx"));
 	models.emplace_back(new Model("res/models/znajdzka.fbx"));
 	models.emplace_back(new Model("res/models/lodowkacialo.fbx"));
+	models.emplace_back(new Model("res/models/polkacalalewo.fbx"));
+	models.emplace_back(new Model("res/models/polkacalaprawo.fbx"));
+	models.emplace_back(new Model("res/models/polkacalabez.fbx"));
+	models.emplace_back(new Model("res/models/polkalewowdolprawo.fbx"));
+	models.emplace_back(new Model("res/models/polkalewowdolbez.fbx"));
+	models.emplace_back(new Model("res/models/polkalewowdollewo.fbx"));
+	models.emplace_back(new Model("res/models/polkaprawowdollewo.fbx"));
+	models.emplace_back(new Model("res/models/polkaprawowdolprawo.fbx"));
+	models.emplace_back(new Model("res/models/polkaprawowdolbez.fbx"));
+	models.emplace_back(new Model("res/models/polkasmol.fbx"));
+	models.emplace_back(new Model("res/models/butelki.fbx"));
+	models.emplace_back(new Model("res/models/lodowkadziura.fbx"));
+	models.emplace_back(new Model("res/models/kratka.fbx"));
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
 

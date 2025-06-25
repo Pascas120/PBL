@@ -876,13 +876,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
                         30.0,
-                        200.0
+                        200.0,
+                        0.0
                     ],
                     "halfSize": [
-                        200.0,
                         40.0,
+                        200.0,
                         200.0
                     ],
                     "type": "BOX"
@@ -906,8 +906,8 @@
                 "maxHeight": 5.0,
                 "openHeight": 5.0,
                 "rotate": true,
-                "rotateAngle": 0.0,
-                "rotateAxis": 0,
+                "rotateAngle": 90.0,
+                "rotateAxis": 2,
                 "shouldOpen": false,
                 "speed": 10.0,
                 "startY": -1.0,
@@ -929,27 +929,27 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -90.0,
+                    0.0,
                     0.0,
                     0.0
                 ],
                 "isStatic": false,
                 "parent": "",
                 "rotation": [
-                    -0.7071067690849304,
                     0.0,
                     0.0,
-                    0.7071067690849304
+                    0.0,
+                    1.0
                 ],
                 "scale": [
                     0.0299949049949646,
-                    0.02999611385166645,
-                    0.029994752258062363
+                    0.029995640739798546,
+                    0.029994279146194458
                 ],
                 "translation": [
-                    52.03514862060547,
-                    16.575889587402344,
-                    11.96490478515625
+                    56.718326568603516,
+                    15.625689506530762,
+                    17.396127700805664
                 ]
             }
         },
@@ -1132,6 +1132,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "",
                 "nextLevelPath": "demo.scene.json"
             },
             "ObjectInfoComponent": {
