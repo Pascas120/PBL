@@ -901,11 +901,11 @@
         },
         {
             "ButtonComponent": {
+                "activatorMode": "AllByTag",
                 "elevatorEntity": "8532b76c-4502-118e-1218-e3f2098aa3e4",
                 "isPressed": false,
                 "linkMode": 0,
                 "linkedButton": "",
-                "playerTag": "",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -1233,11 +1233,12 @@
         },
         {
             "ButtonComponent": {
+                "activatorMode": "AllByTag",
+                "activatorTag": "maslo",
                 "elevatorEntity": "f5eb05ba-1775-368a-0bb9-93a33034383e",
                 "isPressed": false,
                 "linkMode": 0,
                 "linkedButton": "",
-                "playerTag": "maslo",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -1496,70 +1497,6 @@
             }
         },
         {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 2
-            },
-            "FreezeComponent": {
-                "OnEnterMessage": "zimno",
-                "hasTriggered": false,
-                "triggerRadius": 1.0
-            },
-            "ModelComponent": {
-                "color": [
-                    0.312692254781723,
-                    0.7525874376296997,
-                    0.8284313678741455
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "freeze",
-                "uuid": "70fa57d3-aaf2-5612-0384-c69e9169d342"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    6.099999904632568,
-                    0.10000000149011612,
-                    2.9000000953674316
-                ],
-                "translation": [
-                    0.624152660369873,
-                    18.202571868896484,
-                    29.614858627319336
-                ]
-            }
-        },
-        {
             "ModelComponent": {
                 "color": [
                     1.0,
@@ -1682,7 +1619,7 @@
                     0.7156862616539001,
                     0.17892156541347504
                 ],
-                "model": "res/models/grass_block/grass_block.obj",
+                "model": "res/models/plama1.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -1710,14 +1647,14 @@
                     1.0
                 ],
                 "scale": [
-                    1.8739999532699585,
-                    0.10000000149011612,
-                    1.798067331314087
+                    0.02500000037252903,
+                    0.02500000037252903,
+                    0.02500000037252903
                 ],
                 "translation": [
                     0.21138149499893188,
-                    18.27737808227539,
-                    38.84476089477539
+                    18.407331466674805,
+                    37.46290588378906
                 ]
             }
         },
@@ -1750,92 +1687,6 @@
                     0.0,
                     18.876708984375,
                     -42.00696563720703
-                ]
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "New Object",
-                "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
-            },
-            "TextComponent": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "font": "",
-                "fontSize": 6.099999904632568,
-                "text": "ndgndbdfbfgsbsfgbfgbfgdbfgbsfbsdfgbgfbfdgbsfgbdfgbsfbsf"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    252.0,
-                    241.5,
-                    222.1999969482422
-                ]
-            }
-        },
-        {
-            "ImageComponent": {
-                "color": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "height": 827.5,
-                "texturePath": "res/textures/cloud.png",
-                "width": 938.2000122070313
-            },
-            "ObjectInfoComponent": {
-                "name": "New Object (1)",
-                "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    242.89999389648438,
-                    226.6999969482422,
-                    207.8000030517578
                 ]
             }
         },

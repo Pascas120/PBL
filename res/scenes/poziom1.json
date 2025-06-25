@@ -756,87 +756,19 @@
                     2.1035518646240234
                 ],
                 "translation": [
-                    15.211712837219238,
+                    -0.21385705471038818,
                     23.48703384399414,
-                    -29.878692626953125
+                    -11.711158752441406
                 ]
             }
         },
         {
             "ButtonComponent": {
-                "elevatorEntity": "0bf095c7-a549-d1ec-f216-4a698a4142eb",
-                "isPressed": false,
-                "linkMode": 1,
-                "linkedButton": "ddeedfd3-c0d9-7200-5658-f6998d26535a",
-                "playerTag": "",
-                "pressDepth": 0.10000000149011612,
-                "pressSpeed": 4.0
-            },
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
-            "ModelComponent": {
-                "color": [
-                    0.8941176533699036,
-                    0.32549020648002625,
-                    0.3529411852359772
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "przycisk (1)",
-                "uuid": "eafe8327-cb38-6447-9112-85090ff0f4a4"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    0.5099999904632568,
-                    0.26320916414260864,
-                    0.5099999904632568
-                ],
-                "translation": [
-                    -4.585425853729248,
-                    18.604381561279297,
-                    -24.166269302368164
-                ]
-            }
-        },
-        {
-            "ButtonComponent": {
+                "activatorMode": "AllByTag",
                 "elevatorEntity": "f5eb05ba-1775-368a-0bb9-93a33034383e",
                 "isPressed": false,
-                "linkMode": 1,
-                "linkedButton": "eafe8327-cb38-6447-9112-85090ff0f4a4",
-                "playerTag": "",
+                "linkMode": 0,
+                "linkedButton": "",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -970,87 +902,9 @@
                     0.8619000315666199
                 ],
                 "translation": [
-                    4.965208530426025,
-                    20.21475601196289,
+                    0.3646526336669922,
+                    21.96184730529785,
                     -18.281391143798828
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 2
-            },
-            "ElevatorComponent": {
-                "buttonEntity": "eafe8327-cb38-6447-9112-85090ff0f4a4",
-                "closedPos": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "doorDir": "Left",
-                "hasInitClosedPos": false,
-                "isDoor": true,
-                "isMoving": false,
-                "locked": true,
-                "maxHeight": 5.0,
-                "openHeight": 5.400000095367432,
-                "shouldOpen": false,
-                "speed": 4.599999904632568,
-                "startY": -1.0,
-                "state": "Closed"
-            },
-            "ModelComponent": {
-                "color": [
-                    0.2666666805744171,
-                    0.24705882370471954,
-                    0.6980392336845398
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "winda (1)",
-                "uuid": "0bf095c7-a549-d1ec-f216-4a698a4142eb"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    5.1620001792907715,
-                    4.61899995803833,
-                    0.8619000315666199
-                ],
-                "translation": [
-                    -5.102582931518555,
-                    20.21475601196289,
-                    -18.077896118164063
                 ]
             }
         },
@@ -1083,92 +937,6 @@
                     0.0,
                     18.876708984375,
                     -42.00696563720703
-                ]
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "New Object",
-                "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
-            },
-            "TextComponent": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "font": "",
-                "fontSize": 6.099999904632568,
-                "text": "ndgndbdfbfgsbsfgbfgbfgdbfgbsfbsdfgbgfbfdgbsfgbdfgbsfbsf"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    252.0,
-                    241.5,
-                    222.1999969482422
-                ]
-            }
-        },
-        {
-            "ImageComponent": {
-                "color": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "height": 827.5,
-                "texturePath": "res/textures/cloud.png",
-                "width": 938.2000122070313
-            },
-            "ObjectInfoComponent": {
-                "name": "New Object (1)",
-                "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    242.89999389648438,
-                    226.6999969482422,
-                    207.8000030517578
                 ]
             }
         },

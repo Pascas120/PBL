@@ -74,9 +74,9 @@
                     0.002969922497868538
                 ],
                 "translation": [
-                    -1.5803756713867188,
+                    -3.121415138244629,
                     19.617265701293945,
-                    -15.287614822387695
+                    -6.5440473556518555
                 ]
             },
             "VelocityComponent": {
@@ -206,9 +206,9 @@
                     0.004899943713098764
                 ],
                 "translation": [
-                    3.387439489364624,
+                    3.3874354362487793,
                     18.926780700683594,
-                    -13.946388244628906
+                    -4.612210750579834
                 ]
             },
             "VelocityComponent": {
@@ -528,7 +528,7 @@
                 "translation": [
                     0.0,
                     0.0,
-                    -10.526385307312012
+                    0.39770030975341797
                 ]
             }
         },
@@ -580,14 +580,73 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.02999873086810112,
+                    0.029998313635587692,
                     0.029999999329447746,
-                    0.02999873086810112
+                    0.029998313635587692
                 ],
                 "translation": [
-                    35.67470169067383,
+                    52.45146942138672,
                     0.0,
                     17.88717269897461
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        312.1000061035156,
+                        0.0
+                    ],
+                    "halfSize": [
+                        250.0,
+                        299.70001220703125,
+                        306.70001220703125
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/blat.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "blat",
+                "uuid": "17703a8e-6332-7226-4d83-00f3aac2d1aa"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.029998181387782097,
+                    0.029999999329447746,
+                    0.029998181387782097
+                ],
+                "translation": [
+                    17.062408447265625,
+                    0.0,
+                    17.887163162231445
                 ]
             }
         },
@@ -764,7 +823,7 @@
                 "translation": [
                     -4.211212158203125,
                     18.91701889038086,
-                    -8.931418418884277
+                    7.549096584320068
                 ]
             }
         },
@@ -821,9 +880,9 @@
                     0.009999999776482582
                 ],
                 "translation": [
-                    3.3111207485198975,
-                    18.91701889038086,
-                    -8.187102317810059
+                    6.813252925872803,
+                    18.807729721069336,
+                    -0.8889778256416321
                 ]
             }
         },
@@ -874,9 +933,9 @@
                     2.1035518646240234
                 ],
                 "translation": [
-                    16.682056427001953,
-                    23.48703384399414,
-                    -29.878692626953125
+                    53.98288345336914,
+                    20.49724578857422,
+                    26.354103088378906
                 ]
             }
         },
@@ -904,9 +963,7 @@
                     "441432ac-ab53-9285-1324-ba5267384cf6",
                     "9f8a3a6e-787e-aecf-8327-7d523dd93dbc",
                     "4082248c-4261-8b74-bd89-f3c86b7085e0",
-                    "eaf87254-07e5-e679-029e-c1e16596a4cc",
-                    "ee3cf972-d988-c97b-bcad-c2524305a3c2",
-                    "15779c6c-f07a-2d0e-dc50-76eb7102f196"
+                    "eaf87254-07e5-e679-029e-c1e16596a4cc"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -927,7 +984,7 @@
                     0.029999999329447746
                 ],
                 "translation": [
-                    0.0,
+                    17.153501510620117,
                     0.0,
                     0.0
                 ]
@@ -1616,270 +1673,6 @@
             }
         },
         {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
-            "ModelComponent": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "CIF",
-                "uuid": "ee3cf972-d988-c97b-bcad-c2524305a3c2"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "539c2a93-75c3-0011-142b-74bf9f80083b",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    33.333335876464844,
-                    52.85255813598633,
-                    76.99991607666016
-                ],
-                "translation": [
-                    353.705810546875,
-                    652.3858032226563,
-                    402.1722717285156
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
-            "ModelComponent": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "CIF (1)",
-                "uuid": "15779c6c-f07a-2d0e-dc50-76eb7102f196"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "539c2a93-75c3-0011-142b-74bf9f80083b",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    33.333335876464844,
-                    66.94000244140625,
-                    76.99991607666016
-                ],
-                "translation": [
-                    353.705810546875,
-                    654.2408447265625,
-                    775.5420532226563
-                ]
-            }
-        },
-        {
-            "ButtonComponent": {
-                "elevatorEntity": "f5eb05ba-1775-368a-0bb9-93a33034383e",
-                "isPressed": false,
-                "linkMode": 0,
-                "linkedButton": "",
-                "playerTag": "",
-                "pressDepth": 0.10000000149011612,
-                "pressSpeed": 4.0
-            },
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
-            "ModelComponent": {
-                "color": [
-                    0.8941176533699036,
-                    0.32549020648002625,
-                    0.3529411852359772
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "przycisk",
-                "uuid": "c8370dea-0d1d-91bd-6b08-7159e7e2084d"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    0.5099999904632568,
-                    0.26320916414260864,
-                    0.5099999904632568
-                ],
-                "translation": [
-                    -5.0251922607421875,
-                    18.660181045532227,
-                    12.62666130065918
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 2
-            },
-            "ElevatorComponent": {
-                "buttonEntity": "c8370dea-0d1d-91bd-6b08-7159e7e2084d",
-                "closedPos": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "doorDir": "Left",
-                "hasInitClosedPos": false,
-                "isDoor": false,
-                "isMoving": false,
-                "locked": false,
-                "maxHeight": 5.0,
-                "openHeight": 5.400000095367432,
-                "shouldOpen": false,
-                "speed": 4.599999904632568,
-                "startY": -1.0,
-                "state": "Closed"
-            },
-            "ModelComponent": {
-                "color": [
-                    0.2666666805744171,
-                    0.24705882370471954,
-                    0.6980392336845398
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "winda",
-                "uuid": "f5eb05ba-1775-368a-0bb9-93a33034383e"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    8.362000465393066,
-                    0.21914473176002502,
-                    3.062000036239624
-                ],
-                "translation": [
-                    0.3311346769332886,
-                    12.993566513061523,
-                    3.1267099380493164
-                ]
-            }
-        },
-        {
             "ObjectInfoComponent": {
                 "name": "Respawn",
                 "uuid": "2307180b-ba4c-4a6b-c620-da16739a00f5"
@@ -1908,92 +1701,6 @@
                     0.0,
                     18.876708984375,
                     -42.00696563720703
-                ]
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "New Object",
-                "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
-            },
-            "TextComponent": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "font": "",
-                "fontSize": 6.099999904632568,
-                "text": "ndgndbdfbfgsbsfgbfgbfgdbfgbsfbsdfgbgfbfdgbsfgbdfgbsfbsf"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    252.0,
-                    241.5,
-                    222.1999969482422
-                ]
-            }
-        },
-        {
-            "ImageComponent": {
-                "color": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "height": 827.5,
-                "texturePath": "res/textures/cloud.png",
-                "width": 938.2000122070313
-            },
-            "ObjectInfoComponent": {
-                "name": "New Object (1)",
-                "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    242.89999389648438,
-                    226.6999969482422,
-                    207.8000030517578
                 ]
             }
         },

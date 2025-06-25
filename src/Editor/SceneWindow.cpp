@@ -24,7 +24,7 @@ namespace Editor
             glm::vec3(0.0f, 1.0f, 0.0f)));
 
 		editorCamera.getFrustum().setProjectionMatrix(
-			glm::perspective(glm::radians(45.0f), 650.0f / 400.0f, 0.1f, 100.0f));
+			glm::perspective(glm::radians(45.0f), 650.0f / 400.0f, 0.1f, 3000.0f));
 
 		editor->getEventSystem().registerListener<Events::CameraFocus>(focusCamera);
 	}
@@ -139,7 +139,7 @@ namespace Editor
                 sceneFramebuffer->Resize(size.x, size.y);
 
 				editorCamera.getFrustum().setProjectionMatrix(
-					glm::perspective(glm::radians(45.0f), size.x / size.y, 0.1f, 100.0f));
+					glm::perspective(glm::radians(45.0f), size.x / size.y, 0.1f, 3000.0f));
                 lastSize = size;
             }
 

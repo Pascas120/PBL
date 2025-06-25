@@ -1352,11 +1352,11 @@
         },
         {
             "ButtonComponent": {
+                "activatorMode": "AllByTag",
                 "elevatorEntity": "9ec594e6-79cd-149d-b51f-578fcfad2507",
                 "isPressed": false,
                 "linkMode": 0,
                 "linkedButton": "",
-                "playerTag": "",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -1420,11 +1420,11 @@
         },
         {
             "ButtonComponent": {
+                "activatorMode": "AllByTag",
                 "elevatorEntity": "43c3fffe-193e-aa92-96ba-e6a405bfaba3",
                 "isPressed": false,
                 "linkMode": 0,
                 "linkedButton": "",
-                "playerTag": "",
                 "pressDepth": 0.10000000149011612,
                 "pressSpeed": 4.0
             },
@@ -1613,92 +1613,6 @@
                     30.9263858795166,
                     18.876708984375,
                     17.536466598510742
-                ]
-            }
-        },
-        {
-            "ObjectInfoComponent": {
-                "name": "New Object",
-                "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
-            },
-            "TextComponent": {
-                "color": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "font": "",
-                "fontSize": 6.099999904632568,
-                "text": "ndgndbdfbfgsbsfgbfgbfgdbfgbsfbsdfgbgfbfdgbsfgbdfgbsfbsf"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    252.0,
-                    241.5,
-                    222.1999969482422
-                ]
-            }
-        },
-        {
-            "ImageComponent": {
-                "color": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "height": 827.5,
-                "texturePath": "res/textures/cloud.png",
-                "width": 938.2000122070313
-            },
-            "ObjectInfoComponent": {
-                "name": "New Object (1)",
-                "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    242.89999389648438,
-                    226.6999969482422,
-                    207.8000030517578
                 ]
             }
         },
