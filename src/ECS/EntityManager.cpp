@@ -25,6 +25,10 @@ EntityID EntityManager::createEntity() {
 
 void EntityManager::destroyEntity(EntityID id) {
     assert(id < MAX_ENTITIES && "Entity ID is out of range!");
+    if(!aliveEntities.test(id)) {
+        std::cerr << "Warning: Attempting to destroy a non-existent entity with ID: " << id << std::endl;
+        return;
+    }
     assert(aliveEntities.test(id) && "Attempt to destroy a non-existent entity!");
 
     aliveEntities.reset(id);
