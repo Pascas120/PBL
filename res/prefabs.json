@@ -4,458 +4,6 @@
             "data": {
                 "entities": [
                     {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    -5.300000190734863,
-                                    0.0,
-                                    13.300000190734863
-                                ],
-                                "halfSize": [
-                                    113.80000305175781,
-                                    8.600000381469727,
-                                    108.9000015258789
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/plama2.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "2749eb5b-9a9c-e4e3-5614-11d632a4d204"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                -0.8992981314659119,
-                                18.61429786682129,
-                                -7.476591110229492
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail2"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "halfSize": [
-                                    123.9000015258789,
-                                    64.5,
-                                    67.5
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/MASLO.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "436e2b89-877a-62cf-1f3b-9625af2278fc"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.00046488040243275464,
-                                0.004882157780230045
-                            ],
-                            "translation": [
-                                -0.4241061508655548,
-                                18.61429786682129,
-                                -7.976927280426025
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    0.0,
-                                    0.0,
-                                    -7.800000190734863
-                                ],
-                                "halfSize": [
-                                    110.9000015258789,
-                                    8.600000381469727,
-                                    88.9000015258789
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/plama1.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "700092d0-bc04-201e-3303-2ecdc2e4ec75"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                -0.4241061508655548,
-                                18.61429786682129,
-                                -7.976927280426025
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail1"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "New Object",
-                            "uuid": "459b5ca3-94a4-8e61-56e4-80776618b1eb"
-                        },
-                        "Transform": {
-                            "children": [
-                                "a0f7c358-ad56-aaff-8d66-91572b5aa110"
-                            ],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "New Object (1)",
-                            "uuid": "a0f7c358-ad56-aaff-8d66-91572b5aa110"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "459b5ca3-94a4-8e61-56e4-80776618b1eb",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "test"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/CHLEB.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Collectible Model",
-                            "uuid": "fcc4815f-c626-9f5f-c981-be6466be2e65"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                0.003000000026077032,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "CollectibleModel"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    10.100000381469727,
-                                    0.0,
-                                    13.300000190734863
-                                ],
-                                "halfSize": [
-                                    128.39999389648438,
-                                    8.600000381469727,
-                                    109.30000305175781
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/plama3.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                -1.46438729763031,
-                                18.61429786682129,
-                                -8.249442100524902
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail3"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "CollectibleComponent": null,
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "radius": 0.5,
-                                "type": "SPHERE"
-                            },
-                            "isStatic": false,
-                            "isTrigger": true,
-                            "properties": 4
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Collectible Pos",
-                            "uuid": "8d209f4d-df08-344f-0ec9-ad0b8b8af094"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                0.22349166870117188,
-                                20.330055236816406,
-                                -35.58539581298828
-                            ]
-                        },
-                        "VelocityComponent": {
-                            "angularVelocity": [
-                                0.0,
-                                37.5,
-                                0.0
-                            ],
-                            "useGravity": false,
-                            "velocity": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "CollectiblePos"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
                         "ImageComponent": {
                             "color": [
                                 0.21568627655506134,
@@ -810,6 +358,610 @@
                 ]
             },
             "name": "Dialog"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "CollectibleComponent": null,
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "radius": 0.5,
+                                "type": "SPHERE"
+                            },
+                            "isStatic": false,
+                            "isTrigger": true,
+                            "properties": 4
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Collectible Pos",
+                            "uuid": "8d209f4d-df08-344f-0ec9-ad0b8b8af094"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.22349166870117188,
+                                20.330055236816406,
+                                -35.58539581298828
+                            ]
+                        },
+                        "VelocityComponent": {
+                            "angularVelocity": [
+                                0.0,
+                                37.5,
+                                0.0
+                            ],
+                            "useGravity": false,
+                            "velocity": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "CollectiblePos"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    10.100000381469727,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    128.39999389648438,
+                                    8.600000381469727,
+                                    109.30000305175781
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama3.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -1.46438729763031,
+                                18.61429786682129,
+                                -8.249442100524902
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail3"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/CHLEB.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Collectible Model",
+                            "uuid": "fcc4815f-c626-9f5f-c981-be6466be2e65"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                0.003000000026077032,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "CollectibleModel"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "New Object",
+                            "uuid": "459b5ca3-94a4-8e61-56e4-80776618b1eb"
+                        },
+                        "Transform": {
+                            "children": [
+                                "a0f7c358-ad56-aaff-8d66-91572b5aa110"
+                            ],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "New Object (1)",
+                            "uuid": "a0f7c358-ad56-aaff-8d66-91572b5aa110"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "459b5ca3-94a4-8e61-56e4-80776618b1eb",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "test"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "BunController": null,
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "height": 427.5,
+                            "texturePath": "res/textures/bulka1.png",
+                            "width": 588.9000244140625
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Bula",
+                            "uuid": "f7f14e2e-1efe-0ae6-7777-c66fc5dac722"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                180.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                -0.0,
+                                0.0,
+                                1.0,
+                                -4.371138828673793e-08
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "translation": [
+                                946.9000244140625,
+                                583.0999755859375,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Bula"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    -7.800000190734863
+                                ],
+                                "halfSize": [
+                                    110.9000015258789,
+                                    8.600000381469727,
+                                    88.9000015258789
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama1.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "700092d0-bc04-201e-3303-2ecdc2e4ec75"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -0.4241061508655548,
+                                18.61429786682129,
+                                -7.976927280426025
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail1"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "halfSize": [
+                                    123.9000015258789,
+                                    64.5,
+                                    67.5
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/MASLO.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "436e2b89-877a-62cf-1f3b-9625af2278fc"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.00046488040243275464,
+                                0.004882157780230045
+                            ],
+                            "translation": [
+                                -0.4241061508655548,
+                                18.61429786682129,
+                                -7.976927280426025
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "BunController": null,
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.9843137264251709
+                            ],
+                            "height": 500.79998779296875,
+                            "texturePath": "res/textures/zart1.png",
+                            "width": 950.0
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Bula Otwarta",
+                            "uuid": "e6a75344-9205-8f28-cf44-ee2e88cf1404"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                180.0,
+                                180.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                -1.0,
+                                -4.371138828673793e-08,
+                                -4.371138828673793e-08,
+                                1.910685465164705e-15
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                960.5999755859375,
+                                566.0999755859375,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Kranczips"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    -5.300000190734863,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    113.80000305175781,
+                                    8.600000381469727,
+                                    108.9000015258789
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama2.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "2749eb5b-9a9c-e4e3-5614-11d632a4d204"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -0.8992981314659119,
+                                18.61429786682129,
+                                -7.476591110229492
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail2"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "height": 318.8999938964844,
+                            "texturePath": "res/textures/dym.png",
+                            "width": 511.70001220703125
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Dym",
+                            "uuid": "fc2b1b35-b32f-d59f-ce72-3595b63bf0b0"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "translation": [
+                                850.9000244140625,
+                                636.7000122070313,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Dym"
         }
     ]
 }

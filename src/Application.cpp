@@ -11,6 +11,8 @@
 #include <fstream>
 #include <random>
 
+#include "ECS/components/BunController.h"
+
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 static void glfw_error_callback(int error, const char* description)
@@ -769,6 +771,15 @@ void Application::update()
 		}
 	}
 
+
+	if (auto bun = scene->getStorage<BunController>())
+	{
+		for (int i = 0; i < bun->getQuantity(); ++i)
+		{
+			auto& controller = bun->components[i];
+			controller.update(window, scene.get(), deltaTime);
+		}
+	}
 
 	if (auto collectibles = scene->getStorage<CollectibleComponent>())
 	{
@@ -1663,7 +1674,8 @@ void Application::setupEvents()
 		{
 			scene->destroyEntity(child);
 		}
-		spdlog::info("Suchar: {}", jokes[currentLevel % jokes.size()]);
+		EntityID bun = scene->instantiatePrefab("Bula")[0];
+		scene->getComponent<BunController>(bun).joke = jokes[currentLevel % jokes.size()];
 	});
 }
 
