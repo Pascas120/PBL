@@ -231,12 +231,17 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/STOL.fbx"));
 	models.emplace_back(new Model("res/models/KRZESLO.fbx"));
 	models.emplace_back(new Model("res/models/ksiazkakucharska.fbx"));
+	models.emplace_back(new Model("res/models/ksiazka.fbx"));
+	models.emplace_back(new Model("res/models/ksiazka2.fbx"));
 	models.emplace_back(new Model("res/models/talerz.fbx"));
 	models.emplace_back(new Model("res/models/talerze.fbx"));
 	models.emplace_back(new Model("res/models/pomidor.fbx"));
 	models.emplace_back(new Model("res/models/SER.fbx"));
 	models.emplace_back(new Model("res/models/guzikM.fbx"));
 	models.emplace_back(new Model("res/models/guzikD.fbx"));
+	models.emplace_back(new Model("res/models/guziklodowkacaly.fbx"));
+	models.emplace_back(new Model("res/models/guziklodowkadol.fbx"));
+	models.emplace_back(new Model("res/models/guziklodowkagora.fbx"));
 	models.emplace_back(new Model("res/models/PODLOGA.fbx"));
 	models.emplace_back(new Model("res/models/kubek1.fbx"));
 	models.emplace_back(new Model("res/models/kubek2.fbx"));
