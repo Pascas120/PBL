@@ -1906,19 +1906,19 @@
                 "parent": "",
                 "rotation": [
                     0.6995211839675903,
-                    0.6995211839675903,
-                    0.10329631716012955,
-                    0.10329631716012955
+                    0.6995211243629456,
+                    0.10329634696245193,
+                    0.10329633206129074
                 ],
                 "scale": [
-                    0.02999960258603096,
-                    0.02999960258603096,
-                    0.029999205842614174
+                    0.029999520629644394,
+                    0.02999960444867611,
+                    0.029999108985066414
                 ],
                 "translation": [
-                    38.228878021240234,
+                    54.93864822387695,
                     19.84909439086914,
-                    21.007728576660156
+                    21.90107536315918
                 ]
             }
         },
@@ -2034,9 +2034,132 @@
                     0.03000001423060894
                 ],
                 "translation": [
-                    31.62970542907715,
+                    47.8875846862793,
                     18.234878540039063,
-                    20.779739379882813
+                    19.092803955078125
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze",
+                "uuid": "e8de44a0-5868-aeee-aac5-c4394a002cf5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    8.0
+                ],
+                "translation": [
+                    21.585208892822266,
+                    19.27496337890625,
+                    17.713056564331055
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "FreezeComponent": {
+                "OnEnterMessage": "zimno",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.28320837020874023,
+                    0.5867893695831299,
+                    0.6960784196853638
+                ],
+                "model": "res/models/grass_block/grass_block.obj",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "freeze",
+                "uuid": "0a19af95-8eff-4341-6732-bd15658aafa2"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    2.0,
+                    0.10000000149011612,
+                    8.0
+                ],
+                "translation": [
+                    18.71061134338379,
+                    18.274368286132813,
+                    17.713056564331055
                 ]
             }
         }
