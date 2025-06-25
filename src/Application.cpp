@@ -449,6 +449,11 @@ void Application::update()
 		for (int i = 0; i < butterControllers->getQuantity(); i++)
 		{
 			auto& butterController = butterControllers->components[i];
+			if(scene->playerLock && scene->hasComponent<VelocityComponent>(butterController.id)) {
+				scene->getComponent<VelocityComponent>(butterController.id).velocity.x = 0.0f;
+				scene->getComponent<VelocityComponent>(butterController.id).velocity.z = 0.0f;
+				continue;
+			}
 			butterController.update(window, scene.get(), deltaTime);
 		}
 	}
@@ -459,6 +464,12 @@ void Application::update()
 		for (int i = 0; i < breadControllers->getQuantity(); i++)
 		{
 			auto& breadController = breadControllers->components[i];
+			if(scene->playerLock && scene->hasComponent<VelocityComponent>(breadController.id)) {
+				scene->getComponent<VelocityComponent>(breadController.id).velocity.x = 0.0f;
+				scene->getComponent<VelocityComponent>(breadController.id).velocity.z = 0.0f;
+				continue;
+			}
+
 			breadController.update(window, scene.get(), deltaTime);
 		}
 	}
@@ -893,6 +904,7 @@ void Application::update()
 			{
 				scene->destroyEntity(dialogueBoxEntities.background);
 				dialogueBoxEntities = {};
+				scene->playerLock = false;
 			}
 			dialogueAdvanceKeyPressed = true;
 		}
@@ -1693,7 +1705,7 @@ void Application::setupEvents()
 				{
 					currentDialogue.push(dialogueBox);
 				}
-
+				scene->playerLock = true;
 			}
 
 			levelExit.active = false;
@@ -1717,6 +1729,7 @@ void Application::setupEvents()
 		{
 			scene->destroyEntity(child);
 		}
+		scene->playerLock = true;
 		EntityID bun = scene->instantiatePrefab("Bula")[0];
 		scene->getComponent<BunController>(bun).joke = jokes[currentLevel % jokes.size()];
 	});

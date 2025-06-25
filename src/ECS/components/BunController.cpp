@@ -19,6 +19,7 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
     if(isOpen) {
         if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             scene->destroyEntity(id);
+            scene->playerLock = false;
         }
         return;
     }
