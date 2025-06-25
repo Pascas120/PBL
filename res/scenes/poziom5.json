@@ -43,7 +43,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
+                "model": "res/models/MASLOmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -75,7 +75,7 @@
                 ],
                 "translation": [
                     35.52267837524414,
-                    43.75033950805664,
+                    43.01404571533203,
                     58.300479888916016
                 ]
             },
@@ -174,7 +174,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
+                "model": "res/models/chlebekmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -207,7 +207,7 @@
                 ],
                 "translation": [
                     37.981544494628906,
-                    44.14098358154297,
+                    43.19127655029297,
                     56.27812576293945
                 ]
             },
@@ -363,54 +363,6 @@
                     0.14117896556854248,
                     19.272022247314453,
                     -33.025856018066406
-                ]
-            }
-        },
-        {
-            "CameraController": {
-                "offset": [
-                    16.5,
-                    9.399999618530273,
-                    4.099999904632568
-                ],
-                "targetID": "20223709-e370-72af-81fb-d872aec3be9f"
-            },
-            "DirectionalLightComponent": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "intensity": 0.5199999809265137
-            },
-            "ObjectInfoComponent": {
-                "name": "dir light",
-                "uuid": "b07ee8f4-90a9-cae0-8c14-fafc7dff2e28"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    -388.9375,
-                    76.04548645019531,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "",
-                "rotation": [
-                    -0.19682486355304718,
-                    0.5964380502700806,
-                    0.1539023071527481,
-                    0.76278156042099
-                ],
-                "scale": [
-                    1.000004529953003,
-                    1.000015139579773,
-                    1.0
-                ],
-                "translation": [
-                    13.394908905029297,
-                    29.01726531982422,
-                    -29.22088050842285
                 ]
             }
         },
@@ -1144,7 +1096,7 @@
                 ],
                 "translation": [
                     35.09336853027344,
-                    42.3455696105957,
+                    41.544189453125,
                     55.00281524658203
                 ]
             }
@@ -1414,8 +1366,8 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "p1 (7)",
-                "uuid": "1e52ff19-ab08-c5a0-ad63-35d0712ab4f8"
+                "name": "p1 (8)",
+                "uuid": "8aa20f75-bc3d-f4df-244f-1815458b2571"
             },
             "Transform": {
                 "children": [],
@@ -1438,8 +1390,8 @@
                     0.05000003054738045
                 ],
                 "translation": [
-                    22.129470825195313,
-                    37.03684616088867,
+                    21.42559814453125,
+                    37.603939056396484,
                     54.69273376464844
                 ]
             }
@@ -1473,6 +1425,159 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
+                "name": "p1 (7)",
+                "uuid": "1e52ff19-ab08-c5a0-ad63-35d0712ab4f8"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -900.0,
+                    0.0,
+                    -540.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    8.742278367890322e-08,
+                    1.0,
+                    1.7484555314695172e-07,
+                    -4.3711374075883214e-08
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.030000001192092896,
+                    0.05000003054738045
+                ],
+                "translation": [
+                    23.882476806640625,
+                    38.267337799072266,
+                    61.67433166503906
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        125.4000015258789,
+                        67.80000305175781,
+                        13.100000381469727
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": false,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/kratka.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "kratka",
+                "uuid": "77e273d5-3520-fdfa-a681-046a462b4cb9"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.031999971717596054,
+                    0.026000000536441803,
+                    0.05000000074505806
+                ],
+                "translation": [
+                    40.964515686035156,
+                    23.6950626373291,
+                    51.11835861206055
+                ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "useGravity": true,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        18.0,
+                        23.399999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        250.0,
+                        10.0,
+                        160.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ElevatorComponent": {
+                "buttonEntity": "dd74af74-717a-ebeb-bfbf-115f19959432",
+                "closedPos": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "doorDir": "Left",
+                "hasInitClosedPos": false,
+                "isDoor": true,
+                "isMoving": false,
+                "locked": true,
+                "maxHeight": 5.0,
+                "openHeight": 20.0,
+                "rotate": false,
+                "rotateAngle": 90.0,
+                "rotateAxis": 1,
+                "shouldOpen": false,
+                "speed": 8.0,
+                "startY": -1.0,
+                "state": "Closed"
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/polkasmol.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
                 "name": "drzwi1",
                 "uuid": "c3ec490b-e076-ceb6-91da-9330984f5f42"
             },
@@ -1483,7 +1588,7 @@
                     0.0,
                     -540.0
                 ],
-                "isStatic": true,
+                "isStatic": false,
                 "parent": "",
                 "rotation": [
                     8.742277657347586e-08,
@@ -1583,6 +1688,65 @@
             },
             "ModelComponent": {
                 "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/polkasmol.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "p1 (9)",
+                "uuid": "863e6888-0172-4569-8277-940e600231a7"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -540.0,
+                    0.0,
+                    -540.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    8.742280499518529e-08,
+                    1.0,
+                    8.742278367890322e-08,
+                    -4.3711402497592644e-08
+                ],
+                "scale": [
+                    0.018032129853963852,
+                    0.030000001192092896,
+                    0.05000000074505806
+                ],
+                "translation": [
+                    25.60068130493164,
+                    27.04300880432129,
+                    55.15422439575195
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        18.0,
+                        23.399999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        250.0,
+                        10.0,
+                        160.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
                     0.9558823704719543,
                     0.6887975931167603,
                     0.6887975931167603
@@ -1591,33 +1755,114 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "blokada",
+                "name": "SKOK",
                 "uuid": "2cf156cd-746e-fcf3-0b75-232612dde778"
             },
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -315.0000305175781,
+                    -495.0,
                     89.96572875976563,
-                    -405.0
+                    -585.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    0.4999775290489197,
-                    0.4999796152114868,
-                    -0.4999775290489197,
-                    0.5000651478767395
+                    0.4999958276748657,
+                    0.5000105500221252,
+                    -0.4999958276748657,
+                    0.499997615814209
                 ],
                 "scale": [
-                    0.03999935835599899,
-                    0.02999761328101158,
-                    0.004999919794499874
+                    0.04000280797481537,
+                    0.03000015579164028,
+                    0.003889169078320265
                 ],
                 "translation": [
-                    34.719730377197266,
-                    37.1955680847168,
-                    57.139278411865234
+                    34.71976089477539,
+                    36.834320068359375,
+                    57.1392936706543
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        18.0,
+                        23.399999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        250.0,
+                        10.0,
+                        160.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ElevatorComponent": {
+                "buttonEntity": "",
+                "closedPos": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "doorDir": "Left",
+                "hasInitClosedPos": false,
+                "isDoor": true,
+                "isMoving": false,
+                "locked": true,
+                "maxHeight": 5.0,
+                "openHeight": 20.0,
+                "rotate": false,
+                "rotateAngle": 90.0,
+                "rotateAxis": 1,
+                "shouldOpen": false,
+                "speed": 8.0,
+                "startY": -1.0,
+                "state": "Closed"
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/polkasmol.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "drzwi2",
+                "uuid": "6522bfe1-b317-4f6c-fd55-95b6ffb937ce"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -89.980224609375,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.040001410990953445,
+                    0.22216856479644775,
+                    0.014879181049764156
+                ],
+                "translation": [
+                    23.0552978515625,
+                    28.766191482543945,
+                    56.822757720947266
                 ]
             }
         },
@@ -1656,27 +1901,730 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    -180.0,
-                    0.0,
-                    -150.0
+                    -251.12969970703125,
+                    -90.0,
+                    -91.7899169921875
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    -0.258819043636322,
-                    0.9659258127212524,
-                    -1.131360427564232e-08,
-                    -4.222200544745647e-08
+                    -0.12247520685195923,
+                    0.696419358253479,
+                    -0.12247485667467117,
+                    -0.6964192986488342
                 ],
                 "scale": [
-                    0.009999988600611687,
-                    0.030000001192092896,
-                    0.05000000074505806
+                    0.03054121509194374,
+                    0.029999999329447746,
+                    0.014512568712234497
                 ],
                 "translation": [
-                    28.8731689453125,
-                    41.3194580078125,
-                    55.021610260009766
+                    29.006996154785156,
+                    40.80885696411133,
+                    54.191184997558594
+                ]
+            }
+        },
+        {
+            "ButtonComponent": {
+                "activatorMode": "PlayersOnly",
+                "elevatorEntity": "c3ec490b-e076-ceb6-91da-9330984f5f42",
+                "isPressed": false,
+                "linkMode": 0,
+                "linkedButton": "",
+                "pressDepth": 0.10000000149011612,
+                "pressSpeed": 4.0
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        -36.599998474121094,
+                        0.0
+                    ],
+                    "halfSize": [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/guziklodowkacaly.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "GUZIK_LODOWKA",
+                "uuid": "dd74af74-717a-ebeb-bfbf-115f19959432"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.019999999552965164,
+                    0.019999587908387184,
+                    0.019999587908387184
+                ],
+                "translation": [
+                    31.935806274414063,
+                    42.80718231201172,
+                    58.665802001953125
+                ]
+            }
+        },
+        {
+            "ButtonComponent": {
+                "activatorMode": "PlayersOnly",
+                "elevatorEntity": "6522bfe1-b317-4f6c-fd55-95b6ffb937ce",
+                "isPressed": false,
+                "linkMode": 0,
+                "linkedButton": "",
+                "pressDepth": 0.10000000149011612,
+                "pressSpeed": 4.0
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        -36.599998474121094,
+                        0.0
+                    ],
+                    "halfSize": [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": true,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "GUZIK_LODOWKA (1)",
+                "uuid": "c43f09dd-f6cb-6880-99ae-1d6079858aa6"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.019999999552965164,
+                    0.019999587908387184,
+                    0.019999587908387184
+                ],
+                "translation": [
+                    31.935806274414063,
+                    42.80718231201172,
+                    58.665802001953125
+                ]
+            }
+        },
+        {
+            "ButtonComponent": {
+                "activatorMode": "PlayersOnly",
+                "elevatorEntity": "5e045931-c409-0576-e4d1-be25dd34f964",
+                "isPressed": false,
+                "linkMode": 0,
+                "linkedButton": "",
+                "pressDepth": 0.10000000149011612,
+                "pressSpeed": 4.0
+            },
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        -36.599998474121094,
+                        0.0
+                    ],
+                    "halfSize": [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": true,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "GUZIK_LODOWKA_FREEZE",
+                "uuid": "99b327da-4432-b21c-fa49-797d8037998f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.019999999552965164,
+                    0.019999587908387184,
+                    0.019999587908387184
+                ],
+                "translation": [
+                    31.935806274414063,
+                    42.80718231201172,
+                    58.665802001953125
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": true,
+                "properties": 0
+            },
+            "ElevatorComponent": {
+                "buttonEntity": "99b327da-4432-b21c-fa49-797d8037998f",
+                "closedPos": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "doorDir": "Right",
+                "hasInitClosedPos": false,
+                "isDoor": true,
+                "isMoving": false,
+                "locked": true,
+                "maxHeight": 5.0,
+                "openHeight": 20.0,
+                "rotate": false,
+                "rotateAngle": 90.0,
+                "rotateAxis": 1,
+                "shouldOpen": false,
+                "speed": 8.0,
+                "startY": -1.0,
+                "state": "Closed"
+            },
+            "FreezeComponent": {
+                "OnEnterMessage": "zimno",
+                "hasTriggered": false,
+                "triggerRadius": 1.0
+            },
+            "ObjectInfoComponent": {
+                "name": "FREEZE",
+                "uuid": "5e045931-c409-0576-e4d1-be25dd34f964"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    10.0,
+                    15.0,
+                    10.0
+                ],
+                "translation": [
+                    9.943138122558594,
+                    34.77357482910156,
+                    50.96403503417969
+                ]
+            }
+        },
+        {
+            "DirectionalLightComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "intensity": 1.0
+            },
+            "ObjectInfoComponent": {
+                "name": "dir light",
+                "uuid": "1f078830-b192-4d6c-df10-04ebd8bf76cb"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    2.723783016204834,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    51.777122497558594,
+                    44.89762878417969,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje",
+                "uuid": "79e5440f-bb99-4514-65ad-cd7c37a4a467"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    10.0,
+                    1.0,
+                    10.0
+                ],
+                "translation": [
+                    30.54171371459961,
+                    19.534393310546875,
+                    53.53549575805664
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (1)",
+                "uuid": "69dc0e45-fb74-d945-1c48-f0cd442698ae"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    10.0,
+                    1.0,
+                    10.0
+                ],
+                "translation": [
+                    30.54171371459961,
+                    49.113059997558594,
+                    53.53549575805664
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (2)",
+                "uuid": "c15a7059-8b26-a90e-81b4-11fc5c7e2bf4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    89.99998474121094,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.7071066498756409,
+                    0.0,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    10.0,
+                    0.9999979138374329,
+                    20.699934005737305
+                ],
+                "translation": [
+                    30.54171371459961,
+                    33.21728515625,
+                    60.41326141357422
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (6)",
+                "uuid": "1550d2dd-69a7-b712-e03e-529dc685aa99"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    89.99998474121094,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.7071066498756409,
+                    0.0,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    10.0,
+                    0.9999940395355225,
+                    20.699810028076172
+                ],
+                "translation": [
+                    30.54171371459961,
+                    33.21728515625,
+                    45.36899948120117
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (3)",
+                "uuid": "7949f9b1-1fdc-6bf9-595c-b57cf9d03c8f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    45.0,
+                    89.96572875976563,
+                    -45.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.49998873472213745,
+                    0.49998927116394043,
+                    -0.49998873472213745,
+                    0.5000330805778503
+                ],
+                "scale": [
+                    9.999642372131348,
+                    0.9999672770500183,
+                    20.699296951293945
+                ],
+                "translation": [
+                    19.881935119628906,
+                    33.21718978881836,
+                    52.6158332824707
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (4)",
+                "uuid": "ed40f52c-ef26-4516-b170-1c4616faaf02"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    45.0,
+                    89.96572875976563,
+                    -45.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.4999780058860779,
+                    0.49997854232788086,
+                    -0.4999780058860779,
+                    0.500065267086029
+                ],
+                "scale": [
+                    9.999299049377441,
+                    0.9999350905418396,
+                    20.698610305786133
+                ],
+                "translation": [
+                    41.195350646972656,
+                    46.518001556396484,
+                    52.61642837524414
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (5)",
+                "uuid": "43b86d98-55a9-c185-13f7-21d6c247de14"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    45.0,
+                    89.96572875976563,
+                    -45.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.4999716877937317,
+                    0.49997222423553467,
+                    -0.4999716877937317,
+                    0.5000842213630676
+                ],
+                "scale": [
+                    1.9999620914459229,
+                    0.999916136264801,
+                    1.9999620914459229
+                ],
+                "translation": [
+                    41.19487380981445,
+                    23.7183895111084,
+                    57.644859313964844
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Kolizje (7)",
+                "uuid": "17676926-ba91-ac7a-82c7-c1b40e2e3481"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.7777284383773804,
+                    0.8888107538223267,
+                    5.990375995635986
+                ],
+                "translation": [
+                    42.1845817565918,
+                    20.83976936340332,
+                    50.98219680786133
                 ]
             }
         }

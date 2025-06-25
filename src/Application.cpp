@@ -271,6 +271,12 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/lodowkadziura.fbx"));
 	models.emplace_back(new Model("res/models/kratka.fbx"));
 
+	models.emplace_back(new Model("res/models/puszka.fbx"));
+	models.emplace_back(new Model("res/models/mleczok.fbx"));
+	models.emplace_back(new Model("res/models/jogurt.fbx"));
+	models.emplace_back(new Model("res/models/butter.fbx"));
+	models.emplace_back(new Model("res/models/jajka.fbx"));
+
 	//animacje
 	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));
 	animations.emplace_back(new Animation("res/anims/chlebekdown.fbx", models[1]));
