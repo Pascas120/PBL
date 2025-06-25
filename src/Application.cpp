@@ -286,9 +286,56 @@ bool Application::init()
 			jokes.push_back(line);
 		}
 	}
+	file.close();
 	std::shuffle(jokes.begin(), jokes.end(), std::mt19937(std::random_device()()));
 	spdlog::info("Loaded {} jokes.", jokes.size());
 	spdlog::info(jokes[0]);
+
+
+	// TODO: przenieść poza Application.cpp ( nie zrobimy tego ;) )
+	file.open("res/dialogues.json");
+	if (!file.is_open())
+	{
+		spdlog::error("Failed to open dialogue file!");
+		return false;
+	}
+	json dialogueListJson;
+	file >> dialogueListJson;
+	file.close();
+
+	for (json dialogueJson : dialogueListJson["dialogues"])
+	{
+		std::vector<DialogueBox> dialogue;
+		for (json dialogueSpeechJson : dialogueJson["lines"])
+		{
+			DialogueBox box;
+			box.character = dialogueSpeechJson["character"];
+
+			json linesJson = dialogueSpeechJson["textLines"];
+			for (size_t i = 0; i < linesJson.size(); i++)
+			{
+				box.lines[i] = linesJson[i];
+			}
+
+			dialogue.push_back(box);
+		}
+
+		dialogues[dialogueJson["dialogueName"]] = dialogue;
+	}
+
+	dialogueCharacterInfo["chleb"] = {
+		.name = "Chleb",
+		.imagePath = "res/textures/cloud.png",
+		.bgColor = {0.216, 0.135, 0.054, 0.796}
+	};
+	dialogueCharacterInfo["maslo"] = {
+		.name = "Maslo",
+		.imagePath = "",
+		.bgColor = {0.22, 0.216, 0.055, 0.796}
+	};
+
+
+
 
 	return true;
 }
@@ -299,47 +346,6 @@ void Application::input()
 	if (player == (EntityID)-1)
 		return;
 
-
-	/*auto& transform = scene->getComponent<Transform>(player);
-	glm::vec3 translation = transform.translation;
-	glm::vec3 rotation = transform.eulerRotation;
-
-	constexpr float moveSpeed = 3.0f;
-	constexpr float rotateSpeed = 180.0f;
-	bool change = false;
-
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		rotation.y += rotateSpeed * deltaTime;
-		change = true;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		rotation.y -= rotateSpeed * deltaTime;
-		change = true;
-	}
-
-	glm::quat quatRotation = glm::quat(glm::radians(rotation));
-	glm::vec3 forward = quatRotation * glm::vec3(0.0f, 0.0f, 1.0f) * (moveSpeed * deltaTime);
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		translation += forward;
-		change = true;
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		translation -= forward;
-		change = true;
-	}
-
-
-	if (change)
-	{
-		auto& ts = scene->getTransformSystem();
-		ts.translateEntity(player, translation);
-		ts.rotateEntity(player, rotation);
-	}*/
 }
 
 void Application::update()
@@ -781,6 +787,62 @@ void Application::update()
 		}
 	}
 
+	// wyświetlanie dialogów
+	if (!currentDialogue.empty())
+	{
+		if (dialogueBoxEntities.background == (EntityID)-1)
+		{
+			dialogueBoxEntities.background = scene->instantiatePrefab("Dialog")[0];
+			auto& dialogueBgChildren = scene->getComponent<Transform>(dialogueBoxEntities.background).children;
+			for (auto& child : dialogueBgChildren)
+			{
+				std::string& childName = scene->getComponent<ObjectInfoComponent>(child).name;
+				if (childName == "Obrazek")
+				{
+					dialogueBoxEntities.icon = child;
+				}
+				else if (childName.starts_with("Linia") && isdigit(childName.back()))
+				{
+					dialogueBoxEntities.lines[childName.back() - '0' - 1] = child;
+				}
+			}
+		}
+
+		if (updateDialogueBox)
+		{
+			DialogueBox& currentBox = currentDialogue.front();
+			auto it = dialogueCharacterInfo.find(currentBox.character);
+			if (it != dialogueCharacterInfo.end())
+			{
+
+				DialogueCharacter& characterInfo = it->second;
+				scene->getComponent<ImageComponent>(dialogueBoxEntities.background).color = characterInfo.bgColor;
+				scene->getComponent<ImageComponent>(dialogueBoxEntities.icon).texturePath = characterInfo.imagePath;
+				for (int i = 0; i < 6; i++)
+				{
+					scene->getComponent<TextComponent>(dialogueBoxEntities.lines[i]).text = currentBox.lines[i];
+				}
+			}
+			updateDialogueBox = false;
+		}
+
+		if (!dialogueAdvanceKeyPressed && glfwGetKey(window, GLFW_KEY_ENTER))
+		{
+			currentDialogue.pop();
+			updateDialogueBox = true;
+			if (currentDialogue.empty())
+			{
+				scene->destroyEntity(dialogueBoxEntities.background);
+				dialogueBoxEntities = {};
+			}
+			dialogueAdvanceKeyPressed = true;
+		}
+	}
+	if (!glfwGetKey(window, GLFW_KEY_ENTER))
+	{
+		dialogueAdvanceKeyPressed = false;
+	}
+
 	EventSystem& eventSystem = scene->getEventSystem();
 	eventSystem.processEvents();
 }
@@ -993,7 +1055,7 @@ void Application::endFrame()
 	glfwMakeContextCurrent(window);
 	glfwSwapBuffers(window);
 
-	if (!changeSceneTo.empty())
+	if (!changeSceneTo.empty() && currentDialogue.empty())
 	{
 		loadScene(changeSceneTo);
 		changeSceneTo.clear();
@@ -1551,10 +1613,31 @@ void Application::setupEvents()
 		auto& levelExit = scene->getComponent<LevelExitComponent>(ev.triggerObject);
 
 		++levelExit.playerCount;
-		if (levelExit.playerCount == 2)
+		if (levelExit.active && levelExit.playerCount == 2)
 		{
-			++currentLevel;
-			changeSceneTo = "res/scenes/" + levelExit.nextLevelPath;
+			if (!levelExit.nextLevelPath.empty())
+			{
+				++currentLevel;
+				changeSceneTo = "res/scenes/" + levelExit.nextLevelPath;
+			}
+			auto it = dialogues.find(levelExit.dialogueName);
+			if (it != dialogues.end())
+			{
+				auto& dialogueVec = it->second;
+
+				if (!currentDialogue.empty())
+				{
+					currentDialogue = std::queue<DialogueBox>();
+				}
+
+				for (auto& dialogueBox : dialogueVec)
+				{
+					currentDialogue.push(dialogueBox);
+				}
+
+			}
+
+			levelExit.active = false;
 		}
 	});
 

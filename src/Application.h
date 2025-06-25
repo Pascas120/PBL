@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <unordered_map>
+#include <queue>
 
 #include "Framebuffer.h"
 #include "Camera.h"
@@ -20,6 +21,27 @@
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
+
+struct DialogueCharacter
+{
+	std::string name;
+	std::string imagePath;
+	glm::vec4 bgColor;
+};
+
+struct DialogueBox
+{
+	std::string character;
+	std::array<std::string, 6> lines;
+};
+
+struct DialogueBoxEntities
+{
+	EntityID background = (EntityID)-1;
+	EntityID icon = (EntityID)-1;
+	std::array<EntityID, 6> lines = { (EntityID)-1, (EntityID)-1, (EntityID)-1,
+									  (EntityID)-1, (EntityID)-1, (EntityID)-1 };
+};
 
 class Application
 {
@@ -107,6 +129,13 @@ protected:
 	void setStartValues();
 
 	std::vector<std::string> jokes;
+
+	std::unordered_map<std::string, DialogueCharacter> dialogueCharacterInfo;
+	std::unordered_map<std::string, std::vector<DialogueBox>> dialogues;
+	std::queue<DialogueBox> currentDialogue;
+	DialogueBoxEntities dialogueBoxEntities;
+	bool updateDialogueBox = true;
+	bool dialogueAdvanceKeyPressed = false;
 
 private:
 	// TODO: remove

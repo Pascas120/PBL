@@ -685,11 +685,13 @@ namespace Serialization
 	static void to_json(nlohmann::json& j, LevelExitComponent& c, const SerializationContext& context)
 	{
 		j["nextLevelPath"] = c.nextLevelPath;
+		j["dialogueName"] = c.dialogueName;
 	}
 
 	static void from_json(const nlohmann::json& j, LevelExitComponent& c, const DeserializationContext& context)
 	{
 		c.nextLevelPath = j.value("nextLevelPath", c.nextLevelPath);
+		c.dialogueName = j.value("dialogueName", c.dialogueName);
 	}
 
 	static void to_json(nlohmann::json& j, AnimationComponent& c, const SerializationContext& context)

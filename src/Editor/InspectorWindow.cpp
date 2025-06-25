@@ -876,6 +876,12 @@ namespace Editor
             {
                 levelExit.nextLevelPath = levelPathCStr;
             }
+            std::string dialogueName = levelExit.dialogueName;
+            const char* dialogueNameCStr = dialogueName.c_str();
+            if (ImGui::InputText("Dialogue", (char*)dialogueNameCStr, 64))
+            {
+                levelExit.dialogueName = dialogueNameCStr;
+            }
         }
         ImGui::PopID();
     }

@@ -244,7 +244,9 @@ struct TrailCollisionDetectorComponent
 struct LevelExitComponent
 {
     std::string nextLevelPath;
+    std::string dialogueName;
     int playerCount = 0;
+    bool active = true;
 
     EntityID id = (EntityID)-1;
 };
