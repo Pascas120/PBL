@@ -57,6 +57,8 @@ public:
 
     Scene(const Scene& other);
 
+
+
     Scene& operator=(const Scene&) = delete; // Wyłączenie przypisania
     Scene(Scene&&) = default; // Przenoszenie dozwolone
     Scene& operator=(Scene&&) = default;

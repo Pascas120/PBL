@@ -46,7 +46,6 @@ struct DialogueBoxEntities
 class Application
 {
 public:
-	ma_engine audioEngine;
 
 	Application();
 	virtual ~Application();
@@ -140,4 +139,7 @@ protected:
 private:
 	// TODO: remove
 	void setupScene();
+
+public:
+	ma_engine audioEngine;
 };
