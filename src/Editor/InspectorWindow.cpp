@@ -647,9 +647,16 @@ namespace Editor
             ImGui::DragFloat("Press Depth", &b.pressDepth, 0.01f);
             ImGui::DragFloat("Press Speed", &b.pressSpeed, 0.1f);
 
-            char buf[64]; std::strncpy(buf, b.playerTag.c_str(), sizeof(buf));
-            if (ImGui::InputText("Player Tag", buf, sizeof(buf)))
-                b.playerTag = buf;
+            const char* actModes[] = { "PLAYERS", "ALL" };
+            int act = static_cast<int>(b.activatorMode);
+            if (ImGui::Combo("Activator", &act, actModes, IM_ARRAYSIZE(actModes)))
+                b.activatorMode = static_cast<ButtonComponent::ActivatorMode>(act);
+
+            if (b.activatorMode == ButtonComponent::ActivatorMode::AllByTag) {
+                char buf[64]; std::strncpy(buf, b.activatorTag.c_str(), sizeof(buf));
+                if (ImGui::InputText("Tag", buf, sizeof(buf)))
+                    b.activatorTag = buf;
+            }
 
             Utils::entityRefField("Elevator Entity", b.elevatorEntity, *scene);
 

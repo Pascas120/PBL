@@ -192,10 +192,12 @@ struct ElevatorComponent {
 
 struct ButtonComponent {
     EntityID id;  
+    enum class ActivatorMode : uint8_t { PlayersOnly = 0, AllByTag = 1 };
+    ActivatorMode activatorMode = ActivatorMode::PlayersOnly;
     bool isPressed = false;
     float pressDepth = 0.1f;
     float pressSpeed = 4.0f;
-    std::string playerTag;
+    std::string activatorTag;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
 
     ButtonLinkMode linkMode = ButtonLinkMode::Single;

@@ -542,37 +542,56 @@ namespace Serialization
 
 	static void to_json(nlohmann::json& j, const ButtonComponent& c, const SerializationContext& context)
 	{
+		
 		j["isPressed"] = c.isPressed;
 		j["pressDepth"] = c.pressDepth;
 		j["pressSpeed"] = c.pressSpeed;
-		j["playerTag"] = c.playerTag;
-		j["elevatorEntity"] = entity_to_json(c.elevatorEntity, context);
-		j["linkMode"] = c.linkMode;
-		j["linkedButton"] = entity_to_json(c.linkedButton, context);
 
+		
+		j["activatorMode"] =
+			(c.activatorMode == ButtonComponent::ActivatorMode::PlayersOnly)
+			? "PlayersOnly"
+			: "AllByTag";
+
+		if (!c.activatorTag.empty())
+			j["activatorTag"] = c.activatorTag;
+
+		
+		j["elevatorEntity"] = entity_to_json(c.elevatorEntity, context);
+		j["linkMode"] = c.linkMode;                      
+		j["linkedButton"] = entity_to_json(c.linkedButton, context);
 	}
 
 	static void from_json(const nlohmann::json& j, ButtonComponent& c, const DeserializationContext& context)
 	{
-		j.at("isPressed").get_to(c.isPressed);
-		j.at("pressDepth").get_to(c.pressDepth);
-		j.at("pressSpeed").get_to(c.pressSpeed);
+		
+		c.isPressed = j.value("isPressed", false);
+		c.pressDepth = j.value("pressDepth", c.pressDepth);
+		c.pressSpeed = j.value("pressSpeed", c.pressSpeed);
 
-		if (j.contains("playerTag"))
-		{
-			j.at("playerTag").get_to(c.playerTag);
-		}
+		
+		std::string modeStr = j.value("activatorMode", "PlayersOnly");
+		if (modeStr == "AllByTag")
+			c.activatorMode = ButtonComponent::ActivatorMode::AllByTag;
 		else
+			c.activatorMode = ButtonComponent::ActivatorMode::PlayersOnly;
+
+		
+		c.activatorTag = j.value("activatorTag", std::string{});
+
+		if (c.activatorTag.empty() && j.contains("playerTag"))
 		{
-			c.playerTag.clear();
+			c.activatorTag = j["playerTag"].get<std::string>();
+			c.activatorMode = ButtonComponent::ActivatorMode::AllByTag;
 		}
-		c.elevatorEntity = entity_from_json(j.at("elevatorEntity"), context);
-		c.linkedButton = entity_from_json(j.value("linkedButton", ""), context);
+
+	
+		c.elevatorEntity = entity_from_json(j.value("elevatorEntity", ""), context);
 		c.linkMode = j.value("linkMode", c.linkMode);
+		c.linkedButton = entity_from_json(j.value("linkedButton", ""), context);
 	}
 
-	//			c.isTrigger = j.value("isTrigger", c.isTrigger);
-	//			c.properties = j.value("properties", c.properties);
+	
 	static void to_json(nlohmann::json& j, const BreadController& c, const SerializationContext& context)
 	{
 		j["moveSpeed"] = c.moveSpeed;

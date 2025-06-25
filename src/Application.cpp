@@ -462,27 +462,39 @@ void Application::update()
 	auto isButton = [&](EntityID id) {
 		return scene->hasComponent<ButtonComponent>(id);
 		};
-	for (auto& col : collisions) {
-		if ((isPlayer(col.objectA) && isButton(col.objectB)) ||
-			(isPlayer(col.objectB) && isButton(col.objectA)))
+	for (auto& col : collisions)
+	{
+		// ignorujemy kolizje, w których nie ma żadnego przycisku
+		if (!isButton(col.objectA) && !isButton(col.objectB)) continue;
+
+		EntityID btnId = isButton(col.objectA) ? col.objectA : col.objectB;
+		EntityID otherId = (btnId == col.objectA) ? col.objectB : col.objectA;
+
+		auto& btn = scene->getComponent<ButtonComponent>(btnId);
+		bool   ok = false;
+
+		switch (btn.activatorMode)
 		{
-			bool isEntAButton = isButton(col.objectA);
-			EntityID btn = isEntAButton ? col.objectA : col.objectB;
-			EntityID playerId = !isEntAButton ? col.objectA : col.objectB;
+		case ButtonComponent::ActivatorMode::PlayersOnly:
+			ok = scene->hasComponent<ButterController>(otherId) ||
+				scene->hasComponent<BreadController>(otherId);
+			break;
 
-			auto& button = scene->getComponent<ButtonComponent>(btn);
+		case ButtonComponent::ActivatorMode::AllByTag:
+			if (btn.activatorTag.empty())             // brak filtru -> wszystko
+				ok = true;
+			else if (scene->hasComponent<ObjectInfoComponent>(otherId))
+				ok = (scene->getComponent<ObjectInfoComponent>(otherId).tag == btn.activatorTag);
+			break;
+		}
 
-			if (!button.playerTag.empty())
-			{
-				auto& playerInfo = scene->getComponent<ObjectInfoComponent>(playerId);
-				if (playerInfo.tag != button.playerTag) {
-					continue;
-				}
-			}
-			if (abs(col.separationVector.x) < 0.001f && abs(col.separationVector.z) < 0.001f)
-			{
-				pressedButtons.insert(btn);
-			}
+		if (!ok) continue;
+
+		// sprawdzamy czy faktycznie stoi na przycisku (stary warunek)
+		if (std::abs(col.separationVector.x) < 0.001f &&
+			std::abs(col.separationVector.z) < 0.001f)
+		{
+			pressedButtons.insert(btnId);
 		}
 	}
 
@@ -1361,13 +1373,14 @@ void Application::setupEvents()
 		auto& button = scene->getComponent<ButtonComponent>(ev.objectB);
 		if (button.elevatorEntity == (EntityID)-1) return;
 
-		if (!button.playerTag.empty())
+		bool allow = true;
+		if (button.activatorMode == ButtonComponent::ActivatorMode::AllByTag &&
+			!button.activatorTag.empty())
 		{
-			auto& playerInfo = scene->getComponent<ObjectInfoComponent>(ev.objectA);
-			if (playerInfo.tag != button.playerTag) {
-				return;
-			}
+			auto& info = scene->getComponent<ObjectInfoComponent>(ev.objectA);
+			allow = (info.tag == button.activatorTag);
 		}
+		if (!allow) return;
 
 		auto& elevator = scene->getComponent<ElevatorComponent>(button.elevatorEntity);
 
