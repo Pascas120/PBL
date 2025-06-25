@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 #include "ECS/Components.h"
+#include "ECS/components/BunController.h"
 #include "ECS/components/CameraController.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -736,6 +737,15 @@ namespace Serialization
 		// ;D
 	}
 
+	static void to_json(nlohmann::json& j, BunController& c, const SerializationContext& context)
+	{
+		// B)
+	}
+
+	static void from_json(const nlohmann::json& j, BunController& c, const DeserializationContext& context)
+	{
+		// :P
+	}
 
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
@@ -904,6 +914,9 @@ namespace Serialization
 			serializeComponent(SoundComponent);
 
 			serializeComponent(LevelExitComponent);
+			serializeComponent(AnimationComponent);
+			serializeComponent(CollectibleComponent);
+			serializeComponent(BunController);
 
 			selectionJson["entities"].push_back(entityJson);
 		}
@@ -999,6 +1012,9 @@ namespace Serialization
 			deserializeComponent(SoundComponent);
 
 			deserializeComponent(LevelExitComponent);
+			deserializeComponent(AnimationComponent);
+			deserializeComponent(CollectibleComponent);
+			deserializeComponent(BunController);
 		}
 
 		return deserializedEntities;

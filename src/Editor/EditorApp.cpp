@@ -326,7 +326,7 @@ namespace Editor
         }
 		else if (mode == PlayMode::STOP)
 		{
-			scene->getAudioSystem().stopAllSounds();
+			//scene->getAudioSystem().stopAllSounds();
 			if (sceneBackup)
             {
                 if (selectedObject != (EntityID)-1)

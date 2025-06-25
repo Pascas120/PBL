@@ -4,150 +4,71 @@
             "data": {
                 "entities": [
                     {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "halfSize": [
-                                    123.9000015258789,
-                                    64.5,
-                                    67.5
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
+                        "ImageComponent": {
                             "color": [
-                                1.0,
-                                1.0,
-                                1.0
+                                0.21568627655506134,
+                                0.1352941244840622,
+                                0.054901961237192154,
+                                0.7960784435272217
                             ],
-                            "model": "res/models/MASLO.fbx",
-                            "shader": "CelShading"
+                            "height": 205.5,
+                            "texturePath": "",
+                            "width": 963.5
                         },
                         "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "436e2b89-877a-62cf-1f3b-9625af2278fc"
+                            "name": "Dialog",
+                            "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
                         },
                         "Transform": {
-                            "children": [],
+                            "children": [
+                                "dc4584bd-577f-ece3-40ea-104f47419875",
+                                "4744c138-fec4-d1bb-1ac3-92499b821824",
+                                "4a2d5b40-e1c2-a131-0550-ec8591c9d5e3",
+                                "b4413b7d-06a5-18dd-6088-bf28b637fb2d",
+                                "b8f66b2a-dc9a-6aca-e252-0ac40d1c2ba6",
+                                "93f276c9-b055-ffce-7301-cd9ab7ef2afc",
+                                "e846a94b-4f01-295c-4274-aa206632483e"
+                            ],
                             "eulerRotation": [
                                 0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
+                                0.0,
+                                0.0
                             ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.00046488040243275464,
-                                0.004882157780230045
-                            ],
-                            "translation": [
-                                -0.4241061508655548,
-                                18.61429786682129,
-                                -7.976927280426025
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    -5.300000190734863,
-                                    0.0,
-                                    13.300000190734863
-                                ],
-                                "halfSize": [
-                                    113.80000305175781,
-                                    8.600000381469727,
-                                    108.9000015258789
-                                ],
-                                "type": "BOX"
-                            },
                             "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/plama2.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "2749eb5b-9a9c-e4e3-5614-11d632a4d204"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
                             "parent": "",
                             "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
                             ],
                             "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                -0.8992981314659119,
-                                18.61429786682129,
-                                -7.476591110229492
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail2"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ModelComponent": {
-                            "color": [
                                 1.0,
                                 1.0,
                                 1.0
                             ],
-                            "model": "res/models/CHLEB.fbx",
-                            "shader": "CelShading"
+                            "translation": [
+                                959.0999755859375,
+                                203.3000030517578,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
+                        "ImageComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "height": 200.0,
+                            "texturePath": "",
+                            "width": 200.0
                         },
                         "ObjectInfoComponent": {
-                            "name": "Collectible Model",
-                            "uuid": "fcc4815f-c626-9f5f-c981-be6466be2e65"
+                            "name": "Obrazek",
+                            "uuid": "dc4584bd-577f-ece3-40ea-104f47419875"
                         },
                         "Transform": {
                             "children": [],
@@ -156,8 +77,8 @@
                                 0.0,
                                 0.0
                             ],
-                            "isStatic": false,
-                            "parent": "",
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
                             "rotation": [
                                 0.0,
                                 0.0,
@@ -165,86 +86,278 @@
                                 1.0
                             ],
                             "scale": [
-                                0.003000000026077032,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "CollectibleModel"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    0.0,
-                                    0.0,
-                                    -7.800000190734863
-                                ],
-                                "halfSize": [
-                                    110.9000015258789,
-                                    8.600000381469727,
-                                    88.9000015258789
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
                                 1.0,
                                 1.0,
                                 1.0
                             ],
-                            "model": "res/models/plama1.fbx",
-                            "shader": "CelShading"
-                        },
+                            "translation": [
+                                -750.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
                         "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "700092d0-bc04-201e-3303-2ecdc2e4ec75"
+                            "name": "Linia 1",
+                            "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 1"
                         },
                         "Transform": {
                             "children": [],
                             "eulerRotation": [
                                 0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
+                                0.0,
+                                0.0
                             ],
-                            "isStatic": false,
-                            "parent": "",
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
                             "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
                             ],
                             "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
+                                1.0,
+                                1.0,
+                                1.0
                             ],
                             "translation": [
-                                -0.4241061508655548,
-                                18.61429786682129,
-                                -7.976927280426025
+                                445.1000061035156,
+                                345.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 2",
+                            "uuid": "4a2d5b40-e1c2-a131-0550-ec8591c9d5e3"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 2"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                285.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 3",
+                            "uuid": "b4413b7d-06a5-18dd-6088-bf28b637fb2d"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 3"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                225.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 4",
+                            "uuid": "b8f66b2a-dc9a-6aca-e252-0ac40d1c2ba6"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 4"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                165.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 5",
+                            "uuid": "93f276c9-b055-ffce-7301-cd9ab7ef2afc"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 5"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                105.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 6",
+                            "uuid": "e846a94b-4f01-295c-4274-aa206632483e"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 6"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                45.0,
+                                222.1999969482422
                             ]
                         }
                     }
                 ]
             },
-            "name": "Trail1"
+            "name": "Dialog"
         },
         {
             "data": {
@@ -312,6 +425,120 @@
                 ]
             },
             "name": "CollectiblePos"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    10.100000381469727,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    128.39999389648438,
+                                    8.600000381469727,
+                                    109.30000305175781
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama3.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -1.46438729763031,
+                                18.61429786682129,
+                                -8.249442100524902
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail3"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/CHLEB.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Collectible Model",
+                            "uuid": "fcc4815f-c626-9f5f-c981-be6466be2e65"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                0.003000000026077032,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "CollectibleModel"
         },
         {
             "data": {
@@ -390,17 +617,68 @@
             "data": {
                 "entities": [
                     {
+                        "BunController": null,
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "height": 427.5,
+                            "texturePath": "res/textures/bulka1.png",
+                            "width": 588.9000244140625
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Bula",
+                            "uuid": "f7f14e2e-1efe-0ae6-7777-c66fc5dac722"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                180.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                -0.0,
+                                0.0,
+                                1.0,
+                                -4.371138828673793e-08
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "translation": [
+                                946.9000244140625,
+                                583.0999755859375,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Bula"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
                         "ColliderComponent": {
                             "colliderShape": {
                                 "center": [
-                                    10.100000381469727,
                                     0.0,
-                                    13.300000190734863
+                                    0.0,
+                                    -7.800000190734863
                                 ],
                                 "halfSize": [
-                                    128.39999389648438,
+                                    110.9000015258789,
                                     8.600000381469727,
-                                    109.30000305175781
+                                    88.9000015258789
                                 ],
                                 "type": "BOX"
                             },
@@ -413,13 +691,13 @@
                                 1.0,
                                 1.0
                             ],
-                            "model": "res/models/plama3.fbx",
+                            "model": "res/models/plama1.fbx",
                             "shader": "CelShading"
                         },
                         "ObjectInfoComponent": {
                             "name": "Trail",
                             "tag": "trail",
-                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
+                            "uuid": "700092d0-bc04-201e-3303-2ecdc2e4ec75"
                         },
                         "Transform": {
                             "children": [],
@@ -442,15 +720,198 @@
                                 0.003000000026077032
                             ],
                             "translation": [
-                                -1.46438729763031,
+                                -0.4241061508655548,
                                 18.61429786682129,
-                                -8.249442100524902
+                                -7.976927280426025
                             ]
                         }
                     }
                 ]
             },
-            "name": "Trail3"
+            "name": "Trail1"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "halfSize": [
+                                    123.9000015258789,
+                                    64.5,
+                                    67.5
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/MASLO.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "436e2b89-877a-62cf-1f3b-9625af2278fc"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.00046488040243275464,
+                                0.004882157780230045
+                            ],
+                            "translation": [
+                                -0.4241061508655548,
+                                18.61429786682129,
+                                -7.976927280426025
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "BunController": null,
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.9843137264251709
+                            ],
+                            "height": 500.79998779296875,
+                            "texturePath": "res/textures/zart1.png",
+                            "width": 950.0
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Bula Otwarta",
+                            "uuid": "e6a75344-9205-8f28-cf44-ee2e88cf1404"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                180.0,
+                                180.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                -1.0,
+                                -4.371138828673793e-08,
+                                -4.371138828673793e-08,
+                                1.910685465164705e-15
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                960.5999755859375,
+                                566.0999755859375,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Kranczips"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    -5.300000190734863,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    113.80000305175781,
+                                    8.600000381469727,
+                                    108.9000015258789
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama2.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "2749eb5b-9a9c-e4e3-5614-11d632a4d204"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -0.8992981314659119,
+                                18.61429786682129,
+                                -7.476591110229492
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail2"
         },
         {
             "data": {
@@ -458,314 +919,49 @@
                     {
                         "ImageComponent": {
                             "color": [
-                                0.21568627655506134,
-                                0.1352941244840622,
-                                0.054901961237192154,
-                                0.7960784435272217
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
                             ],
-                            "height": 215.16233825683594,
-                            "texturePath": "res\\textures\\dialogtlo.png",
-                            "width": 940.0
+                            "height": 318.8999938964844,
+                            "texturePath": "res/textures/dym.png",
+                            "width": 511.70001220703125
                         },
                         "ObjectInfoComponent": {
-                            "name": "Dialog",
-                            "uuid": "1a6f2ab5-99fc-9cef-2002-2f90af604947"
+                            "name": "Dym",
+                            "uuid": "fc2b1b35-b32f-d59f-ce72-3595b63bf0b0"
                         },
                         "Transform": {
-                            "children": [
-                                "ffc25afe-0bad-695c-2a8d-64e515221459",
-                                "5ff43941-3ee0-2b42-eb20-073fdca231e1",
-                                "c52e9cb1-2210-3a02-103e-df75b5bf0b53",
-                                "bdda0233-7a58-d0ba-40fa-20d8df572ec9",
-                                "d3873b8e-2e4c-d8d0-dfa6-73cc866d5a36",
-                                "3912f04a-dd13-3b01-7b96-87d2aa2c180c"
-                            ],
+                            "children": [],
                             "eulerRotation": [
-                                180.0,
+                                0.0,
                                 0.0,
                                 0.0
                             ],
                             "isStatic": true,
                             "parent": "",
                             "rotation": [
-                                1.0,
-                                0.0,
-                                -0.0,
-                                -4.371138828673793e-08
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                955.0999755859375,
-                                217.6999969482422,
-                                0.0
-                            ]
-                        }
-                    },
-                    {
-                        "ImageComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "height": 144.8000030517578,
-                            "texturePath": "",
-                            "width": 144.8000030517578
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Obrazek",
-                            "uuid": "ffc25afe-0bad-695c-2a8d-64e515221459"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
                                 0.0,
                                 0.0,
                                 0.0,
                                 1.0
                             ],
                             "scale": [
-                                1.0,
-                                1.0,
+                                0.0,
+                                0.0,
                                 1.0
                             ],
                             "translation": [
-                                -748.7999877929688,
-                                -6.099999904632568,
+                                850.9000244140625,
+                                636.7000122070313,
                                 0.0
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "Imie Cien",
-                            "uuid": "5ff43941-3ee0-2b42-eb20-073fdca231e1"
-                        },
-                        "TextComponent": {
-                            "color": [
-                                0.6509804129600525,
-                                0.545098066329956,
-                                0.45098039507865906,
-                                0.0
-                            ],
-                            "font": "",
-                            "fontSize": 1.100000023841858,
-                            "text": "IMIE"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                442.29998779296875,
-                                321.8999938964844,
-                                222.1999969482422
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "Imie",
-                            "uuid": "c52e9cb1-2210-3a02-103e-df75b5bf0b53"
-                        },
-                        "TextComponent": {
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "font": "",
-                            "fontSize": 1.100000023841858,
-                            "text": "IMIE"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                440.1000061035156,
-                                324.3999938964844,
-                                222.1999969482422
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "Linia 1",
-                            "uuid": "bdda0233-7a58-d0ba-40fa-20d8df572ec9"
-                        },
-                        "TextComponent": {
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "font": "",
-                            "fontSize": 0.9549999833106995,
-                            "text": "Linia 1"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                440.1000061035156,
-                                256.0,
-                                222.1999969482422
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "Linia 2",
-                            "uuid": "d3873b8e-2e4c-d8d0-dfa6-73cc866d5a36"
-                        },
-                        "TextComponent": {
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "font": "",
-                            "fontSize": 0.9549999833106995,
-                            "text": "Linia 2"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                440.1000061035156,
-                                198.0,
-                                222.1999969482422
-                            ]
-                        }
-                    },
-                    {
-                        "ObjectInfoComponent": {
-                            "name": "Linia 3",
-                            "uuid": "3912f04a-dd13-3b01-7b96-87d2aa2c180c"
-                        },
-                        "TextComponent": {
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "font": "",
-                            "fontSize": 0.9549999833106995,
-                            "text": "Linia 3"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "isStatic": true,
-                            "parent": "1a6f2ab5-99fc-9cef-2002-2f90af604947",
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "translation": [
-                                440.1000061035156,
-                                140.0,
-                                222.1999969482422
                             ]
                         }
                     }
                 ]
             },
-            "name": "Dialog"
+            "name": "Dym"
         }
     ]
 }

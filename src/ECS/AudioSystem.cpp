@@ -9,7 +9,7 @@
 
 
 AudioSystem::AudioSystem(Scene *scene): scene(scene) {
-    audioEngine = scene->getApplication()->audioEngine;
+    audioEngine = &scene->getApplication()->audioEngine;
 }
 
 AudioSystem::~AudioSystem() {
@@ -36,7 +36,7 @@ void AudioSystem::playSound(EntityID id) {
             ma_result result;
             if(soundComponent.loop) {
                 result = ma_sound_init_from_file(
-                &audioEngine,
+                audioEngine,
                 soundComponent.soundPath.c_str(),
                 MA_SOUND_FLAG_LOOPING,
                 nullptr,
@@ -45,7 +45,7 @@ void AudioSystem::playSound(EntityID id) {
                 );
             }else{
             result = ma_sound_init_from_file(
-                &audioEngine,
+                audioEngine,
                 soundComponent.soundPath.c_str(),
                 0, // No flags
                 nullptr,
@@ -73,7 +73,7 @@ void AudioSystem::playSound(std::string soundPath) {
     }
 
     ma_result result = ma_engine_play_sound(
-        &audioEngine,
+        audioEngine,
         soundPath.c_str(),
         nullptr // ma_sound_config can be passed here for volume, etc., or set after
     );

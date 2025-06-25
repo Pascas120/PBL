@@ -4,6 +4,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "ECS/components/BunController.h"
 #include "ECS/components/CameraController.h"
 
 #define ADD_COMPONENT(T, name) \
@@ -97,6 +98,7 @@ namespace Editor
                 drawCollectible(context, editor->selectedObject);
                 drawImage(context, editor->selectedObject);
                 drawText(context, editor->selectedObject);
+                drawBun(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -146,7 +148,7 @@ namespace Editor
                     ADD_COMPONENT(CollectibleComponent, "Collectible");
                     ADD_COMPONENT(ImageComponent, "Image");
                     ADD_COMPONENT(TextComponent, "Text");
-
+                    ADD_COMPONENT(BunController, "Bun Controller");
 
                     ImGui::EndCombo();
                 }
@@ -752,7 +754,7 @@ namespace Editor
         auto& bc = scene->getComponent<BreadController>(id);
 
         ImGui::PushID(&bc);
-        bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
+        bool open = ImGui::CollapsingHeader("BreadController", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<BreadController>(context, id)) return;
         if (open)
         {
@@ -957,6 +959,26 @@ namespace Editor
             }
             ImGui::ColorEdit4("Color", &text.color[0]);
             ImGui::DragFloat("Font Size", &text.fontSize, 0.1f, 0.1f, 100.0f);
+        }
+        ImGui::PopID();
+    }
+
+
+    void InspectorWindow::drawBun(const EditorContext &context, EntityID id) {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<BunController>(id))
+            return;
+
+        // marker – brak edytowalnych pól, ale pozwalamy usunąć
+        auto& comp = scene->getComponent<BunController>(id);
+        ImGui::PushID(&comp);
+
+        bool open = ImGui::CollapsingHeader("Bun", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<CollectibleComponent>(context, id)) { return; }
+
+        if (open)
+        {
+            ImGui::TextUnformatted("brak parametrow");
         }
         ImGui::PopID();
     }

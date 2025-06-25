@@ -1,11 +1,9 @@
-Czym się mierzy piach? Sandomierzem!
-W jaką część ciała idzie alkohol? Wóda!
-Jak nazywają się ulubione chipsy hydraulika? Kranczips!
-Jaki jest ulubiony program kanibalów? Surowi Rodzice!
-Jakie jest motto cukierników? Ciasto pieniądz!
-Jak nazywa się moment przed ugryzieniem bułki? PreAmBuła!
-Co robi 9,50 zł w portfelu? Ledwo Dycha!
-Jak się nazywa meksykanin który stracił samochód? Carloss!
-Co mówi mrówka do mrówki? Nic, bo mrówki nie mówią!
-Czemu orkiestra nie gra na moście? Bo most to nie instrument!
-Jak się nazywa ziomek opon? Brokuł!
+res/textures/zart1.png
+res/textures/zart2.png
+res/textures/zart3.png
+res/textures/zart4.png
+res/textures/zart5.png
+res/textures/zart6.png
+res/textures/zart7.png
+res/textures/zart8.png
+res/textures/zart9.png

@@ -40,5 +40,6 @@ namespace Editor
 		void drawCollectible(const EditorContext& context, EntityID id);
 		void drawImage(const EditorContext& context, EntityID id);
 		void drawText(const EditorContext& context, EntityID id);
+		void drawBun(const EditorContext& context, EntityID id);
 	};
 }

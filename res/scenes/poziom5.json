@@ -1132,6 +1132,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "",
                 "nextLevelPath": "demo.scene.json"
             },
             "ObjectInfoComponent": {
