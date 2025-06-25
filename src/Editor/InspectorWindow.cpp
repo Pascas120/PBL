@@ -754,7 +754,7 @@ namespace Editor
         auto& bc = scene->getComponent<BreadController>(id);
 
         ImGui::PushID(&bc);
-        bool open = ImGui::CollapsingHeader("ButterController", ImGuiTreeNodeFlags_DefaultOpen);
+        bool open = ImGui::CollapsingHeader("BreadController", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<BreadController>(context, id)) return;
         if (open)
         {

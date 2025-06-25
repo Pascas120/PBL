@@ -208,11 +208,10 @@ bool Application::init()
 		}
 	}
 	//setupScene();
-	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
-	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
-	models.emplace_back(new Model("res/models/MASLO.fbx"));
+	models.emplace_back(new Model("res/models/MASLOmesh+bones.fbx"));
+	models.emplace_back(new Model("res/models/chlebekmesh+bones.fbx"));
+	models.emplace_back(new Model("res/models/GABKA.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
-	models.emplace_back(new Model("res/models/CHLEB.fbx"));
 	models.emplace_back(new Model("res/models/poziomy.fbx"));
 	models.emplace_back(new Model("res/models/wallpaper.fbx"));
 	models.emplace_back(new Model("res/models/blat.fbx"));
@@ -220,7 +219,6 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plyta.fbx"));
 	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
 	models.emplace_back(new Model("res/models/woda.fbx"));
-	models.emplace_back(new Model("res/models/GABKA.fbx"));
 	models.emplace_back(new Model("res/models/plama1.fbx"));
 	models.emplace_back(new Model("res/models/plama2.fbx"));
 	models.emplace_back(new Model("res/models/plama3.fbx"));
@@ -260,7 +258,14 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/znajdzka.fbx"));
 	models.emplace_back(new Model("res/models/lodowkacialo.fbx"));
 
-	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
+	//animacje
+	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chlebekdown.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chlebekup.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/maselkochod.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/maselkodown.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/maselkoup.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/GABKAfloat.fbx", models[2]));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
@@ -281,7 +286,10 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/trampolinaSound.mp3");
 	sounds.emplace_back("res/sounds/UISelectionSound.wav");
 	sounds.emplace_back("res/sounds/winda.mp3");
-
+	sounds.emplace_back("res/sounds/track_1.mp3");
+	sounds.emplace_back("res/sounds/track_2.mp3");
+	sounds.emplace_back("res/sounds/track_3.mp3");
+	sounds.emplace_back("res/sounds/track_4.mp3");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
