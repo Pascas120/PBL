@@ -585,27 +585,36 @@ void Application::update()
 
 			if (e.rotate) {
 
-				
+			
 				if (!e.hasInitClosedPos) {
-					e.closedPos = tr.translation;           
-					e.startYaw = tr.eulerRotation.y;       
+					e.closedPos = tr.translation;
+					
+					switch (e.rotateAxis) {
+					case ElevatorComponent::RotateAxis::X: e.startAngle = tr.eulerRotation.x; break;
+					case ElevatorComponent::RotateAxis::Y: e.startAngle = tr.eulerRotation.y; break;
+					case ElevatorComponent::RotateAxis::Z: e.startAngle = tr.eulerRotation.z; break;
+					}
 					e.hasInitClosedPos = true;
 				}
 
-				float targetYaw = e.startYaw + e.rotateAngle;        
+				float& current = (e.rotateAxis == ElevatorComponent::RotateAxis::X) ? tr.eulerRotation.x
+					: (e.rotateAxis == ElevatorComponent::RotateAxis::Y) ? tr.eulerRotation.y
+					: tr.eulerRotation.z;
+
+				float target = e.startAngle + e.rotateAngle;   
 
 				if (e.state == ElevatorState::Opening) {
-					tr.eulerRotation.y += delta;                     
-					if (tr.eulerRotation.y >= targetYaw) {
-						tr.eulerRotation.y = targetYaw;
+					current += delta;
+					if (current >= target) {
+						current = target;
 						e.state = ElevatorState::Open;
 						e.isMoving = false;
 					}
 				}
 				else if (e.state == ElevatorState::Closing) {
-					tr.eulerRotation.y -= delta;
-					if (tr.eulerRotation.y <= e.startYaw) {
-						tr.eulerRotation.y = e.startYaw;
+					current -= delta;
+					if (current <= e.startAngle) {
+						current = e.startAngle;
 						e.state = ElevatorState::Closed;
 						e.isMoving = false;
 					}
@@ -614,9 +623,9 @@ void Application::update()
 				
 				tr.rotation = glm::quat(glm::radians(tr.eulerRotation));
 				tr.isDirty = true;
+				ts.rotateEntity(e.id, tr.eulerRotation);
 
-				ts.rotateEntity(e.id, tr.eulerRotation);  
-				continue;                                 
+				continue;  
 			}
 
 			if (e.isDoor) {

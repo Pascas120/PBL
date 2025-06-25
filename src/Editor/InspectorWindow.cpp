@@ -630,14 +630,12 @@ namespace Editor
                 ImGui::Checkbox("Lock", &e.locked);
             }
 
-            if (e.rotate)
+            if (e.rotate) {
+                const char* axes[] = { "X", "Y", "Z" };
+                int axis = static_cast<int>(e.rotateAxis);
+                if (ImGui::Combo("Axis", &axis, axes, IM_ARRAYSIZE(axes)))
+                    e.rotateAxis = static_cast<ElevatorComponent::RotateAxis>(axis);
 
-            {
-                e.isDoor = false;
-                const char* nums[] = { "1", "2", "3", "4" };
-                int sel = e.rotateId;
-                if (ImGui::Combo("Rotate №", &sel, nums, IM_ARRAYSIZE(nums)))
-                    e.rotateId = sel;
                 ImGui::DragFloat("Angle (°)", &e.rotateAngle, 1.0f, 1.0f, 360.0f);
             }
 
