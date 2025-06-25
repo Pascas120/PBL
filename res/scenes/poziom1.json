@@ -1,6 +1,21 @@
 {
     "entities": [
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/maselkochod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkodown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkoup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ButterController": {
                 "jumpSpeed": 6.0,
                 "moveSpeed": 7.0,
@@ -43,8 +58,8 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
-                "shader": "CelShading"
+                "model": "res/models/MASLOmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
@@ -145,6 +160,21 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/chlebekchod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekdown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "BreadController": {
                 "jumpSpeed": 5.0,
                 "moveSpeed": 7.0,
@@ -174,13 +204,18 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
-                "shader": "CelShading"
+                "model": "res/models/chlebekmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
                 "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/trampolinaSound.mp3",
+                "volume": 1.0
             },
             "TrailCollisionDetectorComponent": {
                 "sprintMultiplier": 2.0
@@ -227,7 +262,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.777544617652893,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +311,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.777544617652893,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -418,13 +453,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        8.699999809265137,
+                        0.0,
                         312.1000061035156,
                         0.0
                     ],
                     "halfSize": [
-                        259.0,
-                        299.3999938964844,
+                        250.0,
+                        299.70001220703125,
                         306.70001220703125
                     ],
                     "type": "BOX"
@@ -477,13 +512,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        10.899999618530273,
+                        0.0,
                         312.1000061035156,
                         0.0
                     ],
                     "halfSize": [
-                        259.0,
-                        299.3999938964844,
+                        250.0,
+                        299.70001220703125,
                         306.70001220703125
                     ],
                     "type": "BOX"
@@ -654,14 +689,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        -3.0,
-                        -9.5,
-                        -0.30000001192092896
+                        -1.100000023841858,
+                        -0.30000001192092896,
+                        0.0
                     ],
                     "halfSize": [
-                        199.60000610351563,
-                        23.100000381469727,
-                        250.89999389648438
+                        199.1999969482422,
+                        28.200000762939453,
+                        250.0
                     ],
                     "type": "BOX"
                 },
@@ -675,7 +710,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/ksiazkakucharska.fbx",
+                "model": "res/models/ksiazka.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -698,14 +733,14 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.029999911785125732,
-                    0.029999999329447746,
-                    0.029999911785125732
+                    0.023000000044703484,
+                    0.023000000044703484,
+                    0.029999839141964912
                 ],
                 "translation": [
-                    -0.06542650610208511,
-                    19.2382869720459,
-                    -33.281063079833984
+                    -0.06542651355266571,
+                    19.13800048828125,
+                    -33.290740966796875
                 ]
             }
         },
@@ -729,6 +764,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "DialogPoziom1",
                 "nextLevelPath": "poziom2.json"
             },
             "ObjectInfoComponent": {
@@ -775,14 +811,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
+                        -1.100000023841858,
                         0.0,
-                        0.0,
-                        0.0
+                        0.4000000059604645
                     ],
                     "halfSize": [
-                        31.600000381469727,
-                        15.0,
-                        33.70000076293945
+                        36.5,
+                        13.0,
+                        36.70000076293945
                     ],
                     "type": "BOX"
                 },
@@ -834,14 +870,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
-                        0.4000000059604645,
+                        -0.20000000298023224,
+                        1.100000023841858,
                         0.0
                     ],
                     "halfSize": [
-                        200.0,
-                        28.600000381469727,
-                        248.39999389648438
+                        199.60000610351563,
+                        28.0,
+                        251.3000030517578
                     ],
                     "type": "BOX"
                 },
@@ -944,24 +980,6 @@
             }
         },
         {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        44.900001525878906,
-                        -0.6000000238418579,
-                        0.0
-                    ],
-                    "halfSize": [
-                        19999.0,
-                        56.29999923706055,
-                        1999.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
             "ModelComponent": {
                 "color": [
                     1.0,
@@ -1006,14 +1024,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
+                        2.299999952316284,
                         0.0,
-                        0.0,
-                        0.0
+                        0.800000011920929
                     ],
                     "halfSize": [
-                        40.20000076293945,
-                        40.0,
-                        40.0
+                        41.70000076293945,
+                        41.0,
+                        41.0
                     ],
                     "type": "BOX"
                 },
@@ -1036,7 +1054,7 @@
             },
             "Transform": {
                 "children": [
-                    "e1973fa3-3eeb-dc6f-afac-7490346afdfd"
+                    "5ed9cfa6-d725-a220-f2ef-6c3711690dfb"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -1067,24 +1085,24 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        57.5,
-                        -0.699999988079071,
+                        58.0,
+                        1.7000000476837158,
                         0.0
                     ],
                     "halfSize": [
-                        19.5,
-                        30.299999237060547,
-                        5.800000190734863
+                        19.100000381469727,
+                        31.200000762939453,
+                        7.0
                     ],
                     "type": "BOX"
                 },
                 "isStatic": true,
                 "isTrigger": false,
-                "properties": 3
+                "properties": 0
             },
             "ObjectInfoComponent": {
                 "name": "Collider Ucho",
-                "uuid": "e1973fa3-3eeb-dc6f-afac-7490346afdfd"
+                "uuid": "5ed9cfa6-d725-a220-f2ef-6c3711690dfb"
             },
             "Transform": {
                 "children": [],
@@ -1169,6 +1187,103 @@
                     4.858834266662598,
                     18.615163803100586,
                     -23.114707946777344
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "ost",
+                "uuid": "1d6272d4-c470-9c2a-a14b-c6db3d02f3e5"
+            },
+            "SoundComponent": {
+                "loop": true,
+                "soundPath": "res/sounds/track_1.mp3",
+                "volume": 0.019999999552965164
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CollectibleComponent": null,
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 0.5,
+                    "type": "SPHERE"
+                },
+                "isStatic": false,
+                "isTrigger": true,
+                "properties": 4
+            },
+            "ObjectInfoComponent": {
+                "name": "Collectible Pos",
+                "uuid": "1ccfe4f3-8052-2067-77d5-e049b38f2105"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.22349166870117188,
+                    20.330055236816406,
+                    -35.58539581298828
+                ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    37.5,
+                    0.0
+                ],
+                "useGravity": false,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

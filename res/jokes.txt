@@ -1,9 +1,12 @@
+res/textures/zart7.png
 res/textures/zart1.png
 res/textures/zart2.png
 res/textures/zart3.png
 res/textures/zart4.png
 res/textures/zart5.png
 res/textures/zart6.png
-res/textures/zart7.png
 res/textures/zart8.png
 res/textures/zart9.png
+res/textures/zart10.png
+res/textures/zart11.png
+res/textures/zart12.png

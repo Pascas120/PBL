@@ -57,7 +57,7 @@ public:
 
     Scene(const Scene& other);
 
-
+    bool playerLock = false;
 
     Scene& operator=(const Scene&) = delete; // Wyłączenie przypisania
     Scene(Scene&&) = default; // Przenoszenie dozwolone
@@ -150,6 +150,7 @@ public:
 	const std::vector<EntityID>& getEntities() const;
 
     std::vector<EntityID> instantiatePrefab(const std::string& prefabName, EntityID parent = (EntityID)-1);
+
 
 };
 

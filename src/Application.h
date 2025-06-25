@@ -75,7 +75,7 @@ protected:
 	void renderToWindow();
 	void endFrame();
 
-	const std::string firstScene = "res/scenes/demo.scene.json";
+	const std::string firstScene = "res/scenes/poziom1.json";
 	std::string scenePath = "";
 	std::string changeSceneTo = "";
 	virtual void loadScene(const std::string path);
