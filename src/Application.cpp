@@ -222,6 +222,33 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plama1.fbx"));
 	models.emplace_back(new Model("res/models/plama2.fbx"));
 	models.emplace_back(new Model("res/models/plama3.fbx"));
+	models.emplace_back(new Model("res/models/szuflada.fbx"));
+	models.emplace_back(new Model("res/models/szafkaszufladowa.fbx"));
+	models.emplace_back(new Model("res/models/samblatdowindy.fbx"));
+	models.emplace_back(new Model("res/models/koszdol.fbx"));
+	models.emplace_back(new Model("res/models/koszgora.fbx"));
+	models.emplace_back(new Model("res/models/mikrofalapoprawka.fbx"));
+	models.emplace_back(new Model("res/models/STOL.fbx"));
+	models.emplace_back(new Model("res/models/KRZESLO.fbx"));
+	models.emplace_back(new Model("res/models/ksiazkakucharska.fbx"));
+	models.emplace_back(new Model("res/models/talerz.fbx"));
+	models.emplace_back(new Model("res/models/talerze.fbx"));
+	models.emplace_back(new Model("res/models/pomidor.fbx"));
+	models.emplace_back(new Model("res/models/SER.fbx"));
+	models.emplace_back(new Model("res/models/guzikM.fbx"));
+	models.emplace_back(new Model("res/models/guzikD.fbx"));
+	models.emplace_back(new Model("res/models/PODLOGA.fbx"));
+	models.emplace_back(new Model("res/models/kubek1.fbx"));
+	models.emplace_back(new Model("res/models/kubek2.fbx"));
+	models.emplace_back(new Model("res/models/kubek3.fbx"));
+	models.emplace_back(new Model("res/models/kubek4.fbx"));
+	models.emplace_back(new Model("res/models/kubek5.fbx"));
+	models.emplace_back(new Model("res/models/kubek6.fbx"));
+	models.emplace_back(new Model("res/models/musztardaplama.fbx"));
+	models.emplace_back(new Model("res/models/ketchupplama.fbx"));
+	models.emplace_back(new Model("res/models/ketchup.fbx"));
+	models.emplace_back(new Model("res/models/mustard.fbx"));
+
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
 

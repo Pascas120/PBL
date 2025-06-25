@@ -734,11 +734,11 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/grass_block/grass_block.obj",
+                "model": "res/models/talerze.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "Ksiazka",
+                "name": "talerze",
                 "uuid": "de793c1f-8b2c-ea87-bc9f-ffd6a736ab48"
             },
             "Transform": {
@@ -757,14 +757,73 @@
                     1.0
                 ],
                 "scale": [
-                    8.40771198272705,
-                    0.6487905383110046,
-                    2.1035518646240234
+                    0.03999999910593033,
+                    0.03999999910593033,
+                    0.03999999910593033
                 ],
                 "translation": [
-                    0.22349166870117188,
-                    18.715436935424805,
-                    -8.319913864135742
+                    -4.211212158203125,
+                    18.91701889038086,
+                    -8.931418418884277
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/SER.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "serek",
+                "uuid": "974ed776-84f9-6a69-eade-2216fb2a4db3"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    41.599998474121094,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.3551069498062134,
+                    0.0,
+                    0.9348256587982178
+                ],
+                "scale": [
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
+                ],
+                "translation": [
+                    3.3111207485198975,
+                    18.91701889038086,
+                    -8.187102317810059
                 ]
             }
         },
@@ -847,8 +906,7 @@
                     "4082248c-4261-8b74-bd89-f3c86b7085e0",
                     "eaf87254-07e5-e679-029e-c1e16596a4cc",
                     "ee3cf972-d988-c97b-bcad-c2524305a3c2",
-                    "15779c6c-f07a-2d0e-dc50-76eb7102f196",
-                    "83462a73-0795-27b7-5e2c-fa92393fde07"
+                    "15779c6c-f07a-2d0e-dc50-76eb7102f196"
                 ],
                 "eulerRotation": [
                     0.0,
@@ -1676,65 +1734,6 @@
             }
         },
         {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 0
-            },
-            "ModelComponent": {
-                "color": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "CIF (2)",
-                "uuid": "83462a73-0795-27b7-5e2c-fa92393fde07"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": true,
-                "parent": "539c2a93-75c3-0011-142b-74bf9f80083b",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    33.333335876464844,
-                    22.997587203979492,
-                    57.72716522216797
-                ],
-                "translation": [
-                    111.87118530273438,
-                    625.5787963867188,
-                    804.5604858398438
-                ]
-            }
-        },
-        {
             "ButtonComponent": {
                 "elevatorEntity": "f5eb05ba-1775-368a-0bb9-93a33034383e",
                 "isPressed": false,
@@ -1995,6 +1994,342 @@
                     242.89999389648438,
                     226.6999969482422,
                     207.8000030517578
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/PODLOGA.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "New Object",
+                "uuid": "b3b7392b-23fb-9816-e817-cc86cc7bfefd"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.10000000149011612,
+                    0.10000000149011612,
+                    0.10000000149011612
+                ],
+                "translation": [
+                    -250.0,
+                    -4.699999809265137,
+                    156.5
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/ketchup.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "keczupcaly",
+                "uuid": "6675a750-0a5d-72d0-3b3c-61bc5b998602"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    134.99996948242188,
+                    -61.599998474121094,
+                    -179.99998474121094
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.19595029950141907,
+                    0.7935754060745239,
+                    0.32870981097221375,
+                    -0.47306594252586365
+                ],
+                "scale": [
+                    0.029999997466802597,
+                    0.029999997466802597,
+                    0.0299999862909317
+                ],
+                "translation": [
+                    2.1297574043273926,
+                    21.724260330200195,
+                    22.025014877319336
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/kubek3.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "kubek3",
+                "uuid": "73360fe1-8e9a-6a4b-27e9-b60cff893165"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -147.8000030517578,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.9607791900634766,
+                    0.0,
+                    0.27731460332870483
+                ],
+                "scale": [
+                    0.029999997466802597,
+                    0.029999997466802597,
+                    0.0299999862909317
+                ],
+                "translation": [
+                    4.224996566772461,
+                    19.58738899230957,
+                    21.343324661254883
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/mustard.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "musztarda cala",
+                "uuid": "e9efa7ef-ff99-fdad-055d-190213a60e8a"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -196.8000030517578,
+                    0.0,
+                    -270.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.6995211839675903,
+                    0.6995211839675903,
+                    0.10329631716012955,
+                    0.10329631716012955
+                ],
+                "scale": [
+                    0.02999960258603096,
+                    0.02999960258603096,
+                    0.029999205842614174
+                ],
+                "translation": [
+                    38.228878021240234,
+                    19.84909439086914,
+                    21.007728576660156
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/ketchupplama.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "keczupplama",
+                "uuid": "83144a04-408d-9b33-c259-6703d75a87c4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    155.5,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.9772310853004456,
+                    0.0,
+                    0.21217772364616394
+                ],
+                "scale": [
+                    0.029999999329447746,
+                    0.029999999329447746,
+                    0.029999999329447746
+                ],
+                "translation": [
+                    -3.459108352661133,
+                    18.234878540039063,
+                    21.653512954711914
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/musztardaplama.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "plama musztarda",
+                "uuid": "fff62fb7-55a9-e5dc-533f-708112b39ed9"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    253.59999084472656,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.800731360912323,
+                    0.0,
+                    -0.5990235805511475
+                ],
+                "scale": [
+                    0.03000001423060894,
+                    0.029999999329447746,
+                    0.03000001423060894
+                ],
+                "translation": [
+                    31.62970542907715,
+                    18.234878540039063,
+                    20.779739379882813
                 ]
             }
         }

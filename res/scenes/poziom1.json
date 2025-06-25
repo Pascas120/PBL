@@ -655,13 +655,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        0.0,
+                        -7.0,
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        200.0,
+                        20.0,
+                        250.0
                     ],
                     "type": "BOX"
                 },
@@ -675,7 +675,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/grass_block/grass_block.obj",
+                "model": "res/models/ksiazkakucharska.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -686,26 +686,26 @@
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    0.0,
+                    -89.980224609375,
                     0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
+                    -0.7071066498756409,
                     0.0,
-                    0.0,
-                    1.0
+                    0.70710688829422
                 ],
                 "scale": [
-                    8.40771198272705,
-                    0.6487905383110046,
-                    2.1035518646240234
+                    0.029999911785125732,
+                    0.029999999329447746,
+                    0.029999911785125732
                 ],
                 "translation": [
-                    0.22349166870117188,
-                    18.715436935424805,
-                    -35.58539581298828
+                    -0.06542650610208511,
+                    19.2382869720459,
+                    -33.281063079833984
                 ]
             }
         },
@@ -756,7 +756,7 @@
                     2.1035518646240234
                 ],
                 "translation": [
-                    0.22349166870117188,
+                    15.211712837219238,
                     23.48703384399414,
                     -29.878692626953125
                 ]
@@ -1169,6 +1169,106 @@
                     242.89999389648438,
                     226.6999969482422,
                     207.8000030517578
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/PODLOGA.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "PODLOGA",
+                "uuid": "08a2b2fa-0ed6-765a-13f1-4c4be6ac9f5d"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.05999999865889549,
+                    0.05999999865889549,
+                    0.05999999865889549
+                ],
+                "translation": [
+                    -85.36900329589844,
+                    -2.299999952316284,
+                    37.275001525878906
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/kubek1.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "kubek1",
+                "uuid": "33f7b24f-dee7-d262-bcfc-19364b25f41c"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.05000000074505806,
+                    0.05000000074505806,
+                    0.05000000074505806
+                ],
+                "translation": [
+                    -5.441624164581299,
+                    20.47747039794922,
+                    -12.265909194946289
                 ]
             }
         }
