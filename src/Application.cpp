@@ -255,7 +255,10 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/ketchupplama.fbx"));
 	models.emplace_back(new Model("res/models/ketchup.fbx"));
 	models.emplace_back(new Model("res/models/mustard.fbx"));
-
+	models.emplace_back(new Model("res/models/lody1.fbx"));
+	models.emplace_back(new Model("res/models/lody2.fbx"));
+	models.emplace_back(new Model("res/models/znajdzka.fbx"));
+	models.emplace_back(new Model("res/models/lodowkacialo.fbx"));
 
 	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
 
