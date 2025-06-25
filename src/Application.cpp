@@ -329,17 +329,21 @@ bool Application::init()
 	}
 
 	dialogueCharacterInfo["chleb"] = {
-		.name = "Chleb",
-		.imagePath = "res/textures/cloud.png",
-		.bgColor = {0.216, 0.135, 0.054, 0.796}
+		.name = "CHLEB",
+		.imagePath = "res/textures/dialog_chleb.png",
 	};
 	dialogueCharacterInfo["maslo"] = {
-		.name = "Maslo",
-		.imagePath = "",
-		.bgColor = {0.22, 0.216, 0.055, 0.796}
+		.name = "MASLO",
+		.imagePath = "res/textures/dialog_maslo.png",
 	};
-
-
+	dialogueCharacterInfo["pomidor"] = {
+		.name = "POMIDOR",
+		.imagePath = "res/textures/dialog_pomidor.png",
+	};
+	dialogueCharacterInfo["ser"] = {
+		.name = "SER",
+		.imagePath = "res/textures/dialog_ser.png",
+	};
 
 
 	return true;
@@ -806,6 +810,14 @@ void Application::update()
 				{
 					dialogueBoxEntities.icon = child;
 				}
+				else if (childName == "Imie")
+				{
+					dialogueBoxEntities.name = child;
+				}
+				else if (childName == "Imie Cien")
+				{
+					dialogueBoxEntities.nameShadow = child;
+				}
 				else if (childName.starts_with("Linia") && isdigit(childName.back()))
 				{
 					dialogueBoxEntities.lines[childName.back() - '0' - 1] = child;
@@ -821,9 +833,10 @@ void Application::update()
 			{
 
 				DialogueCharacter& characterInfo = it->second;
-				scene->getComponent<ImageComponent>(dialogueBoxEntities.background).color = characterInfo.bgColor;
 				scene->getComponent<ImageComponent>(dialogueBoxEntities.icon).texturePath = characterInfo.imagePath;
-				for (int i = 0; i < 6; i++)
+				scene->getComponent<TextComponent>(dialogueBoxEntities.name).text = characterInfo.name;
+				scene->getComponent<TextComponent>(dialogueBoxEntities.nameShadow).text = characterInfo.name;
+				for (int i = 0; i < currentBox.lines.size(); i++)
 				{
 					scene->getComponent<TextComponent>(dialogueBoxEntities.lines[i]).text = currentBox.lines[i];
 				}
@@ -1669,6 +1682,8 @@ void Application::setupEvents()
 
 void Application::setStartValues()
 {
+	scene->getRenderingSystem().getTexture("res/textures/dialogtlo.png");
+
 	auto breadControllers = scene->getStorage<BreadController>();
 	if (breadControllers)
 	{

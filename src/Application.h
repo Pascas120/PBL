@@ -26,21 +26,21 @@ struct DialogueCharacter
 {
 	std::string name;
 	std::string imagePath;
-	glm::vec4 bgColor;
 };
 
 struct DialogueBox
 {
 	std::string character;
-	std::array<std::string, 6> lines;
+	std::array<std::string, 3> lines;
 };
 
 struct DialogueBoxEntities
 {
 	EntityID background = (EntityID)-1;
 	EntityID icon = (EntityID)-1;
-	std::array<EntityID, 6> lines = { (EntityID)-1, (EntityID)-1, (EntityID)-1,
-									  (EntityID)-1, (EntityID)-1, (EntityID)-1 };
+	EntityID name = (EntityID)-1;
+	EntityID nameShadow = (EntityID)-1;
+	std::array<EntityID, 3> lines = { (EntityID)-1, (EntityID)-1, (EntityID)-1 };
 };
 
 class Application

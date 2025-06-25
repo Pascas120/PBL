@@ -29,7 +29,6 @@ private:
 
 
     std::map<std::string, GLuint> textures;
-    GLuint getTexture(std::string path);
     GLuint hudVAO, hudVBO, hudEBO;
     bool initializedHud = false;
     void initHud();
@@ -79,6 +78,9 @@ public:
 	const std::unordered_map<std::string, Shader*>& postShaders);
     void drawHud(const Framebuffer& framebuffer, const std::unordered_map<std::string, Shader*>& postShaders);
     void buildTree();
+
+    GLuint getTexture(std::string path);
+
 
     void updatePreviousModelMatrices();
 
