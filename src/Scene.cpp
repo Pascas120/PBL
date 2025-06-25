@@ -49,7 +49,8 @@ void Scene::destroyEntity(EntityID id) {
     if (hasComponent<Transform>(id)) {
         auto& transform = getComponent<Transform>(id);
 
-        for (const auto& child : transform.children) {
+        for (int i = transform.children.size() - 1; i >= 0; i--) {
+            auto child = transform.children[i];
             destroyEntity(child);
         }
         transformSystem.removeChild(transform.parent, id);

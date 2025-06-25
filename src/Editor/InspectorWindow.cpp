@@ -69,6 +69,8 @@ namespace Editor
                     objectInfo.tag = tagCStr;
                 }
 
+                ImGui::Text("Id: %d", editor->selectedObject);
+
                 ImGui::Separator();
 
                 drawTransform(context, editor->selectedObject);
@@ -921,7 +923,7 @@ namespace Editor
             {
                 image.texturePath = buf;
             }
-            ImGui::ColorEdit3("Color", &image.color[0]);
+            ImGui::ColorEdit4("Color", &image.color[0]);
             ImGui::DragFloat("Height", &image.height, 0.1f, 0.0f, 1000.0f);
             ImGui::DragFloat("Width", &image.width, 0.1f, 0.0f, 1000.0f);
         }
@@ -949,8 +951,8 @@ namespace Editor
             {
                 text.text = buf;
             }
-            ImGui::ColorEdit3("Color", &text.color[0]);
-            ImGui::DragFloat("Font Size", &text.fontSize, 0.1f, 1.0f, 100.0f);
+            ImGui::ColorEdit4("Color", &text.color[0]);
+            ImGui::DragFloat("Font Size", &text.fontSize, 0.1f, 0.1f, 100.0f);
         }
         ImGui::PopID();
     }

@@ -202,6 +202,79 @@
             "data": {
                 "entities": [
                     {
+                        "ObjectInfoComponent": {
+                            "name": "New Object",
+                            "uuid": "459b5ca3-94a4-8e61-56e4-80776618b1eb"
+                        },
+                        "Transform": {
+                            "children": [
+                                "a0f7c358-ad56-aaff-8d66-91572b5aa110"
+                            ],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "New Object (1)",
+                            "uuid": "a0f7c358-ad56-aaff-8d66-91572b5aa110"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "459b5ca3-94a4-8e61-56e4-80776618b1eb",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "test"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
                         "ModelComponent": {
                             "color": [
                                 1.0,
@@ -378,6 +451,365 @@
                 ]
             },
             "name": "CollectiblePos"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ImageComponent": {
+                            "color": [
+                                0.21568627655506134,
+                                0.1352941244840622,
+                                0.054901961237192154,
+                                0.7960784435272217
+                            ],
+                            "height": 205.5,
+                            "texturePath": "",
+                            "width": 963.5
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Dialog",
+                            "uuid": "9c639d98-7c00-27a8-9e42-483467053f81"
+                        },
+                        "Transform": {
+                            "children": [
+                                "dc4584bd-577f-ece3-40ea-104f47419875",
+                                "4744c138-fec4-d1bb-1ac3-92499b821824",
+                                "4a2d5b40-e1c2-a131-0550-ec8591c9d5e3",
+                                "b4413b7d-06a5-18dd-6088-bf28b637fb2d",
+                                "b8f66b2a-dc9a-6aca-e252-0ac40d1c2ba6",
+                                "93f276c9-b055-ffce-7301-cd9ab7ef2afc",
+                                "e846a94b-4f01-295c-4274-aa206632483e"
+                            ],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                959.0999755859375,
+                                203.3000030517578,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
+                        "ImageComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "height": 200.0,
+                            "texturePath": "",
+                            "width": 200.0
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Obrazek",
+                            "uuid": "dc4584bd-577f-ece3-40ea-104f47419875"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                -750.0,
+                                0.0,
+                                0.0
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 1",
+                            "uuid": "4744c138-fec4-d1bb-1ac3-92499b821824"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 1"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                345.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 2",
+                            "uuid": "4a2d5b40-e1c2-a131-0550-ec8591c9d5e3"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 2"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                285.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 3",
+                            "uuid": "b4413b7d-06a5-18dd-6088-bf28b637fb2d"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 3"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                225.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 4",
+                            "uuid": "b8f66b2a-dc9a-6aca-e252-0ac40d1c2ba6"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 4"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                165.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 5",
+                            "uuid": "93f276c9-b055-ffce-7301-cd9ab7ef2afc"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 5"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                105.0,
+                                222.1999969482422
+                            ]
+                        }
+                    },
+                    {
+                        "ObjectInfoComponent": {
+                            "name": "Linia 6",
+                            "uuid": "e846a94b-4f01-295c-4274-aa206632483e"
+                        },
+                        "TextComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                0.0
+                            ],
+                            "font": "",
+                            "fontSize": 1.0,
+                            "text": "Linia 6"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "9c639d98-7c00-27a8-9e42-483467053f81",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "translation": [
+                                445.1000061035156,
+                                45.0,
+                                222.1999969482422
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Dialog"
         }
     ]
 }
