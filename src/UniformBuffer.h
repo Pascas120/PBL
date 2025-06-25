@@ -39,4 +39,5 @@ private:
 struct UniformBlockStorage {
     UniformBlock cameraBlock{ "Camera", 0 };
     UniformBlock lightBlock{ "Lights", 1 };
+    UniformBlock splitScreenBlock{ "SplitScreen", 2 };
 };

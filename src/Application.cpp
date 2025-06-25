@@ -849,9 +849,6 @@ void Application::render(const Framebuffer& framebuffer)
 
 		if (ssc.splitActive)
 		{
-			auto& dynamicSplitScreen = postShaders["SplitScreen"];
-			dynamicSplitScreen->use();
-
 			glm::vec2 world_p1 = glm::vec2(p1.x, p1.z);
 			glm::vec2 world_p2 = glm::vec2(p2.x, p2.z);
 
@@ -869,13 +866,14 @@ void Application::render(const Framebuffer& framebuffer)
 				splitSlope = -dx.x / dx.y;
 			}
 
-			dynamicSplitScreen->setFloat("split_slope", ssc.splitSlope);
+			uniformBlockStorage.splitScreenBlock.setData("split_slope", &ssc.splitSlope);
 
 			bool player1AboveSlope = (p1.z - (splitSlope * (p1.x - center.x) + center.y)) < 0.0f;
 
-			dynamicSplitScreen->setBool("player1_above", ssc.target1AboveSlope);
+			int target1AboveSlope = ssc.target1AboveSlope;
+			uniformBlockStorage.splitScreenBlock.setData("player1_above", &target1AboveSlope);
 
-			dynamicSplitScreen->setFloat("split_line_thickness", ssc.splitLineThickness);
+			uniformBlockStorage.splitScreenBlock.setData("split_line_thickness", &ssc.splitLineThickness);
 
 
 

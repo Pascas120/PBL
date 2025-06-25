@@ -143,6 +143,10 @@ static GLsizeiptr getGLTypeSize(GLenum type) {
 	case GL_INT_VEC4: return sizeof(GLint) * 4;
 	case GL_FLOAT_MAT4: return sizeof(GLfloat) * 16;
 	case GL_FLOAT_MAT3: return sizeof(GLfloat) * 12;
+	case GL_BOOL: return sizeof(GLint);
+	case GL_BOOL_VEC2: return sizeof(GLint) * 2;
+	case GL_BOOL_VEC3: return sizeof(GLint) * 4;
+	case GL_BOOL_VEC4: return sizeof(GLint) * 4;
 	default:
 		spdlog::warn("Unknown GL uniform type: {}", type);
 		return 0;

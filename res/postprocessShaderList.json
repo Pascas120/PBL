@@ -65,6 +65,14 @@
             }
         },
         {
+            "name": "SplitScreenStencil",
+            "sources":
+            {
+                "VERTEX": "res/shaders/postprocess/postprocess.vert",
+                "FRAGMENT": "res/shaders/postprocess/splitscreenStencil.frag"
+            }
+        },
+        {
             "name": "HUD",
             "sources":
             {

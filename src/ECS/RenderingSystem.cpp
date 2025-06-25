@@ -145,12 +145,29 @@ void RenderingSystem::drawScene(const Framebuffer& framebuffer, Camera& cameraP1
     CustomFramebuffer* baseOutputFramebuffer;
 
 	if (cameraP2 != nullptr) {
-		drawBase(auxiliaryFramebuffer1, cameraP1, uniformBlockStorage, postShaders, useShadows);
-		glm::mat4 viewMatrixP2 = cameraP2->getViewMatrix();
-		glm::mat4 projectionMatrixP2 = cameraP2->getFrustum().getProjectionMatrix();
-		glm::mat4 viewProjectionMatrixP2 = projectionMatrixP2 * viewMatrixP2;
 
-		drawBase(auxiliaryFramebuffer2, *cameraP2, uniformBlockStorage, postShaders, useShadows);
+        glEnable(GL_STENCIL_TEST);
+        auto stencilShader = postShaders.at("SplitScreenStencil");
+        stencilShader->use();
+        stencilShader->setBool("swapStencil", false);
+        drawSplitScreenStencil();
+
+
+        drawBase(auxiliaryFramebuffer1, cameraP1, uniformBlockStorage, postShaders, useShadows);
+
+        //draw camera 2 view
+        
+        stencilShader->use();
+        stencilShader->setBool("swapStencil", true);
+        drawSplitScreenStencil();
+
+        drawBase(auxiliaryFramebuffer2, *cameraP2, uniformBlockStorage, postShaders, useShadows);
+
+
+        // draw split screen
+        glDisable(GL_STENCIL_TEST);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 0, 0xFF);
 
 		baseOutputFramebuffer = &postProcessingFramebuffer1;
 		dynamicSplitScreen(postShaders.at("SplitScreen"), cameraP1, auxiliaryFramebuffer1, auxiliaryFramebuffer2, *baseOutputFramebuffer);
@@ -463,6 +480,38 @@ void RenderingSystem::dynamicSplitScreen(Shader *dynamicSplitScreen, Camera& cam
 	glBindVertexArray(hudVAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+}
+
+void RenderingSystem::drawSplitScreenStencil()
+{
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+
+    glBindVertexArray(hudVAO);
+
+    std::array splitScreenBuffers = { &customFramebuffer, &postProcessingFramebuffer1, &postProcessingFramebuffer2, &ssaoFramebuffer,
+        &auxiliaryFramebuffer1, &auxiliaryFramebuffer2 };
+    for (auto& buffer : splitScreenBuffers)
+    {
+        buffer->Bind();
+        glClear(GL_STENCIL_BUFFER_BIT);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    }
+
+    glBindVertexArray(0);
+
+    glStencilMask(0x00);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
 }
 
 void RenderingSystem::updatePreviousModelMatrices() {

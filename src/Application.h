@@ -86,7 +86,8 @@ protected:
 
 	std::unordered_map<std::string, UniformBlock*> uniformBlockMap{
 		{ "Camera", &uniformBlockStorage.cameraBlock },
-		{ "Lights", &uniformBlockStorage.lightBlock }
+		{ "Lights", &uniformBlockStorage.lightBlock },
+		{ "SplitScreen", &uniformBlockStorage.splitScreenBlock }
 	};
 
 	std::vector<std::string> sounds;
