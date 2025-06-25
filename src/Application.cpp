@@ -309,6 +309,7 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/track_2.mp3");
 	sounds.emplace_back("res/sounds/track_3.mp3");
 	sounds.emplace_back("res/sounds/track_4.mp3");
+	sounds.emplace_back("res/sounds/znajdzka.mp3");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -324,7 +325,7 @@ bool Application::init()
 		}
 	}
 	file.close();
-	std::shuffle(jokes.begin(), jokes.end(), std::mt19937(std::random_device()()));
+	std::shuffle(jokes.begin() + 1, jokes.end(), std::mt19937(std::random_device()()));
 	spdlog::info("Loaded {} jokes.", jokes.size());
 	spdlog::info(jokes[0]);
 
@@ -570,7 +571,6 @@ void Application::update()
 
 	auto isButtonPressed = [&](const ButtonComponent& b) -> bool
 		{
-	
 			bool pressedSelf = pressedButtons.count(b.id) > 0;
 
 			if (b.linkMode == ButtonLinkMode::DoubleD &&
@@ -594,10 +594,12 @@ void Application::update()
 				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 					e.state = ElevatorState::Opening;
 					e.isMoving = true;
+					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 				}
 				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 					e.state = ElevatorState::Closing;
 					e.isMoving = true;
+					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 				}
 			}
 			else if (e.isDoor)       //drzwi
@@ -606,20 +608,24 @@ void Application::update()
 					if (nowPressed && e.state == ElevatorState::Closed) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
+						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 					}
 					else if (nowPressed && e.state == ElevatorState::Open) {
 						e.state = ElevatorState::Closing;
 						e.isMoving = true;
+						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 					}
 				}
 				else {
 					if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
+						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 					}
 					else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 						e.state = ElevatorState::Closing;
 						e.isMoving = true;
+						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 					}
 				}
 			}
@@ -628,10 +634,12 @@ void Application::update()
 				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 					e.state = ElevatorState::Opening;
 					e.isMoving = true;
+					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 				}
 				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 					e.state = ElevatorState::Closing;
 					e.isMoving = true;
+					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
 				}
 			}
 		}
@@ -1732,6 +1740,7 @@ void Application::setupEvents()
 		scene->playerLock = true;
 		EntityID bun = scene->instantiatePrefab("Bula")[0];
 		scene->getComponent<BunController>(bun).joke = jokes[currentLevel % jokes.size()];
+		scene->getAudioSystem().playSound("res/sounds/znajdzka.mp3");
 	});
 }
 

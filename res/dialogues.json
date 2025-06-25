@@ -1,25 +1,54 @@
 {
-    "dialogues" : [
+  "dialogues": [
+    {
+      "dialogueName": "testDialogue",
+      "lines": [
         {
-            "dialogueName": "testDialogue",
-            "lines": [
-                {
-                    "character": "maslo",
-                    "textLines": [
-                        "line1",
-                        "line2",
-                        "line3"
-                    ]
-                },
-                {
-                    "character": "chleb",
-                    "textLines": [
-                        "inny tekst",
-                        "",
-                        ":)"
-                    ]
-                }
-            ]
+          "character": "maslo",
+          "textLines": [
+            "line1",
+            "line2",
+            "line3"
+          ]
+        },
+        {
+          "character": "chleb",
+          "textLines": [
+            "inny tekst",
+            "",
+            ":)"
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "dialogueName": "DialogPoziom1",
+      "lines": [
+        {
+          "character": "maslo",
+          "textLines": [
+            "",
+            "To bylo za proste!",
+            ""
+          ]
+        },
+        {
+          "character": "chleb",
+          "textLines": [
+            "",
+            "...",
+            ""
+          ]
+        },
+        {
+          "character": "maslo",
+          "textLines": [
+            "",
+            "Mniejsza z tym. Chodz, mamy malo czasu.",
+            ""
+          ]
+        }
+      ]
+    }
+  ]
 }

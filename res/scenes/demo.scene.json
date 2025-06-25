@@ -689,13 +689,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        -3.0,
-                        -7.800000190734863,
+                        -1.100000023841858,
+                        -0.30000001192092896,
                         0.0
                     ],
                     "halfSize": [
                         199.1999969482422,
-                        20.799999237060547,
+                        28.200000762939453,
                         250.0
                     ],
                     "type": "BOX"
@@ -710,7 +710,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/ksiazkakucharska.fbx",
+                "model": "res/models/ksiazka.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -733,13 +733,13 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.029999839141964912,
-                    0.029999999329447746,
+                    0.023000000044703484,
+                    0.023000000044703484,
                     0.029999839141964912
                 ],
                 "translation": [
                     -0.06542651355266571,
-                    19.2382869720459,
+                    19.13800048828125,
                     -33.290740966796875
                 ]
             }
@@ -1221,6 +1221,66 @@
                     1.0
                 ],
                 "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CollectibleComponent": null,
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 0.5,
+                    "type": "SPHERE"
+                },
+                "isStatic": false,
+                "isTrigger": true,
+                "properties": 4
+            },
+            "ObjectInfoComponent": {
+                "name": "Collectible Pos",
+                "uuid": "1ccfe4f3-8052-2067-77d5-e049b38f2105"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.22349166870117188,
+                    20.330055236816406,
+                    -35.58539581298828
+                ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    37.5,
+                    0.0
+                ],
+                "useGravity": false,
+                "velocity": [
                     0.0,
                     0.0,
                     0.0

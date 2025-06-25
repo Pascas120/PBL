@@ -1,6 +1,21 @@
 {
     "entities": [
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/maselkochod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkodown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkoup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ButterController": {
                 "jumpSpeed": 6.0,
                 "moveSpeed": 7.0,
@@ -43,8 +58,8 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
-                "shader": "CelShading"
+                "model": "res/models/MASLOmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
@@ -145,6 +160,21 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/chlebekchod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekdown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "BreadController": {
                 "jumpSpeed": 5.0,
                 "moveSpeed": 7.0,
@@ -174,13 +204,18 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
-                "shader": "CelShading"
+                "model": "res/models/chlebekmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
                 "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/trampolinaSound.mp3",
+                "volume": 1.0
             },
             "TrailCollisionDetectorComponent": {
                 "sprintMultiplier": 2.0
@@ -788,6 +823,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "",
                 "nextLevelPath": "demo.scene.json"
             },
             "ObjectInfoComponent": {
@@ -2261,6 +2297,43 @@
                     -0.6439254879951477,
                     18.59444236755371,
                     41.21227264404297
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "ost",
+                "uuid": "f85a18d7-f5b9-f014-effc-482f1f615e7a"
+            },
+            "SoundComponent": {
+                "loop": true,
+                "soundPath": "res/sounds/track_2.mp3",
+                "volume": 0.07000000029802322
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }
