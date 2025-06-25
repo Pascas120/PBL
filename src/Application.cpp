@@ -260,6 +260,17 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/ost3.mp3");
 	sounds.emplace_back("res/sounds/ost4.mp3");
 	sounds.emplace_back("res/sounds/ost5.mp3");
+	sounds.emplace_back("res/sounds/cieplaStrefaMasloRoztapianie.mp3");
+	sounds.emplace_back("res/sounds/DuzyPrzycisk.wav");
+	sounds.emplace_back("res/sounds/malyPrzycisk.mp3");
+	sounds.emplace_back("res/sounds/poslizgchlebaodmasla.wav");
+	sounds.emplace_back("res/sounds/skokChleb.mp3");
+	sounds.emplace_back("res/sounds/skokMaslo.mp3");
+	sounds.emplace_back("res/sounds/SzafkaDrzwiOtwieranie.mp3");
+	sounds.emplace_back("res/sounds/SzafkaDrzwiZamykanie.mp3");
+	sounds.emplace_back("res/sounds/trampolinaSound.mp3");
+	sounds.emplace_back("res/sounds/UISelectionSound.wav");
+	sounds.emplace_back("res/sounds/winda.mp3");
 
 
 	std::ifstream fileJokes("res/jokes.txt");

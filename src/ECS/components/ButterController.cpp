@@ -147,6 +147,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		{
 			movement.y += jumpSpeed;
 			isJumping = true;
+			scene->getAudioSystem().playSound("res/sounds/skokMaslo.mp3");
 		}
 		else
 		{

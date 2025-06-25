@@ -12,13 +12,15 @@ class Scene;
 class AudioSystem {
     Scene* scene;
     ma_engine audioEngine;
-    float globalVolume = 1.0f;
+    float globalVolume = 0.5f;
 public:
     AudioSystem(Scene* scene);
+    ~AudioSystem();
 
     void update() const;
 
     void playSound(EntityID id);
+    void playSound(std::string soundPath);
     void stopSound(EntityID id) const;
     void setGlobalVolume(float volume);
     float getGlobalVolume() const;
