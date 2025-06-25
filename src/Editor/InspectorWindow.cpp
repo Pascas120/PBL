@@ -605,27 +605,43 @@ namespace Editor
         ImGui::PushID(&e);
         bool open = ImGui::CollapsingHeader("Elevator", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<ElevatorComponent>(context, id)) return;
+
         if (open)
         {
             ImGui::DragFloat("Open Height", &e.openHeight, 0.1f);
             ImGui::DragFloat("Speed", &e.speed, 0.1f);
             Utils::entityRefField("Button Entity", e.buttonEntity, *scene);
-            
+
             ImGui::Separator();
-            ImGui::Checkbox("Door", &e.isDoor);
-            if (e.isDoor) {
+
+            ImGui::Checkbox("Door", &e.isDoor);   ImGui::SameLine();
+            ImGui::Checkbox("Rotate", &e.rotate);
+
+            if (e.isDoor)
+            {
+                e.rotate = false;
                 const char* dirs[] = { "L", "R" };
-                int dir = (int)e.doorDir;
-                if (ImGui::Combo("Direction", &dir, dirs, 2))
-                     e.doorDir = ElevatorComponent::DoorDir(dir);
+                int dir = static_cast<int>(e.doorDir);
+                if (ImGui::Combo("Direction", &dir, dirs, IM_ARRAYSIZE(dirs)))
+                    e.doorDir = static_cast<ElevatorComponent::DoorDir>(dir);
+
                 ImGui::Checkbox("Lock", &e.locked);
-                
+            }
+
+            if (e.rotate)
+
+            {
+                e.isDoor = false;
+                const char* nums[] = { "1", "2", "3", "4" };
+                int sel = e.rotateId;
+                if (ImGui::Combo("Rotate №", &sel, nums, IM_ARRAYSIZE(nums)))
+                    e.rotateId = sel;
+                ImGui::DragFloat("Angle (°)", &e.rotateAngle, 1.0f, 1.0f, 360.0f);
             }
 
             ImGui::Text("Is Moving: %s", e.isMoving ? "Yes" : "No");
-
-
         }
+
         ImGui::PopID();
     }
 

@@ -188,6 +188,12 @@ struct ElevatorComponent {
     enum class DoorDir { Left, Right };
     DoorDir doorDir = DoorDir::Left;      
     bool locked = false;
+
+
+    bool  rotate = false; 
+    float rotateAngle = 90.f;          
+    float startYaw = 0.f;
+    int   rotateId = 0;
 };
 
 struct ButtonComponent {

@@ -515,6 +515,9 @@ namespace Serialization
 		j["isDoor"] = c.isDoor;
 		j["doorDir"] = c.doorDir == ElevatorComponent::DoorDir::Left ? "Left" : "Right";
 		j["locked"] = c.locked;
+		j["rotate"] = c.rotate;
+		j["rotateId"] = c.rotateId;
+		j["rotateAngle"] = c.rotateAngle;
 	}
 
 	static void from_json(const nlohmann::json& j, ElevatorComponent& c, const DeserializationContext& context)
@@ -538,6 +541,9 @@ namespace Serialization
 		if (doorDirStr == "Left") c.doorDir = ElevatorComponent::DoorDir::Left;
 		else if (doorDirStr == "Right") c.doorDir = ElevatorComponent::DoorDir::Right;
 		j.at("locked").get_to(c.locked);
+		c.rotate = j.value("rotate", false);
+		c.rotateId = j.value("rotateId", 0);
+		c.rotateAngle = j.value("rotateAngle", 90.f);
 	}
 
 	static void to_json(nlohmann::json& j, const ButtonComponent& c, const SerializationContext& context)

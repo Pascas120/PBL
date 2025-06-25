@@ -520,10 +520,20 @@ void Application::update()
 
 			bool nowPressed = isButtonPressed(btn);
 
-			if (e.isDoor) {
-
+			if (e.rotate)            // rotate
+			{
+				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
+					e.state = ElevatorState::Opening;
+					e.isMoving = true;
+				}
+				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
+					e.state = ElevatorState::Closing;
+					e.isMoving = true;
+				}
+			}
+			else if (e.isDoor)       //drzwi
+			{
 				if (e.locked) {
-
 					if (nowPressed && e.state == ElevatorState::Closed) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
@@ -534,7 +544,6 @@ void Application::update()
 					}
 				}
 				else {
-
 					if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
@@ -545,8 +554,8 @@ void Application::update()
 					}
 				}
 			}
-			else {
-
+			else                      //winda
+			{
 				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 					e.state = ElevatorState::Opening;
 					e.isMoving = true;
@@ -573,6 +582,42 @@ void Application::update()
 			}
 
 			float delta = e.speed * deltaTime;
+
+			if (e.rotate) {
+
+				
+				if (!e.hasInitClosedPos) {
+					e.closedPos = tr.translation;           
+					e.startYaw = tr.eulerRotation.y;       
+					e.hasInitClosedPos = true;
+				}
+
+				float targetYaw = e.startYaw + e.rotateAngle;        
+
+				if (e.state == ElevatorState::Opening) {
+					tr.eulerRotation.y += delta;                     
+					if (tr.eulerRotation.y >= targetYaw) {
+						tr.eulerRotation.y = targetYaw;
+						e.state = ElevatorState::Open;
+						e.isMoving = false;
+					}
+				}
+				else if (e.state == ElevatorState::Closing) {
+					tr.eulerRotation.y -= delta;
+					if (tr.eulerRotation.y <= e.startYaw) {
+						tr.eulerRotation.y = e.startYaw;
+						e.state = ElevatorState::Closed;
+						e.isMoving = false;
+					}
+				}
+
+				
+				tr.rotation = glm::quat(glm::radians(tr.eulerRotation));
+				tr.isDirty = true;
+
+				ts.rotateEntity(e.id, tr.eulerRotation);  
+				continue;                                 
+			}
 
 			if (e.isDoor) {
 
