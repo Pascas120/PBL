@@ -227,7 +227,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +276,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -1378,9 +1378,9 @@
                     0.8619000315666199
                 ],
                 "translation": [
-                    -14.299928665161133,
+                    -14.49537181854248,
                     18.542999267578125,
-                    -1.112002968788147
+                    -1.1949635744094849
                 ]
             }
         },
@@ -1395,7 +1395,7 @@
                     "halfSize": [
                         1.0,
                         1.0,
-                        1.0
+                        2.4000000953674316
                     ],
                     "type": "BOX"
                 },
@@ -1437,7 +1437,7 @@
                     0.10000000149011612
                 ],
                 "translation": [
-                    6.022069931030273,
+                    6.122000217437744,
                     15.5,
                     32.39363479614258
                 ]
@@ -1454,7 +1454,7 @@
                     "halfSize": [
                         1.0,
                         1.0,
-                        1.0
+                        2.4000000953674316
                     ],
                     "type": "BOX"
                 },
@@ -1633,6 +1633,24 @@
             }
         },
         {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        -0.10000000149011612,
+                        -4.400000095367432,
+                        0.0
+                    ],
+                    "halfSize": [
+                        100.0,
+                        5.800000190734863,
+                        101.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
             "ModelComponent": {
                 "color": [
                     1.0,
@@ -1647,7 +1665,12 @@
                 "uuid": "fafdabb1-15f1-2b47-9d6e-05b091e7afd2"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "0968b305-dacb-8190-83c3-05d6c1dc67e3",
+                    "a4c11e07-e00b-088a-5ab1-23221fa2ef8e",
+                    "b27fef3b-1218-db9e-b967-80df2d309d95",
+                    "6c7eecd6-c28b-a531-9df1-38013086cc84"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -1670,6 +1693,226 @@
                     4.081844329833984,
                     18.925251007080078,
                     2.34537935256958
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 97.4000015258789,
+                    "type": "SPHERE"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/pomidor.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "pomidor",
+                "uuid": "0968b305-dacb-8190-83c3-05d6c1dc67e3"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "fafdabb1-15f1-2b47-9d6e-05b091e7afd2",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "translation": [
+                    -79.5252685546875,
+                    -2.290679931640625,
+                    88.85699462890625
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 97.4000015258789,
+                    "type": "SPHERE"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/pomidor.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "pomidor (1)",
+                "uuid": "a4c11e07-e00b-088a-5ab1-23221fa2ef8e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "fafdabb1-15f1-2b47-9d6e-05b091e7afd2",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "translation": [
+                    -86.98455810546875,
+                    -2.290679931640625,
+                    -82.64691925048828
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 97.4000015258789,
+                    "type": "SPHERE"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/pomidor.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "pomidor (2)",
+                "uuid": "b27fef3b-1218-db9e-b967-80df2d309d95"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "fafdabb1-15f1-2b47-9d6e-05b091e7afd2",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "translation": [
+                    86.58517456054688,
+                    -2.290679931640625,
+                    -83.39620971679688
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 97.4000015258789,
+                    "type": "SPHERE"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/pomidor.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "pomidor (3)",
+                "uuid": "6c7eecd6-c28b-a531-9df1-38013086cc84"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "fafdabb1-15f1-2b47-9d6e-05b091e7afd2",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.20000000298023224,
+                    0.20000000298023224,
+                    0.20000000298023224
+                ],
+                "translation": [
+                    86.58517456054688,
+                    -2.290679931640625,
+                    83.7445068359375
                 ]
             }
         },
@@ -1802,7 +2045,9 @@
                 "uuid": "121f76e9-9bd5-be9c-d15e-bea261abac26"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "e68fa994-e785-9e75-bbe1-eec23de96289"
+                ],
                 "eulerRotation": [
                     0.0,
                     55.20000076293945,
@@ -1825,6 +2070,56 @@
                     6.126185417175293,
                     20.030616760253906,
                     39.96898651123047
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        59.0,
+                        0.4000000059604645,
+                        0.0
+                    ],
+                    "halfSize": [
+                        18.799999237060547,
+                        30.0,
+                        6.199999809265137
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Collider Ucha",
+                "uuid": "e68fa994-e785-9e75-bbe1-eec23de96289"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "121f76e9-9bd5-be9c-d15e-bea261abac26",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },

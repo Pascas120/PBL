@@ -227,7 +227,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +276,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -418,13 +418,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
+                        8.699999809265137,
                         312.1000061035156,
                         0.0
                     ],
                     "halfSize": [
-                        250.0,
-                        299.70001220703125,
+                        259.0,
+                        299.3999938964844,
                         306.70001220703125
                     ],
                     "type": "BOX"
@@ -477,13 +477,13 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
+                        10.899999618530273,
                         312.1000061035156,
                         0.0
                     ],
                     "halfSize": [
-                        250.0,
-                        299.70001220703125,
+                        259.0,
+                        299.3999938964844,
                         306.70001220703125
                     ],
                     "type": "BOX"
@@ -654,14 +654,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
-                        -7.0,
-                        0.0
+                        -3.0,
+                        -9.5,
+                        -0.30000001192092896
                     ],
                     "halfSize": [
-                        200.0,
-                        20.0,
-                        250.0
+                        199.60000610351563,
+                        23.100000381469727,
+                        250.89999389648438
                     ],
                     "type": "BOX"
                 },
@@ -729,7 +729,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
-                "nextLevelPath": "demo.scene.json"
+                "nextLevelPath": "poziom2.json"
             },
             "ObjectInfoComponent": {
                 "name": "EXIT",
@@ -780,9 +780,9 @@
                         0.0
                     ],
                     "halfSize": [
-                        30.0,
+                        31.600000381469727,
                         15.0,
-                        30.0
+                        33.70000076293945
                     ],
                     "type": "BOX"
                 },
@@ -835,13 +835,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        0.0,
+                        0.4000000059604645,
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        200.0,
+                        28.600000381469727,
+                        248.39999389648438
                     ],
                     "type": "BOX"
                 },
@@ -944,6 +944,24 @@
             }
         },
         {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        44.900001525878906,
+                        -0.6000000238418579,
+                        0.0
+                    ],
+                    "halfSize": [
+                        19999.0,
+                        56.29999923706055,
+                        1999.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
             "ModelComponent": {
                 "color": [
                     1.0,
@@ -993,7 +1011,7 @@
                         0.0
                     ],
                     "halfSize": [
-                        40.0,
+                        40.20000076293945,
                         40.0,
                         40.0
                     ],
@@ -1017,7 +1035,9 @@
                 "uuid": "33f7b24f-dee7-d262-bcfc-19364b25f41c"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "e1973fa3-3eeb-dc6f-afac-7490346afdfd"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -1040,6 +1060,56 @@
                     -5.441624164581299,
                     20.47747039794922,
                     -12.265909194946289
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        57.5,
+                        -0.699999988079071,
+                        0.0
+                    ],
+                    "halfSize": [
+                        19.5,
+                        30.299999237060547,
+                        5.800000190734863
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 3
+            },
+            "ObjectInfoComponent": {
+                "name": "Collider Ucho",
+                "uuid": "e1973fa3-3eeb-dc6f-afac-7490346afdfd"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "33f7b24f-dee7-d262-bcfc-19364b25f41c",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
