@@ -208,11 +208,10 @@ bool Application::init()
 		}
 	}
 	//setupScene();
-	models.emplace_back(new Model("res/anims/maselkochodzenie.fbx"));
-	models.emplace_back(new Model("res/models/muhahahahahahah.fbx"));
-	models.emplace_back(new Model("res/models/MASLO.fbx"));
+	models.emplace_back(new Model("res/models/MASLOmesh+bones.fbx"));
+	models.emplace_back(new Model("res/models/chlebekmesh+bones.fbx"));
+	models.emplace_back(new Model("res/models/GABKA.fbx"));
 	models.emplace_back(new Model("res/models/grass_block/grass_block.obj"));
-	models.emplace_back(new Model("res/models/CHLEB.fbx"));
 	models.emplace_back(new Model("res/models/poziomy.fbx"));
 	models.emplace_back(new Model("res/models/wallpaper.fbx"));
 	models.emplace_back(new Model("res/models/blat.fbx"));
@@ -220,7 +219,6 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/plyta.fbx"));
 	models.emplace_back(new Model("res/models/zlew_blat.fbx"));
 	models.emplace_back(new Model("res/models/woda.fbx"));
-	models.emplace_back(new Model("res/models/GABKA.fbx"));
 	models.emplace_back(new Model("res/models/plama1.fbx"));
 	models.emplace_back(new Model("res/models/plama2.fbx"));
 	models.emplace_back(new Model("res/models/plama3.fbx"));
@@ -273,7 +271,14 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/lodowkadziura.fbx"));
 	models.emplace_back(new Model("res/models/kratka.fbx"));
 
-	animations.emplace_back(new Animation("res/anims/maselkochodzenie.fbx", models[0]));
+	//animacje
+	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chlebekdown.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chlebekup.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/maselkochod.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/maselkodown.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/maselkoup.fbx", models[0]));
+	animations.emplace_back(new Animation("res/anims/GABKAfloat.fbx", models[2]));
 
 	//TODO Automatyczne wczytywanie z folderu
 	sounds.emplace_back("res/sounds/background.mp3");
@@ -294,7 +299,10 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/trampolinaSound.mp3");
 	sounds.emplace_back("res/sounds/UISelectionSound.wav");
 	sounds.emplace_back("res/sounds/winda.mp3");
-
+	sounds.emplace_back("res/sounds/track_1.mp3");
+	sounds.emplace_back("res/sounds/track_2.mp3");
+	sounds.emplace_back("res/sounds/track_3.mp3");
+	sounds.emplace_back("res/sounds/track_4.mp3");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -347,17 +355,21 @@ bool Application::init()
 	}
 
 	dialogueCharacterInfo["chleb"] = {
-		.name = "Chleb",
-		.imagePath = "res/textures/cloud.png",
-		.bgColor = {0.216, 0.135, 0.054, 0.796}
+		.name = "CHLEB",
+		.imagePath = "res/textures/dialog_chleb.png",
 	};
 	dialogueCharacterInfo["maslo"] = {
-		.name = "Maslo",
-		.imagePath = "",
-		.bgColor = {0.22, 0.216, 0.055, 0.796}
+		.name = "MASLO",
+		.imagePath = "res/textures/dialog_maslo.png",
 	};
-
-
+	dialogueCharacterInfo["pomidor"] = {
+		.name = "POMIDOR",
+		.imagePath = "res/textures/dialog_pomidor.png",
+	};
+	dialogueCharacterInfo["ser"] = {
+		.name = "SER",
+		.imagePath = "res/textures/dialog_ser.png",
+	};
 
 
 	return true;
@@ -833,6 +845,14 @@ void Application::update()
 				{
 					dialogueBoxEntities.icon = child;
 				}
+				else if (childName == "Imie")
+				{
+					dialogueBoxEntities.name = child;
+				}
+				else if (childName == "Imie Cien")
+				{
+					dialogueBoxEntities.nameShadow = child;
+				}
 				else if (childName.starts_with("Linia") && isdigit(childName.back()))
 				{
 					dialogueBoxEntities.lines[childName.back() - '0' - 1] = child;
@@ -848,9 +868,10 @@ void Application::update()
 			{
 
 				DialogueCharacter& characterInfo = it->second;
-				scene->getComponent<ImageComponent>(dialogueBoxEntities.background).color = characterInfo.bgColor;
 				scene->getComponent<ImageComponent>(dialogueBoxEntities.icon).texturePath = characterInfo.imagePath;
-				for (int i = 0; i < 6; i++)
+				scene->getComponent<TextComponent>(dialogueBoxEntities.name).text = characterInfo.name;
+				scene->getComponent<TextComponent>(dialogueBoxEntities.nameShadow).text = characterInfo.name;
+				for (int i = 0; i < currentBox.lines.size(); i++)
 				{
 					scene->getComponent<TextComponent>(dialogueBoxEntities.lines[i]).text = currentBox.lines[i];
 				}
@@ -1697,6 +1718,8 @@ void Application::setupEvents()
 
 void Application::setStartValues()
 {
+	scene->getRenderingSystem().getTexture("res/textures/dialogtlo.png");
+
 	auto breadControllers = scene->getStorage<BreadController>();
 	if (breadControllers)
 	{

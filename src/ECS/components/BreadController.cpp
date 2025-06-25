@@ -65,6 +65,14 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 			targetRotation = glm::eulerAngles(glm::quatLookAt(movementDir, glm::vec3(0.0f, 1.0f, 0.0f)));
 			targetRotation = glm::degrees(targetRotation);
+
+			if (scene->hasComponent<AnimationComponent>(id)) {
+				auto& anim = scene->getComponent<AnimationComponent>(id);
+				if (movementMag > 0.1f && !anim.isPlaying)
+				{
+					scene->getAnimationSystem().playAnimation(id, "res/anims/chlebekchod.fbx");
+				}
+			}
 		}
 
 		movement *= moveSpeed;
@@ -110,14 +118,42 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 		if (!isJumping && jumpButton)
 		{
-			
+			bool isSpeedUp = false;
+			if (scene->hasComponent<TrailCollisionDetectorComponent>(id))
+			{
+				auto& trailCollisionDetectorComponent = scene->getComponent<TrailCollisionDetectorComponent>(id);
+				if (trailCollisionDetectorComponent.sprintTimeLeft > 0.0f)
+				{
+					isSpeedUp = true;
+				}
+			}
 			float jumpMul = freezing ? 0.5f : 1.0f;
 			movement.y += jumpSpeed * jumpMul;
 			isJumping = true;
+			if (!isSpeedUp) {
+				scene->getAudioSystem().playSound("res/sounds/skokChleb.mp3");
+			}
+			else {
+				scene->getAudioSystem().playSound("res/sounds/poslizgchlebaodmasla.wav");
+			}
+			if (scene->hasComponent<AnimationComponent>(id)) {
+				auto& anim = scene->getComponent<AnimationComponent>(id);
+				if (movementMag > 0.1f && !anim.isPlaying)
+				{
+					scene->getAnimationSystem().playAnimation(id, "res/anims/chlebekup.fbx");
+				}
+			}
 		}
 		else
 		{
 			movement.y = velocityComponent.velocity.y;
+			if (scene->hasComponent<AnimationComponent>(id)) {
+				auto& anim = scene->getComponent<AnimationComponent>(id);
+				if (movementMag > 0.1f && !anim.isPlaying)
+				{
+					scene->getAnimationSystem().playAnimation(id, "res/anims/chlebekdown.fbx");
+				}
+			}
 		}
 
 		velocityComponent.velocity = movement;

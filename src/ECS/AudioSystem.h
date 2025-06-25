@@ -11,7 +11,7 @@ class Scene;
 
 class AudioSystem {
     Scene* scene;
-    ma_engine audioEngine;
+    ma_engine *audioEngine;
     float globalVolume = 0.5f;
 public:
     AudioSystem(Scene* scene);

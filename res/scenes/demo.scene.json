@@ -1,6 +1,21 @@
 {
     "entities": [
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/maselkochod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkodown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkoup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ButterController": {
                 "jumpSpeed": 6.0,
                 "moveSpeed": 7.0,
@@ -43,8 +58,8 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
-                "shader": "CelShading"
+                "model": "res/models/MASLOmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
@@ -145,6 +160,21 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/chlebekchod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekdown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "BreadController": {
                 "jumpSpeed": 5.0,
                 "moveSpeed": 7.0,
@@ -174,13 +204,18 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
-                "shader": "CelShading"
+                "model": "res/models/chlebekmesh+bones.fbx",
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
                 "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/trampolinaSound.mp3",
+                "volume": 1.0
             },
             "TrailCollisionDetectorComponent": {
                 "sprintMultiplier": 2.0
@@ -227,7 +262,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7780580520629883,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +311,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7780580520629883,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -729,6 +764,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "",
                 "nextLevelPath": "demo.scene.json"
             },
             "ObjectInfoComponent": {
@@ -1151,6 +1187,43 @@
                     4.858834266662598,
                     18.615163803100586,
                     -23.114707946777344
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "ost",
+                "uuid": "1d6272d4-c470-9c2a-a14b-c6db3d02f3e5"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/track_1.mp3",
+                "volume": 0.019999999552965164
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }

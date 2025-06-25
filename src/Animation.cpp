@@ -24,7 +24,8 @@ Animation::Animation(const std::string& animationPath, Model* model)
     // }
 }
 
-Animation::~Animation() {}
+Animation::~Animation() {
+}
 
 Bone* Animation::FindBone(const std::string& name)
 {
