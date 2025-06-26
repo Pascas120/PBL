@@ -204,8 +204,10 @@ struct ButtonComponent {
     enum class ActivatorMode : uint8_t { PlayersOnly = 0, AllByTag = 1 };
     ActivatorMode activatorMode = ActivatorMode::PlayersOnly;
     bool isPressed = false;
-    float pressDepth = 0.1f;
+    float pressDepth = 3.0f;
     float pressSpeed = 4.0f;
+    float startY = 0.0f;
+    bool  startYSet = false;
     std::string activatorTag;
     EntityID elevatorEntity = static_cast<EntityID>(-1);
 

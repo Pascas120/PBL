@@ -387,6 +387,14 @@ bool Application::init()
 		.name = "DAREK",
 		.imagePath = "res/textures/dialog_ser.png",
 	};
+	dialogueCharacterInfo["ogorek"] = {
+		.name = "OGOREK",
+		.imagePath = "res/textures/dialog_ogorek.png",
+	};
+	dialogueCharacterInfo["czlowiek"] = {
+		.name = "???",
+		.imagePath = "res/textures/dialog_czlowiek.png",
+	};
 
 
 	return true;
@@ -544,7 +552,7 @@ void Application::update()
 		};
 	for (auto& col : collisions)
 	{
-		// ignorujemy kolizje, w których nie ma żadnego przycisku
+		
 		if (!isButton(col.objectA) && !isButton(col.objectB)) continue;
 
 		EntityID btnId = isButton(col.objectA) ? col.objectA : col.objectB;
@@ -561,7 +569,7 @@ void Application::update()
 			break;
 
 		case ButtonComponent::ActivatorMode::AllByTag:
-			if (btn.activatorTag.empty())             // brak filtru -> wszystko
+			if (btn.activatorTag.empty())            
 				ok = true;
 			else if (scene->hasComponent<ObjectInfoComponent>(otherId))
 				ok = (scene->getComponent<ObjectInfoComponent>(otherId).tag == btn.activatorTag);
@@ -570,11 +578,42 @@ void Application::update()
 
 		if (!ok) continue;
 
-		// sprawdzamy czy faktycznie stoi na przycisku (stary warunek)
 		if (std::abs(col.separationVector.x) < 0.001f &&
 			std::abs(col.separationVector.z) < 0.001f)
 		{
 			pressedButtons.insert(btnId);
+		}
+	}
+	if (auto buttons = scene->getStorage<ButtonComponent>()) {
+		auto& ts = scene->getTransformSystem();
+
+		for (int i = 0; i < buttons->getQuantity(); ++i) {
+			auto& btn = buttons->components[i];
+			auto& tr = scene->getComponent<Transform>(btn.id);
+
+		
+			if (!btn.startYSet) {
+				btn.startY = tr.translation.y;
+				btn.startYSet = true;
+			}
+
+			
+			bool pressedNow = pressedButtons.count(btn.id) != 0;
+
+			
+			float targetY = pressedNow ? btn.startY - btn.pressDepth  
+				: btn.startY;                   
+
+			
+			float maxStep = btn.pressSpeed * deltaTime;
+			float diff = targetY - tr.translation.y;
+
+			if (std::abs(diff) <= maxStep)        
+				tr.translation.y = targetY;
+			else
+				tr.translation.y += (diff > 0 ? +maxStep : -maxStep);
+
+			ts.translateEntity(btn.id, tr.translation);
 		}
 	}
 
