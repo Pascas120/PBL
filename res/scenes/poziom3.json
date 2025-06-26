@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7782546281814575,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7782546281814575,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -693,124 +693,6 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "radius": 0.5,
-                    "type": "SPHERE"
-                },
-                "isStatic": false,
-                "isTrigger": true,
-                "properties": 4
-            },
-            "ObjectInfoComponent": {
-                "name": "Collectible Pos",
-                "uuid": "8d209f4d-df08-344f-0ec9-ad0b8b8af094"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    3979.962158203125,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    -0.17332106828689575,
-                    0.0,
-                    -0.9848653674125671
-                ],
-                "scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ],
-                "translation": [
-                    0.22349166870117188,
-                    20.330055236816406,
-                    -35.58539581298828
-                ]
-            },
-            "VelocityComponent": {
-                "angularVelocity": [
-                    0.0,
-                    37.5,
-                    0.0
-                ],
-                "useGravity": false,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "radius": 0.5,
-                    "type": "SPHERE"
-                },
-                "isStatic": false,
-                "isTrigger": true,
-                "properties": -1
-            },
-            "ObjectInfoComponent": {
-                "name": "Collectible Pos",
-                "uuid": "d5f47d72-3f32-46e1-6a98-afeacd950ed0"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    19.961929321289063,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.17332102358341217,
-                    0.0,
-                    0.9848654270172119
-                ],
-                "scale": [
-                    0.9999995231628418,
-                    1.0,
-                    0.9999995231628418
-                ],
-                "translation": [
-                    -1.59284508228302,
-                    20.330055236816406,
-                    -35.46773910522461
-                ]
-            },
-            "VelocityComponent": {
-                "angularVelocity": [
-                    0.0,
-                    37.5,
-                    0.0
-                ],
-                "useGravity": false,
-                "velocity": [
-                    0.0,
-                    0.0,
-                    0.0
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
                         20.799999237060547,
                         0.0
                     ],
@@ -866,6 +748,40 @@
             }
         },
         {
+            "ObjectInfoComponent": {
+                "name": "serek origin",
+                "uuid": "1aa4eaef-6288-1f32-f997-afff6915d718"
+            },
+            "Transform": {
+                "children": [
+                    "974ed776-84f9-6a69-eade-2216fb2a4db3"
+                ],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    9.926480293273926,
+                    18.629825592041016,
+                    20.798673629760742
+                ]
+            }
+        },
+        {
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -898,16 +814,14 @@
                 "uuid": "974ed776-84f9-6a69-eade-2216fb2a4db3"
             },
             "Transform": {
-                "children": [
-                    "0816c9ce-c08d-f36e-e607-b95e52de4745"
-                ],
+                "children": [],
                 "eulerRotation": [
                     0.0,
                     41.599998474121094,
                     0.0
                 ],
-                "isStatic": true,
-                "parent": "",
+                "isStatic": false,
+                "parent": "1aa4eaef-6288-1f32-f997-afff6915d718",
                 "rotation": [
                     0.0,
                     0.3551069498062134,
@@ -920,9 +834,9 @@
                     0.009999999776482582
                 ],
                 "translation": [
-                    11.742981910705566,
-                    18.807729721069336,
-                    18.988906860351563
+                    1.7614383697509766,
+                    0.1779041290283203,
+                    -1.760885238647461
                 ]
             }
         },
@@ -947,7 +861,7 @@
             },
             "LevelExitComponent": {
                 "dialogueName": "DialogSer",
-                "ingredient": "",
+                "ingredient": "1aa4eaef-6288-1f32-f997-afff6915d718",
                 "nextLevelPath": ""
             },
             "ObjectInfoComponent": {
@@ -958,26 +872,26 @@
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    0.0,
+                    41.600006103515625,
                     0.0
                 ],
                 "isStatic": true,
-                "parent": "974ed776-84f9-6a69-eade-2216fb2a4db3",
+                "parent": "",
                 "rotation": [
                     0.0,
+                    0.3551069498062134,
                     0.0,
-                    0.0,
-                    1.0
+                    0.9348256587982178
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.009999999776482582,
+                    0.009999999776482582,
+                    0.009999999776482582
                 ],
                 "translation": [
-                    0.0,
-                    0.0,
-                    0.0
+                    11.742981910705566,
+                    18.807729721069336,
+                    18.988906860351563
                 ]
             }
         },
@@ -3337,6 +3251,126 @@
                     1.0
                 ],
                 "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CollectibleComponent": null,
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 0.5,
+                    "type": "SPHERE"
+                },
+                "isStatic": false,
+                "isTrigger": true,
+                "properties": 4
+            },
+            "ObjectInfoComponent": {
+                "name": "Collectible Pos",
+                "uuid": "8fdf710d-c4ed-64fb-50c9-f81bf976deb0"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    2.2468655109405518,
+                    19.200899124145508,
+                    24.924625396728516
+                ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    37.5,
+                    0.0
+                ],
+                "useGravity": false,
+                "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "CollectibleComponent": null,
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "radius": 0.5,
+                    "type": "SPHERE"
+                },
+                "isStatic": false,
+                "isTrigger": true,
+                "properties": 4
+            },
+            "ObjectInfoComponent": {
+                "name": "Collectible Pos (1)",
+                "uuid": "3956c7e4-7d3a-aea3-0de2-4109c51236ea"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": false,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    21.362947463989258,
+                    19.200899124145508,
+                    25.485437393188477
+                ]
+            },
+            "VelocityComponent": {
+                "angularVelocity": [
+                    0.0,
+                    37.5,
+                    0.0
+                ],
+                "useGravity": false,
+                "velocity": [
                     0.0,
                     0.0,
                     0.0
