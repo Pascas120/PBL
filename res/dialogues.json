@@ -57,24 +57,24 @@
           "character": "pomidor",
           "textLines": [
             "",
-            "Co was tu sprowadza?",
-            ""
-          ]
-        },
-        {
-          "character": "chleb",
-          "textLines": [
-            "",
-            "...",
+            "Co Was tu sprowadza?",
             ""
           ]
         },
         {
           "character": "maslo",
           "textLines": [
-            "Hej, wlasnie cie szukalismy!",
+            "Hej, wlasnie Cie szukalismy!",
             "Organizujemy mala impreze...",
             "Koniecznie musisz wpasc, bedzie pysznie!"
+          ]
+        },
+        {
+          "character": "chleb",
+          "textLines": [
+            "",
+            "Mhm",
+            ""
           ]
         }
       ]
@@ -106,17 +106,25 @@
         {
           "character": "maslo",
           "textLines": [
-            "line1",
-            "line2",
-            "line3"
+            "Cze, Darek!",
+            "Naprawde potrzebujemy Cie na naszej imprezie...",
+            "Przydalbys nam sie do kompletu!"
           ]
         },
         {
           "character": "chleb",
           "textLines": [
-            "inny tekst",
             "",
-            ":)"
+            "Hmm",
+            ""
+          ]
+        },
+        {
+          "character": "ser",
+          "textLines": [
+            "Bardzo mi milo.",
+            "Na pewno sie pojawie!",
+            ""
           ]
         }
       ]
@@ -128,23 +136,15 @@
           "character": "maslo",
           "textLines": [
             "",
-            "To bylo za proste!",
-            ""
+            "Lecimy dalej!",
+            "Zostal nam tylko jeden..."
           ]
         },
         {
           "character": "chleb",
           "textLines": [
             "",
-            "...",
-            ""
-          ]
-        },
-        {
-          "character": "maslo",
-          "textLines": [
-            "",
-            "Mniejsza z tym. Chodz, mamy malo czasu.",
+            "Ehe",
             ""
           ]
         }
@@ -154,7 +154,7 @@
       "dialogueName": "DialogOgorek",
       "lines": [
         {
-          "character": "pomidor",
+          "character": "ogorek",
           "textLines": [
             "",
             "Co was tu sprowadza?",
