@@ -931,6 +931,37 @@ void Application::update()
 			dialogueAdvanceKeyPressed = true;
 		}
 	}
+	else if (ingredient != (EntityID)-1)
+	{
+		if (!scene->hasComponent<VelocityComponent>(ingredient))
+		{
+			auto& ingredientVel = scene->addComponent<VelocityComponent>(ingredient);
+			ingredientVel.useGravity = false;
+		}
+
+		auto& ingredientVel = scene->getComponent<VelocityComponent>(ingredient);
+		if (ingredientAnimationTimer < 0.9f)
+		{
+			ingredientVel.velocity.y = 4.0f - glm::smoothstep(0.0f, 0.9f, ingredientAnimationTimer) * 4.0f;
+		}
+		if (ingredientAnimationTimer > 0.7f)
+		{
+			ingredientVel.angularVelocity.y = glm::smoothstep(0.7f, 3.0f, ingredientAnimationTimer) * 800.0f;
+		}
+		if (ingredientAnimationTimer > 4.0f)
+		{
+			ingredientVel.velocity.y = 30.0f;
+			
+		}
+		if (ingredientAnimationTimer > 6.0f)
+		{
+			scene->destroyEntity(ingredient);
+			ingredient = (EntityID)-1;
+		}
+
+		ingredientAnimationTimer += deltaTime;
+
+	}
 	if (!advanceButton)
 	{
 		dialogueAdvanceKeyPressed = false;
@@ -1719,6 +1750,11 @@ void Application::setupEvents()
 					currentDialogue.push(dialogueBox);
 				}
 				scene->playerLock = true;
+			}
+			if (levelExit.ingredient != (EntityID)-1)
+			{
+				ingredient = levelExit.ingredient;
+				ingredientAnimationTimer = 0.0f;
 			}
 
 			levelExit.active = false;

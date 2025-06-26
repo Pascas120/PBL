@@ -884,6 +884,8 @@ namespace Editor
             {
                 levelExit.dialogueName = dialogueNameCStr;
             }
+            Utils::entityRefField("Ingredient", levelExit.ingredient, *scene);
+
         }
         ImGui::PopID();
     }

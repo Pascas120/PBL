@@ -135,6 +135,8 @@ protected:
 	DialogueBoxEntities dialogueBoxEntities;
 	bool updateDialogueBox = true;
 	bool dialogueAdvanceKeyPressed = false;
+	EntityID ingredient = (EntityID)-1;
+	float ingredientAnimationTimer;
 
 private:
 	// TODO: remove

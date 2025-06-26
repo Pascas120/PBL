@@ -248,6 +248,8 @@ struct LevelExitComponent
     int playerCount = 0;
     bool active = true;
 
+    EntityID ingredient = (EntityID)-1;
+
     EntityID id = (EntityID)-1;
 };
 
