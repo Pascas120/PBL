@@ -28,7 +28,6 @@ private:
     //Shader textShader;
 
 
-    std::map<std::string, GLuint> textures;
     GLuint hudVAO, hudVBO, hudEBO;
     bool initializedHud = false;
     void initHud();

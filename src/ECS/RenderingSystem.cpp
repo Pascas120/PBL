@@ -10,6 +10,7 @@
 #include "spdlog/spdlog.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <unordered_set>
+#include "Application.h"
 
 #include "Random.h"
 
@@ -259,6 +260,7 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unorder
 }
 
 GLuint RenderingSystem::getTexture(std::string path) {
+    auto& textures = scene->getApplication()->textures;
     if (textures.find(path) != textures.end()) {
         return textures[path];
     }

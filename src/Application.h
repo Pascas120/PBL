@@ -144,4 +144,6 @@ private:
 
 public:
 	ma_engine audioEngine;
+	std::map<std::string, GLuint> textures;
+
 };
