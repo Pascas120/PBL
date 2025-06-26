@@ -721,7 +721,7 @@
             "LevelExitComponent": {
                 "dialogueName": "DialogPoziom5",
                 "ingredient": "",
-                "nextLevelPath": ""
+                "nextLevelPath": "poziomEND.json"
             },
             "ObjectInfoComponent": {
                 "name": "EXIT",
