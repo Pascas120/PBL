@@ -154,26 +154,34 @@
       "dialogueName": "DialogOgorek",
       "lines": [
         {
-          "character": "ogorek",
+          "character": "maslo",
           "textLines": [
-            "",
-            "Co was tu sprowadza?",
-            ""
+            "Ooo, Ogorek!",
+            "Musisz wpasc na nasza impreze.",
+            "Jestes ostatnim skladnikiem ukladanki."
           ]
         },
         {
-          "character": "chleb",
+          "character": "ogorek",
           "textLines": [
             "",
-            "...",
+            "Chyba chciales powiedziec elementem",
             ""
           ]
         },
         {
           "character": "maslo",
           "textLines": [
-            "Hej, wlasnie cie szukalismy!",
             "",
+            "A no tak, o to chodzilo!",
+            ""
+          ]
+        },
+        {
+          "character": "ogorek",
+          "textLines": [
+            "",
+            "Zjawie sie tam najwczesniej, jak moge.",
             ""
           ]
         }
@@ -185,8 +193,8 @@
         {
           "character": "maslo",
           "textLines": [
-            "",
-            "To bylo za proste!",
+            "Uff! Cale szczescie niczego nie podejrzewali.",
+            "Pozeracz",
             ""
           ]
         },

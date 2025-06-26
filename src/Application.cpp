@@ -284,7 +284,10 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/lody4.fbx"));
 	models.emplace_back(new Model("res/models/try.fbx"));
 	models.emplace_back(new Model("res/models/meta.fbx"));
+	models.emplace_back(new Model("res/models/majstersztykkanapkafullposilekpozdro.fbx"));
+	models.emplace_back(new Model("res/models/czlowiek.fbx"));
 
+	
 	//animacje
 	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));
 	animations.emplace_back(new Animation("res/anims/chlebekdown.fbx", models[1]));
