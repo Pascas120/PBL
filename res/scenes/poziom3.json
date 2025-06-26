@@ -821,7 +821,7 @@
                     0.03999999910593033
                 ],
                 "translation": [
-                    -4.211212158203125,
+                    -2.258701801300049,
                     18.91701889038086,
                     7.549096584320068
                 ]
@@ -2338,6 +2338,147 @@
                     18.71061134338379,
                     18.274368286132813,
                     17.713056564331055
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "OTOCZENIE SCIANY",
+                "uuid": "c23d6ccb-c716-00b1-048f-25736974b4b7"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    173.45997619628906
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "OTOCZENIE SCIANY (1)",
+                "uuid": "257140cd-bd5f-c7ad-850c-5ba1b152d7ff"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999960064888,
+                    1.0,
+                    0.9999960064888
+                ],
+                "translation": [
+                    154.99900817871094,
+                    0.0,
+                    173.45997619628906
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        147.0,
+                        0.0,
+                        50.900001525878906
+                    ],
+                    "halfSize": [
+                        65.19999694824219,
+                        76.69999694824219,
+                        6.400000095367432
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "OTOCZENIE SCIANY (2)",
+                "uuid": "c78eddfb-4671-2c5d-3e38-49f5d9f1ab5c"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.999981701374054,
+                    1.0,
+                    0.999981701374054
+                ],
+                "translation": [
+                    -63.6472282409668,
+                    0.0,
+                    173.45997619628906
                 ]
             }
         }

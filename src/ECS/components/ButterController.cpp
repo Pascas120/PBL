@@ -48,10 +48,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			glm::vec3 clingEntPos = clingEntityMatrix[3];
 			transformSystem.translateEntity(id, clingEntPos);
 
-			glm::vec3 clingEntZ = glm::normalize(clingEntityMatrix[2]);
-			glm::vec3 clingEntY = glm::normalize(clingEntityMatrix[1]);
-
-			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingEntZ, clingEntY));
+			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingNormal, glm::vec3(0.0f, 1.0f, 0.0f)));
 			normalEulerY = glm::degrees(normalEulerY);
 			normalEulerY.y += 180.0f;
 			transformSystem.rotateEntity(id, normalEulerY);
