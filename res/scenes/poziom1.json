@@ -262,7 +262,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -311,7 +311,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -816,9 +816,9 @@
                         0.4000000059604645
                     ],
                     "halfSize": [
-                        36.5,
+                        34.70000076293945,
                         13.0,
-                        36.70000076293945
+                        23.0
                     ],
                     "type": "BOX"
                 },
@@ -832,7 +832,7 @@
                     0.8077662587165833,
                     0.8139700889587402
                 ],
-                "model": "res/models/guziklodowkagora.fbx",
+                "model": "res/models/guzikD.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -861,8 +861,8 @@
                 ],
                 "translation": [
                     4.892579078674316,
-                    18.652202606201172,
-                    -23.11155891418457
+                    18.276010513305664,
+                    -23.068260192871094
                 ]
             }
         },
@@ -1152,11 +1152,11 @@
             },
             "ModelComponent": {
                 "color": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
-                "model": "res/models/guziklodowkadol.fbx",
+                "model": "res/models/guzikD.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -1179,13 +1179,13 @@
                     1.0
                 ],
                 "scale": [
-                    0.019999999552965164,
-                    0.019999999552965164,
-                    0.019999999552965164
+                    0.030000003054738045,
+                    0.020000001415610313,
+                    0.029999999329447746
                 ],
                 "translation": [
                     4.858834266662598,
-                    18.615163803100586,
+                    17.93757438659668,
                     -23.114707946777344
                 ]
             }

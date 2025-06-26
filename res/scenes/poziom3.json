@@ -43,7 +43,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
+                "model": "res/models/MASLOmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -174,7 +174,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
+                "model": "res/models/chlebekmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -467,7 +467,7 @@
                     0.02817772701382637
                 ],
                 "translation": [
-                    0.4947173297405243,
+                    1.0,
                     0.0,
                     17.53108024597168
                 ]
@@ -526,7 +526,7 @@
                     0.029999999329447746
                 ],
                 "translation": [
-                    0.0,
+                    1.0,
                     0.0,
                     0.39770030975341797
                 ]
@@ -880,9 +880,9 @@
                     0.009999999776482582
                 ],
                 "translation": [
-                    6.813252925872803,
+                    11.742981910705566,
                     18.807729721069336,
-                    -0.8889778256416321
+                    18.988906860351563
                 ]
             }
         },
@@ -906,6 +906,7 @@
                 "properties": 0
             },
             "LevelExitComponent": {
+                "dialogueName": "",
                 "nextLevelPath": "demo.scene.json"
             },
             "ObjectInfoComponent": {
@@ -930,12 +931,12 @@
                 "scale": [
                     8.40771198272705,
                     6.086941242218018,
-                    2.1035518646240234
+                    5.558122158050537
                 ],
                 "translation": [
-                    53.98288345336914,
+                    47.989906311035156,
                     20.49724578857422,
-                    26.354103088378906
+                    17.796218872070313
                 ]
             }
         },
@@ -2065,7 +2066,66 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/grass_block/grass_block.obj",
+                "model": "res/models/musztardaplama.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "plama musztarda (1)",
+                "uuid": "6364a6e5-d183-84ff-ba52-bc6d7b0751c5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -52.35310363769531,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.4411385655403137,
+                    0.0,
+                    0.8974390029907227
+                ],
+                "scale": [
+                    0.019999999552965164,
+                    0.029999999329447746,
+                    0.019999999552965164
+                ],
+                "translation": [
+                    -3.1612985134124756,
+                    18.200233459472656,
+                    0.2954998016357422
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody1.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -2076,26 +2136,144 @@
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    0.0,
+                    89.980224609375,
                     0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
+                    0.7071066498756409,
                     0.0,
-                    0.0,
-                    1.0
+                    0.70710688829422
                 ],
                 "scale": [
-                    1.0,
-                    1.0,
-                    8.0
+                    0.006999950390309095,
+                    0.007333939429372549,
+                    0.006999950390309095
                 ],
                 "translation": [
-                    21.585208892822266,
+                    21.072940826416016,
                     19.27496337890625,
-                    17.713056564331055
+                    17.556673049926758
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (1)",
+                "uuid": "48059c8f-eb8e-c865-22af-d9fcca37fecd"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.019999640062451363,
+                    0.019999999552965164,
+                    0.019999640062451363
+                ],
+                "translation": [
+                    22.604158401489258,
+                    19.866004943847656,
+                    13.326303482055664
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (2)",
+                "uuid": "a187bdf5-901f-5ffd-19fc-be30b7341439"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.021447915583848953,
+                    0.019999999552965164,
+                    0.019999437034130096
+                ],
+                "translation": [
+                    22.604158401489258,
+                    19.866004943847656,
+                    22.03412628173828
                 ]
             }
         },

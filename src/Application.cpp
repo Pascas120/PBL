@@ -1074,6 +1074,9 @@ void Application::render(const Framebuffer& framebuffer)
 
 			uniformBlockStorage.splitScreenBlock.setData("split_slope", &ssc.splitSlope);
 
+			constexpr glm::vec4 split_line_color = { 0.0f, 0.0f, 0.0f, 1.0f };
+			uniformBlockStorage.splitScreenBlock.setData("split_line_color", &split_line_color);
+
 			bool player1AboveSlope = (p1.z - (splitSlope * (p1.x - center.x) + center.y)) < 0.0f;
 
 			int target1AboveSlope = ssc.target1AboveSlope;

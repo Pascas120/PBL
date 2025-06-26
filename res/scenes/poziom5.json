@@ -1408,6 +1408,419 @@
                 "colliderShape": {
                     "center": [
                         0.0,
+                        43.099998474121094,
+                        0.0
+                    ],
+                    "halfSize": [
+                        43.5,
+                        45.5,
+                        41.29999923706055
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/jogurt.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "jogurt",
+                "uuid": "b7feb884-17ca-8e47-f269-1f0a205e19a5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1079.999755859375,
+                    -89.980224609375,
+                    -360.0001220703125
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    4.2708097680588253e-07,
+                    -0.7071066498756409,
+                    4.270801809980185e-07,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.029998786747455597,
+                    0.029999999329447746,
+                    0.029998786747455597
+                ],
+                "translation": [
+                    22.951053619384766,
+                    28.067928314208984,
+                    57.925724029541016
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        61.29999923706055,
+                        0.0
+                    ],
+                    "halfSize": [
+                        43.5,
+                        60.5,
+                        41.29999923706055
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/mleczko.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "mleko1",
+                "uuid": "b7ada454-1cef-f9d0-2ebc-ce599d2314de"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1079.999755859375,
+                    0.0,
+                    -360.0001220703125
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    1.8834988395610708e-06,
+                    -1.9609051795516086e-12,
+                    -1.0410971071905806e-06,
+                    1.0
+                ],
+                "scale": [
+                    0.02999831549823284,
+                    0.029999999329447746,
+                    0.02999831549823284
+                ],
+                "translation": [
+                    23.195627212524414,
+                    21.047422409057617,
+                    57.234397888183594
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        61.29999923706055,
+                        0.0
+                    ],
+                    "halfSize": [
+                        43.5,
+                        60.5,
+                        41.29999923706055
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/mleczko.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "mleko1 (2)",
+                "uuid": "7d86a239-b18e-6422-ddbe-2e2a8e95ee33"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1080.0,
+                    18.709915161132813,
+                    -359.99993896484375
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -1.255870074601262e-07,
+                    0.16255034506320953,
+                    6.156062681839103e-07,
+                    0.9867002367973328
+                ],
+                "scale": [
+                    0.029998205602169037,
+                    0.029999999329447746,
+                    0.029998205602169037
+                ],
+                "translation": [
+                    23.195627212524414,
+                    21.047422409057617,
+                    50.58958435058594
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        61.29999923706055,
+                        0.0
+                    ],
+                    "halfSize": [
+                        43.5,
+                        60.5,
+                        41.29999923706055
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/mleczko.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "mleko1 (1)",
+                "uuid": "231524a4-061a-2d25-3074-e90385d0c99f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1080.0,
+                    0.0,
+                    -359.99993896484375
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -2.384976127700611e-08,
+                    -1.4973665482444914e-14,
+                    6.278329465203569e-07,
+                    1.0
+                ],
+                "scale": [
+                    0.029998205602169037,
+                    0.029999999329447746,
+                    0.029998205602169037
+                ],
+                "translation": [
+                    23.195627212524414,
+                    21.047422409057617,
+                    54.064300537109375
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        19.899999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        38.70000076293945,
+                        18.799999237060547,
+                        40.099998474121094
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/puszka.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "puszka",
+                "uuid": "7e753715-daa6-c6da-c047-082cf5b2f8fd"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1260.0,
+                    0.0,
+                    -539.9999389648438
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -4.649122899991198e-07,
+                    1.0,
+                    -2.900667084304587e-07,
+                    1.3485557343127091e-13
+                ],
+                "scale": [
+                    0.02999819628894329,
+                    0.029999999329447746,
+                    0.02999819628894329
+                ],
+                "translation": [
+                    27.8110408782959,
+                    32.11155700683594,
+                    57.24678039550781
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        19.899999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        38.70000076293945,
+                        18.799999237060547,
+                        40.099998474121094
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/puszka.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "puszka (1)",
+                "uuid": "94460ca1-e2be-3961-e30b-bcd386263479"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1260.0,
+                    -34.074432373046875,
+                    -539.9999389648438
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -3.5952226085100847e-07,
+                    0.956114649772644,
+                    -4.1355301050316484e-07,
+                    -0.29299283027648926
+                ],
+                "scale": [
+                    0.029998183250427246,
+                    0.029999999329447746,
+                    0.029998183250427246
+                ],
+                "translation": [
+                    30.396757125854492,
+                    32.11155700683594,
+                    57.24678039550781
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        19.899999618530273,
+                        0.0
+                    ],
+                    "halfSize": [
+                        38.70000076293945,
+                        18.799999237060547,
+                        40.099998474121094
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/puszka.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "puszka (2)",
+                "uuid": "3fed2132-03d6-d58a-8b13-f311feb158de"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -1260.0,
+                    0.0,
+                    -539.9999389648438
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -4.649122899991198e-07,
+                    1.0,
+                    -2.900667084304587e-07,
+                    1.3485557343127091e-13
+                ],
+                "scale": [
+                    0.029998183250427246,
+                    0.029999999329447746,
+                    0.029998183250427246
+                ],
+                "translation": [
+                    29.054609298706055,
+                    33.248252868652344,
+                    57.24678039550781
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
                         0.0,
                         0.0
                     ],
