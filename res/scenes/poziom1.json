@@ -768,6 +768,7 @@
             },
             "LevelExitComponent": {
                 "dialogueName": "DialogPoziom1",
+                "ingredient": "",
                 "nextLevelPath": "poziom2.json"
             },
             "ObjectInfoComponent": {
@@ -775,7 +776,9 @@
                 "uuid": "8a749ee7-0e15-e04a-165d-2eec9010ae83"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "80817081-7906-d7c6-8c0d-8964eb62cff8"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -798,6 +801,65 @@
                     -0.21385705471038818,
                     23.48703384399414,
                     -12.51099967956543
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        -14.199999809265137,
+                        -2.9000000953674316
+                    ],
+                    "halfSize": [
+                        401.70001220703125,
+                        131.1999969482422,
+                        20.799999237060547
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/meta.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "meta",
+                "uuid": "80817081-7906-d7c6-8c0d-8964eb62cff8"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "8a749ee7-0e15-e04a-165d-2eec9010ae83",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.001500000013038516,
+                    0.002000090666115284,
+                    0.0017152008367702365
+                ],
+                "translation": [
+                    0.3089759349822998,
+                    -0.787874698638916,
+                    0.7660555839538574
                 ]
             }
         },
