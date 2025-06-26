@@ -18,7 +18,6 @@ struct BunController {
 
   float currentScale = 0.0f;
   float currentRotationZ = 0.0f;
-  float soundTimer = 0.1f;
 
   float rotationSpeed = 720.0f;
   float scaleSpeed = 1.5f;
@@ -27,7 +26,7 @@ struct BunController {
 
   bool isShaking = false;
   float shakeDuration = 0.0f;
-  float MAX_SHAKE_DURATION = 1.0f;
+  float MAX_SHAKE_DURATION = 2.0f;
   float SHAKE_INTENSITY = 10.0f;
   glm::vec3 basePosition = glm::vec3(0.0f);
   std::default_random_engine randomEngine;
