@@ -270,6 +270,7 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/butelki.fbx"));
 	models.emplace_back(new Model("res/models/lodowkadziura.fbx"));
 	models.emplace_back(new Model("res/models/kratka.fbx"));
+	models.emplace_back(new Model("res/models/sciana.fbx"));
 
 	models.emplace_back(new Model("res/models/puszka.fbx"));
 	models.emplace_back(new Model("res/models/mleczko.fbx"));

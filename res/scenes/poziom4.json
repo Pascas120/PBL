@@ -43,7 +43,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/MASLO.fbx",
+                "model": "res/models/MASLOmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -174,7 +174,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/CHLEB.fbx",
+                "model": "res/models/chlebekmesh+bones.fbx",
                 "shader": "CelShading"
             },
             "ObjectInfoComponent": {
@@ -1865,6 +1865,129 @@
                     27.486770629882813,
                     -1.873570442199707,
                     49.01537322998047
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE",
+                "uuid": "7687a0b1-de7d-7a83-0678-41905bfe9b7c"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    210.65069580078125
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE (1)",
+                "uuid": "a5eb27c6-4e3a-703a-5bd5-260af5d21b75"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999955296516418,
+                    1.0,
+                    0.9999955296516418
+                ],
+                "translation": [
+                    150.480224609375,
+                    0.0,
+                    210.65074157714844
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE (2)",
+                "uuid": "a9c998ee-3bf7-63e5-0819-64293e7bd37f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999917149543762,
+                    1.0,
+                    0.9999917149543762
+                ],
+                "translation": [
+                    -51.6044921875,
+                    0.0,
+                    210.65066528320313
                 ]
             }
         }

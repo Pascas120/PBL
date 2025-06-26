@@ -2988,6 +2988,129 @@
                     50.98219680786133
                 ]
             }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE",
+                "uuid": "baedc878-b298-cf0d-d924-386245a57194"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    -0.9204273223876953,
+                    0.0,
+                    207.151123046875
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE (1)",
+                "uuid": "5b62516c-1a94-9d87-9e2d-188d7a7930f5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999961256980896,
+                    1.0,
+                    0.9999961256980896
+                ],
+                "translation": [
+                    165.81082153320313,
+                    0.0,
+                    207.1511688232422
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY OTOCZENIE (2)",
+                "uuid": "d890d366-d712-7666-5da3-d8e55f6b65b4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999930262565613,
+                    1.0,
+                    0.9999930262565613
+                ],
+                "translation": [
+                    -112.40058898925781,
+                    0.0,
+                    207.15109252929688
+                ]
+            }
         }
     ],
     "sceneRoot": "Root"
