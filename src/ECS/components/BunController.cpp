@@ -30,13 +30,6 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
             scene->destroyEntity(id);
             scene->playerLock = false;
         }
-		if (soundTimer > 0.0f) {
-			soundTimer -= deltaTime;
-		}
-		else {
-            scene->getAudioSystem().playSound("res/sounds/otwieranieBulki.wav");
-			soundTimer = 10000000000000.0f;
-		}
         return;
     }
 
