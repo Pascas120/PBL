@@ -150,10 +150,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			scene->getAudioSystem().playSound("res/sounds/skokMaslo.mp3");
 			if (scene->hasComponent<AnimationComponent>(id)) {
 				auto& anim = scene->getComponent<AnimationComponent>(id);
-				if (movementMag > 0.1f && !anim.isPlaying)
+				/*if (movement.y > 0.1f && !anim.isPlaying)
 				{
 					scene->getAnimationSystem().playAnimation(id, "res/anims/maselkoup.fbx");
-				}
+				}*/
 			}
 		}
 		else
@@ -161,7 +161,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			movement.y = velocityComponent.velocity.y;
 			if (scene->hasComponent<AnimationComponent>(id)) {
 				auto& anim = scene->getComponent<AnimationComponent>(id);
-				if (movementMag > 0.1f && !anim.isPlaying)
+				if (movement.y < -0.1f && timeSinceLastGroundContact > 0.04f && !anim.isPlaying)
 				{
 					scene->getAnimationSystem().playAnimation(id, "res/anims/maselkodown.fbx");
 				}

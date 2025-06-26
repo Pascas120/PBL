@@ -281,6 +281,7 @@ bool Application::init()
 	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));
 	animations.emplace_back(new Animation("res/anims/chlebekdown.fbx", models[1]));
 	animations.emplace_back(new Animation("res/anims/chlebekup.fbx", models[1]));
+	animations.emplace_back(new Animation("res/anims/chlebeksqish.fbx", models[1]));
 	animations.emplace_back(new Animation("res/anims/maselkochod.fbx", models[0]));
 	animations.emplace_back(new Animation("res/anims/maselkodown.fbx", models[0]));
 	animations.emplace_back(new Animation("res/anims/maselkoup.fbx", models[0]));
@@ -1485,13 +1486,13 @@ void Application::setupEvents()
 		if (bread.isBouncy)
 		{
 			auto& velocityComponent = scene->getComponent<VelocityComponent>(event.objectA);
-			
 
-			if (glm::dot(glm::normalize(event.separationVector), {0.0f, 1.0f, 0.0f}) > 0.9f
+
+			if (glm::dot(glm::normalize(event.separationVector), { 0.0f, 1.0f, 0.0f }) > 0.9f
 				&& velocityComponent.velocity.y < 0.1f)
 			{
 				scene->getAudioSystem().playSound(event.objectB);
-
+				scene->getAnimationSystem().playAnimation(event.objectB, "res/anims/chlebeksqish.fbx");
 				velocityComponent.velocity.y = butter.jumpSpeed * 1.5f;
 				butter.isJumping = true;
 			}
