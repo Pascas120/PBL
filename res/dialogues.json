@@ -83,18 +83,10 @@
       "dialogueName": "DialogPoziom2",
       "lines": [
         {
-          "character": "maslo",
-          "textLines": [
-            "",
-            "To bylo za proste!",
-            ""
-          ]
-        },
-        {
           "character": "chleb",
           "textLines": [
             "",
-            "...",
+            ":)",
             ""
           ]
         },
@@ -213,7 +205,9 @@
             "Mniejsza z tym. Chodz, mamy malo czasu.",
             ""
           ]
-        },
+        }
+      ]
+    },
         {
           "dialogueName": "DialogPoziom5",
           "lines": [
