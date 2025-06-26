@@ -170,6 +170,9 @@
                     },
                     {
                         "animationPath": "res/anims/chlebekup.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebeksqish.fbx"
                     }
                 ],
                 "loop": false,

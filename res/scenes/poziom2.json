@@ -262,7 +262,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7799443006515503,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -311,7 +311,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7777777910232544,
+                "aspectRatio": 1.7799443006515503,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -615,14 +615,73 @@
                     1.0
                 ],
                 "scale": [
+                    0.029999447986483574,
                     0.029999999329447746,
-                    0.029999999329447746,
-                    0.029999999329447746
+                    0.029999447986483574
                 ],
                 "translation": [
-                    0.4106616973876953,
+                    0.5914180278778076,
                     -0.07747054100036621,
-                    33.788063049316406
+                    32.552391052246094
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        312.1000061035156,
+                        0.0
+                    ],
+                    "halfSize": [
+                        250.0,
+                        299.70001220703125,
+                        306.70001220703125
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/blat.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "blat (4)",
+                "uuid": "8287097c-a982-8085-661b-58842733656b"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.029999447986483574,
+                    0.029999999329447746,
+                    0.029999447986483574
+                ],
+                "translation": [
+                    0.5914180278778076,
+                    -0.07747054100036621,
+                    50.50926208496094
                 ]
             }
         },
@@ -889,12 +948,12 @@
                 "isMoving": false,
                 "locked": false,
                 "maxHeight": 5.0,
-                "openHeight": 2.0,
+                "openHeight": 8.0,
                 "rotate": false,
                 "rotateAngle": 90.0,
                 "rotateAxis": 1,
                 "shouldOpen": false,
-                "speed": 2.0,
+                "speed": 4.0,
                 "startY": -1.0,
                 "state": "Closed"
             },
@@ -932,9 +991,9 @@
                     0.8619000315666199
                 ],
                 "translation": [
-                    -2.685605525970459,
+                    -4.507969379425049,
                     18.122047424316406,
-                    31.39025115966797
+                    30.73361587524414
                 ]
             }
         },
@@ -1333,9 +1392,9 @@
                     0.019999999552965164
                 ],
                 "translation": [
-                    -0.6314408779144287,
+                    0.10974559187889099,
                     18.405933380126953,
-                    41.167381286621094
+                    56.19679641723633
                 ]
             }
         },
@@ -1417,124 +1476,6 @@
                     -14.49537181854248,
                     18.542999267578125,
                     -1.1949635744094849
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        2.4000000953674316
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 2
-            },
-            "ModelComponent": {
-                "color": [
-                    0.2666666805744171,
-                    0.24705882370471954,
-                    0.6980392336845398
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "szczelina",
-                "uuid": "282da327-903b-b983-c4bf-8361a24db3aa"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    6.0,
-                    5.0,
-                    0.10000000149011612
-                ],
-                "translation": [
-                    6.122000217437744,
-                    15.5,
-                    32.39363479614258
-                ]
-            }
-        },
-        {
-            "ColliderComponent": {
-                "colliderShape": {
-                    "center": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "halfSize": [
-                        1.0,
-                        1.0,
-                        2.4000000953674316
-                    ],
-                    "type": "BOX"
-                },
-                "isStatic": true,
-                "isTrigger": false,
-                "properties": 2
-            },
-            "ModelComponent": {
-                "color": [
-                    0.2666666805744171,
-                    0.24705882370471954,
-                    0.6980392336845398
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
-            },
-            "ObjectInfoComponent": {
-                "name": "szczelina (1)",
-                "uuid": "d927363f-657b-6d25-b90f-5c46b897ff8c"
-            },
-            "Transform": {
-                "children": [],
-                "eulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "isStatic": false,
-                "parent": "",
-                "rotation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "scale": [
-                    5.599999904632568,
-                    5.0,
-                    0.10000000149011612
-                ],
-                "translation": [
-                    -5.924560070037842,
-                    15.5,
-                    32.39363479614258
                 ]
             }
         },
@@ -2125,9 +2066,9 @@
             },
             "ModelComponent": {
                 "color": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.2045847773551941,
+                    0.8128816485404968,
+                    0.970588207244873
                 ],
                 "model": "res/models/kubek2.fbx",
                 "shader": "Basic"
@@ -2142,26 +2083,26 @@
                 ],
                 "eulerRotation": [
                     0.0,
-                    55.20000076293945,
+                    0.0,
                     0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
-                    0.4632960855960846,
                     0.0,
-                    0.8862035870552063
+                    0.0,
+                    1.0
                 ],
                 "scale": [
-                    0.05000000074505806,
-                    0.05000000074505806,
-                    0.05000000074505806
+                    0.10000000149011612,
+                    0.07999999821186066,
+                    0.10000000149011612
                 ],
                 "translation": [
-                    6.126185417175293,
-                    20.030616760253906,
-                    39.96898651123047
+                    4.346079349517822,
+                    21.291479110717773,
+                    35.572654724121094
                 ]
             }
         },
@@ -2207,6 +2148,117 @@
                     1.0,
                     1.0,
                     1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        40.0,
+                        40.0,
+                        40.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.3176097273826599,
+                    0.8578431606292725,
+                    0.15138408541679382
+                ],
+                "model": "res/models/kubek2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "kubek2 (1)",
+                "uuid": "84b0efa5-5e61-81ec-89de-40bcaf17337d"
+            },
+            "Transform": {
+                "children": [
+                    "335bb416-688b-a7c3-6be6-fb3660e2642a"
+                ],
+                "eulerRotation": [
+                    -180.0,
+                    0.0,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    4.371138828673793e-08,
+                    1.0,
+                    4.371138828673793e-08,
+                    1.910685465164705e-15
+                ],
+                "scale": [
+                    0.10000003129243851,
+                    0.07999999821186066,
+                    0.10000003129243851
+                ],
+                "translation": [
+                    -4.443023681640625,
+                    21.47423553466797,
+                    35.572654724121094
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        59.0,
+                        0.4000000059604645,
+                        0.0
+                    ],
+                    "halfSize": [
+                        18.799999237060547,
+                        30.0,
+                        6.199999809265137
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Collider Ucha",
+                "uuid": "335bb416-688b-a7c3-6be6-fb3660e2642a"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "84b0efa5-5e61-81ec-89de-40bcaf17337d",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0000003576278687,
+                    1.0,
+                    1.0000003576278687
                 ],
                 "translation": [
                     0.0,
@@ -2350,9 +2402,9 @@
                     0.019999999552965164
                 ],
                 "translation": [
-                    -0.6439254879951477,
+                    0.08934831619262695,
                     18.59444236755371,
-                    41.21227264404297
+                    56.06772232055664
                 ]
             }
         },
@@ -2390,6 +2442,265 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANA OTOCZENIE",
+                "uuid": "25514269-e183-6133-2852-20d568ae8eaa"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    177.8798370361328
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANA OTOCZENIE (1)",
+                "uuid": "68190863-7dd2-b8b6-4e48-d2d2471be39e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999961853027344,
+                    1.0,
+                    0.9999961853027344
+                ],
+                "translation": [
+                    145.8987274169922,
+                    0.0,
+                    177.8798370361328
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        174.6999969482422,
+                        7.300000190734863,
+                        43.79999923706055
+                    ],
+                    "halfSize": [
+                        44.099998474121094,
+                        35.20000076293945,
+                        13.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "CelShading"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANA OTOCZENIE (2)",
+                "uuid": "f5b74b98-6802-c025-21c1-86ba0d72e7e2"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999804496765137,
+                    1.0,
+                    0.9999804496765137
+                ],
+                "translation": [
+                    -84.66098022460938,
+                    0.0,
+                    177.8798065185547
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        200.0,
+                        30.0,
+                        250.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/ksiazka2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "ksiazka",
+                "uuid": "5d27e8f6-9c90-134f-cec5-1042ab3e6015"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    88.49311828613281,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.6977480053901672,
+                    0.0,
+                    0.7163432836532593
+                ],
+                "scale": [
+                    0.014999964274466038,
+                    0.014999999664723873,
+                    0.014999964274466038
+                ],
+                "translation": [
+                    -4.845770835876465,
+                    25.1146183013916,
+                    35.44395065307617
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        200.0,
+                        30.0,
+                        250.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/ksiazka.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "ksiazka (1)",
+                "uuid": "adaefaaf-1d76-dc1f-9f18-eeec5d50c03d"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    0.014999999664723873,
+                    0.014999999664723873,
+                    0.014999999664723873
+                ],
+                "translation": [
+                    4.6809468269348145,
+                    24.908084869384766,
+                    35.629608154296875
                 ]
             }
         }
