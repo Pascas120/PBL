@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.777544617652893,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -1287,6 +1287,129 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY",
+                "uuid": "d312e129-12d4-9ed0-2d1a-2448e8c951e4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    88.49344635009766
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY (1)",
+                "uuid": "e9b3b1ee-029c-1d21-f3b7-dd14b4ad6118"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999955892562866,
+                    1.0,
+                    0.9999955892562866
+                ],
+                "translation": [
+                    192.43138122558594,
+                    0.0,
+                    22.577333450317383
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/sciana.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "SCIANY (2)",
+                "uuid": "de2962ce-8f0b-74ca-97a2-87fe8f52c69b"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.9999814033508301,
+                    1.0,
+                    0.9999814033508301
+                ],
+                "translation": [
+                    -76.88203430175781,
+                    0.0,
+                    22.577274322509766
                 ]
             }
         }

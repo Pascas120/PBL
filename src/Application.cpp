@@ -277,6 +277,9 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/jogurt.fbx"));
 	models.emplace_back(new Model("res/models/butter.fbx"));
 	models.emplace_back(new Model("res/models/jajka.fbx"));
+	models.emplace_back(new Model("res/models/lody3.fbx"));
+	models.emplace_back(new Model("res/models/lody4.fbx"));
+	models.emplace_back(new Model("res/models/try.fbx"));
 
 	//animacje
 	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));

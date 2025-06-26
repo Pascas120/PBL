@@ -2148,14 +2148,14 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.006999950390309095,
+                    0.006999913603067398,
                     0.007333939429372549,
-                    0.006999950390309095
+                    0.006999913603067398
                 ],
                 "translation": [
                     21.072940826416016,
-                    19.27496337890625,
-                    17.556673049926758
+                    18.832000732421875,
+                    16.950029373168945
                 ]
             }
         },
@@ -2184,12 +2184,71 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/lody2.fbx",
+                "model": "res/models/lody1.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (9)",
+                "uuid": "14ca4c6a-3b3c-dedb-eeb5-ec8160e8bcd4"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    29.816268920898438,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.2572700083255768,
+                    0.0,
+                    0.9663395285606384
+                ],
+                "scale": [
+                    0.006999889388680458,
+                    0.007333939429372549,
+                    0.006999889388680458
+                ],
+                "translation": [
+                    18.816953659057617,
+                    18.832000732421875,
+                    24.639564514160156
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody3.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
                 "name": "blokadafreeze (1)",
-                "uuid": "48059c8f-eb8e-c865-22af-d9fcca37fecd"
+                "uuid": "e7c8857e-45e2-1982-d18d-5e4029a1e989"
             },
             "Transform": {
                 "children": [],
@@ -2207,14 +2266,368 @@
                     0.70710688829422
                 ],
                 "scale": [
-                    0.019999640062451363,
-                    0.019999999552965164,
-                    0.019999640062451363
+                    0.006999891251325607,
+                    0.007333939429372549,
+                    0.006999891251325607
                 ],
                 "translation": [
-                    22.604158401489258,
-                    19.866004943847656,
-                    13.326303482055664
+                    21.072940826416016,
+                    18.832000732421875,
+                    14.682154655456543
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody3.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (4)",
+                "uuid": "b90499cf-3d6b-b2f3-38aa-1ee4743127c5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -91.27902221679688,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7149536609649658,
+                    0.0,
+                    -0.699171781539917
+                ],
+                "scale": [
+                    0.006999825593084097,
+                    0.007333939429372549,
+                    0.006999825593084097
+                ],
+                "translation": [
+                    21.072940826416016,
+                    19.877769470214844,
+                    11.412374496459961
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody3.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (8)",
+                "uuid": "3038d5c2-bec6-5ce2-fa93-0e85d4f6b259"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -108.71847534179688,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.8126864433288574,
+                    0.0,
+                    -0.5827012658119202
+                ],
+                "scale": [
+                    0.006999783217906952,
+                    0.007333939429372549,
+                    0.006999783217906952
+                ],
+                "translation": [
+                    20.866275787353516,
+                    19.93705940246582,
+                    20.670438766479492
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody4.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (2)",
+                "uuid": "81fd79c4-b8ed-f20d-0563-abc0186b83b5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.006999877747148275,
+                    0.007333939429372549,
+                    0.006999877747148275
+                ],
+                "translation": [
+                    21.072940826416016,
+                    18.832000732421875,
+                    12.468404769897461
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    0.8252595663070679,
+                    1.0,
+                    0.009803950786590576
+                ],
+                "model": "res/models/lody4.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (10)",
+                "uuid": "eabe6dd2-843f-b030-d7e0-6077bf6c556c"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -119.2958984375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.8629369139671326,
+                    0.0,
+                    -0.5053116679191589
+                ],
+                "scale": [
+                    0.006999853998422623,
+                    0.007333939429372549,
+                    0.006999853998422623
+                ],
+                "translation": [
+                    24.338809967041016,
+                    18.832000732421875,
+                    22.571706771850586
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody4.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (7)",
+                "uuid": "407bc5b5-e4c0-951f-fb31-b0bb69b4b611"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.006999813951551914,
+                    0.007333939429372549,
+                    0.006999813951551914
+                ],
+                "translation": [
+                    20.500898361206055,
+                    18.832000732421875,
+                    23.557342529296875
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody4.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (5)",
+                "uuid": "335f1acb-f8c9-9182-ea2f-1d8a944dc140"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    -0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.0069998325780034065,
+                    0.007333939429372549,
+                    0.0069998325780034065
+                ],
+                "translation": [
+                    21.072940826416016,
+                    18.832000732421875,
+                    19.108600616455078
                 ]
             }
         },
@@ -2247,33 +2660,33 @@
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
-                "name": "blokadafreeze (2)",
-                "uuid": "a187bdf5-901f-5ffd-19fc-be30b7341439"
+                "name": "blokadafreeze (3)",
+                "uuid": "0544c6ac-f461-13ba-ad3f-66903d92f3f7"
             },
             "Transform": {
                 "children": [],
                 "eulerRotation": [
                     0.0,
-                    89.980224609375,
+                    113.42768859863281,
                     0.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
                     0.0,
-                    0.7071066498756409,
+                    0.8359400033950806,
                     0.0,
-                    0.70710688829422
+                    0.5488208532333374
                 ],
                 "scale": [
-                    0.021447915583848953,
-                    0.019999999552965164,
-                    0.019999437034130096
+                    0.006999877747148275,
+                    0.007333939429372549,
+                    0.006999877747148275
                 ],
                 "translation": [
-                    22.604158401489258,
-                    19.866004943847656,
-                    22.03412628173828
+                    21.103097915649414,
+                    18.832000732421875,
+                    10.247261047363281
                 ]
             }
         },
@@ -2286,7 +2699,125 @@
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (11)",
+                "uuid": "31b3526d-a193-c321-25f5-7f41e5ef7d56"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    156.90785217285156,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.9797641038894653,
+                    0.0,
+                    0.2001558393239975
+                ],
+                "scale": [
+                    0.006999877281486988,
+                    0.007333939429372549,
+                    0.006999877281486988
+                ],
+                "translation": [
+                    24.09660530090332,
+                    18.83234214782715,
+                    12.132279396057129
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        160.0,
+                        80.0,
+                        100.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/lody2.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "blokadafreeze (6)",
+                "uuid": "af03cdb2-15dd-6ff1-b640-7f5e39999619"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    73.73728942871094,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.599982500076294,
+                    0.0,
+                    0.8000131249427795
+                ],
+                "scale": [
+                    0.006999853998422623,
+                    0.007333939429372549,
+                    0.006999853998422623
+                ],
+                "translation": [
+                    20.852331161499023,
+                    18.832000732421875,
+                    21.367889404296875
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        1.399999976158142,
                         31.0,
                         1.0
                     ],
@@ -2333,6 +2864,24 @@
             }
         },
         {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        -56.400001525878906
+                    ],
+                    "halfSize": [
+                        185.0,
+                        77.0,
+                        1.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
             "ModelComponent": {
                 "color": [
                     1.0,
@@ -2369,7 +2918,7 @@
                 "translation": [
                     0.0,
                     0.0,
-                    173.45997619628906
+                    83.60126495361328
                 ]
             }
         },
@@ -2470,6 +3019,106 @@
                     -63.6472282409668,
                     0.0,
                     173.45997619628906
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        8.300000190734863,
+                        10.600000381469727,
+                        1.7000000476837158
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "kolizja",
+                "uuid": "c1da0456-ba8a-183e-1573-973d18c1bcb5"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    34.84440612792969,
+                    18.216064453125,
+                    10.665640830993652
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        8.300000190734863,
+                        10.600000381469727,
+                        1.7000000476837158
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "kolizja (1)",
+                "uuid": "4053f215-3bf6-4207-c78a-308b9b6a0c8e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    34.84440612792969,
+                    18.216064453125,
+                    25.988677978515625
                 ]
             }
         }
