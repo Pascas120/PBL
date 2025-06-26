@@ -48,7 +48,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			glm::vec3 clingEntPos = clingEntityMatrix[3];
 			transformSystem.translateEntity(id, clingEntPos);
 
-			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingNormal, glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::vec3 clingEntZ = glm::normalize(clingEntityMatrix[2]);
+			glm::vec3 clingEntY = glm::normalize(clingEntityMatrix[1]);
+
+			glm::vec3 normalEulerY = glm::eulerAngles(glm::quatLookAt(clingEntZ, clingEntY));
 			normalEulerY = glm::degrees(normalEulerY);
 			normalEulerY.y += 180.0f;
 			transformSystem.rotateEntity(id, normalEulerY);
@@ -108,7 +111,7 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 		}
 
 		float movementMag = glm::length(movement);
-		if (movementMag > 1e-4f)
+		if (movementMag > 0.2f)
 		{
 			glm::vec3 movementDir = movement / movementMag;
 			float remappedMag = std::min(movementMag / 0.9f, 1.0f);
@@ -124,9 +127,10 @@ void ButterController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 					scene->getAnimationSystem().playAnimation(id, "res/anims/maselkochod.fbx");
 				}
 			}
+			movement *= moveSpeed;
 		}
 
-		movement *= moveSpeed;
+
 
 		timeSinceLastGroundContact += deltaTime;
 		if (!isJumping && timeSinceLastGroundContact > 0.15f)

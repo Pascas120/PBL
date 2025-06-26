@@ -228,6 +228,7 @@ void RenderingSystem::drawHud(const Framebuffer& framebuffer, const std::unorder
                     glActiveTexture(GL_TEXTURE0);
                     glBindTexture(GL_TEXTURE_2D, textureID);
                     hudShader->setInt("useTexture", true);
+                	hudShader->setVec4("color", image.color);
                 } else {
                     hudShader->setInt("useTexture", false);
                     hudShader->setVec4("color", image.color);

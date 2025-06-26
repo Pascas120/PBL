@@ -386,6 +386,72 @@
             "data": {
                 "entities": [
                     {
+                        "ColliderComponent": {
+                            "colliderShape": {
+                                "center": [
+                                    10.100000381469727,
+                                    0.0,
+                                    13.300000190734863
+                                ],
+                                "halfSize": [
+                                    128.39999389648438,
+                                    8.600000381469727,
+                                    109.30000305175781
+                                ],
+                                "type": "BOX"
+                            },
+                            "isStatic": true,
+                            "isTrigger": true
+                        },
+                        "ModelComponent": {
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "model": "res/models/plama3.fbx",
+                            "shader": "CelShading"
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Trail",
+                            "tag": "trail",
+                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                -43.52345275878906,
+                                -4.57763671875e-05
+                            ],
+                            "isStatic": false,
+                            "parent": "",
+                            "rotation": [
+                                -1.481037656958506e-07,
+                                -0.370747447013855,
+                                -3.7100525673849916e-07,
+                                0.9287337064743042
+                            ],
+                            "scale": [
+                                0.0029699942097067833,
+                                0.003000000026077032,
+                                0.003000000026077032
+                            ],
+                            "translation": [
+                                -1.46438729763031,
+                                18.61429786682129,
+                                -8.249442100524902
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Trail3"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
                         "ObjectInfoComponent": {
                             "name": "New Object",
                             "uuid": "459b5ca3-94a4-8e61-56e4-80776618b1eb"
@@ -459,72 +525,6 @@
             "data": {
                 "entities": [
                     {
-                        "ColliderComponent": {
-                            "colliderShape": {
-                                "center": [
-                                    10.100000381469727,
-                                    0.0,
-                                    13.300000190734863
-                                ],
-                                "halfSize": [
-                                    128.39999389648438,
-                                    8.600000381469727,
-                                    109.30000305175781
-                                ],
-                                "type": "BOX"
-                            },
-                            "isStatic": true,
-                            "isTrigger": true
-                        },
-                        "ModelComponent": {
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "model": "res/models/plama3.fbx",
-                            "shader": "CelShading"
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Trail",
-                            "tag": "trail",
-                            "uuid": "901b7aec-3396-94bb-67b8-8f621542eb24"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                -43.52345275878906,
-                                -4.57763671875e-05
-                            ],
-                            "isStatic": false,
-                            "parent": "",
-                            "rotation": [
-                                -1.481037656958506e-07,
-                                -0.370747447013855,
-                                -3.7100525673849916e-07,
-                                0.9287337064743042
-                            ],
-                            "scale": [
-                                0.0029699942097067833,
-                                0.003000000026077032,
-                                0.003000000026077032
-                            ],
-                            "translation": [
-                                -1.46438729763031,
-                                18.61429786682129,
-                                -8.249442100524902
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Trail3"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
                         "ModelComponent": {
                             "color": [
                                 0.6627451181411743,
@@ -568,6 +568,57 @@
                 ]
             },
             "name": "CollectibleModel"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "BunController": null,
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "height": 427.5,
+                            "texturePath": "res/textures/bulka1.png",
+                            "width": 588.9000244140625
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Bula",
+                            "uuid": "701cc6f3-1c35-d6b6-e928-fc524c5c6f21"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                -180.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                -4.371138828673793e-08
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "translation": [
+                                946.9000244140625,
+                                583.0999755859375,
+                                0.0
+                            ]
+                        }
+                    }
+                ]
+            },
+            "name": "Bula"
         },
         {
             "data": {
@@ -634,57 +685,6 @@
                 ]
             },
             "name": "Trail1"
-        },
-        {
-            "data": {
-                "entities": [
-                    {
-                        "BunController": null,
-                        "ImageComponent": {
-                            "color": [
-                                0.0,
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "height": 427.5,
-                            "texturePath": "res/textures/bulka1.png",
-                            "width": 588.9000244140625
-                        },
-                        "ObjectInfoComponent": {
-                            "name": "Bula",
-                            "uuid": "f7f14e2e-1efe-0ae6-7777-c66fc5dac722"
-                        },
-                        "Transform": {
-                            "children": [],
-                            "eulerRotation": [
-                                0.0,
-                                0.0,
-                                180.0
-                            ],
-                            "isStatic": true,
-                            "parent": "",
-                            "rotation": [
-                                -0.0,
-                                0.0,
-                                1.0,
-                                -4.371138828673793e-08
-                            ],
-                            "scale": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "translation": [
-                                946.9000244140625,
-                                583.0999755859375,
-                                0.0
-                            ]
-                        }
-                    }
-                ]
-            },
-            "name": "Bula"
         },
         {
             "data": {
@@ -918,6 +918,57 @@
                 ]
             },
             "name": "Dym"
+        },
+        {
+            "data": {
+                "entities": [
+                    {
+                        "ImageComponent": {
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "height": 675.0,
+                            "texturePath": "res/textures/vignette.png",
+                            "width": 960.0
+                        },
+                        "ObjectInfoComponent": {
+                            "name": "Vignette",
+                            "uuid": "a4c90dc7-235e-8d1d-7a10-030ac97d419d"
+                        },
+                        "Transform": {
+                            "children": [],
+                            "eulerRotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "isStatic": true,
+                            "parent": "",
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "scale": [
+                                1.0,
+                                0.800000011920929,
+                                1.0
+                            ],
+                            "translation": [
+                                960.0,
+                                540.0,
+                                0.0
+                            ]
+                        },
+                        "VignetteController": null
+                    }
+                ]
+            },
+            "name": "Vignette"
         }
     ]
 }

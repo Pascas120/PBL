@@ -6,6 +6,7 @@
 #include "imgui_internal.h"
 #include "ECS/components/BunController.h"
 #include "ECS/components/CameraController.h"
+#include "ECS/components/VignetteController.h"
 
 #define ADD_COMPONENT(T, name) \
     ImGui::BeginDisabled(scene->hasComponent<T>(editor->selectedObject)); \
@@ -99,6 +100,7 @@ namespace Editor
                 drawImage(context, editor->selectedObject);
                 drawText(context, editor->selectedObject);
                 drawBun(context, editor->selectedObject);
+                drawVignette(context, editor->selectedObject);
 
                 ImGui::Dummy(ImVec2(0, 10));
 
@@ -149,6 +151,7 @@ namespace Editor
                     ADD_COMPONENT(ImageComponent, "Image");
                     ADD_COMPONENT(TextComponent, "Text");
                     ADD_COMPONENT(BunController, "Bun Controller");
+                    ADD_COMPONENT(VignetteController, "Vignette Controller");
 
                     ImGui::EndCombo();
                 }
@@ -978,6 +981,24 @@ namespace Editor
         bool open = ImGui::CollapsingHeader("Bun", ImGuiTreeNodeFlags_DefaultOpen);
         if (componentContextMenu<CollectibleComponent>(context, id)) { return; }
 
+        if (open)
+        {
+            ImGui::TextUnformatted("brak parametrow");
+        }
+        ImGui::PopID();
+    }
+
+    void InspectorWindow::drawVignette(const EditorContext& context, EntityID id)
+    {
+        auto& scene = context.scene;
+        if (!scene->hasComponent<VignetteController>(id))
+            return;
+
+        auto& vignette = scene->getComponent<VignetteController>(id);
+        ImGui::PushID(&vignette);
+
+        bool open = ImGui::CollapsingHeader("Vignette", ImGuiTreeNodeFlags_DefaultOpen);
+        if (componentContextMenu<VignetteController>(context, id)) {return;}
         if (open)
         {
             ImGui::TextUnformatted("brak parametrow");

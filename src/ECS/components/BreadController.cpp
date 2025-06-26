@@ -4,6 +4,9 @@
 #include "spdlog/spdlog.h"
 #include <glm/gtx/quaternion.hpp>
 
+#include "Application.h"
+#include "VignetteController.h"
+
 void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 {
 	auto& transformSystem = scene->getTransformSystem();
@@ -17,12 +20,20 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 
 	if (freezing)
 	{
-		freezeCooldownTimer = freezeCooldownDur;         
-
+		freezeCooldownTimer = freezeCooldownDur;
 		if (isBouncy)                                 
 		{
 
 			isBouncy = false;
+		}
+	}
+
+	if(freezeCooldownTimer <= 0.0f)
+	{
+		if (scene->hasComponent<VignetteController>(scene->getApplication()->freezeID))
+		{
+			auto& vignetteController = scene->getComponent<VignetteController>(scene->getApplication()->freezeID);
+			vignetteController.vignetteEnabled = false;
 		}
 	}
 

@@ -11,6 +11,7 @@
 #include "ECS/Components.h"
 #include "ECS/components/BunController.h"
 #include "ECS/components/CameraController.h"
+#include "ECS/components/VignetteController.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
@@ -749,6 +750,16 @@ namespace Serialization
 		// :P
 	}
 
+	static void to_json(nlohmann::json& j, VignetteController& c, const SerializationContext& context)
+	{
+		// :3
+	}
+
+	static void from_json(const nlohmann::json& j, VignetteController& c, const DeserializationContext& context)
+	{
+		// 0_0
+	}
+
 	void saveScene(const std::string& filePath, Scene& scene)
 	{
 		std::ofstream file(filePath);
@@ -919,6 +930,7 @@ namespace Serialization
 			serializeComponent(AnimationComponent);
 			serializeComponent(CollectibleComponent);
 			serializeComponent(BunController);
+			serializeComponent(VignetteController);
 
 			selectionJson["entities"].push_back(entityJson);
 		}
@@ -1017,6 +1029,7 @@ namespace Serialization
 			deserializeComponent(AnimationComponent);
 			deserializeComponent(CollectibleComponent);
 			deserializeComponent(BunController);
+			deserializeComponent(VignetteController);
 		}
 
 		return deserializedEntities;

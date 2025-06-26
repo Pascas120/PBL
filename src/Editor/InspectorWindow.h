@@ -41,5 +41,6 @@ namespace Editor
 		void drawImage(const EditorContext& context, EntityID id);
 		void drawText(const EditorContext& context, EntityID id);
 		void drawBun(const EditorContext& context, EntityID id);
+		void drawVignette(const EditorContext& context, EntityID id);
 	};
 }

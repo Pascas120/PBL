@@ -51,6 +51,9 @@ public:
     }
 
     T& get(EntityID id)  {
+        if(!has(id)) {
+            int i = 0;
+        }
         assert(has(id) && "ComponentStorage: trying to get a non-existing component");
         return components[entityToIndex[id]];
     }

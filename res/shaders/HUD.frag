@@ -10,9 +10,9 @@ uniform bool useTexture;
 void main() {
     if (useTexture){
         vec4 texColor = texture(texture1, TexCoords);
-        if (texColor.a < 0.1)
+        if (texColor.a < 0.001)
             discard;
-        FragColor = texColor;
+        FragColor = texColor * color.a;
     }
     else {
         FragColor = color;

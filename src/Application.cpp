@@ -12,6 +12,7 @@
 #include <random>
 
 #include "ECS/components/BunController.h"
+#include "ECS/components/VignetteController.h"
 
 static glm::vec4 clear_color = glm::vec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -115,7 +116,7 @@ bool Application::init()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL", nullptr, nullptr);
+	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Sandwich Must Be Made", nullptr, nullptr);
 	if (window == nullptr)
 	{
 		spdlog::error("Failed to create GLFW window!");
@@ -495,6 +496,7 @@ void Application::update()
 	}
 
 	ts.update();
+
 
 	auto& cs = scene->getCollisionSystem();
 	cs.CheckCollisions();
@@ -880,6 +882,15 @@ void Application::update()
 		for (int i = 0; i < bun->getQuantity(); ++i)
 		{
 			auto& controller = bun->components[i];
+			controller.update(window, scene.get(), deltaTime);
+		}
+	}
+
+	if (auto vig = scene->getStorage<VignetteController>())
+	{
+		for (int i = 0; i < vig->getQuantity(); ++i)
+		{
+			auto& controller = vig->components[i];
 			controller.update(window, scene.get(), deltaTime);
 		}
 	}
@@ -1604,7 +1615,9 @@ void Application::setupEvents()
 				return;
 
 			scene->getComponent<BreadController>(ev.otherObject).freezing = true;
-
+		if(scene->hasComponent<VignetteController>(ev.otherObject)) {
+			scene->getComponent<VignetteController>(freezeID).vignetteEnabled = true;
+		}
 		});
 
 
@@ -1833,6 +1846,7 @@ void Application::setupEvents()
 void Application::setStartValues()
 {
 	scene->getRenderingSystem().getTexture("res/textures/dialogtlo.png");
+	scene->getRenderingSystem().getTexture("res/textures/vignette.png");
 
 	auto breadControllers = scene->getStorage<BreadController>();
 	if (breadControllers)
@@ -1901,4 +1915,6 @@ void Application::setStartValues()
 	if(ost != (EntityID) -1) {
 		scene->getAudioSystem().playSound(ost);
 	}
+
+	freezeID = scene->getEntityByName("Vignette");
 }

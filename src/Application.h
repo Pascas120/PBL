@@ -138,12 +138,14 @@ protected:
 	EntityID ingredient = (EntityID)-1;
 	float ingredientAnimationTimer;
 
+
 private:
 	// TODO: remove
 	void setupScene();
 
 public:
 	ma_engine audioEngine;
+	EntityID freezeID;
 	std::map<std::string, GLuint> textures;
 
 };
