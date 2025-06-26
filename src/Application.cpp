@@ -1677,8 +1677,9 @@ void Application::setupEvents()
 				glm::vec3 upLocal = glm::inverse(wallMatrix) * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 				if (glm::length(upLocal) > 0.0f) upLocal = glm::normalize(upLocal);
 
-				glm::quat rotation = glm::quatLookAt(-n, upLocal);
-				ts.rotateEntity(clingEntity, rotation);
+				/*glm::vec3 dirLocal = glm::inverse(wallMatrix) * glm::vec4(-n, 0.0);
+				glm::quat rotation = glm::quatLookAt(dirLocal, upLocal);
+				ts.rotateEntity(clingEntity, rotation);*/
 
 				butter.clingEntity = clingEntity;
 
