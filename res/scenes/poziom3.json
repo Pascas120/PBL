@@ -1,6 +1,21 @@
 {
     "entities": [
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/maselkochod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkodown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkoup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ButterController": {
                 "jumpSpeed": 6.0,
                 "moveSpeed": 7.0,
@@ -44,7 +59,7 @@
                     1.0
                 ],
                 "model": "res/models/MASLOmesh+bones.fbx",
-                "shader": "CelShading"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
@@ -145,6 +160,24 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/chlebekchod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekdown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekup.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebeksqish.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "BreadController": {
                 "jumpSpeed": 5.0,
                 "moveSpeed": 7.0,
@@ -175,12 +208,17 @@
                     1.0
                 ],
                 "model": "res/models/chlebekmesh+bones.fbx",
-                "shader": "CelShading"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
                 "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/trampolinaSound.mp3",
+                "volume": 1.0
             },
             "TrailCollisionDetectorComponent": {
                 "sprintMultiplier": 2.0
@@ -773,13 +811,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        0.0,
+                        20.799999237060547,
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        102.19999694824219,
+                        39.70000076293945,
+                        99.5
                     ],
                     "type": "BOX"
                 },
@@ -831,14 +869,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
-                        0.0,
-                        0.0
+                        -200.6999969482422,
+                        70.19999694824219,
+                        -17.200000762939453
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        204.1999969482422,
+                        99.4000015258789,
+                        140.5
                     ],
                     "type": "BOX"
                 },
@@ -852,7 +890,7 @@
                     1.0,
                     1.0
                 ],
-                "model": "res/models/SER.fbx",
+                "model": "res/models/mainser.fbx",
                 "shader": "Basic"
             },
             "ObjectInfoComponent": {
@@ -860,7 +898,9 @@
                 "uuid": "974ed776-84f9-6a69-eade-2216fb2a4db3"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "0816c9ce-c08d-f36e-e607-b95e52de4745"
+                ],
                 "eulerRotation": [
                     0.0,
                     41.599998474121094,
@@ -892,6 +932,60 @@
                     "center": [
                         0.0,
                         0.0,
+                        -37.70000076293945
+                    ],
+                    "halfSize": [
+                        546.2999877929688,
+                        251.60000610351563,
+                        700.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": true,
+                "properties": 0
+            },
+            "LevelExitComponent": {
+                "dialogueName": "DialogSer",
+                "nextLevelPath": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "dialog Serek",
+                "uuid": "0816c9ce-c08d-f36e-e607-b95e52de4745"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "974ed776-84f9-6a69-eade-2216fb2a4db3",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        0.0,
                         0.0
                     ],
                     "halfSize": [
@@ -906,8 +1000,8 @@
                 "properties": 0
             },
             "LevelExitComponent": {
-                "dialogueName": "",
-                "nextLevelPath": "demo.scene.json"
+                "dialogueName": "DialogPoziom3",
+                "nextLevelPath": "poziom4.json"
             },
             "ObjectInfoComponent": {
                 "name": "EXIT",
@@ -929,14 +1023,14 @@
                     1.0
                 ],
                 "scale": [
-                    8.40771198272705,
-                    6.086941242218018,
-                    5.558122158050537
+                    7.607999801635742,
+                    6.88700008392334,
+                    10.857999801635742
                 ],
                 "translation": [
-                    47.989906311035156,
+                    54.447330474853516,
                     20.49724578857422,
-                    17.796218872070313
+                    17.395999908447266
                 ]
             }
         },
@@ -1038,6 +1132,15 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/GABKAfloat.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -1063,7 +1166,7 @@
                     0.19607843458652496
                 ],
                 "model": "res/models/GABKA.fbx",
-                "shader": "Basic"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "gabka",
@@ -1097,6 +1200,15 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/GABKAfloat.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -1122,7 +1234,7 @@
                     0.0941176488995552
                 ],
                 "model": "res/models/GABKA.fbx",
-                "shader": "Basic"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "gabka (1)",
@@ -1156,6 +1268,15 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/GABKAfloat.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -1181,7 +1302,7 @@
                     0.6392157077789307
                 ],
                 "model": "res/models/GABKA.fbx",
-                "shader": "Basic"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "gabka (2)",
@@ -1215,6 +1336,15 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/GABKAfloat.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
@@ -1240,7 +1370,7 @@
                     0.0941176488995552
                 ],
                 "model": "res/models/GABKA.fbx",
-                "shader": "Basic"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "gabka (3)",
@@ -1700,8 +1830,8 @@
                 ],
                 "translation": [
                     0.0,
-                    18.876708984375,
-                    -42.00696563720703
+                    18.545177459716797,
+                    -2.1520633697509766
                 ]
             }
         },
@@ -1751,13 +1881,13 @@
                 "colliderShape": {
                     "center": [
                         0.0,
-                        0.0,
+                        -12.300000190734863,
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        59.5,
+                        107.19999694824219,
+                        39.599998474121094
                     ],
                     "type": "BOX"
                 },
@@ -1781,17 +1911,17 @@
             "Transform": {
                 "children": [],
                 "eulerRotation": [
-                    134.99996948242188,
-                    -61.599998474121094,
-                    -179.99998474121094
+                    135.0,
+                    -80.0,
+                    -180.0
                 ],
                 "isStatic": true,
                 "parent": "",
                 "rotation": [
-                    0.19595029950141907,
-                    0.7935754060745239,
-                    0.32870981097221375,
-                    -0.47306594252586365
+                    -0.24598418176174164,
+                    -0.7077327370643616,
+                    -0.2931525409221649,
+                    0.5938582420349121
                 ],
                 "scale": [
                     0.029999997466802597,
@@ -1809,14 +1939,14 @@
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [
-                        0.0,
-                        0.0,
-                        0.0
+                        1.7999999523162842,
+                        -6.5,
+                        -0.8999999761581421
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        42.79999923706055,
+                        46.70000076293945,
+                        41.20000076293945
                     ],
                     "type": "BOX"
                 },
@@ -1838,7 +1968,9 @@
                 "uuid": "73360fe1-8e9a-6a4b-27e9-b60cff893165"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "1a7a8d19-2a69-118a-3a35-8e0def253fbc"
+                ],
                 "eulerRotation": [
                     0.0,
                     -147.8000030517578,
@@ -1873,9 +2005,59 @@
                         0.0
                     ],
                     "halfSize": [
-                        1.0,
-                        1.0,
-                        1.0
+                        24.600000381469727,
+                        32.70000076293945,
+                        11.0
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ObjectInfoComponent": {
+                "name": "Ucho Collider",
+                "uuid": "1a7a8d19-2a69-118a-3a35-8e0def253fbc"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "73360fe1-8e9a-6a4b-27e9-b60cff893165",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    53.908843994140625,
+                    0.0,
+                    0.001220703125
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        -23.299999237060547,
+                        -1.0
+                    ],
+                    "halfSize": [
+                        56.099998474121094,
+                        117.0,
+                        38.5
                     ],
                     "type": "BOX"
                 },
@@ -1907,9 +2089,9 @@
                 "parent": "",
                 "rotation": [
                     0.6995211839675903,
-                    0.6995211243629456,
-                    0.10329634696245193,
-                    0.10329633206129074
+                    0.6995211839675903,
+                    0.10329631716012955,
+                    0.10329631716012955
                 ],
                 "scale": [
                     0.029999520629644394,
@@ -1918,7 +2100,7 @@
                 ],
                 "translation": [
                     54.93864822387695,
-                    19.84909439086914,
+                    19.948999404907227,
                     21.90107536315918
                 ]
             }
@@ -3119,6 +3301,43 @@
                     34.84440612792969,
                     18.216064453125,
                     25.988677978515625
+                ]
+            }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "ost",
+                "uuid": "96ccf9da-903f-7633-2ed5-062512019665"
+            },
+            "SoundComponent": {
+                "loop": true,
+                "soundPath": "res/sounds/track_3.mp3",
+                "volume": 0.10000000149011612
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         }
