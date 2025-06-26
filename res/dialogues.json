@@ -195,14 +195,14 @@
           "textLines": [
             "Udalo sie!",
             "Zebralismy wszystkie potrzebne skladniki.",
-            ""
+            "Zostala ostatnia prosta!"
           ]
         },
         {
           "character": "chleb",
           "textLines": [
             "",
-            "Mhm",
+            "A-ha",
             ""
           ]
         }
@@ -223,7 +223,23 @@
               "character": "chleb",
               "textLines": [
                 "",
-                "Mhm",
+                "Uhm",
+                ""
+              ]
+            },
+            {
+              "character": "maslo",
+              "textLines": [
+                "Zobacz juz idzie.",
+                "Witaj, to dla cie... co..?",
+                "Czekaj..!"
+              ]
+            },
+            {
+              "character": "chleb",
+              "textLines": [
+                "",
+                "Aaaaaaaaaaaaaaa",
                 ""
               ]
             }
