@@ -309,7 +309,9 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/track_2.mp3");
 	sounds.emplace_back("res/sounds/track_3.mp3");
 	sounds.emplace_back("res/sounds/track_4.mp3");
-	sounds.emplace_back("res/sounds/znajdzka.mp3");
+	sounds.emplace_back("res/sounds/znajdzka.wav");
+	sounds.emplace_back("res/sounds/otwieranieBulki.wav");
+	sounds.emplace_back("res/sounds/zart.wav");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -1749,7 +1751,7 @@ void Application::setupEvents()
 		scene->playerLock = true;
 		EntityID bun = scene->instantiatePrefab("Bula")[0];
 		scene->getComponent<BunController>(bun).joke = jokes[currentLevel % jokes.size()];
-		scene->getAudioSystem().playSound("res/sounds/znajdzka.mp3");
+		scene->getAudioSystem().playSound("res/sounds/znajdzka.wav");
 	});
 }
 

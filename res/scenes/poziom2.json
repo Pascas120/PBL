@@ -1981,7 +1981,9 @@
                 "uuid": "0b2ed733-59fb-ece6-5525-2e44dc166fec"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "20aa4a01-04ac-d51c-cdaf-f605bfc1303f"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -2004,6 +2006,60 @@
                     4.081844329833984,
                     19.060626983642578,
                     2.34537935256958
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        -15.600000381469727,
+                        0.0,
+                        3.5
+                    ],
+                    "halfSize": [
+                        35.5,
+                        33.5,
+                        26.399999618530273
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": true,
+                "properties": 0
+            },
+            "LevelExitComponent": {
+                "dialogueName": "testDialogue",
+                "nextLevelPath": ""
+            },
+            "ObjectInfoComponent": {
+                "name": "Dialog Pomidor",
+                "uuid": "20aa4a01-04ac-d51c-cdaf-f605bfc1303f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "0b2ed733-59fb-ece6-5525-2e44dc166fec",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    19.899999618530273,
+                    1.5,
+                    27.299999237060547
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
                 ]
             }
         },
