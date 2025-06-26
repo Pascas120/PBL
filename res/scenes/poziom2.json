@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -2767,6 +2767,88 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/trampolina.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTURKCJA1",
+                "uuid": "1754c59b-7c47-c114-0e8a-9d8b2e608a6f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -90.0,
+                    34.046234130859375,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.2070108950138092,
+                    -0.6761260628700256,
+                    0.6761261224746704,
+                    -0.20701083540916443
+                ],
+                "scale": [
+                    0.010000002570450306,
+                    0.009999945759773254,
+                    0.009999938309192657
+                ],
+                "translation": [
+                    -23.090381622314453,
+                    21.53460693359375,
+                    8.645295143127441
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/roztapianie.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTURKCJA1 (1)",
+                "uuid": "591a71e5-0706-abbd-28ed-72a30f5d4f58"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -90.00004577636719,
+                    -32.2086181640625,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.19614215195178986,
+                    0.679358959197998,
+                    -0.6793584823608398,
+                    -0.19614219665527344
+                ],
+                "scale": [
+                    0.009999838657677174,
+                    0.009999774396419525,
+                    0.009999765083193779
+                ],
+                "translation": [
+                    3.4949448108673096,
+                    20.051130294799805,
+                    27.736419677734375
                 ]
             }
         }

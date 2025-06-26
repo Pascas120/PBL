@@ -287,6 +287,16 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/majstersztykkanapkafullposilekpozdro.fbx"));
 	models.emplace_back(new Model("res/models/czlowiek.fbx"));
 
+	models.emplace_back(new Model("res/models/przyklejenie.fbx"));
+	models.emplace_back(new Model("res/models/skok.fbx"));
+	models.emplace_back(new Model("res/models/trampolina.fbx"));
+	models.emplace_back(new Model("res/models/mrozenie.fbx"));
+	models.emplace_back(new Model("res/models/roztapianie.fbx"));
+	models.emplace_back(new Model("res/models/slizg.fbx"));
+	models.emplace_back(new Model("res/models/slad.fbx"));
+	models.emplace_back(new Model("res/models/chodzenie.fbx"));
+	models.emplace_back(new Model("res/models/znajdzkaINS.fbx"));
+
 	
 	//animacje
 	animations.emplace_back(new Animation("res/anims/chlebekchod.fbx", models[1]));

@@ -748,6 +748,88 @@
             }
         },
         {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/skok.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTRUKCJA",
+                "uuid": "b46ecf09-592f-ac3c-5347-14ddcc85647f"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -89.99995422363281,
+                    -42.98786926269531,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.2590859532356262,
+                    -0.6579317450523376,
+                    0.6579322814941406,
+                    0.2590857744216919
+                ],
+                "scale": [
+                    0.018000002950429916,
+                    0.018000002950429916,
+                    0.018000001087784767
+                ],
+                "translation": [
+                    11.408679962158203,
+                    21.954967498779297,
+                    -32.75507736206055
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/znajdzkaINS.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTRUKCJA (1)",
+                "uuid": "7dc066aa-8099-8ac6-c66c-b78959057436"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -89.99996948242188,
+                    24.951934814453125,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.15275636315345764,
+                    -0.6904094219207764,
+                    0.6904098987579346,
+                    -0.15275637805461884
+                ],
+                "scale": [
+                    0.014999999664723873,
+                    0.014999999664723873,
+                    0.014999999664723873
+                ],
+                "translation": [
+                    -1.0354794263839722,
+                    20.106826782226563,
+                    -34.699241638183594
+                ]
+            }
+        },
+        {
             "ColliderComponent": {
                 "colliderShape": {
                     "center": [

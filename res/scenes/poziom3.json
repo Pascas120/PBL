@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -3481,6 +3481,47 @@
                 ]
             },
             "VignetteController": null
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/przyklejenie.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTURKCJA",
+                "uuid": "bf496242-efd6-c46f-94c9-92dea174c923"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -90.0,
+                    -27.049468994140625,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.16536757349967957,
+                    0.6874980926513672,
+                    -0.6874979734420776,
+                    -0.16536761820316315
+                ],
+                "scale": [
+                    0.00999973714351654,
+                    0.009999739937484264,
+                    0.009999707341194153
+                ],
+                "translation": [
+                    16.578184127807617,
+                    22.04437828063965,
+                    20.622163772583008
+                ]
+            }
         }
     ],
     "sceneRoot": "Root"

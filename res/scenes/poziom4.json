@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -2359,6 +2359,88 @@
                     0.0,
                     0.0,
                     0.0
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/slad.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTRUCKAJ",
+                "uuid": "ac1ba294-37de-9c6b-bf5f-efd682851f6b"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -90.0,
+                    0.0,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -3.090863742727379e-08,
+                    0.7071067690849304,
+                    -0.7071067690849304,
+                    -3.090863742727379e-08
+                ],
+                "scale": [
+                    0.009999806061387062,
+                    0.009999806061387062,
+                    0.009999806061387062
+                ],
+                "translation": [
+                    39.916744232177734,
+                    20.723968505859375,
+                    28.284292221069336
+                ]
+            }
+        },
+        {
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/slizg.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "INSTRUCKAJ (1)",
+                "uuid": "36635a4e-a4bc-6fee-85fc-4b8e06064d3d"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    -90.0,
+                    -21.494537353515625,
+                    -180.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    -0.13185931742191315,
+                    0.6947036385536194,
+                    -0.6947036385536194,
+                    -0.13185931742191315
+                ],
+                "scale": [
+                    0.009999783709645271,
+                    0.009999766014516354,
+                    0.009999770671129227
+                ],
+                "translation": [
+                    47.01267623901367,
+                    19.836811065673828,
+                    27.25642204284668
                 ]
             }
         }
