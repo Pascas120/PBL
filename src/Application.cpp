@@ -856,6 +856,15 @@ void Application::update()
 		}
 	}
 
+	GLFWgamepadstate state;
+	glfwGetGamepadState(GLFW_JOYSTICK_1, &state);
+
+	bool advanceButton = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_A] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_B] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_X] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_Y];
+
 	// wyświetlanie dialogów
 	if (!currentDialogue.empty())
 	{
@@ -904,7 +913,7 @@ void Application::update()
 			updateDialogueBox = false;
 		}
 
-		if (!dialogueAdvanceKeyPressed && glfwGetKey(window, GLFW_KEY_ENTER))
+		if (!dialogueAdvanceKeyPressed && advanceButton)
 		{
 			currentDialogue.pop();
 			updateDialogueBox = true;
@@ -917,7 +926,7 @@ void Application::update()
 			dialogueAdvanceKeyPressed = true;
 		}
 	}
-	if (!glfwGetKey(window, GLFW_KEY_ENTER))
+	if (!advanceButton)
 	{
 		dialogueAdvanceKeyPressed = false;
 	}

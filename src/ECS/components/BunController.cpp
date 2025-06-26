@@ -16,8 +16,17 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
     auto& transformSystem = scene->getTransformSystem();
     auto& transform = scene->getComponent<Transform>(id);
 
+    GLFWgamepadstate state;
+    glfwGetGamepadState(GLFW_JOYSTICK_1, &state);
+
+    bool advanceButton = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_A] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_B] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_X] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_Y];
+
     if(isOpen) {
-        if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if(advanceButton) {
             scene->destroyEntity(id);
             scene->playerLock = false;
         }
@@ -58,7 +67,7 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
     }
 
     // --- Obsługa wejścia dla spacji (drżenie) ---
-    bool currentSpaceState = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+    bool currentSpaceState = (advanceButton);
     if (currentSpaceState && !lastSpaceState) { // Sprawdzamy, czy spacja została *naciśnięta* (nie przytrzymana)
         if (currentScale >= TARGET_SCALE) { // Drżenie tylko po zakończeniu animacji skalowania
             isShaking = true;
