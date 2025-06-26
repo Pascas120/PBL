@@ -193,8 +193,8 @@
         {
           "character": "maslo",
           "textLines": [
-            "Uff! Cale szczescie niczego nie podejrzewali.",
-            "Pozeracz",
+            "Udalo sie!",
+            "Zebralismy wszystkie potrzebne skladniki.",
             ""
           ]
         },
@@ -202,15 +202,7 @@
           "character": "chleb",
           "textLines": [
             "",
-            "...",
-            ""
-          ]
-        },
-        {
-          "character": "maslo",
-          "textLines": [
-            "",
-            "Mniejsza z tym. Chodz, mamy malo czasu.",
+            "Mhm",
             ""
           ]
         }
@@ -222,8 +214,8 @@
             {
               "character": "maslo",
               "textLines": [
-                "",
-                "To bylo za proste!",
+                "Uff! Cale szczescie niczego nie podejrzewali.",
+                "Pozeracz powinien byc usatysfakcjonowany.",
                 ""
               ]
             },
@@ -231,15 +223,7 @@
               "character": "chleb",
               "textLines": [
                 "",
-                "...",
-                ""
-              ]
-            },
-            {
-              "character": "maslo",
-              "textLines": [
-                "",
-                "Mniejsza z tym. Chodz, mamy malo czasu.",
+                "Mhm",
                 ""
               ]
             }
