@@ -138,22 +138,15 @@ void BreadController::update(GLFWwindow* window, Scene* scene, float deltaTime)
 			}
 			if (scene->hasComponent<AnimationComponent>(id)) {
 				auto& anim = scene->getComponent<AnimationComponent>(id);
-				/*if (movement.y > 0.1f && !anim.isPlaying)
+				if (movement.y > 0.1f && !anim.isPlaying)
 				{
 					scene->getAnimationSystem().playAnimation(id, "res/anims/chlebekup.fbx");
-				}*/
+				}
 			}
 		}
 		else
 		{
 			movement.y = velocityComponent.velocity.y;
-			if (scene->hasComponent<AnimationComponent>(id)) {
-				auto& anim = scene->getComponent<AnimationComponent>(id);
-				if (movement.y < -0.1f && timeSinceLastGroundContact > 0.04f && !anim.isPlaying)
-				{
-					scene->getAnimationSystem().playAnimation(id, "res/anims/chlebekdown.fbx");
-				}
-			}
 		}
 
 		velocityComponent.velocity = movement;

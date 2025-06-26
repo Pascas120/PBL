@@ -271,7 +271,7 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/lodowkadziura.fbx"));
 	models.emplace_back(new Model("res/models/kratka.fbx"));
 	models.emplace_back(new Model("res/models/sciana.fbx"));
-
+	models.emplace_back(new Model("res/models/mainpomidor.fbx"));
 	models.emplace_back(new Model("res/models/puszka.fbx"));
 	models.emplace_back(new Model("res/models/mleczko.fbx"));
 	models.emplace_back(new Model("res/models/jogurt.fbx"));
@@ -314,6 +314,7 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/znajdzka.wav");
 	sounds.emplace_back("res/sounds/otwieranieBulki.wav");
 	sounds.emplace_back("res/sounds/zart.wav");
+	sounds.emplace_back("res/sounds/guzik.mp3");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -598,12 +599,12 @@ void Application::update()
 				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 					e.state = ElevatorState::Opening;
 					e.isMoving = true;
-					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+					scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 				}
 				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 					e.state = ElevatorState::Closing;
 					e.isMoving = true;
-					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+					scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 				}
 			}
 			else if (e.isDoor)       //drzwi
@@ -612,24 +613,24 @@ void Application::update()
 					if (nowPressed && e.state == ElevatorState::Closed) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
-						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+						scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 					}
 					else if (nowPressed && e.state == ElevatorState::Open) {
 						e.state = ElevatorState::Closing;
 						e.isMoving = true;
-						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+						scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 					}
 				}
 				else {
 					if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 						e.state = ElevatorState::Opening;
 						e.isMoving = true;
-						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+						scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 					}
 					else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 						e.state = ElevatorState::Closing;
 						e.isMoving = true;
-						scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+						scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 					}
 				}
 			}
@@ -638,12 +639,12 @@ void Application::update()
 				if (nowPressed && e.state != ElevatorState::Opening && e.state != ElevatorState::Open) {
 					e.state = ElevatorState::Opening;
 					e.isMoving = true;
-					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+					scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 				}
 				else if (!nowPressed && e.state != ElevatorState::Closing && e.state != ElevatorState::Closed) {
 					e.state = ElevatorState::Closing;
 					e.isMoving = true;
-					scene->getAudioSystem().playSound("res/sounds/DuzyPrzycisk.wav");
+					scene->getAudioSystem().playSound("res/sounds/guzik.mp3");
 				}
 			}
 		}
