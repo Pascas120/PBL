@@ -24,7 +24,7 @@ static void glfw_error_callback(int error, const char* description)
 
 Application::Application()
 {
-	assert(init() && "Failed to initialize application!"); // mo�e by� assert?
+	init();
 	spdlog::info("Initialized project.");
 }
 
@@ -116,7 +116,7 @@ bool Application::init()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
 
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Sandwich Must Be Made", nullptr, nullptr);
+	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Sandwich Must Be Made", glfwGetPrimaryMonitor(), nullptr);
 	if (window == nullptr)
 	{
 		spdlog::error("Failed to create GLFW window!");
@@ -349,22 +349,22 @@ bool Application::init()
 			jokes.push_back(line);
 		}
 	}
-	file.close();
+	fileJokes.close();
 	std::shuffle(jokes.begin() + 1, jokes.end(), std::mt19937(std::random_device()()));
 	spdlog::info("Loaded {} jokes.", jokes.size());
 	spdlog::info(jokes[0]);
 
 
 	// TODO: przenieść poza Application.cpp ( nie zrobimy tego ;) )
-	file.open("res/dialogues.json");
-	if (!file.is_open())
+	std::ifstream file2("res/dialogues.json");
+	if (!file2.is_open())
 	{
 		spdlog::error("Failed to open dialogue file!");
 		return false;
 	}
 	json dialogueListJson;
-	file >> dialogueListJson;
-	file.close();
+	file2 >> dialogueListJson;
+	file2.close();
 
 	for (json dialogueJson : dialogueListJson["dialogues"])
 	{

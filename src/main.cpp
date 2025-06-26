@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "Editor/EditorApp.h"
 
-#define EDITOR_APP
+//#define EDITOR_APP
 
 int main(int, char**)
 {

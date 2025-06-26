@@ -35,7 +35,7 @@ namespace Editor
         initImGui();
         spdlog::info("Initialized ImGui.");
 
-        assert(NFD_Init() == NFD_OKAY && "Failed to initialize NFD!");
+        NFD_Init();
         spdlog::info("Initialized NFD");
 
     	hierarchyWindow = std::make_unique<HierarchyWindow>(this);

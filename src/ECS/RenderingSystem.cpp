@@ -322,7 +322,7 @@ void RenderingSystem::initHud() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    t1.init("../../res/fonts/caramel.ttf");
+    t1.init("res/fonts/caramel.ttf");
 
     initializedHud = true;
 }
