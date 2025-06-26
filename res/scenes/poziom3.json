@@ -227,7 +227,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -276,7 +276,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7799443006515503,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -2287,28 +2287,19 @@
                     ],
                     "halfSize": [
                         1.0,
-                        1.0,
+                        31.0,
                         1.0
                     ],
                     "type": "BOX"
                 },
-                "isStatic": true,
-                "isTrigger": false,
+                "isStatic": false,
+                "isTrigger": true,
                 "properties": 0
             },
             "FreezeComponent": {
                 "OnEnterMessage": "zimno",
                 "hasTriggered": false,
                 "triggerRadius": 1.0
-            },
-            "ModelComponent": {
-                "color": [
-                    0.28320837020874023,
-                    0.5867893695831299,
-                    0.6960784196853638
-                ],
-                "model": "res/models/grass_block/grass_block.obj",
-                "shader": "Basic"
             },
             "ObjectInfoComponent": {
                 "name": "freeze",
