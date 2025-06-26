@@ -1696,7 +1696,7 @@ void Application::setupEvents()
 		auto& levelExit = scene->getComponent<LevelExitComponent>(ev.triggerObject);
 
 		++levelExit.playerCount;
-		if (levelExit.active && levelExit.playerCount == 2)
+		if (levelExit.active && (levelExit.playerCount == 2 || levelExit.nextLevelPath.empty()))
 		{
 			if (!levelExit.nextLevelPath.empty())
 			{
