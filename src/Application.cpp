@@ -1615,7 +1615,7 @@ void Application::setupEvents()
 				return;
 
 			scene->getComponent<BreadController>(ev.otherObject).freezing = true;
-		if(scene->hasComponent<VignetteController>(ev.otherObject)) {
+		if(scene->hasComponent<VignetteController>(freezeID)) {
 			scene->getComponent<VignetteController>(freezeID).vignetteEnabled = true;
 		}
 		});

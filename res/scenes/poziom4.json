@@ -1179,7 +1179,9 @@
                 "uuid": "8a749ee7-0e15-e04a-165d-2eec9010ae83"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "d6d1683a-4f42-e7cd-8c58-5ee2b65c4c4e"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -1202,6 +1204,65 @@
                     55.833091735839844,
                     14.217458724975586,
                     63.67805862426758
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        13.600000381469727,
+                        0.0
+                    ],
+                    "halfSize": [
+                        401.20001220703125,
+                        100.0,
+                        11.100000381469727
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/meta.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "meta",
+                "uuid": "d6d1683a-4f42-e7cd-8c58-5ee2b65c4c4e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    -14.800000190734863,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "8a749ee7-0e15-e04a-165d-2eec9010ae83",
+                "rotation": [
+                    0.0,
+                    -0.1287955641746521,
+                    0.0,
+                    0.9916711449623108
+                ],
+                "scale": [
+                    0.0010000001639127731,
+                    0.0009999601170420647,
+                    0.0010000003967434168
+                ],
+                "translation": [
+                    -0.285858154296875,
+                    -0.8448002338409424,
+                    0.6683540344238281
                 ]
             }
         },

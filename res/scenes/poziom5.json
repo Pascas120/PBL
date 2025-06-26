@@ -1,6 +1,21 @@
 {
     "entities": [
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/maselkochod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkodown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/maselkoup.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "ButterController": {
                 "jumpSpeed": 6.0,
                 "moveSpeed": 7.0,
@@ -44,7 +59,7 @@
                     1.0
                 ],
                 "model": "res/models/MASLOmesh+bones.fbx",
-                "shader": "CelShading"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Maslo",
@@ -145,6 +160,24 @@
             }
         },
         {
+            "AnimationComponent": {
+                "animations": [
+                    {
+                        "animationPath": "res/anims/chlebekchod.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekdown.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebekup.fbx"
+                    },
+                    {
+                        "animationPath": "res/anims/chlebeksqish.fbx"
+                    }
+                ],
+                "loop": false,
+                "playbackSpeed": 1.0
+            },
             "BreadController": {
                 "jumpSpeed": 5.0,
                 "moveSpeed": 7.0,
@@ -175,12 +208,17 @@
                     1.0
                 ],
                 "model": "res/models/chlebekmesh+bones.fbx",
-                "shader": "CelShading"
+                "shader": "Animation"
             },
             "ObjectInfoComponent": {
                 "name": "Chleb",
                 "tag": "chleb",
                 "uuid": "69e225a2-09f0-a663-ddb6-1377399b5555"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/trampolinaSound.mp3",
+                "volume": 1.0
             },
             "TrailCollisionDetectorComponent": {
                 "sprintMultiplier": 2.0
@@ -681,16 +719,18 @@
                 "properties": 0
             },
             "LevelExitComponent": {
-                "dialogueName": "",
+                "dialogueName": "DialogPoziom5",
                 "ingredient": "",
-                "nextLevelPath": "demo.scene.json"
+                "nextLevelPath": ""
             },
             "ObjectInfoComponent": {
                 "name": "EXIT",
                 "uuid": "8a749ee7-0e15-e04a-165d-2eec9010ae83"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "85bfe558-c60d-6065-b562-f71893091f03"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -713,6 +753,65 @@
                     83.7573013305664,
                     25.027904510498047,
                     52.31233596801758
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        19.700000762939453,
+                        -2.700000047683716
+                    ],
+                    "halfSize": [
+                        395.8999938964844,
+                        97.9000015258789,
+                        13.899999618530273
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/meta.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "meta",
+                "uuid": "85bfe558-c60d-6065-b562-f71893091f03"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "8a749ee7-0e15-e04a-165d-2eec9010ae83",
+                "rotation": [
+                    0.0,
+                    0.7071066498756409,
+                    0.0,
+                    0.70710688829422
+                ],
+                "scale": [
+                    0.002800000598654151,
+                    0.00279999990016222,
+                    0.0027999994345009327
+                ],
+                "translation": [
+                    1.0941963195800781,
+                    -0.7991976737976074,
+                    0.005788326263427734
                 ]
             }
         },
@@ -1121,9 +1220,9 @@
                     1.0
                 ],
                 "translation": [
-                    30.9263858795166,
-                    18.876708984375,
-                    17.536466598510742
+                    44.728736877441406,
+                    22.600278854370117,
+                    49.23031997680664
                 ]
             }
         },
@@ -3112,6 +3211,87 @@
                     207.15109252929688
                 ]
             }
+        },
+        {
+            "ObjectInfoComponent": {
+                "name": "ost",
+                "uuid": "643d312f-0d72-7e20-15c6-fbc27585150c"
+            },
+            "SoundComponent": {
+                "loop": false,
+                "soundPath": "res/sounds/track_1.mp3",
+                "volume": 0.20000000298023224
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "ImageComponent": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "height": 675.0,
+                "texturePath": "res/textures/vignette.png",
+                "width": 960.0
+            },
+            "ObjectInfoComponent": {
+                "name": "Vignette",
+                "uuid": "e237d66e-a940-e6e3-4289-712e43faad91"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    0.800000011920929,
+                    1.0
+                ],
+                "translation": [
+                    960.0,
+                    540.0,
+                    0.0
+                ]
+            },
+            "VignetteController": null
         }
     ],
     "sceneRoot": "Root"

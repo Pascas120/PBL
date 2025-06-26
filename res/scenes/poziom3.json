@@ -265,7 +265,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -314,7 +314,7 @@
         },
         {
             "CameraComponent": {
-                "aspectRatio": 1.7782546281814575,
+                "aspectRatio": 1.7777777910232544,
                 "farPlane": 1000.0,
                 "fovSizeAxis": "VERTICAL",
                 "nearPlane": 0.10000000149011612,
@@ -924,7 +924,9 @@
                 "uuid": "8a749ee7-0e15-e04a-165d-2eec9010ae83"
             },
             "Transform": {
-                "children": [],
+                "children": [
+                    "6fe20555-1990-ade7-97bd-f38dcda3b63e"
+                ],
                 "eulerRotation": [
                     0.0,
                     0.0,
@@ -947,6 +949,65 @@
                     54.447330474853516,
                     20.49724578857422,
                     17.395999908447266
+                ]
+            }
+        },
+        {
+            "ColliderComponent": {
+                "colliderShape": {
+                    "center": [
+                        0.0,
+                        28.0,
+                        0.0
+                    ],
+                    "halfSize": [
+                        399.79998779296875,
+                        111.5999984741211,
+                        14.399999618530273
+                    ],
+                    "type": "BOX"
+                },
+                "isStatic": true,
+                "isTrigger": false,
+                "properties": 0
+            },
+            "ModelComponent": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "model": "res/models/meta.fbx",
+                "shader": "Basic"
+            },
+            "ObjectInfoComponent": {
+                "name": "meta",
+                "uuid": "6fe20555-1990-ade7-97bd-f38dcda3b63e"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    89.980224609375,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "8a749ee7-0e15-e04a-165d-2eec9010ae83",
+                "rotation": [
+                    0.0,
+                    0.7071067690849304,
+                    0.0,
+                    0.7071067690849304
+                ],
+                "scale": [
+                    0.0017999999690800905,
+                    0.0020000000949949026,
+                    0.0020000000949949026
+                ],
+                "translation": [
+                    0.8488264083862305,
+                    -0.23908185958862305,
+                    0.03465700149536133
                 ]
             }
         },
@@ -3376,6 +3437,50 @@
                     0.0
                 ]
             }
+        },
+        {
+            "ImageComponent": {
+                "color": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "height": 675.0,
+                "texturePath": "res/textures/vignette.png",
+                "width": 960.0
+            },
+            "ObjectInfoComponent": {
+                "name": "Vignette",
+                "uuid": "5964e3c1-222f-c089-eb2f-0b35810ab0e6"
+            },
+            "Transform": {
+                "children": [],
+                "eulerRotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "isStatic": true,
+                "parent": "",
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    0.800000011920929,
+                    1.0
+                ],
+                "translation": [
+                    960.0,
+                    540.0,
+                    0.0
+                ]
+            },
+            "VignetteController": null
         }
     ],
     "sceneRoot": "Root"
