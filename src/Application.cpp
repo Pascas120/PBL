@@ -382,7 +382,7 @@ bool Application::init()
 		.imagePath = "res/textures/dialog_pomidor.png",
 	};
 	dialogueCharacterInfo["ser"] = {
-		.name = "SER",
+		.name = "DAREK",
 		.imagePath = "res/textures/dialog_ser.png",
 	};
 
