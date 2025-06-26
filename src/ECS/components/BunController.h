@@ -18,7 +18,7 @@ struct BunController {
 
   float currentScale = 0.0f;
   float currentRotationZ = 0.0f;
-
+  float soundTimer = 0.1f;
 
   float rotationSpeed = 720.0f;
   float scaleSpeed = 1.5f;

@@ -309,7 +309,9 @@ bool Application::init()
 	sounds.emplace_back("res/sounds/track_2.mp3");
 	sounds.emplace_back("res/sounds/track_3.mp3");
 	sounds.emplace_back("res/sounds/track_4.mp3");
-	sounds.emplace_back("res/sounds/znajdzka.mp3");
+	sounds.emplace_back("res/sounds/znajdzka.wav");
+	sounds.emplace_back("res/sounds/otwieranieBulki.wav");
+	sounds.emplace_back("res/sounds/zart.wav");
 
 	std::ifstream fileJokes("res/jokes.txt");
 	if (!fileJokes.is_open())
@@ -856,6 +858,15 @@ void Application::update()
 		}
 	}
 
+	GLFWgamepadstate state;
+	glfwGetGamepadState(GLFW_JOYSTICK_1, &state);
+
+	bool advanceButton = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_A] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_B] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_X] ||
+		state.buttons[GLFW_GAMEPAD_BUTTON_Y];
+
 	// wyświetlanie dialogów
 	if (!currentDialogue.empty())
 	{
@@ -904,7 +915,7 @@ void Application::update()
 			updateDialogueBox = false;
 		}
 
-		if (!dialogueAdvanceKeyPressed && glfwGetKey(window, GLFW_KEY_ENTER))
+		if (!dialogueAdvanceKeyPressed && advanceButton)
 		{
 			currentDialogue.pop();
 			updateDialogueBox = true;
@@ -917,7 +928,7 @@ void Application::update()
 			dialogueAdvanceKeyPressed = true;
 		}
 	}
-	if (!glfwGetKey(window, GLFW_KEY_ENTER))
+	if (!advanceButton)
 	{
 		dialogueAdvanceKeyPressed = false;
 	}
@@ -1743,7 +1754,7 @@ void Application::setupEvents()
 		scene->playerLock = true;
 		EntityID bun = scene->instantiatePrefab("Bula")[0];
 		scene->getComponent<BunController>(bun).joke = jokes[currentLevel % jokes.size()];
-		scene->getAudioSystem().playSound("res/sounds/znajdzka.mp3");
+		scene->getAudioSystem().playSound("res/sounds/znajdzka.wav");
 	});
 }
 

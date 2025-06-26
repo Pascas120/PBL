@@ -16,11 +16,27 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
     auto& transformSystem = scene->getTransformSystem();
     auto& transform = scene->getComponent<Transform>(id);
 
+    GLFWgamepadstate state;
+    glfwGetGamepadState(GLFW_JOYSTICK_1, &state);
+
+    bool advanceButton = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_A] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_B] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_X] ||
+        state.buttons[GLFW_GAMEPAD_BUTTON_Y];
+
     if(isOpen) {
-        if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if(advanceButton) {
             scene->destroyEntity(id);
             scene->playerLock = false;
         }
+		if (soundTimer > 0.0f) {
+			soundTimer -= deltaTime;
+		}
+		else {
+            scene->getAudioSystem().playSound("res/sounds/otwieranieBulki.wav");
+			soundTimer = 10000000000000.0f;
+		}
         return;
     }
 
@@ -58,11 +74,12 @@ void BunController::update(GLFWwindow* window, Scene* scene, float deltaTime)
     }
 
     // --- Obsługa wejścia dla spacji (drżenie) ---
-    bool currentSpaceState = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+    bool currentSpaceState = (advanceButton);
     if (currentSpaceState && !lastSpaceState) { // Sprawdzamy, czy spacja została *naciśnięta* (nie przytrzymana)
         if (currentScale >= TARGET_SCALE) { // Drżenie tylko po zakończeniu animacji skalowania
             isShaking = true;
             shakeDuration = MAX_SHAKE_DURATION;
+            scene->getAudioSystem().playSound("res/sounds/otwieranieBulki.wav");
             // Tutaj możesz opcjonalnie zapisać transform.translation do zmiennej basePosition,
             // jeśli chcesz, by drżenie było zawsze wokół statycznej bazowej pozycji.
         }
