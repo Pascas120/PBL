@@ -272,6 +272,7 @@ bool Application::init()
 	models.emplace_back(new Model("res/models/kratka.fbx"));
 	models.emplace_back(new Model("res/models/sciana.fbx"));
 	models.emplace_back(new Model("res/models/mainpomidor.fbx"));
+	models.emplace_back(new Model("res/models/mainser.fbx"));
 	models.emplace_back(new Model("res/models/puszka.fbx"));
 	models.emplace_back(new Model("res/models/mleczko.fbx"));
 	models.emplace_back(new Model("res/models/jogurt.fbx"));
