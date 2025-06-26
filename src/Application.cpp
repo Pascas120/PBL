@@ -1516,28 +1516,15 @@ void Application::setupEvents()
 
 
 	//freeze
-	eventSystem.registerListener<CollisionEvent>([&](const Event& e)
+	eventSystem.registerListener<TriggerEvent>([&](const Event& e)
 		{
-			const auto& ev = static_cast<const CollisionEvent&>(e);
-			if (!ev.isColliding) return;
+			const auto& ev = static_cast<const TriggerEvent&>(e);
 
-			auto isFreeze = [&](EntityID id)
-				{ return scene->hasComponent<FreezeComponent>(id); };
+			if (!scene->hasComponent<FreezeComponent>(ev.triggerObject) ||
+				!scene->hasComponent<BreadController>(ev.otherObject))
+				return;
 
-			auto isChleb = [&](EntityID id)
-				{ return scene->hasComponent<ObjectInfoComponent>(id) &&
-				scene->getComponent<ObjectInfoComponent>(id).tag == "chleb"; };
-
-			bool aFreeze = isFreeze(ev.objectA);
-			bool bFreeze = isFreeze(ev.objectB);
-			bool aChleb = isChleb(ev.objectA);
-			bool bChleb = isChleb(ev.objectB);
-
-			if ((aFreeze && bChleb) || (bFreeze && aChleb))
-			{
-				EntityID breadID = aChleb ? ev.objectA : ev.objectB;
-				scene->getComponent<BreadController>(breadID).freezing = true;
-			}
+			scene->getComponent<BreadController>(ev.otherObject).freezing = true;
 
 		});
 
